@@ -1,15 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 class AuthController extends Controller
 {
     
-    use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 
 public function register(Request $request)
 {
@@ -42,7 +40,6 @@ public function register(Request $request)
         'token' => $token
     ]);
 }
-
 public function logout(Request $request)
 {
     $request->user()->tokens()->delete();
