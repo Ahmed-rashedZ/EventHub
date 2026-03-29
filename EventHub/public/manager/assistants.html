@@ -57,6 +57,12 @@
           <label class="form-label">Password</label>
           <input id="a-pass" type="password" class="form-control" required minlength="8"/>
         </div>
+        <div class="form-group">
+          <label class="form-label">Assign to Event</label>
+          <select id="a-event" class="form-control" required>
+            <option value="">Select an Event...</option>
+          </select>
+        </div>
         <div style="text-align: right; margin-top:20px;">
           <button type="submit" class="btn btn-primary" id="save-btn">Create Assistant</button>
         </div>
@@ -74,7 +80,22 @@
 <script src="/js/auth.js"></script>
 <script>
   const user = requireRole('Event Manager');
-  if (user) { populateSidebar(user); setActiveNav(); }
+  if (user) { populateSidebar(user); setActiveNav(); loadEvents(); }
+
+  async function loadEvents() {
+    const res = await api.get('/events/list/my');
+    const select = document.getElementById('a-event');
+    if (res.ok) {
+      res.data.forEach(ev => {
+        const opt = document.createElement('option');
+        opt.value = ev.id;
+        opt.textContent = ev.title;
+        select.appendChild(opt);
+      });
+    } else {
+      showToast('Failed to load events', 'error');
+    }
+  }
 
   document.getElementById('assistant-form').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -85,6 +106,7 @@
       name: document.getElementById('a-name').value,
       email: document.getElementById('a-email').value,
       password: document.getElementById('a-pass').value,
+      event_id: document.getElementById('a-event').value,
       role: 'Assistant' 
     };
 

@@ -11,11 +11,18 @@ class AuthController extends Controller
 
 public function register(Request $request)
 {
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|min:8',
+        'role' => 'nullable|string|in:User', // Only allow 'User' role via public registration
+    ]);
+
     $user = User::create([
         'name' => $request->name,
         'email' => $request->email,
         'password' => Hash::make($request->password),
-        'role' => $request->role ?? 'User'
+        'role' => 'User' // Force 'User' role for public registration
     ]);
 
     $token = $user->createToken('auth_token')->plainTextToken;
@@ -68,19 +75,29 @@ public function createUser(Request $request)
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8',
         'role' => 'required|string',
+        'event_id' => 'nullable|exists:events,id',
     ]);
 
     // Role constraints
     if ($authUser->role === 'Admin') {
-        // Admin can create Event Manager (or any other role except maybe Admin itself, but we'll allow Event Manager/Sponsor/etc)
         $allowedRoles = ['Event Manager', 'Sponsor', 'User'];
         if (!in_array($request->role, $allowedRoles)) {
             return response()->json(['message' => 'Invalid role creation for Admin'], 403);
         }
     } elseif ($authUser->role === 'Event Manager') {
-        // Manager can ONLY create Assistants
+        // Manager can ONLY create Assistants for their own events
         if ($request->role !== 'Assistant') {
             return response()->json(['message' => 'Event Managers can only create Assistants'], 403);
+        }
+        if (!$request->event_id) {
+            return response()->json(['message' => 'Event ID is required for Assistant creation'], 422);
+        }
+        
+        $event = \App\Models\Event::where('id', $request->event_id)
+                                  ->where('created_by', $authUser->id)
+                                  ->first();
+        if (!$event) {
+            return response()->json(['message' => 'Unauthorized or invalid event for this Assistant'], 403);
         }
     } else {
         return response()->json(['message' => 'Unauthorized to create users'], 403);
@@ -91,6 +108,7 @@ public function createUser(Request $request)
         'email' => $request->email,
         'password' => Hash::make($request->password),
         'role' => $request->role,
+        'event_id' => $request->event_id,
     ]);
 
     return response()->json(['message' => 'User created successfully', 'user' => $user], 201);

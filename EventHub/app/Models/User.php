@@ -18,7 +18,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role' // 🔥 مهم جدًا
+        'role',
+        'event_id'
     ];
 
     protected $hidden = [
@@ -32,5 +33,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function event()
+    {
+        return $this->belongsTo(Event::class);
     }
 }
