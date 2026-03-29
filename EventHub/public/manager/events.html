@@ -105,7 +105,10 @@
   async function loadEvents() {
     const res = await api.get('/events/list/my');
     const tbody = document.getElementById('events-body');
-    if (!res.ok || !res.data.length) { tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📅</div><p>No events yet</p></div></td></tr>'; return; }
+    if (!res.ok || !res.data.length) {
+      tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📅</div><p>No events yet</p></div></td></tr>';
+      return;
+    }
     tbody.innerHTML = res.data.map((ev, i) => `
       <tr>
         <td style="color:var(--text-muted)">${i+1}</td>
@@ -114,36 +117,90 @@
         <td style="white-space:nowrap;color:var(--text-muted)">${fmtDateShort(ev.start_time)}</td>
         <td style="color:var(--text-muted)">${ev.capacity}</td>
         <td style="color:var(--text-muted)" id="tickets-${ev.id}">—</td>
-        <td>${badge(ev.status)}</td>
+        <td>${badge(ev.status)} <button class="btn btn-sm btn-info" onclick="showEventDetails(${ev.id})">Details</button></td>
       </tr>`).join('');
-  }
+}
 
-  async function loadVenues() {
-    const res = await api.get('/venues');
-    const sel = document.getElementById('e-venue');
-    if (!res.ok) { sel.innerHTML = '<option value="">No venues available</option>'; return; }
-    sel.innerHTML = res.data.map(v => `<option value="${v.id}">${v.name} (${v.location})</option>`).join('');
-  }
-
-  function openModal() { document.getElementById('event-modal').classList.add('open'); }
-  function closeModal() { document.getElementById('event-modal').classList.remove('open'); document.getElementById('event-form').reset(); }
-
-  document.getElementById('event-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const res = await api.post('/events', {
-      title:       document.getElementById('e-title').value,
-      description: document.getElementById('e-desc').value,
-      venue_id:    +document.getElementById('e-venue').value,
-      start_time:  document.getElementById('e-start').value,
-      end_time:    document.getElementById('e-end').value,
-      capacity:    +document.getElementById('e-capacity').value,
-    });
-    if (res.ok) { showToast('Event submitted for approval!', 'success'); closeModal(); loadEvents(); }
-    else {
-      const msg = res.data?.errors ? Object.values(res.data.errors).flat().join('. ') : res.data?.message || 'Error';
-      showToast(msg, 'error');
-    }
+// Modal for event details (يجب أن تكون في النطاق العام)
+function showEventDetails(eventId) {
+  const modal = document.getElementById('event-details-modal');
+  const content = document.getElementById('event-details-content');
+  modal.classList.add('open');
+  content.innerHTML = '<div class="spinner" style="margin:auto"></div>';
+    api.get(`/events/${eventId}`).then(res => {
+      if (!res.ok) {
+        content.innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><p>Could not fetch event details</p></div>';
+        return;
+      }
+    const ev = res.data;
+    content.innerHTML = `
+      <div class="event-icon">🎫</div>
+      <div class="modal-body event-details">
+        <h3>${ev.title}</h3>
+        <div class="event-status">${ev.status ? badge(ev.status) : ''}</div>
+        <div><b>Description:</b> <span>${ev.description || '-'}</span></div>
+        <div class="event-details-row">
+          <div><b>Venue:</b> <span>${ev.venue?.name || '-'}</span></div>
+          <div><b>Location:</b> <span>${ev.venue?.location || '-'}</span></div>
+        </div>
+        <div class="event-details-row">
+          <div><b>Start:</b> <span>${fmtDate(ev.start_time)}</span></div>
+          <div><b>End:</b> <span>${fmtDate(ev.end_time)}</span></div>
+        </div>
+        <div class="event-details-row">
+          <div><b>Capacity:</b> <span>${ev.capacity}</span></div>
+          <div><b>Tickets:</b> <span>${ev.tickets_count ?? '—'}</span></div>
+        </div>
+        <div class="event-details-row">
+          <div><b>Created by:</b> <span>${ev.manager?.name || '-'}</span></div>
+        </div>
+      </div>
+    `;
   });
+}
+
+function closeEventDetailsModal() {
+  document.getElementById('event-details-modal').classList.remove('open');
+  document.getElementById('event-details-content').innerHTML = '';
+}
+
+async function loadVenues() {
+  const res = await api.get('/venues');
+  const sel = document.getElementById('e-venue');
+  if (!res.ok) { sel.innerHTML = '<option value="">No venues available</option>'; return; }
+  sel.innerHTML = res.data.map(v => `<option value="${v.id}">${v.name} (${v.location})</option>`).join('');
+}
+
+function openModal() { document.getElementById('event-modal').classList.add('open'); }
+function closeModal() { document.getElementById('event-modal').classList.remove('open'); document.getElementById('event-form').reset(); }
+
+document.getElementById('event-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const res = await api.post('/events', {
+    title:       document.getElementById('e-title').value,
+    description: document.getElementById('e-desc').value,
+    venue_id:    +document.getElementById('e-venue').value,
+    start_time:  document.getElementById('e-start').value,
+    end_time:    document.getElementById('e-end').value,
+    capacity:    +document.getElementById('e-capacity').value,
+  });
+  if (res.ok) { showToast('Event submitted for approval!', 'success'); closeModal(); loadEvents(); }
+  else {
+    const msg = res.data?.errors ? Object.values(res.data.errors).flat().join('. ') : res.data?.message || 'Error';
+    showToast(msg, 'error');
+  }
+});
 </script>
+
+<!-- Event Details Modal -->
+<div class="modal-overlay" id="event-details-modal">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-header">
+      <h3 class="modal-title">Event Details</h3>
+      <button class="modal-close" onclick="closeEventDetailsModal()">✕</button>
+    </div>
+    <div class="modal-body" id="event-details-content" style="padding:16px;min-height:120px"></div>
+  </div>
+</div>
 </body>
 </html>
