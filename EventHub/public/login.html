@@ -1,48 +1,77 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>Login</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login – EventHub</title>
+  <meta name="description" content="Sign in to EventHub Smart Event Management Platform"/>
+  <link rel="stylesheet" href="/css/style.css"/>
 </head>
-
 <body>
+<div class="auth-page">
+  <div class="auth-bg-glow"></div>
+  <div class="auth-bg-glow auth-bg-glow-2"></div>
 
-    <h2>Login</h2>
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="logo-icon">🎯</div>
+      <h1>EventHub</h1>
+    </div>
 
-    <input type="email" id="email" placeholder="Email">
-    <br><br>
+    <h2 class="auth-heading">Welcome back</h2>
+    <p class="auth-subheading">Sign in to your account to continue</p>
 
-    <input type="password" id="password" placeholder="Password">
-    <br><br>
+    <form id="login-form">
+      <div class="form-group">
+        <label class="form-label" for="email">Email Address</label>
+        <input id="email" type="email" class="form-control" placeholder="you@example.com" required/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input id="password" type="password" class="form-control" placeholder="••••••••" required/>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block" id="login-btn">Sign In</button>
+    </form>
 
-    <button onclick="login()">Login</button>
+    <div class="auth-footer">
+      Don't have an account? <a href="/register.html">Register</a>
+    </div>
+  </div>
+</div>
 
-    <script>
-        function login() {
-            fetch("http://127.0.0.1:8000/api/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    email: document.getElementById("email").value,
-                    password: document.getElementById("password").value
-                })
-            })
-                .then(res => res.json())
-                .then(data => {
-                    console.log(data);
+<div id="toast-container"></div>
+<script src="/js/api.js"></script>
+<script>
+  (function(){
+    const user = localStorage.getItem('user');
+    if (user && localStorage.getItem('token')) redirectByRole(JSON.parse(user).role);
+  })();
 
-                    if (data.token) {
-                        localStorage.setItem("token", data.token);
-                        alert("Login Success ✅");
-                    } else {
-                        alert("Login Failed ❌");
-                    }
-                });
-        }
-    </script>
+  function redirectByRole(role) {
+    const map = { 'Admin': '/admin/dashboard.html', 'Event Manager': '/manager/dashboard.html', 'Sponsor': '/sponsor/dashboard.html', 'User': '/profile.html', 'Assistant': '/profile.html' };
+    window.location.href = map[role] || '/login.html';
+  }
 
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('login-btn');
+    btn.textContent = 'Signing in…'; btn.disabled = true;
+
+    const res = await api.post('/login', {
+      email: document.getElementById('email').value,
+      password: document.getElementById('password').value,
+    });
+
+    if (res.ok) {
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('user', JSON.stringify(res.data.user));
+      showToast('Welcome back, ' + res.data.user.name + '!', 'success');
+      setTimeout(() => redirectByRole(res.data.user.role), 600);
+    } else {
+      showToast(res.data?.message || 'Login failed', 'error');
+      btn.textContent = 'Sign In'; btn.disabled = false;
+    }
+  });
+</script>
 </body>
-
 </html>

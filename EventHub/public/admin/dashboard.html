@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard – EventHub</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+<div class="app-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">🎯</div>
+      <span>EventHub</span>
+    </div>
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Overview</span>
+      <a class="nav-item active" href="/admin/dashboard.html"><span class="nav-icon">📊</span> Dashboard</a>
+      <span class="nav-section-label">Management</span>
+      <a class="nav-item" href="/admin/users.html"><span class="nav-icon">👥</span> Users</a>
+      <a class="nav-item" href="/admin/events.html"><span class="nav-icon">📅</span> Events</a>
+      <a class="nav-item" href="/admin/venues.html"><span class="nav-icon">🏛️</span> Venues</a>
+      <span class="nav-section-label">Settings</span>
+      <a class="nav-item" href="/profile.html"><span class="nav-icon">⚙️</span> My Profile</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="avatar" id="sidebar-avatar">A</div>
+        <div class="user-info">
+          <div class="user-name" id="sidebar-username">Admin</div>
+          <div class="user-role" id="sidebar-role">Administrator</div>
+        </div>
+      </div>
+      <button class="btn btn-logout" id="logout-btn">🚪 Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="topbar">
+      <div>
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">System overview & analytics</p>
+      </div>
+      <div class="topbar-actions">
+        <button class="notif-btn" title="Notifications">🔔<span class="notif-dot"></span></button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-card"><div class="stat-label">Total Users</div><div class="stat-value" id="stat-users">—</div><div class="stat-icon">👥</div></div>
+      <div class="stat-card"><div class="stat-label">Total Events</div><div class="stat-value" id="stat-events">—</div><div class="stat-icon">📅</div></div>
+      <div class="stat-card"><div class="stat-label">Approved Events</div><div class="stat-value" id="stat-approved">—</div><div class="stat-icon">✅</div></div>
+      <div class="stat-card"><div class="stat-label">Pending Events</div><div class="stat-value" id="stat-pending">—</div><div class="stat-icon">⏳</div></div>
+      <div class="stat-card"><div class="stat-label">Total Tickets</div><div class="stat-value" id="stat-tickets">—</div><div class="stat-icon">🎟️</div></div>
+      <div class="stat-card"><div class="stat-label">Checked In</div><div class="stat-value" id="stat-attendance">—</div><div class="stat-icon">📍</div></div>
+    </div>
+
+    <!-- Quick Links -->
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">⚠️ Pending Approvals</span>
+          <a href="/admin/events.html" class="btn btn-ghost btn-sm">View All</a>
+        </div>
+        <div id="pending-list">
+          <div class="empty-state"><div class="empty-icon">🎉</div><p>No pending events</p></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">👥 Recent Users</span>
+          <a href="/admin/users.html" class="btn btn-ghost btn-sm">View All</a>
+        </div>
+        <div id="recent-users">
+          <div class="loading-row"><div class="spinner" style="margin:auto"></div></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="toast-container"></div>
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+  const user = requireRole('Admin');
+  if (user) {
+    populateSidebar(user);
+    setActiveNav();
+    loadStats();
+    loadPending();
+    loadRecentUsers();
+  }
+
+  async function loadStats() {
+    const res = await api.get('/analytics/system');
+    if (!res.ok) return;
+    const d = res.data;
+    document.getElementById('stat-users').textContent      = d.total_users;
+    document.getElementById('stat-events').textContent     = d.total_events;
+    document.getElementById('stat-approved').textContent   = d.approved_events;
+    document.getElementById('stat-pending').textContent    = d.pending_events;
+    document.getElementById('stat-tickets').textContent    = d.total_tickets;
+    document.getElementById('stat-attendance').textContent = d.total_attendance;
+  }
+
+  async function loadPending() {
+    const res = await api.get('/events/list/pending');
+    const el = document.getElementById('pending-list');
+    if (!res.ok || !res.data.length) {
+      el.innerHTML = '<div class="empty-state"><div class="empty-icon">🎉</div><p>No pending events</p></div>';
+      return;
+    }
+    el.innerHTML = res.data.slice(0,5).map(ev => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+        <div>
+          <div style="font-weight:600;font-size:.88rem">${ev.title}</div>
+          <div style="font-size:.75rem;color:var(--text-muted)">${ev.venue?.name || 'No venue'} · ${fmtDateShort(ev.start_time)}</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-success btn-sm" onclick="approve(${ev.id})">✓</button>
+          <button class="btn btn-danger btn-sm" onclick="reject(${ev.id})">✕</button>
+        </div>
+      </div>`).join('');
+  }
+
+  async function loadRecentUsers() {
+    const res = await api.get('/analytics/users');
+    const el = document.getElementById('recent-users');
+    if (!res.ok || !res.data.length) { el.innerHTML = ''; return; }
+    el.innerHTML = res.data.slice(0,5).map(u => `
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+        <div class="avatar" style="width:28px;height:28px;font-size:.7rem">${u.name.charAt(0)}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:600;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${u.name}</div>
+          <div style="font-size:.72rem;color:var(--text-muted)">${u.email}</div>
+        </div>
+        ${roleBadge(u.role)}
+      </div>`).join('');
+  }
+
+  async function approve(id) {
+    const res = await api.put(`/events/${id}/approve`);
+    if (res.ok) { showToast('Event approved!', 'success'); loadStats(); loadPending(); }
+    else showToast(res.data?.message || 'Error', 'error');
+  }
+
+  async function reject(id) {
+    const res = await api.put(`/events/${id}/reject`);
+    if (res.ok) { showToast('Event rejected.', 'info'); loadStats(); loadPending(); }
+    else showToast(res.data?.message || 'Error', 'error');
+  }
+</script>
+</body>
+</html>

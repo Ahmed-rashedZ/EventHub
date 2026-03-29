@@ -3,19 +3,68 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\VenueController;
+use App\Http\Controllers\TicketController;
+use App\Http\Controllers\CheckinController;
+use App\Http\Controllers\SponsorshipController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\AnalyticsController;
+
+// ─── Public routes ────────────────────────────────────────────────────────────
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login',    [AuthController::class, 'login']);
 
+// Public event list (approved only)
+Route::get('/events',       [EventController::class, 'index']);
+Route::get('/events/{id}',  [EventController::class, 'show']);
+
+// Public venue list
+Route::get('/venues', [VenueController::class, 'index']);
+
+// ─── Authenticated routes ──────────────────────────────────────────────────────
 Route::middleware('auth:sanctum')->group(function () {
+
+    // Profile & Role Management
+    Route::put('/profile', [AuthController::class, 'updateProfile']);
+    Route::post('/users', [AuthController::class, 'createUser']); // For Admins and Managers
+
+    // Auth
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    // ── Events ──
+    Route::post('/events',                    [EventController::class, 'store']);
+    Route::put('/events/{id}/approve',        [EventController::class, 'approve']);
+    Route::put('/events/{id}/reject',         [EventController::class, 'reject']);
+    Route::get('/events/list/pending',        [EventController::class, 'pending']);
+    Route::get('/events/list/my',             [EventController::class, 'myEvents']);
+    Route::get('/events/list/all',            [EventController::class, 'all']);
+
+    // ── Venues (Admin) ──
+    Route::post('/venues',        [VenueController::class, 'store']);
+    Route::put('/venues/{id}',    [VenueController::class, 'update']);
+    Route::delete('/venues/{id}', [VenueController::class, 'destroy']);
+
+    // ── Tickets ──
+    Route::post('/tickets',     [TicketController::class, 'store']);
+    Route::get('/my-tickets',   [TicketController::class, 'myTickets']);
+
+    // ── Check-in ──
+    Route::post('/checkin',                         [CheckinController::class, 'checkin']);
+    Route::get('/checkin/event/{id}',               [CheckinController::class, 'eventParticipants']);
+
+    // ── Sponsorship ──
+    Route::post('/sponsorship',       [SponsorshipController::class, 'store']);
+    Route::get('/sponsorship',        [SponsorshipController::class, 'index']);
+    Route::put('/sponsorship/{id}',   [SponsorshipController::class, 'update']);
+
+    // ── Notifications ──
+    Route::get('/notifications',              [NotificationController::class, 'index']);
+    Route::post('/notifications',             [NotificationController::class, 'store']);
+    Route::put('/notifications/{id}/read',    [NotificationController::class, 'markRead']);
+
+    // ── Analytics ──
+    Route::get('/analytics/system',       [AnalyticsController::class, 'system']);
+    Route::get('/analytics/event/{id}',   [AnalyticsController::class, 'event']);
+    Route::get('/analytics/users',        [AnalyticsController::class, 'users']);
+    Route::delete('/analytics/users/{id}',[AnalyticsController::class, 'deleteUser']);
 });
-
-
-// عرض events
-Route::get('/events', [EventController::class, 'index']);
-
-// إنشاء event (Event Manager فقط)
-Route::middleware(['auth:sanctum'])->post('/events', [EventController::class, 'store']);
-
-// موافقة (Admin فقط)
-Route::middleware(['auth:sanctum'])->put('/events/{id}/approve', [EventController::class, 'approve']);

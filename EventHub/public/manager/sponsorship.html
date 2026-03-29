@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sponsorship – EventHub Manager</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-icon">🎯</div><span>EventHub</span></div>
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Overview</span>
+      <a class="nav-item" href="/manager/dashboard.html"><span class="nav-icon">📊</span> Dashboard</a>
+      <span class="nav-section-label">Events</span>
+      <a class="nav-item" href="/manager/events.html"><span class="nav-icon">📅</span> My Events</a>
+      <a class="nav-item" href="/manager/assistants.html"><span class="nav-icon">👥</span> Assistants</a>
+      <a class="nav-item" href="/manager/attendance.html"><span class="nav-icon">📍</span> Attendance</a>
+      <a class="nav-item active" href="/manager/sponsorship.html"><span class="nav-icon">💼</span> Sponsorship</a>
+      <span class="nav-section-label">Settings</span>
+      <a class="nav-item" href="/profile.html"><span class="nav-icon">⚙️</span> My Profile</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="avatar" id="sidebar-avatar">M</div>
+        <div class="user-info"><div class="user-name" id="sidebar-username">Manager</div><div class="user-role" id="sidebar-role">Event Manager</div></div>
+      </div>
+      <button class="btn btn-logout" id="logout-btn">🚪 Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="topbar">
+      <div><h1 class="page-title">Sponsorship Requests</h1><p class="page-subtitle">Request sponsors for your events</p></div>
+      <div class="topbar-actions">
+        <button class="btn btn-primary" onclick="openModal()">+ New Request</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Event</th><th>Message</th><th>Sponsor</th><th>Status</th><th>Date</th></tr></thead>
+          <tbody id="req-body">
+            <tr class="loading-row"><td colspan="6"><div class="spinner" style="margin:auto"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- New Request Modal -->
+<div class="modal-overlay" id="req-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Request Sponsorship</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <form id="req-form">
+      <div class="form-group">
+        <label class="form-label">Event</label>
+        <select id="r-event" class="form-control" required>
+          <option value="">Select your event…</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Message to Sponsors</label>
+        <textarea id="r-message" class="form-control" placeholder="Describe sponsorship opportunity…"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Submit Request</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+  const user = requireRole('Event Manager');
+  if (user) { populateSidebar(user); setActiveNav(); loadRequests(); loadMyEvents(); }
+
+  async function loadRequests() {
+    const res = await api.get('/sponsorship');
+    const tbody = document.getElementById('req-body');
+    if (!res.ok || !res.data.length) { tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">💼</div><p>No sponsorship requests yet</p></div></td></tr>'; return; }
+    tbody.innerHTML = res.data.map((r, i) => `
+      <tr>
+        <td style="color:var(--text-muted)">${i+1}</td>
+        <td><div style="font-weight:600">${r.event?.title || '—'}</div></td>
+        <td style="color:var(--text-muted)">${r.message ? r.message.substring(0,60)+'…' : '—'}</td>
+        <td style="color:var(--text-muted)">${r.sponsor?.name || 'Open'}</td>
+        <td>
+          ${badge(r.status)}
+          ${r.status === 'accepted' ? `<a href="/storage/agreements/agreement_${r.id}.pdf" target="_blank" style="margin-left:8px;font-size:12px;text-decoration:none">📄 PDF</a>` : ''}
+        </td>
+        <td style="color:var(--text-muted)">${fmtDateShort(r.created_at)}</td>
+      </tr>`).join('');
+  }
+
+  async function loadMyEvents() {
+    const res = await api.get('/events/list/my');
+    const sel = document.getElementById('r-event');
+    if (!res.ok) return;
+    sel.innerHTML = '<option value="">Select your event…</option>' + res.data.map(e => `<option value="${e.id}">${e.title}</option>`).join('');
+  }
+
+  function openModal() { document.getElementById('req-modal').classList.add('open'); }
+  function closeModal() { document.getElementById('req-modal').classList.remove('open'); document.getElementById('req-form').reset(); }
+
+  document.getElementById('req-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const res = await api.post('/sponsorship', { event_id: +document.getElementById('r-event').value, message: document.getElementById('r-message').value });
+    if (res.ok) { showToast('Request submitted!', 'success'); closeModal(); loadRequests(); }
+    else showToast(res.data?.message || 'Error', 'error');
+  });
+</script>
+</body>
+</html>
