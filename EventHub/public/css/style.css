@@ -80,6 +80,7 @@ a:hover { color: var(--accent-hover); }
   font-size: 1.1rem;
   background: linear-gradient(90deg, var(--accent), var(--accent2));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -395,7 +396,8 @@ select.form-control option { background: var(--bg-card); }
   border-radius: 24px;
   padding: 38px 32px 32px 32px;
   width: 100%;
-  max-width: 540px;
+  max-width: 720px;
+  min-width: 340px;
   box-shadow: 0 24px 64px 0 rgba(0,0,0,.85), 0 2px 16px 0 rgba(110,64,242,0.10) inset;
   transform: translateY(32px) scale(0.98);
   transition: transform .33s cubic-bezier(.4,1.6,.4,1), box-shadow .33s;
@@ -403,6 +405,7 @@ select.form-control option { background: var(--bg-card); }
   backdrop-filter: blur(16px) saturate(1.2);
   border-top: 3.5px solid var(--accent2);
   animation: modalPop .5s cubic-bezier(.4,1.6,.4,1);
+  word-break: break-word;
 }
 
 @keyframes modalPop {
@@ -421,6 +424,7 @@ select.form-control option { background: var(--bg-card); }
   filter: drop-shadow(0 2px 12px #22d3ee55);
   background: linear-gradient(135deg, #6e40f2 30%, #22d3ee 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 0 2px 12px #22d3ee33;
 }
@@ -434,6 +438,7 @@ select.form-control option { background: var(--bg-card); }
   border-radius: 14px;
   box-shadow: 0 2px 16px 0 rgba(110,64,242,0.04) inset;
   padding: 8px 2px 2px 2px;
+  word-break: break-word;
 }
 .event-details-row {
   display: flex;
@@ -457,11 +462,20 @@ select.form-control option { background: var(--bg-card); }
   font-weight: 600;
   letter-spacing: 0.2px;
   font-size: 1.01em;
+  white-space: nowrap;
+  display: inline-block;
 }
 .modal-body.event-details span {
   color: #fff;
   font-weight: 400;
   font-size: 1.01em;
+}
+.modal-body.event-details > div > div > span {
+  color: #fff;
+  font-weight: 400;
+  font-size: 1.01em;
+  word-break: break-word;
+  white-space: pre-line;
 }
 .modal-body.event-details h3 {
   font-size: 1.35rem;
@@ -717,6 +731,7 @@ select.form-control option { background: var(--bg-card); }
   font-weight: 800;
   background: linear-gradient(90deg, var(--accent), var(--accent2));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
