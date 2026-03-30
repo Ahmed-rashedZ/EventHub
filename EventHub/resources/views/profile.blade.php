@@ -57,7 +57,7 @@
 <script>
   // Dynamic Sidebar Logic
   const u = JSON.parse(localStorage.getItem('user'));
-  if (!u) { window.location.href = '/login.html'; }
+  if (!u) { window.location.href = '/login'; }
   else {
     populateSidebar(u);
     
@@ -66,31 +66,31 @@
     if (u.role === 'Admin') {
       linksDiv.innerHTML = `
         <span class="nav-section-label">Overview</span>
-        <a class="nav-item" href="/admin/dashboard.html"><span class="nav-icon">📊</span> Dashboard</a>
+        <a class="nav-item" href="/admin/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
         <span class="nav-section-label">Management</span>
-        <a class="nav-item" href="/admin/users.html"><span class="nav-icon">👥</span> Users</a>
-        <a class="nav-item" href="/admin/events.html"><span class="nav-icon">📅</span> Events</a>
-        <a class="nav-item" href="/admin/venues.html"><span class="nav-icon">🏛️</span> Venues</a>`;
+        <a class="nav-item" href="/admin/users"><span class="nav-icon">👥</span> Users</a>
+        <a class="nav-item" href="/admin/events"><span class="nav-icon">📅</span> Events</a>
+        <a class="nav-item" href="/admin/venues"><span class="nav-icon">🏛️</span> Venues</a>`;
     } else if (u.role === 'Event Manager') {
       linksDiv.innerHTML = `
         <span class="nav-section-label">Overview</span>
-        <a class="nav-item" href="/manager/dashboard.html"><span class="nav-icon">📊</span> Dashboard</a>
+        <a class="nav-item" href="/manager/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
         <span class="nav-section-label">Events</span>
-        <a class="nav-item" href="/manager/events.html"><span class="nav-icon">📅</span> My Events</a>
-        <a class="nav-item" href="/manager/assistants.html"><span class="nav-icon">👥</span> Assistants</a>
-        <a class="nav-item" href="/manager/attendance.html"><span class="nav-icon">📍</span> Attendance</a>
-        <a class="nav-item" href="/manager/sponsorship.html"><span class="nav-icon">💼</span> Sponsorship</a>`;
+        <a class="nav-item" href="/manager/events"><span class="nav-icon">📅</span> My Events</a>
+        <a class="nav-item" href="/manager/assistants"><span class="nav-icon">👥</span> Assistants</a>
+        <a class="nav-item" href="/manager/attendance"><span class="nav-icon">📍</span> Attendance</a>
+        <a class="nav-item" href="/manager/sponsorship"><span class="nav-icon">💼</span> Sponsorship</a>`;
     } else if (u.role === 'Sponsor') {
       linksDiv.innerHTML = `
         <span class="nav-section-label">Overview</span>
-        <a class="nav-item" href="/sponsor/dashboard.html"><span class="nav-icon">📊</span> Dashboard</a>
+        <a class="nav-item" href="/sponsor/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
         <span class="nav-section-label">Sponsorships</span>
-        <a class="nav-item" href="/sponsor/requests.html"><span class="nav-icon">💼</span> Browse Requests</a>`;
+        <a class="nav-item" href="/sponsor/requests"><span class="nav-icon">💼</span> Browse Requests</a>`;
     }
     // Add Profile link at the bottom
     linksDiv.innerHTML += `
       <span class="nav-section-label">Settings</span>
-      <a class="nav-item active" href="/profile.html"><span class="nav-icon">⚙️</span> My Profile</a>`;
+      <a class="nav-item active" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>`;
       
     // Populate form
     document.getElementById('p-name').value = u.name;

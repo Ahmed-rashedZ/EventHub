@@ -34,7 +34,7 @@
     </form>
 
     <div class="auth-footer">
-      Don't have an account? <a href="/register.html">Register</a>
+      Don't have an account? <a href="/register">Register</a>
     </div>
   </div>
 </div>
@@ -44,12 +44,21 @@
 <script>
   (function(){
     const user = localStorage.getItem('user');
-    if (user && localStorage.getItem('token')) redirectByRole(JSON.parse(user).role);
+    const token = localStorage.getItem('token');
+    const hasCookie = document.cookie.split('; ').some(row => row.startsWith('auth_token='));
+    
+    if (user && token && hasCookie) {
+      redirectByRole(JSON.parse(user).role);
+    } else {
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+    }
   })();
 
   function redirectByRole(role) {
-    const map = { 'Admin': '/admin/dashboard.html', 'Event Manager': '/manager/dashboard.html', 'Sponsor': '/sponsor/dashboard.html', 'User': '/profile.html', 'Assistant': '/profile.html' };
-    window.location.href = map[role] || '/login.html';
+    const map = { 'Admin': '/admin/dashboard', 'Event Manager': '/manager/dashboard', 'Sponsor': '/sponsor/dashboard', 'User': '/profile', 'Assistant': '/profile' };
+    window.location.href = map[role] || '/login';
   }
 
   document.getElementById('login-form').addEventListener('submit', async (e) => {
@@ -65,6 +74,7 @@
     if (res.ok) {
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('user', JSON.stringify(res.data.user));
+      document.cookie = "auth_token=" + res.data.token + "; path=/; max-age=86400;";
       showToast('Welcome back, ' + res.data.user.name + '!', 'success');
       setTimeout(() => redirectByRole(res.data.user.role), 600);
     } else {

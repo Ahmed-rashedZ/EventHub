@@ -33,7 +33,7 @@
     </div>
 
     <div class="auth-footer" style="margin-top: 32px;">
-      Already have an account? <a href="/login.html">Sign in here</a>
+      Already have an account? <a href="/login">Sign in here</a>
     </div>
   </div>
 </div>

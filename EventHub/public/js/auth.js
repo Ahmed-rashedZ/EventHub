@@ -19,20 +19,20 @@ function requireRole(...roles) {
     const token = getToken();
 
     if (!user || !token) {
-        window.location.href = '/login.html';
+        window.location.href = '/login';
         return null;
     }
 
     if (roles.length > 0 && !roles.includes(user.role)) {
         // Redirect to the correct dashboard
         const dashMap = {
-            'Admin': '/admin/dashboard.html',
-            'Event Manager': '/manager/dashboard.html',
-            'Sponsor': '/sponsor/dashboard.html',
-            'User': '/profile.html',
-            'Assistant': '/profile.html'
+            'Admin': '/admin/dashboard',
+            'Event Manager': '/manager/dashboard',
+            'Sponsor': '/sponsor/dashboard',
+            'User': '/profile',
+            'Assistant': '/profile'
         };
-        const target = dashMap[user.role] || '/login.html';
+        const target = dashMap[user.role] || '/login';
         if (window.location.pathname !== target) {
             window.location.href = target;
         }
@@ -48,8 +48,9 @@ function requireRole(...roles) {
 function logout() {
     api.post('/logout').finally(() => {
         localStorage.removeItem('token');
+        document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
         localStorage.removeItem('user');
-        window.location.href = '/login.html';
+        window.location.href = '/login';
     });
 }
 

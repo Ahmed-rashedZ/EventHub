@@ -12,13 +12,13 @@
     <div class="sidebar-logo"><div class="logo-icon">🎯</div><span>EventHub</span></div>
     <nav class="sidebar-nav">
       <span class="nav-section-label">Overview</span>
-      <a class="nav-item" href="/admin/dashboard.html"><span class="nav-icon">📊</span> Dashboard</a>
+      <a class="nav-item" href="/admin/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
       <span class="nav-section-label">Management</span>
-      <a class="nav-item active" href="/admin/users.html"><span class="nav-icon">👥</span> Users</a>
-      <a class="nav-item" href="/admin/events.html"><span class="nav-icon">📅</span> Events</a>
-      <a class="nav-item" href="/admin/venues.html"><span class="nav-icon">🏛️</span> Venues</a>
+      <a class="nav-item active" href="/admin/users"><span class="nav-icon">👥</span> Users</a>
+      <a class="nav-item" href="/admin/events"><span class="nav-icon">📅</span> Events</a>
+      <a class="nav-item" href="/admin/venues"><span class="nav-icon">🏛️</span> Venues</a>
       <span class="nav-section-label">Settings</span>
-      <a class="nav-item" href="/profile.html"><span class="nav-icon">⚙️</span> My Profile</a>
+      <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
     </nav>
     <div class="sidebar-footer">
       <div class="sidebar-user">

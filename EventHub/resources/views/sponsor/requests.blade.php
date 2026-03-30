@@ -12,11 +12,11 @@
     <div class="sidebar-logo"><div class="logo-icon">🎯</div><span>EventHub</span></div>
     <nav class="sidebar-nav">
       <span class="nav-section-label">Overview</span>
-      <a class="nav-item" href="/sponsor/dashboard.html"><span class="nav-icon">📊</span> Dashboard</a>
+      <a class="nav-item" href="/sponsor/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
       <span class="nav-section-label">Sponsorships</span>
-      <a class="nav-item active" href="/sponsor/requests.html"><span class="nav-icon">💼</span> Browse Requests</a>
+      <a class="nav-item active" href="/sponsor/requests"><span class="nav-icon">💼</span> Browse Requests</a>
       <span class="nav-section-label">Settings</span>
-      <a class="nav-item" href="/profile.html"><span class="nav-icon">⚙️</span> My Profile</a>
+      <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
     </nav>
     <div class="sidebar-footer">
       <div class="sidebar-user">

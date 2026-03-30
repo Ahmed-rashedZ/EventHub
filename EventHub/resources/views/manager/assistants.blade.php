@@ -15,14 +15,14 @@
     <div class="sidebar-logo"><div class="logo-icon">🎯</div><span>EventHub</span></div>
     <nav class="sidebar-nav">
       <span class="nav-section-label">Overview</span>
-      <a class="nav-item" href="/manager/dashboard.html"><span class="nav-icon">📊</span> Dashboard</a>
+      <a class="nav-item" href="/manager/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
       <span class="nav-section-label">Events</span>
-      <a class="nav-item" href="/manager/events.html"><span class="nav-icon">📅</span> My Events</a>
-      <a class="nav-item active" href="/manager/assistants.html"><span class="nav-icon">👥</span> Assistants</a>
-      <a class="nav-item" href="/manager/attendance.html"><span class="nav-icon">📍</span> Attendance</a>
-      <a class="nav-item" href="/manager/sponsorship.html"><span class="nav-icon">💼</span> Sponsorship</a>
+      <a class="nav-item" href="/manager/events"><span class="nav-icon">📅</span> My Events</a>
+      <a class="nav-item active" href="/manager/assistants"><span class="nav-icon">👥</span> Assistants</a>
+      <a class="nav-item" href="/manager/attendance"><span class="nav-icon">📍</span> Attendance</a>
+      <a class="nav-item" href="/manager/sponsorship"><span class="nav-icon">💼</span> Sponsorship</a>
       <span class="nav-section-label">Settings</span>
-      <a class="nav-item" href="/profile.html"><span class="nav-icon">⚙️</span> My Profile</a>
+      <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
     </nav>
     <div class="sidebar-footer">
       <div class="sidebar-user">

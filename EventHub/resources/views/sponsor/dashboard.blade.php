@@ -12,11 +12,11 @@
     <div class="sidebar-logo"><div class="logo-icon">🎯</div><span>EventHub</span></div>
     <nav class="sidebar-nav">
       <span class="nav-section-label">Overview</span>
-      <a class="nav-item active" href="/sponsor/dashboard.html"><span class="nav-icon">📊</span> Dashboard</a>
+      <a class="nav-item active" href="/sponsor/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
       <span class="nav-section-label">Sponsorships</span>
-      <a class="nav-item" href="/sponsor/requests.html"><span class="nav-icon">💼</span> Browse Requests</a>
+      <a class="nav-item" href="/sponsor/requests"><span class="nav-icon">💼</span> Browse Requests</a>
       <span class="nav-section-label">Settings</span>
-      <a class="nav-item" href="/profile.html"><span class="nav-icon">⚙️</span> My Profile</a>
+      <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
     </nav>
     <div class="sidebar-footer">
       <div class="sidebar-user">
@@ -31,7 +31,7 @@
     <div class="topbar">
       <div><h1 class="page-title">Sponsor Dashboard</h1><p class="page-subtitle">Your sponsorship activities at a glance</p></div>
       <div class="topbar-actions">
-        <a href="/sponsor/requests.html" class="btn btn-primary">Browse Requests</a>
+        <a href="/sponsor/requests" class="btn btn-primary">Browse Requests</a>
       </div>
     </div>
 
@@ -45,7 +45,7 @@
     <div class="card">
       <div class="card-header">
         <span class="card-title">My Sponsorships</span>
-        <a href="/sponsor/requests.html" class="btn btn-ghost btn-sm">View All Open</a>
+        <a href="/sponsor/requests" class="btn btn-ghost btn-sm">View All Open</a>
       </div>
       <div class="table-wrap">
         <table>
@@ -78,7 +78,7 @@
     document.getElementById('stat-rejected').textContent = mine.filter(r => r.status === 'rejected').length;
     document.getElementById('stat-open').textContent     = open.length;
 
-    if (!mine.length) { tbody.innerHTML = '<tr><td colspan="4"><div class="empty-state"><div class="empty-icon">💼</div><p>No sponsorships yet. <a href="/sponsor/requests.html">Browse open requests!</a></p></div></td></tr>'; return; }
+    if (!mine.length) { tbody.innerHTML = '<tr><td colspan="4"><div class="empty-state"><div class="empty-icon">💼</div><p>No sponsorships yet. <a href="/sponsor/requests">Browse open requests!</a></p></div></td></tr>'; return; }
     tbody.innerHTML = mine.map(r => `
       <tr>
         <td><div style="font-weight:600">${r.event?.title || '—'}</div></td>

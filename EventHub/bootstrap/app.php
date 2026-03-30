@@ -12,9 +12,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->encryptCookies(except: [
+            'auth_token',
+        ]);
         $middleware->alias([
-    'role' => \App\Http\Middleware\RoleMiddleware::class,
-]);
+            'role' => \App\Http\Middleware\RoleMiddleware::class,
+            'web.auth' => \App\Http\Middleware\TokenWebAuthMiddleware::class,
+            'web.guest' => \App\Http\Middleware\TokenGuestMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

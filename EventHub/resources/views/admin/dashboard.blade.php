@@ -16,13 +16,13 @@
     </div>
     <nav class="sidebar-nav">
       <span class="nav-section-label">Overview</span>
-      <a class="nav-item active" href="/admin/dashboard.html"><span class="nav-icon">📊</span> Dashboard</a>
+      <a class="nav-item active" href="/admin/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
       <span class="nav-section-label">Management</span>
-      <a class="nav-item" href="/admin/users.html"><span class="nav-icon">👥</span> Users</a>
-      <a class="nav-item" href="/admin/events.html"><span class="nav-icon">📅</span> Events</a>
-      <a class="nav-item" href="/admin/venues.html"><span class="nav-icon">🏛️</span> Venues</a>
+      <a class="nav-item" href="/admin/users"><span class="nav-icon">👥</span> Users</a>
+      <a class="nav-item" href="/admin/events"><span class="nav-icon">📅</span> Events</a>
+      <a class="nav-item" href="/admin/venues"><span class="nav-icon">🏛️</span> Venues</a>
       <span class="nav-section-label">Settings</span>
-      <a class="nav-item" href="/profile.html"><span class="nav-icon">⚙️</span> My Profile</a>
+      <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
     </nav>
     <div class="sidebar-footer">
       <div class="sidebar-user">
@@ -63,7 +63,7 @@
       <div class="card">
         <div class="card-header">
           <span class="card-title">⚠️ Pending Approvals</span>
-          <a href="/admin/events.html" class="btn btn-ghost btn-sm">View All</a>
+          <a href="/admin/events" class="btn btn-ghost btn-sm">View All</a>
         </div>
         <div id="pending-list">
           <div class="empty-state"><div class="empty-icon">🎉</div><p>No pending events</p></div>
@@ -72,7 +72,7 @@
       <div class="card">
         <div class="card-header">
           <span class="card-title">👥 Recent Users</span>
-          <a href="/admin/users.html" class="btn btn-ghost btn-sm">View All</a>
+          <a href="/admin/users" class="btn btn-ghost btn-sm">View All</a>
         </div>
         <div id="recent-users">
           <div class="loading-row"><div class="spinner" style="margin:auto"></div></div>
