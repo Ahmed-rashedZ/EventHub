@@ -13,8 +13,9 @@
     <nav class="sidebar-nav">
       <span class="nav-section-label">Overview</span>
       <a class="nav-item active" href="/sponsor/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
-      <span class="nav-section-label">Sponsorships</span>
-      <a class="nav-item" href="/sponsor/requests"><span class="nav-icon">💼</span> Browse Requests</a>
+      <span class="nav-section-label">Opportunities</span>
+      <a class="nav-item" href="/sponsor/events"><span class="nav-icon">🌍</span> Browse Events</a>
+      <a class="nav-item" href="/sponsor/requests"><span class="nav-icon">💼</span> Sponsorships</a>
       <span class="nav-section-label">Settings</span>
       <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
     </nav>

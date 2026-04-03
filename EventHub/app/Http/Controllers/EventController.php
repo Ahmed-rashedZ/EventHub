@@ -13,6 +13,7 @@ class EventController extends Controller
         return response()->json(
             Event::with('venue', 'creator:id,name')
                 ->where('status', 'approved')
+                ->where('is_sponsorship_open', true)
                 ->orderBy('start_time')
                 ->get()
         );
@@ -147,5 +148,25 @@ class EventController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->get()
         );
+    }
+    
+    // PATCH /api/events/{id}/toggle-sponsorship
+    public function toggleSponsorship($id, Request $request)
+    {
+        if ($request->user()->role !== 'Event Manager') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        
+        $event = Event::findOrFail($id);
+        
+        // Ensure event belongs to manager
+        if ($event->created_by !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        
+        $event->is_sponsorship_open = !$event->is_sponsorship_open;
+        $event->save();
+        
+        return response()->json($event);
     }
 }

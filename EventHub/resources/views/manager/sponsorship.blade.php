@@ -34,10 +34,25 @@
     <div class="topbar">
       <div><h1 class="page-title">Sponsorship Requests</h1><p class="page-subtitle">Request sponsors for your events</p></div>
       <div class="topbar-actions">
-        <button class="btn btn-primary" onclick="openModal()">+ New Request</button>
+        <!-- New Request logic tied to sponsors now -->
+        <button class="btn btn-primary" onclick="openModal()">+ General Request</button>
       </div>
     </div>
 
+    <!-- Available Sponsors Section -->
+    <h2 class="page-title" style="font-size: 1.2rem; margin-top: 20px; font-weight: 600;">Available Sponsors</h2>
+    <div class="card" style="margin-bottom: 30px;">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Sponsor</th><th>Company</th><th>Contact</th><th>Action</th></tr></thead>
+          <tbody id="sponsors-body">
+            <tr class="loading-row"><td colspan="4"><div class="spinner" style="margin:auto"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="page-title" style="font-size: 1.2rem; font-weight: 600;">Your Sponsorship Requests</h2>
     <div class="card">
       <div class="table-wrap">
         <table>
@@ -64,6 +79,11 @@
         <select id="r-event" class="form-control" required>
           <option value="">Select your event…</option>
         </select>
+      </div>
+      <div class="form-group" id="target-sponsor-group" style="display:none; background: #eef2f5; padding: 10px; border-radius: 6px;">
+        <label class="form-label">Target Sponsor</label>
+        <div id="r-sponsor-display" style="font-weight:600; margin-bottom: 5px;"></div>
+        <input type="hidden" id="r-sponsor-id" value=""/>
       </div>
       <div class="form-group">
         <label class="form-label">Message to Sponsors</label>
@@ -97,9 +117,45 @@
         <td>
           ${badge(r.status)}
           ${r.status === 'accepted' ? `<a href="/storage/agreements/agreement_${r.id}.pdf" target="_blank" style="margin-left:8px;font-size:12px;text-decoration:none">📄 PDF</a>` : ''}
+          ${r.status === 'pending' && r.initiator === 'sponsor' ? `
+            <div style="margin-top: 8px; display: flex; gap: 5px;">
+                <button class="btn btn-success" style="padding: 2px 6px; font-size: 11px;" onclick="respond(${r.id}, 'accepted')">Accept</button>
+                <button class="btn btn-danger" style="padding: 2px 6px; font-size: 11px;" onclick="respond(${r.id}, 'rejected')">Reject</button>
+            </div>
+          ` : ''}
+          ${r.status === 'pending' && r.initiator === 'event_manager' ? `<div style="font-size: 11px; margin-top: 4px; color: var(--text-muted);">Awaiting Sponsor</div>` : ''}
         </td>
         <td style="color:var(--text-muted)">${fmtDateShort(r.created_at)}</td>
       </tr>`).join('');
+  }
+
+  async function loadAvailableSponsors() {
+    const res = await api.get('/sponsors/available');
+    const tbody = document.getElementById('sponsors-body');
+    if (!res.ok || !res.data.length) { 
+        tbody.innerHTML = '<tr><td colspan="4"><div class="empty-state"><p>No available sponsors right now.</p></div></td></tr>'; 
+        return; 
+    }
+    
+    tbody.innerHTML = res.data.map(s => {
+        let logo = s.profile?.logo ? s.profile.logo : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(s.name);
+        if(!logo.startsWith('http')) logo = '/' + logo;
+        
+        return `
+      <tr>
+        <td>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <img src="${logo}" style="width:30px; height:30px; border-radius:4px;"/>
+                <span style="font-weight:600;">${s.name}</span>
+            </div>
+        </td>
+        <td style="color:var(--text-muted)">${s.profile?.company_name || '—'}</td>
+        <td style="color:var(--text-muted)">${s.email}</td>
+        <td>
+           <button class="btn btn-primary" style="padding:4px 8px; font-size:12px;" onclick="openModal(${s.id}, '${s.profile?.company_name || s.name}')">Request</button>
+        </td>
+      </tr>`;
+    }).join('');
   }
 
   async function loadMyEvents() {
@@ -109,15 +165,53 @@
     sel.innerHTML = '<option value="">Select your event…</option>' + res.data.map(e => `<option value="${e.id}">${e.title}</option>`).join('');
   }
 
-  function openModal() { document.getElementById('req-modal').classList.add('open'); }
-  function closeModal() { document.getElementById('req-modal').classList.remove('open'); document.getElementById('req-form').reset(); }
+  function openModal(sponsorId = null, sponsorName = null) { 
+      document.getElementById('req-modal').classList.add('open'); 
+      if (sponsorId) {
+          document.getElementById('target-sponsor-group').style.display = 'block';
+          document.getElementById('r-sponsor-id').value = sponsorId;
+          document.getElementById('r-sponsor-display').innerText = sponsorName;
+      } else {
+          document.getElementById('target-sponsor-group').style.display = 'none';
+          document.getElementById('r-sponsor-id').value = '';
+      }
+  }
+
+  async function respond(id, status) {
+    const res = await api.put(`/sponsorship/${id}`, { status });
+    if (res.ok) { 
+        showToast(status === 'accepted' ? 'Sponsorship accepted! 🎉' : 'Request rejected.', status === 'accepted' ? 'success' : 'info'); 
+        loadRequests(); 
+    }
+    else showToast(res.data?.message || 'Error', 'error');
+  }
+  
+  function closeModal() { 
+      document.getElementById('req-modal').classList.remove('open'); 
+      document.getElementById('req-form').reset(); 
+      document.getElementById('target-sponsor-group').style.display = 'none';
+      document.getElementById('r-sponsor-id').value = '';
+  }
 
   document.getElementById('req-form').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const res = await api.post('/sponsorship', { event_id: +document.getElementById('r-event').value, message: document.getElementById('r-message').value });
+    const payload = { 
+        event_id: +document.getElementById('r-event').value, 
+        message: document.getElementById('r-message').value 
+    };
+    
+    const sponsorId = document.getElementById('r-sponsor-id').value;
+    if (sponsorId) {
+        payload.sponsor_id = +sponsorId;
+    }
+
+    const res = await api.post('/sponsorship', payload);
     if (res.ok) { showToast('Request submitted!', 'success'); closeModal(); loadRequests(); }
     else showToast(res.data?.message || 'Error', 'error');
   });
+
+  // Init
+  if (user) { loadAvailableSponsors(); }
 </script>
 </body>
 </html>

@@ -53,9 +53,15 @@ public function updateProfile(Request $request)
         'name' => 'required|string|max:255',
         'email' => 'required|string|email|max:255|unique:users,email,' . $request->user()->id,
         'password' => 'nullable|string|min:8',
+        'bio' => 'nullable|string',
+        'logo' => 'nullable|image|max:2048', // 2MB max image
+        'company_name' => 'nullable|string',
+        'company_description' => 'nullable|string',
+        'is_available' => 'nullable|boolean',
+        'contacts' => 'nullable|string', // Will interpret as JSON array [{"type":"phone", "value":"..."}]
     ]);
 
-    $user = clone $request->user();
+    $user = $request->user();
     $user->name = $request->name;
     $user->email = $request->email;
     if ($request->filled('password')) {
@@ -63,7 +69,64 @@ public function updateProfile(Request $request)
     }
     $user->save();
 
+    // Upsert the unified profile based on the role
+    $profileType = $user->role === 'Sponsor' ? 'company' : 'individual';
+    
+    $profilePayload = [
+        'profile_type' => $profileType,
+        'bio' => $request->bio,
+        'company_name' => $request->company_name,
+        'company_description' => $request->company_description,
+    ];
+    
+    // Only Sponsors can toggle their availability
+    if ($request->has('is_available') && $user->role === 'Sponsor') {
+        $profilePayload['is_available'] = filter_var($request->is_available, FILTER_VALIDATE_BOOLEAN);
+    }
+
+    // Handle File Upload if exists
+    if ($request->hasFile('logo')) {
+        $path = $request->file('logo')->store('profiles', 'public');
+        $profilePayload['logo'] = "/storage/" . $path;
+    }
+
+    $profile = $user->profile()->updateOrCreate(
+        ['user_id' => $user->id],
+        $profilePayload
+    );
+
+    // Sync Contacts if they were passed
+    if ($request->filled('contacts')) {
+        $contactsData = json_decode($request->contacts, true) ?? [];
+        $profile->contacts()->delete(); // drop old ones
+        
+        foreach ($contactsData as $contact) {
+            if (!empty($contact['type']) && !empty($contact['value'])) {
+                $profile->contacts()->create([
+                    'type' => $contact['type'],
+                    'value' => $contact['value']
+                ]);
+            }
+        }
+    }
+
+    // Reload the user with their profile so the frontend gets the latest data
+    $user = User::with(['profile.contacts'])->find($user->id);
+
     return response()->json(['message' => 'Profile updated successfully', 'user' => $user]);
+}
+
+public function getAvailableSponsors(Request $request)
+{
+    // Fetch users with the Sponsor role who have a profile with is_available = true
+    $sponsors = User::where('role', 'Sponsor')
+        ->whereHas('profile', function($q) {
+            $q->available();
+        })
+        ->with(['profile.contacts'])
+        ->get();
+
+    return response()->json($sponsors);
 }
 
 public function createUser(Request $request)

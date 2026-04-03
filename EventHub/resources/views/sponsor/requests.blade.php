@@ -13,8 +13,9 @@
     <nav class="sidebar-nav">
       <span class="nav-section-label">Overview</span>
       <a class="nav-item" href="/sponsor/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
-      <span class="nav-section-label">Sponsorships</span>
-      <a class="nav-item active" href="/sponsor/requests"><span class="nav-icon">💼</span> Browse Requests</a>
+      <span class="nav-section-label">Opportunities</span>
+      <a class="nav-item" href="/sponsor/events"><span class="nav-icon">🌍</span> Browse Events</a>
+      <a class="nav-item active" href="/sponsor/requests"><span class="nav-icon">💼</span> Sponsorships</a>
       <span class="nav-section-label">Settings</span>
       <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
     </nav>
@@ -89,8 +90,12 @@
         <div style="font-size:.78rem;color:var(--text-muted);margin-bottom:14px">By: <strong style="color:var(--text-primary)">${r.event?.creator?.name || '—'}</strong> &nbsp;·&nbsp; Capacity: ${r.event?.capacity || '—'}</div>
         ${r.status === 'pending' ? `
           <div style="display:flex;gap:8px">
-            <button class="btn btn-success" style="flex:1" onclick="respond(${r.id}, 'accepted')">✅ Accept</button>
-            <button class="btn btn-danger" style="flex:1" onclick="respond(${r.id}, 'rejected')">❌ Decline</button>
+            ${r.initiator === 'event_manager' ? `
+                <button class="btn btn-success" style="flex:1" onclick="respond(${r.id}, 'accepted')">✅ Accept</button>
+                <button class="btn btn-danger" style="flex:1" onclick="respond(${r.id}, 'rejected')">❌ Decline</button>
+            ` : `
+                <div style="flex:1; text-align: center; font-size: 12px; color: var(--text-muted); background: #eef2f5; padding: 6px; border-radius: 4px;">⏳ Awaiting Event Manager to respond</div>
+            `}
           </div>` : ''}
       </div>`).join('');
   }

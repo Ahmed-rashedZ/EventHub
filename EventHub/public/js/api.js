@@ -50,6 +50,26 @@ const api = {
     post:   (url, body)     => apiFetch(url, { method: 'POST',   body: JSON.stringify(body) }),
     put:    (url, body)     => apiFetch(url, { method: 'PUT',    body: JSON.stringify(body) }),
     delete: (url)           => apiFetch(url, { method: 'DELETE' }),
+    
+    // For handling multipart/form-data File Uploads (Using POST method in fetch, and optionally faking PUT)
+    postForm: async (url, formData) => {
+        const token = localStorage.getItem('token');
+        try {
+            const res = await fetch(API_BASE + url, {
+                method: 'POST', 
+                body: formData,
+                headers: {
+                    'Accept': 'application/json',
+                    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                }
+            });
+            let data = await res.json().catch(()=>res.text());
+            return { ok: res.ok, status: res.status, data };
+        } catch (err) {
+            showToast('Network error: ' + err.message, 'error');
+            return { ok: false, status: 0, data: null };
+        }
+    }
 };
 
 /**

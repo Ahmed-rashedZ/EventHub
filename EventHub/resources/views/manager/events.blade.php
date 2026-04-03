@@ -41,7 +41,7 @@
     <div class="card">
       <div class="table-wrap">
         <table>
-          <thead><tr><th>#</th><th>Title</th><th>Venue</th><th>Date</th><th>Capacity</th><th>Tickets</th><th>Status</th></tr></thead>
+          <thead><tr><th>#</th><th>Title</th><th>Venue</th><th>Date</th><th>Capacity</th><th>Sponsorships</th><th>Status</th></tr></thead>
           <tbody id="events-body">
             <tr class="loading-row"><td colspan="7"><div class="spinner" style="margin:auto"></div></td></tr>
           </tbody>
@@ -116,7 +116,12 @@
         <td style="color:var(--text-muted)">${ev.venue?.name || '—'}</td>
         <td style="white-space:nowrap;color:var(--text-muted)">${fmtDateShort(ev.start_time)}</td>
         <td style="color:var(--text-muted)">${ev.capacity}</td>
-        <td style="color:var(--text-muted)" id="tickets-${ev.id}">—</td>
+        <td>
+           <div style="display:flex; align-items:center;">
+             <input type="checkbox" id="spon-tog-${ev.id}" ${ev.is_sponsorship_open ? 'checked' : ''} onchange="toggleSponsorship(${ev.id}, this.checked)" style="width:16px; height:16px; margin-right:5px; cursor:pointer;"/>
+             <label for="spon-tog-${ev.id}" style="font-size:12px; cursor:pointer;">Open</label>
+           </div>
+        </td>
         <td>${badge(ev.status)} <button class="btn btn-sm btn-info" onclick="showEventDetails(${ev.id})">Details</button></td>
       </tr>`).join('');
 }
@@ -162,6 +167,16 @@ function showEventDetails(eventId) {
 function closeEventDetailsModal() {
   document.getElementById('event-details-modal').classList.remove('open');
   document.getElementById('event-details-content').innerHTML = '';
+}
+
+async function toggleSponsorship(eventId, checked) {
+    const res = await api.patch(`/events/${eventId}/toggle-sponsorship`);
+    if (res.ok) {
+        showToast(res.data.is_sponsorship_open ? 'Sponsorship is now OPEN for this event.' : 'Sponsorship is now CLOSED for this event.', 'success');
+    } else {
+        showToast(res.data?.message || 'Error updating status', 'error');
+        document.getElementById(`spon-tog-${eventId}`).checked = !checked; // revert UI visually
+    }
 }
 
 async function loadVenues() {

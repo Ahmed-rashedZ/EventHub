@@ -63,7 +63,15 @@ function populateSidebar(user) {
     const avEl    = document.getElementById('sidebar-avatar');
     if (nameEl) nameEl.textContent = user.name;
     if (roleEl) roleEl.textContent = user.role;
-    if (avEl)   avEl.textContent   = user.name.charAt(0).toUpperCase();
+    if (avEl) {
+        if (user.profile && user.profile.logo) {
+            let logoUrl = user.profile.logo.startsWith('http') ? user.profile.logo : (user.profile.logo.startsWith('/') ? user.profile.logo : '/' + user.profile.logo);
+            avEl.innerHTML = `<img src="${logoUrl}" style="width:100%; height:100%; border-radius:12px; object-fit:cover;" alt="Avatar"/>`;
+            avEl.style.background = 'transparent';
+        } else {
+            avEl.textContent = user.name.charAt(0).toUpperCase();
+        }
+    }
 
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) logoutBtn.addEventListener('click', logout);

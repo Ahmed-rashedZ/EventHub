@@ -27,6 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Profile & Role Management
     Route::put('/profile', [AuthController::class, 'updateProfile']);
     Route::post('/users', [AuthController::class, 'createUser']); // For Admins and Managers
+    Route::get('/sponsors/available', [AuthController::class, 'getAvailableSponsors']);
 
     // Auth
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -38,6 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/events/list/pending',        [EventController::class, 'pending']);
     Route::get('/events/list/my',             [EventController::class, 'myEvents']);
     Route::get('/events/list/all',            [EventController::class, 'all']);
+    Route::patch('/events/{id}/toggle-sponsorship', [EventController::class, 'toggleSponsorship']);
 
     // ── Venues (Admin) ──
     Route::post('/venues',        [VenueController::class, 'store']);

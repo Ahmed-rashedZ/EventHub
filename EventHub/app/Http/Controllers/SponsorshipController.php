@@ -8,61 +8,95 @@ use Illuminate\Http\Request;
 
 class SponsorshipController extends Controller
 {
-    // POST /api/sponsorship  – Event Manager creates a request
+    // POST /api/sponsorship  – Create a request (Bidirectional)
     public function store(Request $request)
     {
-        if ($request->user()->role !== 'Event Manager') {
+        $user = $request->user();
+
+        if (!in_array($user->role, ['Event Manager', 'Sponsor'])) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         $request->validate([
             'event_id' => 'required|exists:events,id',
+            'sponsor_id' => $user->role === 'Event Manager' ? 'required|exists:users,id' : 'nullable|exists:users,id',
             'message'  => 'nullable|string|max:1000',
         ]);
 
-        // Ensure the event belongs to this manager
-        $event = Event::where('id', $request->event_id)
-            ->where('created_by', $request->user()->id)
-            ->first();
-
-        if (!$event) {
-            return response()->json(['message' => 'Event not found or not yours'], 404);
+        $event = Event::find($request->event_id);
+        
+        // 1. EVENT MANAGER INITIATED
+        if ($user->role === 'Event Manager') {
+            if ($event->created_by !== $user->id) {
+                return response()->json(['message' => 'Event not found or not yours'], 404);
+            }
+            
+            $targetSponsor = \App\Models\User::with('profile')->find($request->sponsor_id);
+            if ($targetSponsor->role !== 'Sponsor' || !$targetSponsor->profile?->is_available) {
+                return response()->json(['message' => 'Sponsor is not available'], 400);
+            }
+            
+            // Duplicate Check
+            if (SponsorshipRequest::where('event_id', $event->id)->where('sponsor_id', $targetSponsor->id)->exists()) {
+                return response()->json(['message' => 'A sponsorship request already exists between this event and sponsor'], 400);
+            }
+            
+            $sreq = SponsorshipRequest::create([
+                'event_id'   => $event->id,
+                'sponsor_id' => $targetSponsor->id,
+                'event_manager_id' => $user->id,
+                'initiator'  => 'event_manager',
+                'message'    => $request->message,
+                'status'     => 'pending',
+            ]);
+            return response()->json($sreq, 201);
         }
 
-        // Get first available sponsor (or allow manager to specify)
-        $sreq = SponsorshipRequest::create([
-            'event_id'   => $request->event_id,
-            'sponsor_id' => $request->sponsor_id ?? null, // null = open request
-            'message'    => $request->message,
-            'status'     => 'pending',
-        ]);
+        // 2. SPONSOR INITIATED
+        if ($user->role === 'Sponsor') {
+            $profile = $user->profile;
+            if (!$profile || !$profile->is_available) {
+                return response()->json(['message' => 'You must be available to send requests'], 403);
+            }
+            
+            if (!$event->is_sponsorship_open) {
+                return response()->json(['message' => 'This event is currently closed to new sponsorship requests.'], 403);
+            }
 
-        return response()->json($sreq, 201);
+            // Duplicate Check
+            if (SponsorshipRequest::where('event_id', $event->id)->where('sponsor_id', $user->id)->exists()) {
+                return response()->json(['message' => 'You have already sent a request for this event'], 400);
+            }
+
+            $sreq = SponsorshipRequest::create([
+                'event_id'   => $event->id,
+                'sponsor_id' => $user->id,
+                'event_manager_id' => $event->created_by,
+                'initiator'  => 'sponsor',
+                'message'    => $request->message,
+                'status'     => 'pending',
+            ]);
+            return response()->json($sreq, 201);
+        }
     }
 
-    // GET /api/sponsorship  – Sponsor browses open (pending) requests
+    // GET /api/sponsorship  – Browse requests
     public function index(Request $request)
     {
         $user = $request->user();
 
         if ($user->role === 'Sponsor') {
-            // Sponsors see pending requests OR their own
-            $requests = SponsorshipRequest::with(['event.venue', 'event.creator'])
-                ->where(function ($q) use ($user) {
-                    $q->where('status', 'pending')
-                      ->orWhere('sponsor_id', $user->id);
-                })
+            $requests = SponsorshipRequest::with(['event.venue', 'manager'])
+                ->where('sponsor_id', $user->id)
                 ->latest()
                 ->get();
         } elseif ($user->role === 'Event Manager') {
-            // Managers see their own event requests
-            $myEventIds = Event::where('created_by', $user->id)->pluck('id');
             $requests = SponsorshipRequest::with(['event', 'sponsor'])
-                ->whereIn('event_id', $myEventIds)
+                ->where('event_manager_id', $user->id)
                 ->latest()
                 ->get();
         } elseif ($user->role === 'Admin') {
-            $requests = SponsorshipRequest::with(['event', 'sponsor'])->latest()->get();
+            $requests = SponsorshipRequest::with(['event', 'sponsor', 'manager'])->latest()->get();
         } else {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
@@ -70,36 +104,58 @@ class SponsorshipController extends Controller
         return response()->json($requests);
     }
 
-    // PUT /api/sponsorship/{id}  – Sponsor accepts or rejects
+    // PUT /api/sponsorship/{id}  – Accept or reject
     public function update(Request $request, $id)
     {
         $user = $request->user();
-
         $sreq = SponsorshipRequest::findOrFail($id);
 
-        if ($user->role === 'Sponsor') {
-            $request->validate(['status' => 'required|in:accepted,rejected']);
-            $sreq->sponsor_id = $user->id;
-            $sreq->status = $request->status;
-            $sreq->save();
+        $request->validate(['status' => 'required|in:accepted,rejected']);
 
-            // Generate Agreement PDF
-            if ($request->status === 'accepted') {
-                $sreq->load(['event.venue', 'event.creator']);
-                $pdfData = [
-                    'event' => $sreq->event,
-                    'sponsor' => $user,
-                    'manager' => $sreq->event->creator,
-                    'date' => now()->format('Y-m-d')
-                ];
-                $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.agreement', $pdfData);
-                $filename = 'agreements/agreement_' . $sreq->id . '.pdf';
-                \Illuminate\Support\Facades\Storage::disk('public')->put($filename, $pdf->output());
-            }
-
-            return response()->json($sreq);
+        // Check bidirectional permissions
+        if ($sreq->initiator === 'sponsor' && $user->role !== 'Event Manager') {
+            return response()->json(['message' => 'Only the Event Manager can respond to this request'], 403);
+        }
+        
+        if ($sreq->initiator === 'event_manager' && $user->role !== 'Sponsor') {
+            return response()->json(['message' => 'Only the Sponsor can respond to this request'], 403);
         }
 
-        return response()->json(['message' => 'Unauthorized'], 403);
+        // Validate ownership
+        if ($user->role === 'Sponsor' && $sreq->sponsor_id !== $user->id) {
+            return response()->json(['message' => 'Not your request'], 403);
+        }
+        if ($user->role === 'Event Manager' && $sreq->event_manager_id !== $user->id) {
+            return response()->json(['message' => 'Not your request'], 403);
+        }
+
+        // Update status
+        $sreq->status = $request->status;
+        if ($sreq->status === 'accepted') {
+            // Attach sponsor to event
+            \App\Models\EventSponsor::firstOrCreate([
+                'event_id' => $sreq->event_id,
+                'sponsor_id' => $sreq->sponsor_id,
+            ], [
+                'tier' => $request->tier ?? 'bronze',
+                'contribution_amount' => $request->contribution_amount ?? 0
+            ]);
+
+            // Generate Agreement PDF
+            $sreq->load(['event.venue', 'manager', 'sponsor']);
+            $pdfData = [
+                'event' => $sreq->event,
+                'sponsor' => $sreq->sponsor,
+                'manager' => $sreq->manager,
+                'date' => now()->format('Y-m-d')
+            ];
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.agreement', $pdfData);
+            $filename = 'agreements/agreement_' . $sreq->id . '.pdf';
+            \Illuminate\Support\Facades\Storage::disk('public')->put($filename, $pdf->output());
+        }
+        
+        $sreq->save();
+
+        return response()->json($sreq);
     }
 }
