@@ -15,6 +15,7 @@ Route::middleware('web.auth')->group(function () {
     
     // Any authenticated user can access their profile
     Route::view('/profile', 'profile');
+    Route::view('/user-profile', 'user-profile');
 
     // Admin Routes
     Route::middleware('web.auth:Admin')->prefix('admin')->group(function () {

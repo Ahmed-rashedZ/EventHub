@@ -89,3 +89,17 @@ function setActiveNav() {
         }
     });
 }
+
+function navigateToProfile(id) {
+    if (!id) return;
+    window.location.href = `/user-profile?id=${id}`;
+}
+
+function requireAuth() {
+    const user = getUser();
+    if (!user) {
+        window.location.href = '/login';
+        return null;
+    }
+    return user;
+}

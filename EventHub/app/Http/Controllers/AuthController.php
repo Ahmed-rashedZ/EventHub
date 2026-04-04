@@ -28,7 +28,7 @@ public function register(Request $request)
     $token = $user->createToken('auth_token')->plainTextToken;
 
     return response()->json([
-        'user' => $user,
+        'user' => $user->load(['profile.contacts']),
         'token' => $token
     ]);
 }
@@ -43,7 +43,7 @@ public function register(Request $request)
     $token = $user->createToken('auth_token')->plainTextToken;
 
     return response()->json([
-        'user' => $user,
+        'user' => $user->load(['profile.contacts']),
         'token' => $token
     ]);
 }
@@ -114,6 +114,75 @@ public function updateProfile(Request $request)
     $user = User::with(['profile.contacts'])->find($user->id);
 
     return response()->json(['message' => 'Profile updated successfully', 'user' => $user]);
+}
+
+public function getProfile(Request $request)
+{
+    $user = $request->user();
+    
+    // Ensure Sponsor has a profile so is_available exists
+    if ($user->role === 'Sponsor' && !$user->profile) {
+        \App\Models\Profile::create([
+            'user_id' => $user->id,
+            'profile_type' => 'company',
+            'is_available' => true // Default to true as per migration
+        ]);
+        $user->load('profile');
+    } else {
+        $user->load(['profile.contacts']);
+    }
+
+    return response()->json([
+        'user' => $user
+    ]);
+}
+
+public function updateAvailability(Request $request)
+{
+    $request->validate([
+        'is_available' => 'required|boolean'
+    ]);
+
+    $user = $request->user();
+    if ($user->role !== 'Sponsor') {
+        return response()->json(['message' => 'Only sponsors can toggle availability'], 403);
+    }
+
+    // Explicitly cast to boolean and log for debugging
+    $isAvailable = filter_var($request->is_available, FILTER_VALIDATE_BOOLEAN);
+    \Illuminate\Support\Facades\Log::info("Sponsor Availability change", [
+        'user_id' => $user->id,
+        'received' => $request->is_available,
+        'casted' => $isAvailable
+    ]);
+
+    $profile = \App\Models\Profile::updateOrCreate(
+        ['user_id' => $user->id],
+        [
+            'is_available' => $isAvailable,
+            'profile_type' => 'company'
+        ]
+    );
+
+    \Illuminate\Support\Facades\Log::info("Sponsor Availability saved", [
+        'profile_id' => $profile->id,
+        'db_value' => $profile->is_available
+    ]);
+
+    return response()->json([
+        'message' => 'Availability updated',
+        'is_available' => $profile->is_available,
+        'user' => $user->fresh(['profile.contacts'])
+    ]);
+}
+
+public function getPublicProfile($id)
+{
+    $user = User::with(['profile.contacts'])->findOrFail($id);
+    
+    return response()->json([
+        'user' => $user
+    ]);
 }
 
 public function getAvailableSponsors(Request $request)

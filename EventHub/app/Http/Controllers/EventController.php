@@ -8,8 +8,15 @@ use Illuminate\Http\Request;
 class EventController extends Controller
 {
     // GET /api/events  – public approved events
-    public function index()
+    public function index(Request $request)
     {
+        $user = $request->user();
+        if ($user && $user->role === 'Sponsor') {
+            if (!$user->profile?->is_available) {
+                return response()->json(['message' => 'Your sponsorship availability is currently turned off. Go to your dashboard or profile to turn it back on to browse opportunities.'], 403);
+            }
+        }
+
         return response()->json(
             Event::with('venue', 'creator:id,name')
                 ->where('status', 'approved')

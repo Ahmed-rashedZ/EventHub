@@ -114,9 +114,12 @@
       <tr>
         <td style="color:var(--text-muted)">${i+1}</td>
         <td>
-          <div style="display:flex;align-items:center;gap:8px">
+          <div style="display:flex;align-items:center;gap:8px; cursor:pointer;" onclick="navigateToProfile(${t.user?.id})">
             <div class="avatar" style="width:26px;height:26px;font-size:.7rem">${t.user?.name?.charAt(0) || '?'}</div>
-            <div><div style="font-weight:500">${t.user?.name || '—'}</div><div style="font-size:.72rem;color:var(--text-muted)">${t.user?.email || ''}</div></div>
+            <div>
+                <div style="font-weight:500; color:var(--accent2);">${t.user?.name || '—'}</div>
+                <div style="font-size:.72rem;color:var(--text-muted)">${t.user?.email || ''}</div>
+            </div>
           </div>
         </td>
         <td style="font-family:monospace;color:var(--accent2)">${t.qr_code}</td>

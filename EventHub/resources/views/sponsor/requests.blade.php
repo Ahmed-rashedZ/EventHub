@@ -87,7 +87,10 @@
           </div>
         </div>
         ${r.message ? `<p style="font-size:.85rem;color:var(--text-muted);margin-bottom:14px;line-height:1.5">${r.message}</p>` : ''}
-        <div style="font-size:.78rem;color:var(--text-muted);margin-bottom:14px">By: <strong style="color:var(--text-primary)">${r.event?.creator?.name || '—'}</strong> &nbsp;·&nbsp; Capacity: ${r.event?.capacity || '—'}</div>
+        <div style="font-size:.78rem;color:var(--text-muted);margin-bottom:14px">
+            By: <strong style="color:var(--accent2); cursor:pointer;" onclick="navigateToProfile(${r.event?.creator?.id})">${r.event?.creator?.name || '—'}</strong> 
+            &nbsp;·&nbsp; Capacity: ${r.event?.capacity || '—'}
+        </div>
         ${r.status === 'pending' ? `
           <div style="display:flex;gap:8px">
             ${r.initiator === 'event_manager' ? `

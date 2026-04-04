@@ -113,7 +113,9 @@
         <td style="color:var(--text-muted)">${i+1}</td>
         <td><div style="font-weight:600">${r.event?.title || '—'}</div></td>
         <td style="color:var(--text-muted)">${r.message ? r.message.substring(0,60)+'…' : '—'}</td>
-        <td style="color:var(--text-muted)">${r.sponsor?.name || 'Open'}</td>
+        <td style="color:var(--accent2); font-weight:500; cursor:pointer;" onclick="${r.sponsor_id ? `navigateToProfile(${r.sponsor_id})` : ''}">
+            ${r.sponsor?.name || 'Open'}
+        </td>
         <td>
           ${badge(r.status)}
           ${r.status === 'accepted' ? `<a href="/storage/agreements/agreement_${r.id}.pdf" target="_blank" style="margin-left:8px;font-size:12px;text-decoration:none">📄 PDF</a>` : ''}
@@ -139,20 +141,26 @@
     
     tbody.innerHTML = res.data.map(s => {
         let logo = s.profile?.logo ? s.profile.logo : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(s.name);
-        if(!logo.startsWith('http')) logo = '/' + logo;
+        if(!logo.startsWith('http') && !logo.startsWith('/')) logo = '/' + logo;
         
         return `
       <tr>
         <td>
-            <div style="display:flex; align-items:center; gap:10px;">
-                <img src="${logo}" style="width:30px; height:30px; border-radius:4px;"/>
-                <span style="font-weight:600;">${s.name}</span>
+            <div style="display:flex; align-items:center; gap:10px; cursor:pointer;" onclick="navigateToProfile(${s.id})">
+                <img src="${logo}" style="width:34px; height:34px; border-radius:6px; object-fit:cover; border: 1px solid var(--border);"/>
+                <div>
+                    <div style="font-weight:600;">${s.name}</div>
+                    <div style="font-size:0.7rem; color:var(--text-muted);">Sponsor</div>
+                </div>
             </div>
         </td>
         <td style="color:var(--text-muted)">${s.profile?.company_name || '—'}</td>
         <td style="color:var(--text-muted)">${s.email}</td>
         <td>
-           <button class="btn btn-primary" style="padding:4px 8px; font-size:12px;" onclick="openModal(${s.id}, '${s.profile?.company_name || s.name}')">Request</button>
+           <div style="display:flex; gap:8px;">
+               <button class="btn btn-ghost btn-sm" onclick="navigateToProfile(${s.id})">View Profile</button>
+               <button class="btn btn-primary btn-sm" onclick="openModal(${s.id}, '${s.profile?.company_name || s.name}')">Request</button>
+           </div>
         </td>
       </tr>`;
     }).join('');

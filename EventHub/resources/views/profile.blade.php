@@ -189,13 +189,17 @@
         }
 
         if (u.profile.contacts && u.profile.contacts.length > 0) {
+            const seenTypes = new Set();
             u.profile.contacts.forEach(c => {
-                if (c.type === 'phone') {
+                if (c.type === 'phone' && !seenTypes.has('phone')) {
                     document.getElementById('p-phone').value = c.value;
-                } else if (c.type === 'email') {
+                    seenTypes.add('phone');
+                } else if (c.type === 'email' && !seenTypes.has('email')) {
                     document.getElementById('p-contact-email').value = c.value;
-                } else if (c.type === 'website') {
+                    seenTypes.add('email');
+                } else if (c.type === 'website' && !seenTypes.has('website')) {
                     document.getElementById('p-website').value = c.value;
+                    seenTypes.add('website');
                 } else {
                     addContactRow(c.type, c.value);
                 }

@@ -25,7 +25,10 @@ Route::get('/venues', [VenueController::class, 'index']);
 Route::middleware('auth:sanctum')->group(function () {
 
     // Profile & Role Management
+    Route::get('/profile', [AuthController::class, 'getProfile']);
+    Route::get('/profile/{id}', [AuthController::class, 'getPublicProfile']);
     Route::put('/profile', [AuthController::class, 'updateProfile']);
+    Route::patch('/profile/availability', [AuthController::class, 'updateAvailability']);
     Route::post('/users', [AuthController::class, 'createUser']); // For Admins and Managers
     Route::get('/sponsors/available', [AuthController::class, 'getAvailableSponsors']);
 

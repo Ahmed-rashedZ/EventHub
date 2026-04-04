@@ -132,7 +132,9 @@
       <tr>
         <td>
             <div style="font-weight:600">${e.title}</div>
-            <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">${e.creator?.name || 'Unknown'}</div>
+            <div style="font-size:12px; color:var(--accent2); margin-top:2px; cursor:pointer; display:inline-block;" onclick="navigateToProfile(${e.creator?.id})">
+                👤 ${e.creator?.name || 'Unknown'}
+            </div>
         </td>
         <td style="color:var(--text-muted)">${e.location || e.venue?.name || 'TBA'}</td>
         <td style="color:var(--text-muted)">${fmtDateShort(e.start_time)}</td>
