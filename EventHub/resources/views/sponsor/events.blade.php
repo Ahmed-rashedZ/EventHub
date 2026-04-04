@@ -19,6 +19,15 @@
           border: 1px solid #ffeeba;
           display: none;
       }
+      .availability-load-error {
+          background: #fee2e2;
+          color: #991b1b;
+          padding: 15px;
+          border-radius: 8px;
+          margin-bottom: 20px;
+          border: 1px solid #fecaca;
+          display: none;
+      }
   </style>
 </head>
 <body>
@@ -48,8 +57,13 @@
       <div><h1 class="page-title">Browse Events</h1><p class="page-subtitle">Discover opportunities to sponsor upcoming verified events</p></div>
     </div>
     
+    <div class="availability-load-error" id="availability-load-error">
+      Could not load your visibility status from the server. Refresh the page or try again later.
+    </div>
+
     <div class="availability-warning" id="availability-warning">
-        <strong>⚠️ You are currently hidden.</strong> You have disabled your sponsorship availability in your profile settings. Event Managers cannot see you, and you cannot send sponsorship requests. Go to <a href="/profile">My Profile</a> to enable it.
+      You are currently not visible to event managers.<br/>
+      You will remain hidden until you turn this option ON again.
     </div>
 
     <div class="card">
@@ -103,21 +117,49 @@
 <script src="/js/auth.js"></script>
 <script>
   const user = requireRole('Sponsor');
-  let isAvailable = true;
+  /** @type {boolean|null} null until loaded from GET /profile */
+  let sponsorAvailability = null;
 
-  if (user) { 
-      populateSidebar(user); 
-      setActiveNav(); 
-      checkAvailability();
-      loadEvents(); 
+  if (user) {
+      populateSidebar(user);
+      setActiveNav();
+      initSponsorEventsPage();
   }
 
-  function checkAvailability() {
-      // If user is missing profile or is explicitely marked as unavailable
-      if (!user.profile || user.profile.is_available === false) {
-          isAvailable = false;
-          document.getElementById('availability-warning').style.display = 'block';
+  async function initSponsorEventsPage() {
+      const res = await api.get('/profile');
+      const warnEl = document.getElementById('availability-warning');
+      const errEl = document.getElementById('availability-load-error');
+      warnEl.style.display = 'none';
+      errEl.style.display = 'none';
+
+      let fresh = user;
+      if (res.ok && res.data?.user) {
+          fresh = res.data.user;
+          localStorage.setItem('user', JSON.stringify(fresh));
+          populateSidebar(fresh);
       }
+
+      if (!res.ok || !fresh.profile) {
+          sponsorAvailability = null;
+          errEl.style.display = 'block';
+          showToast('Could not load your visibility status.', 'error');
+          loadEvents();
+          return;
+      }
+
+      sponsorAvailability = availabilityFromDatabase(fresh.profile.is_available);
+      if (sponsorAvailability === null) {
+          errEl.style.display = 'block';
+          showToast('Could not read visibility from the server.', 'error');
+          loadEvents();
+          return;
+      }
+
+      if (sponsorAvailability === false) {
+          warnEl.style.display = 'block';
+      }
+      loadEvents();
   }
 
   async function loadEvents() {
@@ -140,14 +182,16 @@
         <td style="color:var(--text-muted)">${fmtDateShort(e.start_time)}</td>
         <td style="color:var(--text-muted)">${e.capacity ? e.capacity.toLocaleString() : 'N/A'}</td>
         <td>
-           <button class="btn btn-primary req-btn" onclick="openModal(${e.id}, '${e.title.replace(/'/g, "\\'")}')" ${!isAvailable ? 'disabled title="You must be available to sponsor"' : ''}>Apply</button>
+           <button class="btn btn-primary req-btn" onclick="openModal(${e.id}, '${e.title.replace(/'/g, "\\'")}')" ${sponsorAvailability !== true ? 'disabled' : ''} title="${sponsorAvailability === true ? 'Request to sponsor' : (sponsorAvailability === false ? 'Turn on Open to Sponsorship on your dashboard or profile' : 'Loading visibility…')}">Apply</button>
         </td>
       </tr>`).join('');
   }
 
   function openModal(eventId, eventTitle) { 
-      if(!isAvailable) {
-          showToast('You must turn on "Available for Sponsorship" in your profile to send requests.', 'warning');
+      if (sponsorAvailability !== true) {
+          showToast(sponsorAvailability === false
+            ? 'Turn on "Open to Sponsorship" on your dashboard or profile to send requests.'
+            : 'Visibility status is still loading or unavailable.', 'warning');
           return;
       }
       document.getElementById('r-event-id').value = eventId;

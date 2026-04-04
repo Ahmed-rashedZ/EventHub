@@ -11,6 +11,16 @@ function getToken() {
 }
 
 /**
+ * Maps profile.is_available from the API/database to a boolean.
+ * Returns null if the value is missing or not a definite true/false — do not guess ON/OFF in the UI.
+ */
+function availabilityFromDatabase(value) {
+    if (value === true || value === 1) return true;
+    if (value === false || value === 0) return false;
+    return null;
+}
+
+/**
  * Require auth + specific role(s). Redirects if not met.
  * @param {...string} roles   e.g. requireRole('Admin') or requireRole('Admin','Event Manager')
  */

@@ -16,6 +16,7 @@ class Event extends Model
         'venue_id',
         'created_by',
         'start_time',
+        'end_time',
         'capacity',
         'status',
         'is_sponsorship_open',

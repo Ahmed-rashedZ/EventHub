@@ -79,9 +79,9 @@ public function updateProfile(Request $request)
         'company_description' => $request->company_description,
     ];
     
-    // Only Sponsors can toggle their availability
+    // Only Sponsors can toggle their availability (persist exact boolean from request)
     if ($request->has('is_available') && $user->role === 'Sponsor') {
-        $profilePayload['is_available'] = filter_var($request->is_available, FILTER_VALIDATE_BOOLEAN);
+        $profilePayload['is_available'] = $request->boolean('is_available');
     }
 
     // Handle File Upload if exists
@@ -148,13 +148,7 @@ public function updateAvailability(Request $request)
         return response()->json(['message' => 'Only sponsors can toggle availability'], 403);
     }
 
-    // Explicitly cast to boolean and log for debugging
-    $isAvailable = filter_var($request->is_available, FILTER_VALIDATE_BOOLEAN);
-    \Illuminate\Support\Facades\Log::info("Sponsor Availability change", [
-        'user_id' => $user->id,
-        'received' => $request->is_available,
-        'casted' => $isAvailable
-    ]);
+    $isAvailable = $request->boolean('is_available');
 
     $profile = \App\Models\Profile::updateOrCreate(
         ['user_id' => $user->id],
@@ -164,14 +158,11 @@ public function updateAvailability(Request $request)
         ]
     );
 
-    \Illuminate\Support\Facades\Log::info("Sponsor Availability saved", [
-        'profile_id' => $profile->id,
-        'db_value' => $profile->is_available
-    ]);
+    $profile->refresh();
 
     return response()->json([
         'message' => 'Availability updated',
-        'is_available' => $profile->is_available,
+        'is_available' => (bool) $profile->is_available,
         'user' => $user->fresh(['profile.contacts'])
     ]);
 }
@@ -243,7 +234,15 @@ public function createUser(Request $request)
         'event_id' => $request->event_id,
     ]);
 
-    return response()->json(['message' => 'User created successfully', 'user' => $user], 201);
+    if ($request->role === 'Sponsor') {
+        \App\Models\Profile::create([
+            'user_id' => $user->id,
+            'profile_type' => 'company',
+            'is_available' => true,
+        ]);
+    }
+
+    return response()->json(['message' => 'User created successfully', 'user' => $user->load('profile')], 201);
 }
 
 public function logout(Request $request)

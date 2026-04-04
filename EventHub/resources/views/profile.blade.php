@@ -62,10 +62,15 @@
           <input id="p-company" type="text" class="form-control" placeholder="Acme Corp"/>
         </div>
 
+        <div id="sponsor-visibility-notice" style="display:none; margin-bottom:14px; padding:12px 14px; background:rgba(239, 68, 68, 0.08); border:1px solid rgba(239, 68, 68, 0.25); border-radius:8px; color:#b91c1c; font-size:0.9rem; line-height:1.5;">
+          You are currently not visible to event managers.<br/>
+          You will remain hidden until you turn this option ON again.
+        </div>
+
         <div class="form-group" id="availability-group" style="display:none; margin-top:15px; padding: 10px; background: #eef2f5; border-radius: 8px;">
           <label class="form-label" style="margin-bottom:0; display:flex; align-items:center; cursor:pointer;">
-            <input type="checkbox" id="p-available" style="margin-right:10px; width:18px; height:18px;"/>
-            <span style="font-weight:600;">Available for Sponsorship</span>
+            <input type="checkbox" id="p-available" disabled style="margin-right:10px; width:18px; height:18px;"/>
+            <span style="font-weight:600;">Open to Sponsorship</span>
           </label>
           <small style="display:block; margin-top:5px; color:#666; margin-left: 28px;">
             When enabled, your profile will be listed publicly, and Event Managers can send you sponsorship requests. You can also browse and request to sponsor published events.
@@ -118,10 +123,23 @@
 <script src="/js/api.js"></script>
 <script src="/js/auth.js"></script>
 <script>
-  // Dynamic Sidebar Logic
-  const u = JSON.parse(localStorage.getItem('user'));
+  // Sponsors: load /profile first so is_available matches the database (no UI default).
+  let u = JSON.parse(localStorage.getItem('user'));
   if (!u) { window.location.href = '/login'; }
-  else {
+
+  (async function initProfilePage() {
+    if (!u) return;
+    if (u.role === 'Sponsor') {
+      document.getElementById('p-available').disabled = true;
+      const pres = await api.get('/profile');
+      if (pres.ok && pres.data?.user) {
+        u = pres.data.user;
+        localStorage.setItem('user', JSON.stringify(u));
+      } else {
+        showToast('Could not load your profile from the server.', 'error');
+      }
+    }
+
     populateSidebar(u);
     
     // Inject links based on role
@@ -178,13 +196,15 @@
 
         if (u.role === 'Sponsor') {
             document.getElementById('p-company').value = u.profile.company_name || '';
-            
-            // Availability toggle
             document.getElementById('availability-group').style.display = 'block';
-            if (u.profile.hasOwnProperty('is_available')) {
-                document.getElementById('p-available').checked = u.profile.is_available;
+            const avail = availabilityFromDatabase(u.profile.is_available);
+            if (avail === null) {
+              showToast('Could not read visibility from the server.', 'error');
+              document.getElementById('p-available').disabled = true;
             } else {
-                document.getElementById('p-available').checked = true; // default
+              document.getElementById('p-available').checked = avail;
+              document.getElementById('sponsor-visibility-notice').style.display = avail ? 'none' : 'block';
+              document.getElementById('p-available').disabled = false;
             }
         }
 
@@ -206,9 +226,8 @@
             });
         }
     }
-  }
 
-  document.getElementById('p-logo').addEventListener('change', function(e) {
+    document.getElementById('p-logo').addEventListener('change', function(e) {
       if (e.target.files && e.target.files[0]) {
           const reader = new FileReader();
           reader.onload = function(e) {
@@ -355,12 +374,20 @@
     if (res.ok) {
       showToast('Profile updated!', 'success');
       localStorage.setItem('user', JSON.stringify(res.data.user)); // update cache
-      
+      u = res.data.user;
+
       // Update local view
       if (res.data.user.profile && res.data.user.profile.logo) {
           const u_logo = res.data.user.profile.logo.startsWith('/') ? res.data.user.profile.logo : '/' + res.data.user.profile.logo;
           document.getElementById('current-logo').src = u_logo;
           document.getElementById('current-logo').style.display = 'block';
+      }
+      if (res.data.user.role === 'Sponsor' && res.data.user.profile) {
+          const avail = availabilityFromDatabase(res.data.user.profile.is_available);
+          if (avail !== null) {
+            document.getElementById('p-available').checked = avail;
+            document.getElementById('sponsor-visibility-notice').style.display = avail ? 'none' : 'block';
+          }
       }
       populateSidebar(res.data.user);
       document.getElementById('p-pass').value = '';
@@ -370,6 +397,8 @@
     }
     btn.textContent = 'Save Changes'; btn.disabled = false;
   });
+
+  })();
 </script>
 </body>
 </html>

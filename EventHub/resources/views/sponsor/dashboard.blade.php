@@ -86,14 +86,14 @@
       </div>
     </div>
 
-    <!-- Persistent Hidden Alert -->
+    <!-- Shown only when profile.is_available is false (DB), after /profile load -->
     <div id="hidden-alert" style="display:none; background:rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 16px; border-radius: var(--radius); margin-bottom: 24px; color: #ff6b6b; font-weight: 500;">
-      <div style="display:flex; align-items:center; gap:12px;">
+      <div style="display:flex; align-items:flex-start; gap:12px;">
         <span style="font-size:1.5rem;">⚠️</span>
-        <div>
-          <div style="font-size:1rem; font-weight:700;">You are currently not visible to event managers.</div>
-          <div style="font-size:0.85rem; opacity:0.9;">You will remain hidden until you turn this option ON again.</div>
-        </div>
+        <p id="hidden-alert-text" style="margin:0; font-size:0.95rem; line-height:1.5;">
+          You are currently not visible to event managers.<br/>
+          You will remain hidden until you turn this option ON again.
+        </p>
       </div>
     </div>
 
@@ -106,7 +106,7 @@
       <div style="display:flex; align-items:center; gap:12px;">
         <span id="avail-badge" class="badge">--</span>
         <label class="switch">
-          <input type="checkbox" id="avail-toggle" onchange="handleToggle(this.checked)">
+          <input type="checkbox" id="avail-toggle" disabled onchange="handleToggle(this.checked)">
           <span class="slider"></span>
         </label>
       </div>
@@ -148,12 +148,18 @@
 
   async function fetchAvailabilityStatus() {
     const res = await api.get('/profile');
-    if (res.ok && res.data.user?.profile) {
-        localStorage.setItem('user', JSON.stringify(res.data.user));
-        const isON = (res.data.user.profile.is_available === true || res.data.user.profile.is_available === 1);
-        syncToggleUI(isON);
-        loadMySponsored(); 
+    if (!res.ok || !res.data.user?.profile) {
+      showToast('Could not load your visibility settings.', 'error');
+      return;
     }
+    localStorage.setItem('user', JSON.stringify(res.data.user));
+    const fromDb = availabilityFromDatabase(res.data.user.profile.is_available);
+    if (fromDb === null) {
+      showToast('Could not read visibility from the server.', 'error');
+      return;
+    }
+    syncToggleUI(fromDb);
+    loadMySponsored();
   }
 
   function syncToggleUI(isON) {
@@ -165,6 +171,7 @@
     const toggle = document.getElementById('avail-toggle');
 
     toggle.checked = isON;
+    toggle.disabled = false;
 
     if (isON) {
       card.classList.add('active-status');
@@ -192,15 +199,31 @@
   }
 
   async function handleToggle(isNowChecked) {
-    const res = await api.patch('/profile/availability', { is_available: isNowChecked });
-    if (res.ok && res.data.user?.profile) {
-        localStorage.setItem('user', JSON.stringify(res.data.user));
-        const dbStatus = (res.data.user.profile.is_available === true || res.data.user.profile.is_available === 1);
-        syncToggleUI(dbStatus);
-        showToast(dbStatus ? 'You are now visible.' : 'You are now hidden.', dbStatus ? 'success' : 'info');
-    } else {
-        showToast('Failed to sync with server', 'error');
-        fetchAvailabilityStatus();
+    const toggle = document.getElementById('avail-toggle');
+    toggle.disabled = true;
+    try {
+      const res = await api.patch('/profile/availability', { is_available: !!isNowChecked });
+      if (res.ok) {
+          const raw = res.data.is_available !== undefined && res.data.is_available !== null
+            ? res.data.is_available
+            : res.data.user?.profile?.is_available;
+          const dbStatus = availabilityFromDatabase(raw);
+          if (dbStatus === null) {
+            showToast('Invalid response from server.', 'error');
+            await fetchAvailabilityStatus();
+            return;
+          }
+          if (res.data.user) {
+            localStorage.setItem('user', JSON.stringify(res.data.user));
+          }
+          syncToggleUI(dbStatus);
+          showToast(dbStatus ? 'You are now visible.' : 'You are now hidden.', dbStatus ? 'success' : 'info');
+      } else {
+          showToast('Failed to sync with server', 'error');
+          await fetchAvailabilityStatus();
+      }
+    } finally {
+      toggle.disabled = false;
     }
   }
 
