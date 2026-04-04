@@ -21,7 +21,11 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'event_id'
+        'event_id',
+        'avatar',
+        'phone',
+        'bio',
+        'social_links',
     ];
 
     protected $hidden = [
@@ -34,6 +38,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'social_links' => 'array',
         ];
     }
 

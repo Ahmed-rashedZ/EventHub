@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/login');
@@ -14,8 +15,10 @@ Route::middleware('web.guest')->group(function () {
 Route::middleware('web.auth')->group(function () {
     
     // Any authenticated user can access their profile
-    Route::view('/profile', 'profile');
-    Route::view('/user-profile', 'user-profile');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('profile.show');
 
     // Admin Routes
     Route::middleware('web.auth:Admin')->prefix('admin')->group(function () {
