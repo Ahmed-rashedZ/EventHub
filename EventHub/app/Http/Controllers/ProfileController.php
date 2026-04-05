@@ -39,6 +39,7 @@ class ProfileController extends Controller
             'email' => 'required|email|unique:users,email,' . $user->id,
             'phone' => 'nullable|string|max:20',
             'bio' => 'nullable|string',
+            'company_name' => 'nullable|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'social_links' => 'nullable|array',
             'social_links.twitter' => 'nullable|url',
@@ -66,6 +67,25 @@ class ProfileController extends Controller
         }
 
         $user->update($data);
+
+        if ($user->role === 'Sponsor') {
+            $user->profile()->updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'profile_type' => 'company',
+                    'company_name' => $request->input('company_name'),
+                    'bio' => $request->input('bio'),
+                ]
+            );
+        } else {
+            $user->profile()->updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'profile_type' => 'individual',
+                    'bio' => $request->input('bio'),
+                ]
+            );
+        }
 
         return redirect()->back()->with('success', 'Profile updated successfully!');
     }

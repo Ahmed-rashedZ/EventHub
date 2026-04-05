@@ -163,6 +163,16 @@
                             @enderror
                         </div>
 
+                        @if(Auth::user()->role === 'Sponsor')
+                        <div class="form-group">
+                            <label class="form-label">Company Name</label>
+                            <input type="text" name="company_name" class="form-control @error('company_name') is-invalid @enderror" value="{{ old('company_name', $user->profile->company_name ?? '') }}" >
+                            @error('company_name')
+                                <p style="color: red; font-size: 0.8rem; margin-top: 5px;">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        @endif
+
                         <div class="form-group">
                             <label class="form-label">Phone Number</label>
                             <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone', $user->phone) }}" placeholder="+218 (092) 000-0000">

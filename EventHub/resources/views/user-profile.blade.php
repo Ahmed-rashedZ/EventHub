@@ -192,7 +192,7 @@
           statusBadge.innerHTML = '';
       }
 
-      const bioText = (u.role === 'Sponsor' ? p.company_description : p.bio) || 'No description provided.';
+      const bioText = (u.role === 'Sponsor' ? p.company_description : p.bio) || u.bio || 'No description provided.';
       document.getElementById('u-bio').innerText = bioText;
 
       // Contacts
