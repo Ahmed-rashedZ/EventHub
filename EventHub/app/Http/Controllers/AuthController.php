@@ -1,13 +1,17 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+
+use App\Models\Event;
+use App\Models\Profile;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+
 class AuthController extends Controller
 {
-    
+
 
 public function register(Request $request)
 {
@@ -34,17 +38,20 @@ public function register(Request $request)
 }
     public function login(Request $request)
 {
-    if (!Auth::attempt($request->only('email', 'password'))) {
+    $credentials = $request->only('email', 'password');
+
+    if (!Auth::attempt($credentials)) {
         return response()->json(['message' => 'Invalid credentials'], 401);
     }
 
+    /** @var \App\Models\User $user */
     $user = Auth::user();
 
     $token = $user->createToken('auth_token')->plainTextToken;
 
     return response()->json([
         'user' => $user->load(['profile.contacts']),
-        'token' => $token
+        'token' => $token,
     ]);
 }
 public function updateProfile(Request $request)
@@ -122,7 +129,7 @@ public function getProfile(Request $request)
     
     // Ensure Sponsor has a profile so is_available exists
     if ($user->role === 'Sponsor' && !$user->profile) {
-        \App\Models\Profile::create([
+        Profile::create([
             'user_id' => $user->id,
             'profile_type' => 'company',
             'is_available' => true // Default to true as per migration
@@ -150,7 +157,7 @@ public function updateAvailability(Request $request)
 
     $isAvailable = $request->boolean('is_available');
 
-    $profile = \App\Models\Profile::updateOrCreate(
+    $profile = Profile::updateOrCreate(
         ['user_id' => $user->id],
         [
             'is_available' => $isAvailable,
@@ -216,9 +223,9 @@ public function createUser(Request $request)
             return response()->json(['message' => 'Event ID is required for Assistant creation'], 422);
         }
         
-        $event = \App\Models\Event::where('id', $request->event_id)
-                                  ->where('created_by', $authUser->id)
-                                  ->first();
+        $event = Event::where('id', $request->event_id)
+                      ->where('created_by', $authUser->id)
+                      ->first();
         if (!$event) {
             return response()->json(['message' => 'Unauthorized or invalid event for this Assistant'], 403);
         }
@@ -236,7 +243,7 @@ public function createUser(Request $request)
     ]);
 
     if ($request->role === 'Sponsor') {
-        \App\Models\Profile::create([
+        Profile::create([
             'user_id' => $user->id,
             'profile_type' => 'company',
             'is_available' => true,
