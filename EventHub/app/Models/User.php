@@ -23,6 +23,7 @@ class User extends Authenticatable
         'role',
         'event_id',
         'avatar',
+        'image',
         'phone',
         'bio',
         'social_links',

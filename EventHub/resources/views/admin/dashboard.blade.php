@@ -24,16 +24,7 @@
       <span class="nav-section-label">Settings</span>
       <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
     </nav>
-    <div class="sidebar-footer">
-      <div class="sidebar-user">
-        <div class="avatar" id="sidebar-avatar">A</div>
-        <div class="user-info">
-          <div class="user-name" id="sidebar-username">Admin</div>
-          <div class="user-role" id="sidebar-role">Administrator</div>
-        </div>
-      </div>
-      <button class="btn btn-logout" id="logout-btn">🚪 Sign Out</button>
-    </div>
+    @include('partials._sidebar-footer')
   </aside>
 
   <!-- Main Content -->

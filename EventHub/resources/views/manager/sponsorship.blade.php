@@ -21,13 +21,7 @@
       <span class="nav-section-label">Settings</span>
       <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
     </nav>
-    <div class="sidebar-footer">
-      <div class="sidebar-user">
-        <div class="avatar" id="sidebar-avatar">M</div>
-        <div class="user-info"><div class="user-name" id="sidebar-username">Manager</div><div class="user-role" id="sidebar-role">Event Manager</div></div>
-      </div>
-      <button class="btn btn-logout" id="logout-btn">🚪 Sign Out</button>
-    </div>
+    @include('partials._sidebar-footer')
   </aside>
 
   <main class="main-content">
@@ -140,8 +134,14 @@
     }
     
     tbody.innerHTML = res.data.map(s => {
-        let logo = s.profile?.logo ? s.profile.logo : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(s.name);
-        if(!logo.startsWith('http') && !logo.startsWith('/')) logo = '/' + logo;
+        let logo = '/images/default-avatar.png';
+        if (s.image && s.image.trim() !== '') {
+            logo = (s.image.startsWith('http') || s.image.startsWith('/')) ? s.image : '/storage/' + s.image;
+        } else if (s.avatar && s.avatar.trim() !== '') {
+            logo = (s.avatar.startsWith('http') || s.avatar.startsWith('/')) ? s.avatar : '/storage/' + s.avatar;
+        } else if (s.profile && s.profile.logo) {
+            logo = (s.profile.logo.startsWith('http') || s.profile.logo.startsWith('/')) ? s.profile.logo : '/' + s.profile.logo;
+        }
         
         return `
       <tr>

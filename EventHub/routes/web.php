@@ -14,11 +14,11 @@ Route::middleware('web.guest')->group(function () {
 // Authenticated Routes
 Route::middleware('web.auth')->group(function () {
     
-    // Any authenticated user can access their profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('profile.show');
+    Route::view('/user-profile', 'user-profile');
 
     // Admin Routes
     Route::middleware('web.auth:Admin')->prefix('admin')->group(function () {

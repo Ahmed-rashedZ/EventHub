@@ -71,16 +71,20 @@ function populateSidebar(user) {
     const nameEl  = document.getElementById('sidebar-username');
     const roleEl  = document.getElementById('sidebar-role');
     const avEl    = document.getElementById('sidebar-avatar');
-    if (nameEl) nameEl.textContent = user.name;
-    if (roleEl) roleEl.textContent = user.role;
-    if (avEl) {
-        if (user.profile && user.profile.logo) {
-            let logoUrl = user.profile.logo.startsWith('http') ? user.profile.logo : (user.profile.logo.startsWith('/') ? user.profile.logo : '/' + user.profile.logo);
-            avEl.innerHTML = `<img src="${logoUrl}" style="width:100%; height:100%; border-radius:12px; object-fit:cover;" alt="Avatar"/>`;
-            avEl.style.background = 'transparent';
-        } else {
-            avEl.textContent = user.name.charAt(0).toUpperCase();
+    if (nameEl && nameEl.textContent.trim() === '') nameEl.textContent = user.name;
+    if (roleEl && roleEl.textContent.trim() === '') roleEl.textContent = user.role;
+    if (avEl && !avEl.querySelector('img')) {
+        let imageUrl = '/images/default-avatar.png';
+        if (user.image && user.image.trim() !== '') {
+            imageUrl = (user.image.startsWith('http') || user.image.startsWith('/')) ? user.image : '/storage/' + user.image;
+        } else if (user.avatar && user.avatar.trim() !== '') {
+            imageUrl = (user.avatar.startsWith('http') || user.avatar.startsWith('/')) ? user.avatar : '/storage/' + user.avatar;
+        } else if (user.profile && user.profile.logo) {
+            imageUrl = user.profile.logo.startsWith('http') ? user.profile.logo : (user.profile.logo.startsWith('/') ? user.profile.logo : '/' + user.profile.logo);
         }
+
+        avEl.innerHTML = `<img src="${imageUrl}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" alt="Avatar"/>`;
+        avEl.style.background = 'transparent';
     }
 
     const logoutBtn = document.getElementById('logout-btn');

@@ -60,13 +60,7 @@
     <nav class="sidebar-nav" id="sidebar-nav">
         <!-- Will be populated by JS -->
     </nav>
-    <div class="sidebar-footer">
-      <div class="sidebar-user">
-        <div class="avatar" id="sidebar-avatar">?</div>
-        <div class="user-info"><div class="user-name" id="sidebar-username">Loading...</div><div class="user-role" id="sidebar-role">...</div></div>
-      </div>
-      <button class="btn btn-logout" id="logout-btn">🚪 Sign Out</button>
-    </div>
+    @include('partials._sidebar-footer')
   </aside>
 
   <main class="main-content">
@@ -173,7 +167,14 @@
 
       document.getElementById('u-name').innerText = (u.role === 'Sponsor' && p.company_name) ? p.company_name : u.name;
       
-      const avatar = p.logo ? p.logo : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(u.name) + '&background=6e40f2&color=fff';
+      let avatar = '/images/default-avatar.png';
+      if (u.image && u.image.trim() !== '') {
+          avatar = (u.image.startsWith('http') || u.image.startsWith('/')) ? u.image : '/storage/' + u.image;
+      } else if (u.avatar && u.avatar.trim() !== '') {
+          avatar = (u.avatar.startsWith('http') || u.avatar.startsWith('/')) ? u.avatar : '/storage/' + u.avatar;
+      } else if (p.logo) {
+          avatar = (p.logo.startsWith('http') || p.logo.startsWith('/')) ? p.logo : '/' + p.logo;
+      }
       document.getElementById('u-avatar').src = avatar;
 
       const roleBadge = document.getElementById('u-role-badge');
@@ -196,15 +197,19 @@
 
       // Contacts
       const contactList = document.getElementById('contact-list');
-      let html = `
-        <div class="contact-card">
-            <span class="contact-icon">📧</span>
-            <div>
-                <div style="font-size:0.75rem; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">Primary Email</div>
-                <div style="font-weight:500;">${u.email}</div>
+      let html = '';
+
+      if (me && me.id === u.id) {
+          html += `
+            <div class="contact-card">
+                <span class="contact-icon">📧</span>
+                <div>
+                    <div style="font-size:0.75rem; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">Primary Email</div>
+                    <div style="font-weight:500;">${u.email}</div>
+                </div>
             </div>
-        </div>
-      `;
+          `;
+      }
 
       if (p.contacts && p.contacts.length > 0) {
           p.contacts.forEach(c => {

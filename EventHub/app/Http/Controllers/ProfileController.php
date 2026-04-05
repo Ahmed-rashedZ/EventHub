@@ -35,23 +35,32 @@ class ProfileController extends Controller
         $user = Auth::user();
 
         $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
             'phone' => 'nullable|string|max:20',
             'bio' => 'nullable|string',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'social_links' => 'nullable|array',
             'social_links.twitter' => 'nullable|url',
             'social_links.linkedin' => 'nullable|url',
             'social_links.website' => 'nullable|url',
         ]);
 
-        $data = $request->only(['phone', 'bio', 'social_links']);
+        $data = $request->only(['name', 'email', 'phone', 'bio', 'social_links']);
 
-        if ($request->hasFile('avatar')) {
-            // Delete old avatar if exists and it's not a placeholder
-            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
-                Storage::disk('public')->delete($user->avatar);
+        if ($request->hasFile('image')) {
+            $oldImage = $user->image ?? $user->avatar;
+            if ($oldImage && Storage::disk('public')->exists($oldImage)) {
+                Storage::disk('public')->delete($oldImage);
             }
 
+            $path = $request->file('image')->store('avatars', 'public');
+            $data['image'] = $path;
+            $data['avatar'] = $path; // Fallback mapping
+        } elseif ($request->hasFile('avatar')) {
+             if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+                Storage::disk('public')->delete($user->avatar);
+            }
             $path = $request->file('avatar')->store('avatars', 'public');
             $data['avatar'] = $path;
         }

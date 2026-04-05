@@ -122,19 +122,7 @@
                 <span class="nav-section-label">Settings</span>
                 <a class="nav-item" href="{{ route('profile.edit') }}"><span class="nav-icon">⚙️</span> My Profile</a>
             </nav>
-            <div class="sidebar-footer">
-                <div class="sidebar-user">
-                    <div class="avatar" id="sidebar-avatar">
-                        <img src="{{ Auth::User()->avatar ? asset('storage/' . Auth::User()->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) . '&background=random&size=160' }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
-                        
-                    </div>
-                    <div class="user-info">
-                        <div class="user-name" id="sidebar-username">{{ Auth::user()->name }}</div>
-                        <div class="user-role" id="sidebar-role">{{ Auth::user()->role }}</div>
-                    </div>
-                </div>
-                <button class="btn btn-logout" id="logout-btn">🚪 Sign Out</button>
-            </div>
+            @include('partials._sidebar-footer')
         </aside>
 
         <main class="main-content" style="padding: 0;">
@@ -143,7 +131,14 @@
                     <a href="{{ route('profile.edit') }}" style="position: absolute; top: 1rem; right: 1rem; z-index: 10;" class="btn btn-ghost btn-sm">Edit Profile</a>
                 @endif
                 <div class="profile-avatar-container">
-                    <img src="{{ $user->avatar ? asset('storage/' . $user->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&background=random&size=160' }}" alt="{{ $user->name }}">
+                    @php
+                        $userImage = $user->image ?? $user->avatar;
+                    @endphp
+                    @if($userImage)
+                        <img src="{{ asset('storage/' . $userImage) }}" alt="{{ $user->name }}">
+                    @else
+                        <img src="{{ asset('images/default-avatar.png') }}" alt="{{ $user->name }}">
+                    @endif
                 </div>
             </div>
 
@@ -164,13 +159,15 @@
                     <div class="card" style="padding: 1.5rem;">
                         <h3 style="font-size: 1rem; margin-bottom: 1rem; color: var(--accent2); text-transform: uppercase; letter-spacing: 0.05em;">Contact Information</h3>
                         <div style="display: flex; flex-direction: column; gap: 1rem;">
-                            <!-- <div style="display: flex; align-items: center; gap: 12px;">
+                            @if(Auth::id() === $user->id)
+                            <div style="display: flex; align-items: center; gap: 12px;">
                                 <span style="font-size: 1.2rem; min-width: 24px;">📧</span>
                                 <div>
                                     <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Email</div>
                                     <div style="font-weight: 500;">{{ $user->email }}</div>
                                 </div>
-                            </div> -->
+                            </div>
+                            @endif
                             @if($user->phone)
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 <span style="font-size: 1.2rem; min-width: 24px;">📱</span>

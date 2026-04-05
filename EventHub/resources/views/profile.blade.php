@@ -15,13 +15,7 @@
   <aside class="sidebar" id="dynamic-sidebar">
     <div class="sidebar-logo"><div class="logo-icon">🎯</div><span>EventHub</span></div>
     <nav class="sidebar-nav" id="sidebar-links"></nav>
-    <div class="sidebar-footer">
-      <div class="sidebar-user">
-        <div class="avatar" id="sidebar-avatar">?</div>
-        <div class="user-info"><div class="user-name" id="sidebar-username">User</div><div class="user-role" id="sidebar-role">Role</div></div>
-      </div>
-      <button class="btn btn-logout" id="logout-btn">🚪 Sign Out</button>
-    </div>
+    @include('partials._sidebar-footer')
   </aside>
 
   <main class="main-content">

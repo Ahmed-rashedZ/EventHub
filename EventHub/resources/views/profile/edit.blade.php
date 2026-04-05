@@ -100,19 +100,7 @@
                 <span class="nav-section-label">Settings</span>
                 <a class="nav-item active" href="{{ route('profile.edit') }}"><span class="nav-icon">⚙️</span> My Profile</a>
             </nav>
-            <div class="sidebar-footer">
-                <div class="sidebar-user">
-                 <div class="avatar" id="sidebar-avatar">
-                        <img src="{{ Auth::User()->avatar ? asset('storage/' . Auth::User()->avatar) : 'https://ui-avatars.com/api/?name='
-                         . urlencode(Auth::user()->name) . '&background=random&size=160' }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
-                    </div>
-                    <div class="user-info">
-                        <div class="user-name" id="sidebar-username">{{ Auth::user()->name }}</div>
-                        <div class="user-role" id="sidebar-role">{{ Auth::user()->role }}</div>
-                    </div>
-                </div>
-                <button class="btn btn-logout" id="logout-btn">🚪 Sign Out</button>
-            </div>
+            @include('partials._sidebar-footer')
         </aside>
 
         <main class="main-content">
@@ -138,15 +126,22 @@
                         <!-- Avatar Section -->
                         <div class="avatar-upload">
                             <div class="avatar-preview">
-                                <img id="imagePreview" src="{{ $user->avatar ? asset('storage/' . $user->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&background=random&size=150' }}" alt="Avatar">
+                                @php
+                                    $userImage = $user->image ?? $user->avatar;
+                                @endphp
+                                @if($userImage)
+                                    <img id="imagePreview" src="{{ asset('storage/' . $userImage) }}" alt="Avatar">
+                                @else
+                                    <img id="imagePreview" src="{{ asset('images/default-avatar.png') }}" alt="Avatar">
+                                @endif
                             </div>
                             <div style="margin-top: 1rem; text-align: center;">
-                                <label for="avatar" class="btn btn-ghost btn-sm" style="cursor: pointer;">
+                                <label for="image" class="btn btn-ghost btn-sm" style="cursor: pointer;">
                                     Change Photo
                                 </label>
-                                <input type='file' id="avatar" name="avatar" accept=".png, .jpg, .jpeg" style="display: none;" onchange="previewImage(this);"/>
-                                @error('avatar')
-                                    <p style="color: red; font-size: 0.8rem;">{{ $message }}</p>
+                                <input type='file' id="image" name="image" accept=".png, .jpg, .jpeg" style="display: none;" onchange="previewImage(this);"/>
+                                @error('image')
+                                    <p style="color: red; font-size: 0.8rem; margin-top: 5px;">{{ $message }}</p>
                                 @enderror
                             </div>
                         </div>
@@ -154,12 +149,18 @@
                         <!-- Basic Info -->
                         <div class="form-group">
                             <label class="form-label">Full Name</label>
-                            <input type="text" class="form-control" value="{{ $user->name }}" >
+                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $user->name) }}" >
+                            @error('name')
+                                <p style="color: red; font-size: 0.8rem; margin-top: 5px;">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">Email Address</label>
-                            <input type="email" class="form-control" value="{{ $user->email }}" >
+                            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', $user->email) }}" >
+                            @error('email')
+                                <p style="color: red; font-size: 0.8rem; margin-top: 5px;">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="form-group">
