@@ -42,9 +42,7 @@ class ProfileController extends Controller
             'company_name' => 'nullable|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'social_links' => 'nullable|array',
-            'social_links.twitter' => 'nullable|url',
-            'social_links.linkedin' => 'nullable|url',
-            'social_links.website' => 'nullable|url',
+            'social_links.*' => 'nullable|url',
         ]);
 
         $data = $request->only(['name', 'email', 'phone', 'bio', 'social_links']);

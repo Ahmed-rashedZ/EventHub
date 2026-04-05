@@ -190,20 +190,12 @@
                         </div>
 
                         <!-- Social Links -->
-                        <h3 style="margin: 2rem 0 1rem; font-size: 1.1rem; font-weight: 600; border-bottom: 1px solid #eee; padding-bottom: 0.5rem;">Social Profiles</h3>
-                        <div class="social-links-grid">
-                            <div class="form-group">
-                                <label class="form-label">Twitter</label>
-                                <input type="url" name="social_links[twitter]" class="form-control" value="{{ old('social_links.twitter', $user->social_links['twitter'] ?? '') }}" placeholder="https://twitter.com/username">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">LinkedIn</label>
-                                <input type="url" name="social_links[linkedin]" class="form-control" value="{{ old('social_links.linkedin', $user->social_links['linkedin'] ?? '') }}" placeholder="https://linkedin.com/in/username">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Website</label>
-                                <input type="url" name="social_links[website]" class="form-control" value="{{ old('social_links.website', $user->social_links['website'] ?? '') }}" placeholder="https://yourwebsite.com">
-                            </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; margin: 2rem 0 1rem; padding-bottom: 0.5rem;">
+                            <h3 style="margin:0; font-size: 1.1rem; font-weight: 600;">Social Profiles & Links</h3>
+                            <button type="button" class="btn btn-ghost btn-sm" onclick="addSocialRow('', '')">+ Add Link</button>
+                        </div>
+                        <div id="social-links-container">
+                            <!-- Populated by JS -->
                         </div>
 
                         <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: flex-end;">
@@ -220,7 +212,7 @@
     <script src="/js/api.js"></script>
     <script src="/js/auth.js"></script>
     <script>
-        const user = AuthUser();
+        const user = requireAuth();
         if (user) {
             populateSidebar(user);
             setActiveNav();
@@ -234,6 +226,96 @@
                 }
                 reader.readAsDataURL(input.files[0]);
             }
+        }
+
+        const existingLinks = @json(old('social_links', $user->social_links) ?: []);
+        const platforms = {
+            'twitter': 'X (Twitter)',
+            'linkedin': 'LinkedIn',
+            'website': 'Personal Website',
+            'facebook': 'Facebook',
+            'instagram': 'Instagram',
+            'whatsapp': 'WhatsApp',
+            'telegram': 'Telegram',
+            'github': 'GitHub',
+            'youtube': 'YouTube',
+            'tiktok': 'TikTok',
+            'discord': 'Discord'
+        };
+
+        let rowCount = 0;
+
+        function addSocialRow(platformKey = '', urlValue = '') {
+            const container = document.getElementById('social-links-container');
+            const row = document.createElement('div');
+            row.className = 'social-link-row';
+            row.style.cssText = "display: flex; gap: 1rem; margin-bottom: 1.25rem; align-items: flex-start; animation: slideUp 0.3s ease;";
+            
+            const currentIdx = rowCount++;
+            let isCustom = platformKey && !platforms[platformKey];
+            
+            let selectHTML = `<select style="width: 180px; flex-shrink: 0;" class="form-control platform-select" onchange="updateSocialName(this, ${currentIdx})">`;
+            selectHTML += `<option value="">Choose Platform...</option>`;
+            for (let [k, v] of Object.entries(platforms)) {
+                selectHTML += `<option value="${k}" ${platformKey === k ? 'selected' : ''}>${v}</option>`;
+            }
+            if (isCustom) {
+                const displayKey = platformKey.split('_')[0]; // removal of unique suffix if any
+                selectHTML += `<option value="${platformKey}" selected>${displayKey.charAt(0).toUpperCase() + displayKey.slice(1)}</option>`;
+            }
+            selectHTML += `<option value="other">Other...</option>`;
+            selectHTML += `</select>`;
+
+            row.innerHTML = `
+                ${selectHTML}
+                <div style="flex-grow: 1;">
+                    <input type="url" name="social_links[${platformKey || 'link_'+currentIdx}]" class="form-control url-input" placeholder="https://..." value="${urlValue}" required>
+                </div>
+                <button type="button" class="btn btn-ghost" style="color: var(--danger); font-size: 1.25rem; min-width: 44px; height: 44px; padding: 0;" onclick="this.parentElement.remove()">✕</button>
+            `;
+            container.appendChild(row);
+        }
+
+        function updateSocialName(selectEl, idx) {
+            let platform = selectEl.value;
+            if (platform === 'other') {
+                let custom = prompt("Enter platform name (e.g. Portfolio, Discord, WhatsApp):");
+                if (!custom) {
+                    selectEl.selectedIndex = 0;
+                    return;
+                }
+                platform = custom.toLowerCase().replace(/[^a-z0-9]/g, '');
+                if (platform === '') platform = 'custom';
+                
+                // Add to select temporarily
+                const opt = document.createElement('option');
+                opt.value = platform + '_' + idx;
+                opt.text = custom;
+                selectEl.add(opt, selectEl.options[selectEl.options.length - 1]);
+                selectEl.value = opt.value;
+                platform = opt.value;
+            } else if (platform !== "") {
+                platform = platform + '_' + idx;
+            }
+            
+            const inputEl = selectEl.parentElement.querySelector('.url-input');
+            inputEl.name = `social_links[${platform}]`;
+        }
+
+        // Initialize
+        let hasInitializedLinks = false;
+        if (existingLinks && typeof existingLinks === 'object' && !Array.isArray(existingLinks)) {
+            Object.entries(existingLinks).forEach(([p, link]) => {
+                if (link) {
+                    const cleanPlatform = p.split('_')[0];
+                    addSocialRow(cleanPlatform, link);
+                    hasInitializedLinks = true;
+                }
+            });
+        }
+        
+        if (!hasInitializedLinks) {
+            addSocialRow('', '');
         }
     </script>
 </body>

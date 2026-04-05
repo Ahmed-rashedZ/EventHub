@@ -211,6 +211,51 @@
           `;
       }
 
+      if (u.phone) {
+          html += `
+            <div class="contact-card">
+                <span class="contact-icon">📞</span>
+                <div>
+                    <div style="font-size:0.75rem; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">Phone</div>
+                    <div style="font-weight:500;"><a href="tel:${u.phone}" style="color:var(--text-primary); text-decoration:none;">${u.phone}</a></div>
+                </div>
+            </div>
+          `;
+      }
+
+      if (u.social_links) {
+          const iconMap = {
+            'twitter': '𝕏', 'x': '𝕏',
+            'linkedin': '💼', 
+            'website': '🌐', 'portfolio': '🎨',
+            'facebook': '👥', 'instagram': '📸',
+            'whatsapp': '💬', 'telegram': '✈️',
+            'github': '💻', 'youtube': '🎬',
+            'tiktok': '🎵', 'discord': '👾'
+          };
+          
+          for (let [p, link] of Object.entries(u.social_links)) {
+              if (link) {
+                  const platform = p.split('_')[0]; // strip our unique suffix
+                  let icon = iconMap[platform] || '🔗';
+                  let dispPlatform = platform.charAt(0).toUpperCase() + platform.slice(1);
+                  if (platform === 'twitter' || platform === 'x') dispPlatform = 'X (Twitter)';
+                  
+                  html += `
+                    <div class="contact-card">
+                        <span class="contact-icon">${icon}</span>
+                        <div>
+                            <div style="font-size:0.75rem; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">${dispPlatform}</div>
+                            <div style="font-weight:500; font-size:0.9rem; word-break: break-all;">
+                                <a href="${link.startsWith('http') ? link : 'https://'+link}" target="_blank" style="color:var(--text-primary); text-decoration:none;">${link.replace(/^https?:\/\//, '')}</a>
+                            </div>
+                        </div>
+                    </div>
+                  `;
+              }
+          }
+      }
+
       if (p.contacts && p.contacts.length > 0) {
           p.contacts.forEach(c => {
               let icon = '🔗';

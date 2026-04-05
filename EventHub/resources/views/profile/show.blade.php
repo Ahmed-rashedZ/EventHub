@@ -173,7 +173,7 @@
                                 <span style="font-size: 1.2rem; min-width: 24px;">📱</span>
                                 <div>
                                     <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Phone</div>
-                                    <div style="font-weight: 500;">{{ $user->phone }}</div>
+                                    <div style="font-weight: 500;"><a href="tel:{{ $user->phone }}" style="color: inherit; text-decoration: none;">{{ $user->phone }}</a></div>
                                 </div>
                             </div>
                             @endif
@@ -182,15 +182,26 @@
                 </div>
 
                 @if($user->social_links)
-                <div class="social-links">
-                    @foreach($user->social_links as $platform => $url)
+                <div class="social-links" style="margin-top: 2rem;">
+                    @php
+                        $iconMap = [
+                            'twitter' => '𝕏', 'x' => '𝕏',
+                            'linkedin' => 'in', 
+                            'website' => '🌐', 'portfolio' => '🎨',
+                            'facebook' => 'f', 'instagram' => '📸',
+                            'whatsapp' => '💬', 'telegram' => '✈️',
+                            'github' => 'gh', 'youtube' => 'yt',
+                            'tiktok' => '🎵', 'discord' => '👾'
+                        ];
+                    @endphp
+                    @foreach($user->social_links as $p => $url)
                         @if($url)
-                        <a href="{{ $url }}" target="_blank" class="social-link" title="{{ ucfirst($platform) }}">
-                            @if($platform == 'twitter') 𝕏
-                            @elseif($platform == 'linkedin') in
-                            @elseif($platform == 'website') 🌐
-                            @else 🔗
-                            @endif
+                        @php
+                            $platform = explode('_', $p)[0];
+                            $icon = $iconMap[$platform] ?? '🔗';
+                        @endphp
+                        <a href="{{ str_starts_with($url, 'http') ? $url : 'https://'.$url }}" target="_blank" class="social-link" title="{{ ucfirst($platform) }}">
+                            {{ $icon }}
                         </a>
                         @endif
                     @endforeach
