@@ -124,7 +124,10 @@
             </nav>
             <div class="sidebar-footer">
                 <div class="sidebar-user">
-                    <div class="avatar" id="sidebar-avatar">{{ substr(Auth::user()->name, 0, 1) }}</div>
+                    <div class="avatar" id="sidebar-avatar">
+                        <img src="{{ Auth::User()->avatar ? asset('storage/' . Auth::User()->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) . '&background=random&size=160' }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                        
+                    </div>
                     <div class="user-info">
                         <div class="user-name" id="sidebar-username">{{ Auth::user()->name }}</div>
                         <div class="user-role" id="sidebar-role">{{ Auth::user()->role }}</div>
@@ -161,13 +164,13 @@
                     <div class="card" style="padding: 1.5rem;">
                         <h3 style="font-size: 1rem; margin-bottom: 1rem; color: var(--accent2); text-transform: uppercase; letter-spacing: 0.05em;">Contact Information</h3>
                         <div style="display: flex; flex-direction: column; gap: 1rem;">
-                            <div style="display: flex; align-items: center; gap: 12px;">
+                            <!-- <div style="display: flex; align-items: center; gap: 12px;">
                                 <span style="font-size: 1.2rem; min-width: 24px;">📧</span>
                                 <div>
                                     <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Email</div>
                                     <div style="font-weight: 500;">{{ $user->email }}</div>
                                 </div>
-                            </div>
+                            </div> -->
                             @if($user->phone)
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 <span style="font-size: 1.2rem; min-width: 24px;">📱</span>

@@ -102,7 +102,10 @@
             </nav>
             <div class="sidebar-footer">
                 <div class="sidebar-user">
-                    <div class="avatar" id="sidebar-avatar">{{ substr(Auth::user()->name, 0, 1) }}</div>
+                 <div class="avatar" id="sidebar-avatar">
+                        <img src="{{ Auth::User()->avatar ? asset('storage/' . Auth::User()->avatar) : 'https://ui-avatars.com/api/?name='
+                         . urlencode(Auth::user()->name) . '&background=random&size=160' }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                    </div>
                     <div class="user-info">
                         <div class="user-name" id="sidebar-username">{{ Auth::user()->name }}</div>
                         <div class="user-role" id="sidebar-role">{{ Auth::user()->role }}</div>
@@ -151,17 +154,17 @@
                         <!-- Basic Info -->
                         <div class="form-group">
                             <label class="form-label">Full Name</label>
-                            <input type="text" class="form-control" value="{{ $user->name }}" disabled>
+                            <input type="text" class="form-control" value="{{ $user->name }}" >
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">Email Address</label>
-                            <input type="email" class="form-control" value="{{ $user->email }}" disabled>
+                            <input type="email" class="form-control" value="{{ $user->email }}" >
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">Phone Number</label>
-                            <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone', $user->phone) }}" placeholder="+1 (555) 000-0000">
+                            <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone', $user->phone) }}" placeholder="+218 (092) 000-0000">
                             @error('phone')
                                 <p style="color: red; font-size: 0.8rem;">{{ $message }}</p>
                             @enderror
