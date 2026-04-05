@@ -32,39 +32,48 @@
       <div><h1 class="page-title">Assistants</h1><p class="page-subtitle">Create accounts for assistants to scan QR codes at your events</p></div>
     </div>
 
-    <div class="assistant-card">
-      <h3 style="margin-top:0; margin-bottom: 20px;">Generate Assistant Account</h3>
-      <p style="color:var(--text-muted); font-size: 0.9rem; margin-bottom: 24px;">
-        Assistants use their accounts to log in on their mobile devices and scan QR codes for attendance tracking at the venue gates.
-      </p>
-      
-      <form id="assistant-form">
-        <div class="form-group">
-          <label class="form-label">Assistant Name</label>
-          <input id="a-name" type="text" class="form-control" placeholder="e.g. Gate 1 Scanner" required/>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Assistant Email (Login ID)</label>
-          <input id="a-email" type="email" class="form-control" placeholder="gate1@myevent.com" required/>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Password</label>
-          <input id="a-pass" type="password" class="form-control" required minlength="8"/>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Assign to Event</label>
-          <select id="a-event" class="form-control" required>
-            <option value="">Select an Event...</option>
-          </select>
-        </div>
-        <div style="text-align: right; margin-top:20px;">
-          <button type="submit" class="btn btn-primary" id="save-btn">Create Assistant</button>
-        </div>
-      </form>
+    <div style="display: flex; gap: 20px; align-items: flex-start;">
+      <div class="assistant-card" style="flex: 1;">
+        <h3 style="margin-top:0; margin-bottom: 20px;">Generate Assistant Account</h3>
+        <p style="color:var(--text-muted); font-size: 0.9rem; margin-bottom: 24px;">
+          Assistants use their accounts to log in on their mobile devices and scan QR codes for attendance tracking at the venue gates.
+        </p>
+        
+        <form id="assistant-form">
+          <div class="form-group">
+            <label class="form-label">Assistant Name</label>
+            <input id="a-name" type="text" class="form-control" placeholder="e.g. Gate 1 Scanner" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Assistant Email (Login ID)</label>
+            <input id="a-email" type="email" class="form-control" placeholder="gate1@myevent.com" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input id="a-pass" type="password" class="form-control" required minlength="8"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Assign to Event</label>
+            <select id="a-event" class="form-control" required>
+              <option value="">Select an Event...</option>
+            </select>
+          </div>
+          <div style="text-align: right; margin-top:20px;">
+            <button type="submit" class="btn btn-primary" id="save-btn">Create Assistant</button>
+          </div>
+        </form>
 
-      <div id="success-box" style="display:none; margin-top:30px; padding: 20px; background: rgba(16,185,129,0.1); border: 1px solid var(--success); border-radius: 8px;">
-        <h4 style="color: var(--success); margin-top:0;">✅ Assistant Created Successfully!</h4>
-        <p style="margin-bottom:0; font-size: 0.9rem; color: var(--text-secondary)">Please share the email and password with your assistant. They can now log in and access the QR scanner.</p>
+        <div id="success-box" style="display:none; margin-top:30px; padding: 20px; background: rgba(16,185,129,0.1); border: 1px solid var(--success); border-radius: 8px;">
+          <h4 style="color: var(--success); margin-top:0;">✅ Assistant Created Successfully!</h4>
+          <p style="margin-bottom:0; font-size: 0.9rem; color: var(--text-secondary)">Please share the email and password with your assistant. They can now log in and access the QR scanner.</p>
+        </div>
+      </div>
+
+      <div class="assistant-card" style="flex: 1;">
+        <h3 style="margin-top:0; margin-bottom: 20px;">Existing Assistants</h3>
+        <div id="assistants-list">
+          <p style="color:var(--text-muted); font-size: 0.9rem;">Loading assistants...</p>
+        </div>
       </div>
     </div>
   </main>
@@ -74,7 +83,7 @@
 <script src="/js/auth.js"></script>
 <script>
   const user = requireRole('Event Manager');
-  if (user) { populateSidebar(user); setActiveNav(); loadEvents(); }
+  if (user) { populateSidebar(user); setActiveNav(); loadEvents(); loadAssistants(); }
 
   async function loadEvents() {
     const res = await api.get('/events/list/my');
@@ -88,6 +97,29 @@
       });
     } else {
       showToast('Failed to load events', 'error');
+    }
+  }
+
+  async function loadAssistants() {
+    const res = await api.get('/assistants');
+    const listDiv = document.getElementById('assistants-list');
+    if (res.ok && res.data.length > 0) {
+      listDiv.innerHTML = '<table style="width:100%; border-collapse: collapse;"><thead><tr><th style="text-align:left; padding:8px; border-bottom:1px solid var(--border);">Name</th><th style="text-align:left; padding:8px; border-bottom:1px solid var(--border);">Email</th><th style="text-align:left; padding:8px; border-bottom:1px solid var(--border);">Password</th><th style="text-align:left; padding:8px; border-bottom:1px solid var(--border);">Event</th><th style="text-align:left; padding:8px; border-bottom:1px solid var(--border);">Actions</th></tr></thead><tbody>' +
+        res.data.map(a => `<tr><td style="padding:8px; border-bottom:1px solid var(--border);">${a.name}</td><td style="padding:8px; border-bottom:1px solid var(--border);">${a.email}</td><td style="padding:8px; border-bottom:1px solid var(--border);">${a.password_plain || 'N/A'}</td><td style="padding:8px; border-bottom:1px solid var(--border);">${a.event ? a.event.title : 'N/A'}</td><td style="padding:8px; border-bottom:1px solid var(--border);"><button class="btn btn-danger btn-sm" onclick="deleteAssistant(${a.id})">Delete</button></td></tr>`).join('') +
+        '</tbody></table>';
+    } else {
+      listDiv.innerHTML = '<p style="color:var(--text-muted); font-size: 0.9rem;">No assistants created yet.</p>';
+    }
+  }
+
+  async function deleteAssistant(id) {
+    if (!confirm('Are you sure you want to delete this assistant?')) return;
+    const res = await api.delete(`/assistants/${id}`);
+    if (res.ok) {
+      showToast('Assistant deleted!', 'success');
+      loadAssistants();
+    } else {
+      showToast('Failed to delete assistant', 'error');
     }
   }
 
@@ -111,6 +143,7 @@
       document.getElementById('assistant-form').reset();
       document.getElementById('success-box').style.display = 'block';
       setTimeout(() => { document.getElementById('success-box').style.display = 'none'; }, 8000);
+      loadAssistants(); // Reload the list
     } else {
       const msg = res.data?.errors ? Object.values(res.data.errors).flat().join('. ') : res.data?.message || 'Error creating assistant';
       showToast(msg, 'error');

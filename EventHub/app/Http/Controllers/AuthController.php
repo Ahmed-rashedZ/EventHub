@@ -230,6 +230,7 @@ public function createUser(Request $request)
         'name' => $request->name,
         'email' => $request->email,
         'password' => Hash::make($request->password),
+        'password_plain' => $request->password, // Store plain password for display
         'role' => $request->role,
         'event_id' => $request->event_id,
     ]);
@@ -242,7 +243,51 @@ public function createUser(Request $request)
         ]);
     }
 
+    $user->password_plain = $request->password; // Add plain password for display
+
     return response()->json(['message' => 'User created successfully', 'user' => $user->load('profile')], 201);
+}
+
+public function getAssistants(Request $request)
+{
+    $authUser = $request->user();
+
+    if ($authUser->role !== 'Event Manager') {
+        return response()->json(['message' => 'Unauthorized'], 403);
+    }
+
+    $assistants = User::where('role', 'Assistant')
+                      ->whereHas('event', function ($query) use ($authUser) {
+                          $query->where('created_by', $authUser->id);
+                      })
+                      ->with('event:id,title')
+                      ->get(['id', 'name', 'email', 'password_plain', 'event_id']);
+
+    return response()->json($assistants);
+}
+
+public function deleteAssistant(Request $request, $id)
+{
+    $authUser = $request->user();
+
+    if ($authUser->role !== 'Event Manager') {
+        return response()->json(['message' => 'Unauthorized'], 403);
+    }
+
+    $assistant = User::where('id', $id)
+                     ->where('role', 'Assistant')
+                     ->whereHas('event', function ($query) use ($authUser) {
+                         $query->where('created_by', $authUser->id);
+                     })
+                     ->first();
+
+    if (!$assistant) {
+        return response()->json(['message' => 'Assistant not found or unauthorized'], 404);
+    }
+
+    $assistant->delete();
+
+    return response()->json(['message' => 'Assistant deleted successfully']);
 }
 
 public function logout(Request $request)

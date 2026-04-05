@@ -30,6 +30,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/profile', [AuthController::class, 'updateProfile']);
     Route::patch('/profile/availability', [AuthController::class, 'updateAvailability']);
     Route::post('/users', [AuthController::class, 'createUser']); // For Admins and Managers
+    Route::get('/assistants', [AuthController::class, 'getAssistants']); // For Managers
+    Route::delete('/assistants/{id}', [AuthController::class, 'deleteAssistant']); // For Managers
     Route::get('/sponsors/available', [AuthController::class, 'getAvailableSponsors']);
 
     // Auth
