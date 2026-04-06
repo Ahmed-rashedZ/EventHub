@@ -237,7 +237,6 @@ public function createUser(Request $request)
         'name' => $request->name,
         'email' => $request->email,
         'password' => Hash::make($request->password),
-        'password_plain' => $request->password, // Store plain password for display
         'role' => $request->role,
         'event_id' => $request->event_id,
     ]);
@@ -249,8 +248,6 @@ public function createUser(Request $request)
             'is_available' => true,
         ]);
     }
-
-    $user->password_plain = $request->password; // Add plain password for display
 
     return response()->json(['message' => 'User created successfully', 'user' => $user->load('profile')], 201);
 }
@@ -268,7 +265,7 @@ public function getAssistants(Request $request)
                           $query->where('created_by', $authUser->id);
                       })
                       ->with('event:id,title')
-                      ->get(['id', 'name', 'email', 'password_plain', 'event_id']);
+                      ->get(['id', 'name', 'email', 'event_id']);
 
     return response()->json($assistants);
 }
