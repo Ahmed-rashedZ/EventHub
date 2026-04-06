@@ -107,16 +107,25 @@
       <tr>
         <td style="color:var(--text-muted)">${i+1}</td>
         <td>
-          <div style="display:flex;align-items:center;gap:8px">
-            <div class="avatar" style="width:28px;height:28px;font-size:.72rem">${u.name.charAt(0)}</div>
-            <span style="font-weight:500">${u.name}</span>
-          </div>
+          ${(u.role === 'Event Manager' || u.role === 'Sponsor') 
+            ? `<a href="/profile/${u.id}" style="display:flex;align-items:center;gap:8px; text-decoration:none; color:inherit; transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'" title="View Profile">` 
+            : `<div style="display:flex;align-items:center;gap:8px">`
+          }
+            <span style="font-weight:500; ${(u.role === 'Event Manager' || u.role === 'Sponsor') ? 'color:var(--accent);' : ''}">${u.name}</span>
+          ${(u.role === 'Event Manager' || u.role === 'Sponsor') ? `</a>` : `</div>`}
         </td>
         <td style="color:var(--text-muted)">${u.email}</td>
         <td>${roleBadge(u.role)}</td>
         <td style="color:var(--text-muted)">${fmtDateShort(u.created_at)}</td>
         <td>
-          <button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id}, '${u.name}')">🗑 Delete</button>
+          <div style="display:flex; gap:8px;">
+            ${u.role !== 'Admin' ? (
+              u.is_active 
+                ? `<button class="btn btn-warning btn-sm" onclick="toggleUserStatus(${u.id}, '${u.name}', false)">⏸ Suspend</button>` 
+                : `<button class="btn btn-success btn-sm" onclick="toggleUserStatus(${u.id}, '${u.name}', true)">▶ Activate</button>`
+            ) : ''}
+            ${u.role !== 'Admin' ? `<button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id}, '${u.name}')">🗑 Delete</button>` : ''}
+          </div>
         </td>
       </tr>`).join('');
   }
@@ -124,6 +133,15 @@
   function filterTable() {
     const q = document.getElementById('search-input').value.toLowerCase();
     renderUsers(allUsers.filter(u => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || u.role.toLowerCase().includes(q)));
+  }
+
+  async function toggleUserStatus(id, name, isActivate) {
+    const action = isActivate ? 'activate' : 'suspend';
+    if (!confirm(`Are you sure you want to ${action} user "${name}"?
+Suspended users will be logged out and unable to log back in.`)) return;
+    const res = await api.patch(`/analytics/users/${id}/status`);
+    if (res.ok) { showToast(`User ${action}d successfully.`, 'success'); loadUsers(); }
+    else showToast(res.data?.message || 'Error updating status', 'error');
   }
 
   async function deleteUser(id, name) {

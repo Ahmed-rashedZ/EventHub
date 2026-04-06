@@ -47,6 +47,11 @@ public function register(Request $request)
     /** @var \App\Models\User $user */
     $user = Auth::user();
 
+    if (!$user->is_active) {
+        Auth::logout();
+        return response()->json(['message' => 'Your account has been suspended. Please contact support.'], 403);
+    }
+
     $token = $user->createToken('auth_token')->plainTextToken;
 
     return response()->json([

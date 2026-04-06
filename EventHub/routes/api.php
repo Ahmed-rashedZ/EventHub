@@ -73,5 +73,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/analytics/system',       [AnalyticsController::class, 'system']);
     Route::get('/analytics/event/{id}',   [AnalyticsController::class, 'event']);
     Route::get('/analytics/users',        [AnalyticsController::class, 'users']);
+    Route::patch('/analytics/users/{id}/status', [AnalyticsController::class, 'toggleStatus']);
     Route::delete('/analytics/users/{id}',[AnalyticsController::class, 'deleteUser']);
 });

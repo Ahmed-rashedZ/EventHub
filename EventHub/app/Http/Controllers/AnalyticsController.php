@@ -65,7 +65,27 @@ class AnalyticsController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        return response()->json(User::orderBy('created_at', 'desc')->get(['id', 'name', 'email', 'role', 'created_at']));
+        return response()->json(User::with('profile')->orderBy('created_at', 'desc')->get());
+    }
+
+    // PATCH /api/analytics/users/{id}/status
+    public function toggleStatus(Request $request, $id)
+    {
+        if ($request->user()->role !== 'Admin') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        if ($request->user()->id == $id) {
+            return response()->json(['message' => 'Cannot suspend yourself'], 422);
+        }
+        $user = User::findOrFail($id);
+        $user->is_active = !$user->is_active;
+        $user->save();
+        
+        if (!$user->is_active) {
+            $user->tokens()->delete();
+        }
+        
+        return response()->json(['message' => 'User status updated']);
     }
 
     // DELETE /api/analytics/users/{id}
