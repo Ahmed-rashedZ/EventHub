@@ -135,9 +135,9 @@
                         $userImage = $user->image ?? $user->avatar;
                     @endphp
                     @if($userImage)
-                        <img src="{{ asset('storage/' . $userImage) }}" alt="{{ $user->name }}">
+                        <img src="{{ asset('storage/' . $userImage) }}" alt="{{ $user->name }}" style="aspect-ratio: 1/1;">
                     @else
-                        <img src="{{ asset('images/default-avatar.png') }}" alt="{{ $user->name }}">
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=random&size=200" alt="{{ $user->name }}" style="aspect-ratio: 1/1;">
                     @endif
                 </div>
             </div>
@@ -159,12 +159,12 @@
                     <div class="card" style="padding: 1.5rem;">
                         <h3 style="font-size: 1rem; margin-bottom: 1rem; color: var(--accent2); text-transform: uppercase; letter-spacing: 0.05em;">Contact Information</h3>
                         <div style="display: flex; flex-direction: column; gap: 1rem;">
-                            @if(Auth::id() === $user->id)
+                            @if($user->contact_email)
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 <span style="font-size: 1.2rem; min-width: 24px;">📧</span>
                                 <div>
-                                    <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Email</div>
-                                    <div style="font-weight: 500;">{{ $user->email }}</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Contact Email</div>
+                                    <div style="font-weight: 500;">{{ $user->contact_email }}</div>
                                 </div>
                             </div>
                             @endif

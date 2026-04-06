@@ -28,6 +28,7 @@
       width: 140px; height: 140px;
       border-radius: 20px;
       object-fit: cover;
+      aspect-ratio: 1/1;
       border: 4px solid var(--border);
       background: var(--bg-dark);
     }
@@ -199,12 +200,22 @@
       const contactList = document.getElementById('contact-list');
       let html = '';
 
-      if (me && me.id === u.id) {
+      if (u.contact_email) {
           html += `
             <div class="contact-card">
                 <span class="contact-icon">📧</span>
                 <div>
-                    <div style="font-size:0.75rem; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">Primary Email</div>
+                    <div style="font-size:0.75rem; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">Contact Email</div>
+                    <div style="font-weight:500;">${u.contact_email}</div>
+                </div>
+            </div>
+          `;
+      } else if (me && me.id === u.id) {
+          html += `
+            <div class="contact-card">
+                <span class="contact-icon">📧</span>
+                <div>
+                    <div style="font-size:0.75rem; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">Login Email (Private)</div>
                     <div style="font-weight:500;">${u.email}</div>
                 </div>
             </div>

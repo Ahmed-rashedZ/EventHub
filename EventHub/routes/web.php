@@ -16,7 +16,8 @@ Route::middleware('web.auth')->group(function () {
     
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/information', [ProfileController::class, 'updateInformation'])->name('profile.update.info');
+    Route::put('/profile/security', [ProfileController::class, 'updateSecurity'])->name('profile.update.security');
     Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('profile.show');
     Route::view('/user-profile', 'user-profile');
 

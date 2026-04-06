@@ -41,6 +41,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            aspect-ratio: 1/1;
         }
         .social-links-grid {
             display: grid;
@@ -119,7 +120,8 @@
                 @endif
 
                 <div class="profile-card">
-                    <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+                    <h3 style="margin-top: 0; margin-bottom: 1.5rem;">Profile Information</h3>
+                    <form action="{{ route('profile.update.info') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
@@ -156,9 +158,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label">Email Address</label>
-                            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', $user->email) }}" >
-                            @error('email')
+                            <label class="form-label">Contact Email</label>
+                            <input type="email" name="contact_email" class="form-control @error('contact_email') is-invalid @enderror" value="{{ old('contact_email', $user->contact_email) }}" placeholder="For public/communication purposes">
+                            @error('contact_email')
                                 <p style="color: red; font-size: 0.8rem; margin-top: 5px;">{{ $message }}</p>
                             @enderror
                         </div>
@@ -173,13 +175,15 @@
                         </div>
                         @endif
 
-                        <div class="form-group">
-                            <label class="form-label">Phone Number</label>
-                            <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone', $user->phone) }}" placeholder="+218 (092) 000-0000">
-                            @error('phone')
-                                <p style="color: red; font-size: 0.8rem;">{{ $message }}</p>
-                            @enderror
+                        <!-- Phones -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; margin: 2rem 0 1rem; padding-bottom: 0.5rem;">
+                            <h3 style="margin:0; font-size: 1.1rem; font-weight: 600;">Phone Numbers</h3>
+                            <button type="button" class="btn btn-ghost btn-sm" onclick="addPhoneRow()">+ Add Phone</button>
                         </div>
+                        <div id="phones-container"></div>
+                        @error('phones.*')
+                            <p style="color: red; font-size: 0.8rem;">Some phone numbers are invalid (max 20 chars).</p>
+                        @enderror
 
                         <div class="form-group">
                             <label class="form-label">Bio</label>
@@ -200,7 +204,41 @@
 
                         <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: flex-end;">
                             <a href="{{ route('profile.show', $user) }}" class="btn btn-ghost">View Public Profile</a>
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <button type="submit" class="btn btn-primary">Save Information</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="profile-card" style="margin-top: 2rem;">
+                    <h3 style="margin-top: 0; margin-bottom: 1.5rem;">Security Settings</h3>
+                    <form action="{{ route('profile.update.security') }}" method="POST">
+                        @csrf
+                        @method('PUT')
+
+                        <div class="form-group">
+                            <label class="form-label">Login Email</label>
+                            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', $user->email) }}" required>
+                            @error('email')
+                                <p style="color: red; font-size: 0.8rem; margin-top: 5px;">{{ $message }}</p>
+                            @enderror
+                            <small style="color: var(--text-muted); display: block; margin-top: 5px;">This email is used for logging into your account.</small>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 1.5rem;">
+                            <label class="form-label">New Password (leave blank to keep current)</label>
+                            <input type="password" name="password" class="form-control @error('password') is-invalid @enderror">
+                            @error('password')
+                                <p style="color: red; font-size: 0.8rem; margin-top: 5px;">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Confirm New Password</label>
+                            <input type="password" name="password_confirmation" class="form-control">
+                        </div>
+
+                        <div style="margin-top: 2rem; display: flex; justify-content: flex-end;">
+                            <button type="submit" class="btn btn-primary">Update Security Settings</button>
                         </div>
                     </form>
                 </div>
@@ -244,6 +282,27 @@
         };
 
         let rowCount = 0;
+
+        function addPhoneRow(value = '') {
+            const container = document.getElementById('phones-container');
+            const row = document.createElement('div');
+            row.style.cssText = "display: flex; gap: 1rem; margin-bottom: 1rem; align-items: center; animation: slideUp 0.3s ease;";
+            row.innerHTML = `
+                <div style="flex-grow: 1;">
+                    <input type="text" name="phones[]" class="form-control" placeholder="+218 (092) 000-0000" value="${value}" maxlength="20">
+                </div>
+                <button type="button" class="btn btn-ghost" style="color: var(--danger); font-size: 1.25rem; min-width: 44px; height: 44px; padding: 0;" onclick="this.parentElement.remove()">✕</button>
+            `;
+            container.appendChild(row);
+        }
+
+        const existingPhonesStr = @json(old('phone', $user->phone) ?: '');
+        const existingPhones = existingPhonesStr.split(',').map(s => s.trim()).filter(s => s.length > 0);
+        if (existingPhones.length > 0) {
+            existingPhones.forEach(p => addPhoneRow(p));
+        } else {
+            addPhoneRow();
+        }
 
         function addSocialRow(platformKey = '', urlValue = '') {
             const container = document.getElementById('social-links-container');

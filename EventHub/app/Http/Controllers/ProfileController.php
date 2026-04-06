@@ -27,17 +27,18 @@ class ProfileController extends Controller
     }
 
     /**
-     * Update the authenticated user's profile in storage.
+     * Update the authenticated user's profile information.
      */
-    public function update(Request $request)
+    public function updateInformation(Request $request)
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'phone' => 'nullable|string|max:20',
+            'contact_email' => 'nullable|email|max:255',
+            'phones' => 'nullable|array',
+            'phones.*' => 'nullable|string|max:20',
             'bio' => 'nullable|string',
             'company_name' => 'nullable|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -45,7 +46,10 @@ class ProfileController extends Controller
             'social_links.*' => 'nullable|url',
         ]);
 
-        $data = $request->only(['name', 'email', 'phone', 'bio', 'social_links']);
+        $data = $request->only(['name', 'contact_email', 'bio']);
+        $phonesList = array_map('trim', $request->input('phones', []));
+        $data['phone'] = implode(', ', array_filter($phonesList));
+        $data['social_links'] = $request->input('social_links', []);
 
         if ($request->hasFile('image')) {
             $oldImage = $user->image ?? $user->avatar;
@@ -85,6 +89,32 @@ class ProfileController extends Controller
             );
         }
 
-        return redirect()->back()->with('success', 'Profile updated successfully!');
+        return redirect()->back()->with('success', 'Profile information updated successfully!');
+    }
+
+    /**
+     * Update the authenticated user's security settings.
+     */
+    public function updateSecurity(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        $rules = [
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|confirmed',
+        ];
+
+        $request->validate($rules);
+
+        $data = ['email' => $request->input('email')];
+
+        if ($request->filled('password')) {
+            $data['password'] = $request->input('password');
+        }
+
+        $user->update($data);
+
+        return redirect()->back()->with('success', 'Security settings updated successfully!');
     }
 }
