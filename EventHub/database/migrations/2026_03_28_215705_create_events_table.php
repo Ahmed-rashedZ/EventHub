@@ -15,6 +15,7 @@ return new class extends Migration
         $table->id();
         $table->string('title');
         $table->text('description');
+        $table->enum('event_type', ['Conference', 'Workshop', 'Exhibition', 'Entertainment', 'Seminar', 'Festival', 'Other'])->default('Other');
         $table->foreignId('venue_id')->constrained();
         $table->dateTime('start_time');
         $table->dateTime('end_time');

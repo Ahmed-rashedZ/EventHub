@@ -64,10 +64,12 @@ class EventController extends Controller
         $request->validate([
             'title'       => 'required|string|max:255',
             'description' => 'required|string',
+            'event_type'  => 'required|in:Conference,Workshop,Exhibition,Entertainment,Seminar,Festival,Other',
             'venue_id'    => 'required|exists:venues,id',
             'start_time'  => 'required|date|after:now',
             'end_time'    => 'required|date|after:start_time',
             'capacity'    => 'required|integer|min:1',
+            'image'       => 'nullable|image|max:2048',
         ]);
 
         $venue = \App\Models\Venue::find($request->venue_id);
@@ -94,15 +96,22 @@ class EventController extends Controller
             ], 422);
         }
 
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('events', 'public');
+        }
+
         $event = Event::create([
             'title'       => $request->title,
             'description' => $request->description,
+            'event_type'  => $request->event_type,
             'venue_id'    => $request->venue_id,
             'start_time'  => $request->start_time,
             'end_time'    => $request->end_time,
             'capacity'    => $request->capacity,
             'status'      => 'pending',
             'created_by'  => $request->user()->id,
+            'image'       => $imagePath,
         ]);
 
         return response()->json($event->load('venue'), 201);

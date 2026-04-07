@@ -12,6 +12,7 @@ class Event extends Model
     protected $fillable = [
         'title',
         'description',
+        'event_type',
         'location',
         'venue_id',
         'created_by',
@@ -21,6 +22,7 @@ class Event extends Model
         'status',
         'is_sponsorship_open',
         'rejection_reason',
+        'image',
     ];
 
     protected $appends = [
