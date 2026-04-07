@@ -116,7 +116,10 @@
              <label for="spon-tog-${ev.id}" style="font-size:12px; cursor:pointer;">Open</label>
            </div>
         </td>
-        <td>${badge(ev.status)} <button class="btn btn-sm btn-info" onclick="showEventDetails(${ev.id})">Details</button></td>
+        <td>
+          <div style="margin-bottom:6px;">${badge(ev.status)} ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''}</div>
+          <button class="btn btn-sm btn-info" onclick="showEventDetails(${ev.id})">Details</button>
+        </td>
       </tr>`).join('');
 }
 
@@ -136,7 +139,16 @@ function showEventDetails(eventId) {
       <div class="event-icon">🎫</div>
       <div class="modal-body event-details">
         <h3>${ev.title}</h3>
-        <div class="event-status">${ev.status ? badge(ev.status) : ''}</div>
+        <div class="event-status">
+          ${ev.status ? badge(ev.status) : ''} 
+          ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''}
+        </div>
+        ${ev.status === 'rejected' && ev.rejection_reason ? `
+          <div style="background:rgba(239, 68, 68, 0.1); border-left:4px solid var(--danger); padding:12px; margin:10px 0; border-radius:4px;">
+            <div style="color:var(--danger); font-weight:700; font-size:0.8rem; margin-bottom:4px; text-transform:uppercase;">Rejection Reason</div>
+            <div style="color:var(--text-primary); font-size:0.95rem;">${ev.rejection_reason}</div>
+          </div>
+        ` : ''}
         <div><b>Description:</b> <span>${ev.description || '-'}</span></div>
         <div class="event-details-row">
           <div><b>Venue:</b> <span>${ev.venue?.name || '-'}</span></div>

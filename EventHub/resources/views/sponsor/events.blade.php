@@ -173,7 +173,7 @@
             </div>
         </td>
         <td style="color:var(--text-muted)">${e.location || e.venue?.name || 'TBA'}</td>
-        <td style="color:var(--text-muted)">${fmtDateShort(e.start_time)}</td>
+        <td style="color:var(--text-muted)">${fmtDateShort(e.start_time)} <div style="margin-top:4px;">${timeBadge(e.time_status)}</div></td>
         <td style="color:var(--text-muted)">${e.capacity ? e.capacity.toLocaleString() : 'N/A'}</td>
         <td>
            <button class="btn btn-primary req-btn" onclick="openModal(${e.id}, '${e.title.replace(/'/g, "\\'")}')" ${sponsorAvailability !== true ? 'disabled' : ''} title="${sponsorAvailability === true ? 'Request to sponsor' : (sponsorAvailability === false ? 'Turn on Open to Sponsorship on your dashboard or profile' : 'Loading visibility…')}">Apply</button>

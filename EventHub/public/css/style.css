@@ -322,6 +322,11 @@ tbody tr:last-child td { border-bottom: none; }
 .badge-used     { background: rgba(110,64,242,.15); color: #a78bfa; }
 .badge-unused   { background: rgba(255,255,255,.08); color: var(--text-muted); }
 
+.badge-upcoming { background: rgba(34,211,238,.15); color: var(--accent2); }
+.badge-live     { background: rgba(34,197,94,.25);  color: #fff; box-shadow: 0 0 0 rgba(34,197,94, 0.4); animation: pulseLive 2s infinite; }
+.badge-ended    { background: rgba(255,255,255,.05); color: var(--text-muted); opacity: 0.8; }
+@keyframes pulseLive { 0% { box-shadow: 0 0 0 0 rgba(34,197,94, 0.4); } 70% { box-shadow: 0 0 0 5px rgba(34,197,94, 0); } 100% { box-shadow: 0 0 0 0 rgba(34,197,94, 0); } }
+
 .role-badge {
   display: inline-flex;
   align-items: center;

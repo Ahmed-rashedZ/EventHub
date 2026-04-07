@@ -20,6 +20,11 @@ class Event extends Model
         'capacity',
         'status',
         'is_sponsorship_open',
+        'rejection_reason',
+    ];
+
+    protected $appends = [
+        'time_status',
     ];
 
     protected $casts = [
@@ -41,6 +46,36 @@ class Event extends Model
     public function tickets()
     {
         return $this->hasMany(Ticket::class);
+    }
+
+    // ─── Time-Based Status Logic ─────────────────────────────────────────────
+
+    public function getTimeStatusAttribute()
+    {
+        $now = now();
+        if ($now < $this->start_time) {
+            return 'upcoming';
+        } elseif ($now > $this->end_time) {
+            return 'ended';
+        } else {
+            return 'live';
+        }
+    }
+
+    public function scopeUpcoming($query)
+    {
+        return $query->where('start_time', '>', now());
+    }
+
+    public function scopeLive($query)
+    {
+        return $query->where('start_time', '<=', now())
+                     ->where('end_time', '>=', now());
+    }
+
+    public function scopeEnded($query)
+    {
+        return $query->where('end_time', '<', now());
     }
 
     /**

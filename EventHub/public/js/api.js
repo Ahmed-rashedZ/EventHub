@@ -121,6 +121,16 @@ function badge(status) {
     return `<span class="badge ${cls}">${status}</span>`;
 }
 
+function timeBadge(time_status) {
+    if (!time_status) return '';
+    const cls = {
+        upcoming: 'badge-upcoming',
+        live: 'badge-live',
+        ended: 'badge-ended'
+    }[time_status] || 'badge-unused';
+    return `<span class="badge ${cls}">${time_status}</span>`;
+}
+
 function roleBadge(role) {
     const map = { Admin: 'role-admin', 'Event Manager': 'role-manager', Sponsor: 'role-sponsor', User: 'role-user', Assistant: 'role-assistant' };
     return `<span class="role-badge ${map[role] || ''}">${role}</span>`;

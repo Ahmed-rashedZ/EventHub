@@ -131,6 +131,7 @@ class EventController extends Controller
 
         $event = Event::findOrFail($id);
         $event->status = 'rejected';
+        $event->rejection_reason = $request->input('rejection_reason');
         $event->save();
 
         return response()->json(['message' => 'Event rejected', 'event' => $event]);

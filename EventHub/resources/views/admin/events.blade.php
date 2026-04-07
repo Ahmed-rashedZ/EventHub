@@ -81,9 +81,10 @@
         <td style="color:var(--text-muted)">${ev.creator?.name || '—'}</td>
         <td style="color:var(--text-muted);white-space:nowrap">${fmtDateShort(ev.start_time)}</td>
         <td style="color:var(--text-muted)">${ev.capacity}</td>
-        <td>${badge(ev.status)}</td>
+        <td>${badge(ev.status)} ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''}</td>
         <td style="display:flex;gap:6px;padding:14px 16px">
-          ${ev.status === 'pending' ? `<button class="btn btn-success btn-sm" onclick="approve(${ev.id})">✓ Approve</button><button class="btn btn-danger btn-sm" onclick="reject(${ev.id})">✕ Reject</button>` : '—'}
+          <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${ev.id})" title="View Details">ℹ️ Details</button>
+          ${ev.status === 'pending' ? `<button class="btn btn-success btn-sm" onclick="approve(${ev.id})">✓ Approve</button><button class="btn btn-danger btn-sm" onclick="reject(${ev.id})">✕ Reject</button>` : ''}
         </td>
       </tr>`).join('');
   }
@@ -94,11 +95,112 @@
     else showToast(res.data?.message || 'Error', 'error');
   }
 
-  async function reject(id) {
-    const res = await api.put(`/events/${id}/reject`);
-    if (res.ok) { showToast('Event rejected.', 'info'); loadEvents(); }
+  function reject(id) {
+    document.getElementById('reject-event-id').value = id;
+    document.getElementById('rejection-modal').classList.add('open');
+  }
+
+  async function submitRejection(e) {
+    e.preventDefault();
+    const id = document.getElementById('reject-event-id').value;
+    const reason = document.getElementById('r-reason').value;
+    
+    const res = await api.put(`/events/${id}/reject`, { rejection_reason: reason });
+    if (res.ok) { 
+      showToast('Event rejected.', 'info'); 
+      closeRejectionModal();
+      loadEvents(); 
+    }
     else showToast(res.data?.message || 'Error', 'error');
   }
+
+  function closeRejectionModal() {
+    document.getElementById('rejection-modal').classList.remove('open');
+    document.getElementById('rejection-form').reset();
+  }
+
+  function showEventDetails(eventId) {
+    const modal = document.getElementById('event-details-modal');
+    const content = document.getElementById('event-details-content');
+    modal.classList.add('open');
+    content.innerHTML = '<div class="spinner" style="margin:auto"></div>';
+    api.get(`/events/${eventId}`).then(res => {
+      if (!res.ok) {
+        content.innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><p>Could not fetch event details</p></div>';
+        return;
+      }
+      const ev = res.data;
+      content.innerHTML = `
+        <div class="event-icon">🎫</div>
+        <div class="modal-body event-details">
+          <h3>${ev.title}</h3>
+          <div class="event-status">
+            ${ev.status ? badge(ev.status) : ''} 
+            ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''}
+          </div>
+          ${ev.status === 'rejected' && ev.rejection_reason ? `
+            <div style="background:rgba(239, 68, 68, 0.1); border-left:4px solid var(--danger); padding:12px; margin:10px 0; border-radius:4px;">
+              <div style="color:var(--danger); font-weight:700; font-size:0.8rem; margin-bottom:4px; text-transform:uppercase;">Rejection Reason</div>
+              <div style="color:var(--text-primary); font-size:0.95rem;">${ev.rejection_reason}</div>
+            </div>
+          ` : ''}
+          <div><b>Description:</b> <span>${ev.description || '-'}</span></div>
+          <div class="event-details-row">
+            <div><b>Venue:</b> <span>${ev.venue?.name || '-'}</span></div>
+            <div><b>Location:</b> <span>${ev.venue?.location || '-'}</span></div>
+          </div>
+          <div class="event-details-row">
+            <div><b>Start:</b> <span>${fmtDate(ev.start_time)}</span></div>
+            <div><b>End:</b> <span>${fmtDate(ev.end_time)}</span></div>
+          </div>
+          <div class="event-details-row">
+            <div><b>Capacity:</b> <span>${ev.capacity}</span></div>
+            <div><b>Tickets:</b> <span>${ev.tickets_count ?? '—'}</span></div>
+          </div>
+          <div class="event-details-row">
+            <div><b>Created by:</b> <span>${ev.creator?.name || '-'}</span></div>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  function closeEventDetailsModal() {
+    document.getElementById('event-details-modal').classList.remove('open');
+    document.getElementById('event-details-content').innerHTML = '';
+  }
 </script>
+
+<!-- Event Details Modal -->
+<div class="modal-overlay" id="event-details-modal">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-header">
+      <h3 class="modal-title">Event Details</h3>
+      <button class="modal-close" onclick="closeEventDetailsModal()">✕</button>
+    </div>
+    <div class="modal-body" id="event-details-content" style="padding:16px;min-height:120px"></div>
+  </div>
+</div>
+
+<!-- Rejection Modal -->
+<div class="modal-overlay" id="rejection-modal">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-header">
+      <h3 class="modal-title">Reason for Rejection</h3>
+      <button class="modal-close" onclick="closeRejectionModal()">✕</button>
+    </div>
+    <form id="rejection-form" onsubmit="submitRejection(event)">
+      <input type="hidden" id="reject-event-id">
+      <div class="form-group">
+        <label class="form-label" style="font-size:0.75rem;">Explain why this event is being rejected</label>
+        <textarea id="r-reason" class="form-control" rows="4" placeholder="e.g. Venue capacity mismatch, missing details..." required></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeRejectionModal()">Cancel</button>
+        <button type="submit" class="btn btn-danger">Confirm Rejection</button>
+      </div>
+    </form>
+  </div>
+</div>
 </body>
 </html>
