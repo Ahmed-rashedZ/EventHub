@@ -59,8 +59,9 @@
       </div>
       <div class="form-grid">
         <div class="form-group">
-          <label class="form-label">Location</label>
-          <input id="v-location" type="text" class="form-control" placeholder="Riyadh, KSA" required/>
+          <label class="form-label">Google Maps Link</label>
+          <input id="v-location" type="url" class="form-control" placeholder="https://maps.google.com/..." required/>
+          <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block">افتح Google Maps → اختر الموقع → انسخ رابط المشاركة والصقه هنا</small>
         </div>
         <div class="form-group">
           <label class="form-label">Capacity</label>
@@ -98,12 +99,11 @@
       <tr>
         <td style="color:var(--text-muted)">${i+1}</td>
         <td><div style="font-weight:600">${v.name}</div></td>
-        <td style="color:var(--text-muted)">📍 ${v.location}</td>
+        <td>${v.location && v.location.startsWith('http') ? `<a href="${v.location}" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;display:inline-flex;align-items:center;gap:4px">📍 Open in Maps <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>` : `<span style="color:var(--text-muted)">📍 ${v.location || '—'}</span>`}</td>
         <td style="color:var(--text-muted)">${v.capacity.toLocaleString()}</td>
         <td>${badge(v.status)}</td>
         <td style="display:flex;gap:6px;padding:14px 16px">
           <button class="btn btn-ghost btn-sm" onclick='editVenue(${JSON.stringify(v)})'>✏️ Edit</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteVenue(${v.id})">🗑</button>
         </td>
       </tr>`).join('');
   }
@@ -130,12 +130,7 @@
     else showToast(res.data?.message || 'Error', 'error');
   });
 
-  async function deleteVenue(id) {
-    if (!confirm('Delete this venue?')) return;
-    const res = await api.delete(`/venues/${id}`);
-    if (res.ok) { showToast('Venue deleted', 'success'); loadVenues(); }
-    else showToast(res.data?.message || 'Error', 'error');
-  }
+  // Venue deletion is disabled to preserve archive history
 </script>
 </body>
 </html>

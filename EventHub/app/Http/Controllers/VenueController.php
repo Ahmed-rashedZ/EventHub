@@ -23,7 +23,7 @@ class VenueController extends Controller
 
         $request->validate([
             'name'     => 'required|string|max:255',
-            'location' => 'required|string|max:255',
+            'location' => 'required|url|max:500',
             'capacity' => 'required|integer|min:1',
         ]);
 
@@ -47,17 +47,7 @@ class VenueController extends Controller
 
     public function destroy(Request $request, $id)
     {
-        $this->requireRole($request, 'Admin');
-
-        $venue = Venue::findOrFail($id);
-
-        // Check no events are using it
-        if ($venue->events()->exists()) {
-            return response()->json(['message' => 'Venue has events, cannot delete'], 422);
-        }
-
-        $venue->delete();
-        return response()->json(['message' => 'Venue deleted']);
+        return response()->json(['message' => 'Venue deletion is disabled to preserve archive records'], 403);
     }
 
     private function requireRole(Request $request, string $role)
