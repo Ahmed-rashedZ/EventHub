@@ -27,7 +27,17 @@
   <main class="main-content">
     <div class="topbar">
       <div><h1 class="page-title">My Events</h1><p class="page-subtitle">Create and manage your events</p></div>
-      <div class="topbar-actions">
+      <div class="topbar-actions" style="display:flex;gap:10px;align-items:center">
+        <div style="position:relative">
+          <input id="search-input" type="text" class="form-control" placeholder="Search by event name..." style="width:260px;padding-left:36px" oninput="applyFilter()">
+          <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted)" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        </div>
+        <select id="filter-status" class="form-control" style="width:160px" onchange="applyFilter()">
+          <option value="">All Events</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+        </select>
         <button class="btn btn-primary" onclick="openModal()">+ Create Event</button>
       </div>
     </div>
@@ -35,9 +45,9 @@
     <div class="card">
       <div class="table-wrap">
         <table>
-          <thead><tr><th>#</th><th>Title</th><th>Venue</th><th>Date</th><th>Capacity</th><th>Sponsorships</th><th>Status</th></tr></thead>
+          <thead><tr><th>#</th><th>Title</th><th>Venue</th><th>Start</th><th>Capacity</th><th>Sponsorships</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody id="events-body">
-            <tr class="loading-row"><td colspan="7"><div class="spinner" style="margin:auto"></div></td></tr>
+            <tr class="loading-row"><td colspan="8"><div class="spinner" style="margin:auto"></div></td></tr>
           </tbody>
         </table>
       </div>
@@ -111,22 +121,40 @@
 <script src="/js/api.js"></script>
 <script src="/js/auth.js"></script>
 <script>
+  let allEvents = [];
   const user = requireRole('Event Manager');
   if (user) { populateSidebar(user); setActiveNav(); loadEvents(); loadVenues(); }
 
   async function loadEvents() {
     const res = await api.get('/events/list/my');
     const tbody = document.getElementById('events-body');
-    if (!res.ok || !res.data.length) {
-      tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📅</div><p>No events yet</p></div></td></tr>';
-      return;
+    if (!res.ok) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--danger)">Failed to load</td></tr>'; return; }
+    allEvents = res.data;
+    applyFilter();
+  }
+
+  function applyFilter() {
+    const f = document.getElementById('filter-status').value;
+    const q = (document.getElementById('search-input').value || '').toLowerCase().trim();
+    let filtered = f ? allEvents.filter(e => e.status === f) : [...allEvents];
+    if (q) {
+      filtered = filtered.filter(e => {
+        const title = (e.title || '').toLowerCase();
+        return title.includes(q);
+      });
     }
-    tbody.innerHTML = res.data.map((ev, i) => `
+    renderEvents(filtered);
+  }
+
+  function renderEvents(events) {
+    const tbody = document.getElementById('events-body');
+    if (!events.length) { tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">📅</div><p>No events found</p></div></td></tr>'; return; }
+    tbody.innerHTML = events.map((ev, i) => `
       <tr>
         <td style="color:var(--text-muted)">${i+1}</td>
-        <td><div style="font-weight:600">${ev.title}</div><div style="font-size:.72rem;color:var(--text-muted)">${ev.description.substring(0,60)}…</div></td>
+        <td><div style="font-weight:600">${ev.title}</div></td>
         <td style="color:var(--text-muted)">${ev.venue?.name || '—'}</td>
-        <td style="white-space:nowrap;color:var(--text-muted)">${fmtDateShort(ev.start_time)}</td>
+        <td style="color:var(--text-muted);white-space:nowrap">${fmtDateShort(ev.start_time)}</td>
         <td style="color:var(--text-muted)">${ev.capacity}</td>
         <td>
            <div style="display:flex; align-items:center;">
@@ -134,14 +162,15 @@
              <label for="spon-tog-${ev.id}" style="font-size:12px; cursor:pointer;">Open</label>
            </div>
         </td>
-        <td>
-          <div style="margin-bottom:6px;">${badge(ev.status)} ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''}</div>
-          <button class="btn btn-sm btn-info" onclick="showEventDetails(${ev.id})">Details</button>
+        <td>${badge(ev.status)} ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''}</td>
+        <td style="display:flex;gap:6px;padding:14px 16px;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${ev.id})" title="View Details">ℹ️ Details</button>
+          <button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="showEventStats(${ev.id})" title="View Statistics">📊 Stats</button>
         </td>
       </tr>`).join('');
-}
+  }
 
-// Modal for event details (يجب أن تكون في النطاق العام)
+// Modal for event details
 const typeIcons = { Conference: '🎤', Workshop: '🔧', Exhibition: '🖼️', Entertainment: '🎭', Seminar: '📚', Festival: '🎉', Other: '📌' };
 const typeColors = { Conference: '#3b82f6', Workshop: '#10b981', Exhibition: '#f59e0b', Entertainment: '#ec4899', Seminar: '#8b5cf6', Festival: '#f97316', Other: '#6b7280' };
 
@@ -254,6 +283,77 @@ function closeEventDetailsModal() {
   document.getElementById('event-details-content').innerHTML = '';
 }
 
+// ── Event Statistics Modal ──
+function showEventStats(eventId) {
+  const modal = document.getElementById('event-stats-modal');
+  const content = document.getElementById('event-stats-content');
+  modal.classList.add('open');
+  content.innerHTML = '<div class="spinner" style="margin:auto"></div>';
+  Promise.all([
+    api.get(`/analytics/event/${eventId}`),
+    api.get(`/events/${eventId}`)
+  ]).then(([statsRes, eventRes]) => {
+    if (!statsRes.ok) {
+      content.innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><p>Could not fetch statistics</p></div>';
+      return;
+    }
+    const s = statsRes.data;
+    const ev = eventRes.ok ? eventRes.data : s.event;
+    const fillRate = ev.capacity > 0 ? Math.round((s.registered_count / ev.capacity) * 100 * 10) / 10 : 0;
+    const frColor = fillRate > 80 ? '#22c55e' : fillRate > 50 ? '#f59e0b' : '#ef4444';
+    const arColor = s.attendance_rate > 80 ? '#22c55e' : s.attendance_rate > 50 ? '#f59e0b' : '#3b82f6';
+
+    content.innerHTML = `
+      <div class="es-header">
+        <h3 class="es-title">📊 ${ev.title || 'Event'} — Statistics</h3>
+      </div>
+      <div class="es-body">
+        <div class="es-metrics">
+          <div class="es-metric">
+            <div class="es-metric-icon" style="background:rgba(110,64,242,.15)">🎟️</div>
+            <div class="es-metric-label">Registered</div>
+            <div class="es-metric-value">${s.registered_count}</div>
+            <div class="es-metric-sub">of ${ev.capacity} capacity</div>
+          </div>
+          <div class="es-metric">
+            <div class="es-metric-icon" style="background:rgba(34,197,94,.15)">✅</div>
+            <div class="es-metric-label">Attended</div>
+            <div class="es-metric-value">${s.attended_count}</div>
+            <div class="es-metric-sub">checked in</div>
+          </div>
+        </div>
+
+        <div class="es-bars">
+          <div class="es-bar-group">
+            <div class="es-bar-header">
+              <span>Fill Rate</span>
+              <span style="font-weight:700;color:#fff">${s.registered_count}/${ev.capacity} (${fillRate}%)</span>
+            </div>
+            <div class="es-bar-track"><div class="es-bar-fill" style="width:${fillRate}%;background:${frColor}"></div></div>
+          </div>
+          <div class="es-bar-group">
+            <div class="es-bar-header">
+              <span>Attendance Rate</span>
+              <span style="font-weight:700;color:#fff">${s.attended_count}/${s.registered_count} (${s.attendance_rate}%)</span>
+            </div>
+            <div class="es-bar-track"><div class="es-bar-fill" style="width:${s.attendance_rate}%;background:${arColor}"></div></div>
+          </div>
+        </div>
+
+        <div class="es-info-row">
+          <div class="es-info-item"><span class="es-info-label">Event Status</span><span>${badge(ev.status)}</span></div>
+          <div class="es-info-item"><span class="es-info-label">Venue</span><span style="color:#fff;font-weight:600">${ev.venue?.name || '—'}</span></div>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function closeEventStatsModal() {
+  document.getElementById('event-stats-modal').classList.remove('open');
+  document.getElementById('event-stats-content').innerHTML = '';
+}
+
 async function toggleSponsorship(eventId, checked) {
     const res = await api.patch(`/events/${eventId}/toggle-sponsorship`);
     if (res.ok) {
@@ -309,7 +409,7 @@ document.getElementById('event-form').addEventListener('submit', async (e) => {
 </div>
 
 <style>
-/* ── Event Details Modal ───────────────────────────────── */
+/* ── Event Details Modal ───────────────────────────── */
 .ed-modal {
   max-width: 560px;
   padding: 0;
@@ -321,37 +421,28 @@ document.getElementById('event-form').addEventListener('submit', async (e) => {
 }
 .ed-close-btn {
   position: absolute;
-  top: 14px;
-  right: 14px;
+  top: 14px; right: 14px;
   z-index: 20;
   background: rgba(0,0,0,0.4);
   border: 1px solid rgba(255,255,255,0.15);
   color: #fff;
-  width: 32px;
-  height: 32px;
+  width: 32px; height: 32px;
   border-radius: 50%;
   font-size: 1rem;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
+  display: flex; align-items: center; justify-content: center;
   transition: background 0.2s;
 }
 .ed-close-btn:hover { background: rgba(255,255,255,0.15); }
 .ed-content { position: relative; }
 .ed-banner {
-  width: 100%;
-  height: 200px;
-  background-size: cover;
-  background-position: center;
+  width: 100%; height: 200px;
+  background-size: cover; background-position: center;
   position: relative;
 }
 .ed-banner-placeholder {
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
 }
 .ed-banner-emoji { font-size: 4.5rem; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5)); }
 .ed-banner-fade {
@@ -360,117 +451,154 @@ document.getElementById('event-form').addEventListener('submit', async (e) => {
   height: 80px;
   background: linear-gradient(to bottom, transparent, #13131f);
 }
-.ed-body {
-  padding: 20px 24px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-/* Header */
+.ed-body { padding: 20px 24px 24px; display: flex; flex-direction: column; gap: 20px; }
 .ed-header { display: flex; flex-direction: column; gap: 10px; }
-.ed-title-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.ed-title {
-  margin: 0;
-  font-size: 1.55rem;
-  font-weight: 800;
-  color: #fff;
-  line-height: 1.2;
-  flex: 1;
-  min-width: 0;
-}
+.ed-title-row { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.ed-title { margin: 0; font-size: 1.55rem; font-weight: 800; color: #fff; line-height: 1.2; flex: 1; min-width: 0; }
 .ed-type-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
+  display: inline-flex; align-items: center; gap: 5px;
   background: color-mix(in srgb, var(--tcolor) 18%, transparent);
   color: var(--tcolor);
   border: 1px solid color-mix(in srgb, var(--tcolor) 40%, transparent);
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  white-space: nowrap;
-  flex-shrink: 0;
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 0.78rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  white-space: nowrap; flex-shrink: 0;
 }
 .ed-badges { display: flex; gap: 8px; flex-wrap: wrap; }
-/* Rejection */
-.ed-rejection {
-  background: rgba(239,68,68,0.09);
-  border-left: 3px solid #ef4444;
-  border-radius: 8px;
-  padding: 12px 14px;
-}
-.ed-rej-label {
-  display: block;
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #ef4444;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 4px;
-}
+.ed-rejection { background: rgba(239,68,68,0.09); border-left: 3px solid #ef4444; border-radius: 8px; padding: 12px 14px; }
+.ed-rej-label { display: block; font-size: 0.72rem; font-weight: 700; color: #ef4444; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
 .ed-rejection p { margin: 0; color: #e2e8f0; font-size: 0.9rem; line-height: 1.5; }
-/* Section */
-.ed-section-label {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: rgba(255,255,255,0.35);
-  margin-bottom: 6px;
-}
-.ed-description {
-  margin: 0;
-  color: rgba(255,255,255,0.75);
-  font-size: 0.95rem;
-  line-height: 1.7;
-}
-/* Info Grid */
-.ed-info-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-.ed-info-card {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 12px;
-  padding: 12px 14px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  transition: background 0.2s;
-}
+.ed-section-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.35); margin-bottom: 6px; }
+.ed-description { margin: 0; color: rgba(255,255,255,0.75); font-size: 0.95rem; line-height: 1.7; }
+.ed-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ed-info-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; transition: background 0.2s; }
 .ed-info-card:hover { background: rgba(255,255,255,0.07); }
 .ed-info-icon { font-size: 1.3rem; flex-shrink: 0; }
-.ed-info-label {
-  font-size: 0.68rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 2px;
-}
+.ed-info-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
 .ed-info-value { font-weight: 600; font-size: 0.88rem; color: #fff; }
 .ed-info-accent  .ed-info-label { color: var(--accent); }
 .ed-info-accent2 .ed-info-label { color: var(--accent2); }
 .ed-info-warning .ed-info-label { color: var(--warning); }
-/* Footer */
-.ed-footer {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding-top: 4px;
-  border-top: 1px solid rgba(255,255,255,0.06);
-}
+.ed-footer { display: flex; align-items: center; gap: 8px; padding-top: 4px; border-top: 1px solid rgba(255,255,255,0.06); }
 .ed-footer-label { font-size: 0.8rem; color: rgba(255,255,255,0.35); }
 .ed-footer-name  { font-size: 0.85rem; font-weight: 600; color: #fff; }
+</style>
+
+<!-- Event Stats Modal -->
+<div class="modal-overlay" id="event-stats-modal">
+  <div class="modal es-modal">
+    <button class="ed-close-btn" onclick="closeEventStatsModal()">✕</button>
+    <div id="event-stats-content" class="es-content"></div>
+  </div>
+</div>
+
+<style>
+.es-modal {
+  max-width: 520px;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+  background: #13131f;
+}
+.es-content { position: relative; }
+.es-header {
+  padding: 24px 28px 0;
+}
+.es-title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #fff;
+}
+.es-body {
+  padding: 20px 28px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.es-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.es-metric {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 14px;
+  padding: 18px;
+  text-align: center;
+  transition: background 0.2s;
+}
+.es-metric:hover { background: rgba(255,255,255,0.07); }
+.es-metric-icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  display: grid; place-items: center;
+  font-size: 1.3rem;
+  margin: 0 auto 10px;
+}
+.es-metric-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.es-metric-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.es-metric-sub {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+.es-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.es-bar-group {}
+.es-bar-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.es-bar-track {
+  background: rgba(255,255,255,0.06);
+  border-radius: 6px;
+  height: 10px;
+  overflow: hidden;
+}
+.es-bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.8s ease;
+}
+.es-info-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.es-info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.es-info-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
 </style>
 </body>
 </html>
