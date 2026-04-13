@@ -149,7 +149,7 @@ class EventController extends Controller
     // GET /api/events/{id}  – single event details
     public function show($id)
     {
-        $event = Event::with('venue', 'creator:id,name')->findOrFail($id);
+        $event = Event::with('venue', 'creator:id,name', 'sponsors.profile')->findOrFail($id);
         return response()->json($event);
     }
 

@@ -66,6 +66,7 @@
       <span class="nav-section-label">Opportunities</span>
       <a class="nav-item" href="/sponsor/events"><span class="nav-icon">🌍</span> Browse Events</a>
       <a class="nav-item" href="/sponsor/requests"><span class="nav-icon">💼</span> Sponsorships</a>
+      <a class="nav-item" href="/sponsor/history"><span class="nav-icon">📜</span> History</a>
       <span class="nav-section-label">Settings</span>
       <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
     </nav>

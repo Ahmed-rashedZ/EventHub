@@ -27,10 +27,6 @@
   <main class="main-content">
     <div class="topbar">
       <div><h1 class="page-title">Sponsorship Requests</h1><p class="page-subtitle">Request sponsors for your events</p></div>
-      <div class="topbar-actions">
-        <!-- New Request logic tied to sponsors now -->
-        <button class="btn btn-primary" onclick="openModal()">+ General Request</button>
-      </div>
     </div>
 
     <!-- Available Sponsors Section -->
@@ -50,7 +46,7 @@
     <div class="card">
       <div class="table-wrap">
         <table>
-          <thead><tr><th>#</th><th>Event</th><th>Message</th><th>Sponsor</th><th>Status</th><th>Date</th></tr></thead>
+          <thead><tr><th>#</th><th>Event</th><th>Message</th><th>Sponsor</th><th>Status</th><th>Action</th></tr></thead>
           <tbody id="req-body">
             <tr class="loading-row"><td colspan="6"><div class="spinner" style="margin:auto"></div></td></tr>
           </tbody>
@@ -91,6 +87,74 @@
   </div>
 </div>
 
+<!-- View Message Modal -->
+<div class="modal-overlay" id="msg-modal">
+  <div class="modal" style="max-width: 500px;">
+    <div class="modal-header">
+      <h3 class="modal-title">Sponsorship Message</h3>
+      <button class="modal-close" onclick="closeMsgModal()">✕</button>
+    </div>
+    <div class="modal-body" id="msg-content" style="padding: 20px; font-size: 15px; line-height: 1.6; color: var(--text);"></div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" onclick="closeMsgModal()" style="width: 100%;">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Accept Sponsorship Modal -->
+<div class="modal-overlay" id="accept-modal">
+  <div class="modal" style="max-width: 400px;">
+    <div class="modal-header">
+      <h3 class="modal-title">Accept Sponsorship</h3>
+      <button class="modal-close" onclick="closeAcceptModal()">✕</button>
+    </div>
+    <form id="accept-form" onsubmit="submitAccept(event)">
+      <input type="hidden" id="accept-req-id">
+      <div class="form-group">
+        <label class="form-label" style="font-size: 0.8rem;">Select Sponsor Tier / Rank</label>
+        <select id="a-tier" class="form-control" required style="cursor: pointer;">
+          <option value="diamond">💎 Diamond Sponsor</option>
+          <option value="gold">🥇 Gold Sponsor</option>
+          <option value="silver">🥈 Silver Sponsor</option>
+          <option value="bronze" selected>🥉 Bronze Sponsor</option>
+        </select>
+        <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;">This rank will determine how the sponsor is displayed to the public.</p>
+      </div>
+      <div class="modal-footer" style="margin-top: 20px;">
+        <button type="button" class="btn btn-ghost" onclick="closeAcceptModal()">Cancel</button>
+        <button type="submit" class="btn btn-success">✅ Confirm Acceptance</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Rank Modal -->
+<div class="modal-overlay" id="edit-rank-modal">
+  <div class="modal" style="max-width: 400px;">
+    <div class="modal-header">
+      <h3 class="modal-title">Edit Sponsor Rank</h3>
+      <button class="modal-close" onclick="closeEditRankModal()">✕</button>
+    </div>
+    <form id="edit-rank-form" onsubmit="submitEditRank(event)">
+      <input type="hidden" id="edit-req-id">
+      <div class="form-group">
+        <label class="form-label" style="font-size: 0.8rem;">Select New Sponsor Tier / Rank</label>
+        <select id="e-tier" class="form-control" required style="cursor: pointer;">
+          <option value="diamond">💎 Diamond Sponsor</option>
+          <option value="gold">🥇 Gold Sponsor</option>
+          <option value="silver">🥈 Silver Sponsor</option>
+          <option value="bronze">🥉 Bronze Sponsor</option>
+        </select>
+        <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;">This rank will immediately update across all event details.</p>
+      </div>
+      <div class="modal-footer" style="margin-top: 20px;">
+        <button type="button" class="btn btn-ghost" onclick="closeEditRankModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <div id="toast-container"></div>
 <script src="/js/api.js"></script>
 <script src="/js/auth.js"></script>
@@ -106,22 +170,25 @@
       <tr>
         <td style="color:var(--text-muted)">${i+1}</td>
         <td><div style="font-weight:600">${r.event?.title || '—'}</div></td>
-        <td style="color:var(--text-muted)">${r.message ? r.message.substring(0,60)+'…' : '—'}</td>
+        <td style="color:var(--text-muted)">
+            ${r.message ? `<button class="btn btn-ghost btn-sm" onclick="showMsg('${r.message.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n')}')" style="font-size:12px; padding: 4px 8px;">💬 Read Message</button>` : '—'}
+        </td>
         <td style="color:var(--accent2); font-weight:500; cursor:pointer;" onclick="${r.sponsor_id ? `navigateToProfile(${r.sponsor_id})` : ''}">
             ${r.sponsor?.name || 'Open'}
         </td>
         <td>
           ${badge(r.status)}
           ${r.status === 'accepted' ? `<a href="/storage/agreements/agreement_${r.id}.pdf" target="_blank" style="margin-left:8px;font-size:12px;text-decoration:none">📄 PDF</a>` : ''}
-          ${r.status === 'pending' && r.initiator === 'sponsor' ? `
-            <div style="margin-top: 8px; display: flex; gap: 5px;">
-                <button class="btn btn-success" style="padding: 2px 6px; font-size: 11px;" onclick="respond(${r.id}, 'accepted')">Accept</button>
-                <button class="btn btn-danger" style="padding: 2px 6px; font-size: 11px;" onclick="respond(${r.id}, 'rejected')">Reject</button>
-            </div>
-          ` : ''}
           ${r.status === 'pending' && r.initiator === 'event_manager' ? `<div style="font-size: 11px; margin-top: 4px; color: var(--text-muted);">Awaiting Sponsor</div>` : ''}
         </td>
-        <td style="color:var(--text-muted)">${fmtDateShort(r.created_at)}</td>
+        <td>
+          <div style="display: flex; gap: 8px;">
+          ${r.status === 'pending' && r.initiator === 'sponsor' ? `
+              <button class="btn btn-success" style="padding: 4px 12px; font-size: 12px; font-weight: 600;" onclick="respond(${r.id}, 'accepted')">✅ Accept</button>
+              <button class="btn btn-danger" style="padding: 4px 12px; font-size: 12px; font-weight: 600;" onclick="respond(${r.id}, 'rejected')">❌ Reject</button>
+          ` : (r.status === 'accepted' ? `<button class="btn btn-ghost btn-sm" onclick="editRank(${r.id})" style="padding: 4px 12px; font-size: 11px;">✏️ Edit Rank</button>` : `<span style="font-size:12px; color:var(--text-muted)">No Action</span>`)}
+          </div>
+        </td>
       </tr>`).join('');
   }
 
@@ -185,20 +252,81 @@
       }
   }
 
-  async function respond(id, status) {
-    const res = await api.put(`/sponsorship/${id}`, { status });
+  function respond(id, status) {
+    if (status === 'accepted') {
+        document.getElementById('accept-req-id').value = id;
+        document.getElementById('accept-modal').classList.add('open');
+    } else {
+        processResponse(id, status);
+    }
+  }
+
+  async function processResponse(id, status, tier = 'bronze') {
+    const payload = { status };
+    if (status === 'accepted') {
+        payload.tier = tier;
+    }
+    
+    const res = await api.put(`/sponsorship/${id}`, payload);
     if (res.ok) { 
         showToast(status === 'accepted' ? 'Sponsorship accepted! 🎉' : 'Request rejected.', status === 'accepted' ? 'success' : 'info'); 
         loadRequests(); 
     }
     else showToast(res.data?.message || 'Error', 'error');
   }
-  
+
+  async function submitAccept(e) {
+      e.preventDefault();
+      const id = document.getElementById('accept-req-id').value;
+      const tier = document.getElementById('a-tier').value;
+      closeAcceptModal();
+      await processResponse(id, 'accepted', tier);
+  }
+
+  function closeAcceptModal() {
+      document.getElementById('accept-modal').classList.remove('open');
+      document.getElementById('accept-form').reset();
+  }
+
+  function editRank(id) {
+      document.getElementById('edit-req-id').value = id;
+      document.getElementById('edit-rank-modal').classList.add('open');
+  }
+
+  async function submitEditRank(e) {
+      e.preventDefault();
+      const id = document.getElementById('edit-req-id').value;
+      const tier = document.getElementById('e-tier').value;
+      
+      const res = await api.patch(`/sponsorship/${id}/tier`, { tier });
+      if (res.ok) {
+          showToast('Sponsor rank updated beautifully! ✨', 'success');
+          closeEditRankModal();
+          loadRequests();
+      } else {
+          showToast(res.data?.message || 'Error updating rank', 'error');
+      }
+  }
+
+  function closeEditRankModal() {
+      document.getElementById('edit-rank-modal').classList.remove('open');
+      document.getElementById('edit-rank-form').reset();
+  }
+
   function closeModal() { 
       document.getElementById('req-modal').classList.remove('open'); 
       document.getElementById('req-form').reset(); 
       document.getElementById('target-sponsor-group').style.display = 'none';
       document.getElementById('r-sponsor-id').value = '';
+  }
+
+  function showMsg(message) {
+      document.getElementById('msg-content').innerText = message;
+      document.getElementById('msg-modal').classList.add('open');
+  }
+
+  function closeMsgModal() {
+      document.getElementById('msg-modal').classList.remove('open');
   }
 
   document.getElementById('req-form').addEventListener('submit', async (e) => {

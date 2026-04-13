@@ -93,8 +93,12 @@ class SponsorshipController extends Controller
         } elseif ($user->role === 'Event Manager') {
             $requests = SponsorshipRequest::with(['event', 'sponsor'])
                 ->where('event_manager_id', $user->id)
-                ->latest()
-                ->get();
+                ->get()
+                ->sortBy(function($req) {
+                    // Sort by Event Title alphabetically, then accepted first, then ID
+                    return strtolower($req->event->title ?? 'zzz') . '-' . ($req->status === 'accepted' ? '0' : '1') . '-' . $req->id;
+                })
+                ->values();
         } elseif ($user->role === 'Admin') {
             $requests = SponsorshipRequest::with(['event', 'sponsor', 'manager'])->latest()->get();
         } else {
@@ -132,12 +136,33 @@ class SponsorshipController extends Controller
         // Update status
         $sreq->status = $request->status;
         if ($sreq->status === 'accepted') {
+            if ($user->role === 'Sponsor') {
+                // If Sponsor is accepting, auto-find an available tier
+                $usedTiers = \App\Models\EventSponsor::where('event_id', $sreq->event_id)->pluck('tier')->toArray();
+                $availableTiers = array_diff(['diamond', 'gold', 'silver', 'bronze'], $usedTiers);
+                if (empty($availableTiers)) {
+                    return response()->json(['message' => 'This event has reached its max limit of ranked sponsors (all 4 ranks taken).'], 400);
+                }
+                $tier = array_pop($availableTiers); // defaults to lowest available (bronze)
+            } else {
+                $tier = $request->tier ?? 'bronze';
+                // Validate unique tier per event
+                $existingRank = \App\Models\EventSponsor::where('event_id', $sreq->event_id)
+                    ->where('tier', $tier)
+                    ->where('sponsor_id', '!=', $sreq->sponsor_id)
+                    ->exists();
+                    
+                if ($existingRank) {
+                    return response()->json(['message' => 'This rank ('.ucfirst($tier).') is already assigned to another sponsor for this event. Please select a different rank.'], 400);
+                }
+            }
+
             // Attach sponsor to event
-            \App\Models\EventSponsor::firstOrCreate([
+            \App\Models\EventSponsor::updateOrCreate([
                 'event_id' => $sreq->event_id,
                 'sponsor_id' => $sreq->sponsor_id,
             ], [
-                'tier' => $request->tier ?? 'bronze',
+                'tier' => $tier,
                 'contribution_amount' => $request->contribution_amount ?? 0
             ]);
 
@@ -157,5 +182,43 @@ class SponsorshipController extends Controller
         $sreq->save();
 
         return response()->json($sreq);
+    }
+
+    // PATCH /api/sponsorship/{id}/tier  – Update sponsor rank
+    public function updateTier(Request $request, $id)
+    {
+        $user = $request->user();
+        if ($user->role !== 'Event Manager') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $request->validate(['tier' => 'required|in:diamond,gold,silver,bronze']);
+
+        $sreq = SponsorshipRequest::findOrFail($id);
+
+        if ($sreq->event_manager_id !== $user->id) {
+            return response()->json(['message' => 'Not your request'], 403);
+        }
+
+        if ($sreq->status !== 'accepted') {
+            return response()->json(['message' => 'Can only update tier for accepted sponsorships'], 400);
+        }
+
+        // Validate unique tier per event
+        $existingRank = \App\Models\EventSponsor::where('event_id', $sreq->event_id)
+            ->where('tier', $request->tier)
+            ->where('sponsor_id', '!=', $sreq->sponsor_id)
+            ->exists();
+            
+        if ($existingRank) {
+            return response()->json(['message' => 'This rank ('.ucfirst($request->tier).') is already assigned to another sponsor for this event. Please select an available rank.'], 400);
+        }
+
+        \App\Models\EventSponsor::updateOrCreate(
+            ['event_id' => $sreq->event_id, 'sponsor_id' => $sreq->sponsor_id],
+            ['tier' => $request->tier]
+        );
+
+        return response()->json(['message' => 'Sponsor rank updated successfully']);
     }
 }

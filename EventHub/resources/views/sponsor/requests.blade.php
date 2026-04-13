@@ -16,6 +16,7 @@
       <span class="nav-section-label">Opportunities</span>
       <a class="nav-item" href="/sponsor/events"><span class="nav-icon">🌍</span> Browse Events</a>
       <a class="nav-item active" href="/sponsor/requests"><span class="nav-icon">💼</span> Sponsorships</a>
+      <a class="nav-item" href="/sponsor/history"><span class="nav-icon">📜</span> History</a>
       <span class="nav-section-label">Settings</span>
       <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
     </nav>
@@ -76,14 +77,23 @@
             <div style="font-size:.78rem;color:var(--text-muted);margin-top:2px">📍 ${r.event?.venue?.name || '—'} &nbsp;·&nbsp; 🗓 ${fmtDateShort(r.event?.start_time)}</div>
           </div>
           <div style="display:flex; align-items:center; gap:8px">
+            ${r.initiator === 'event_manager' 
+                ? '<span style="font-size:11px; padding:3px 8px; border-radius:12px; background:rgba(59,130,246,0.1); color:#3b82f6; border:1px solid rgba(59,130,246,0.2);">📥 Received</span>' 
+                : '<span style="font-size:11px; padding:3px 8px; border-radius:12px; background:rgba(139,92,246,0.1); color:#8b5cf6; border:1px solid rgba(139,92,246,0.2);">📤 Sent</span>'}
             ${r.status === 'accepted' ? `<a href="/storage/agreements/agreement_${r.id}.pdf" target="_blank" style="font-size:12px;text-decoration:none">📄 PDF</a>` : ''}
             ${badge(r.status)}
           </div>
         </div>
         ${r.message ? `<p style="font-size:.85rem;color:var(--text-muted);margin-bottom:14px;line-height:1.5">${r.message}</p>` : ''}
-        <div style="font-size:.78rem;color:var(--text-muted);margin-bottom:14px">
-            By: <strong style="color:var(--accent2); cursor:pointer;" onclick="navigateToProfile(${r.event?.creator?.id})">${r.event?.creator?.name || '—'}</strong> 
-            &nbsp;·&nbsp; Capacity: ${r.event?.capacity || '—'}
+        
+        <div style="margin-bottom:14px; background:rgba(255,255,255,0.02); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <div style="font-size:0.7rem; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.05em; margin-bottom:4px;">Event Manager</div>
+                <div style="font-size:0.9rem; font-weight:600; color:#fff; display:flex; align-items:center; gap:6px;">
+                    👤 ${r.event?.creator?.name || r.manager?.name || '—'}
+                </div>
+            </div>
+            <button class="btn btn-ghost btn-sm" onclick="navigateToProfile(${r.event?.creator?.id || r.manager?.id})" style="font-size:12px; padding:4px 10px;">Message</button>
         </div>
         ${r.status === 'pending' ? `
           <div style="display:flex;gap:8px">

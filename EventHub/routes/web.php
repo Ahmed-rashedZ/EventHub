@@ -27,6 +27,7 @@ Route::middleware('web.auth')->group(function () {
         Route::view('/events', 'admin.events');
         Route::view('/users', 'admin.users');
         Route::view('/venues', 'admin.venues');
+        Route::view('/event-stats/{id}', 'admin.event-stats');
     });
 
     // Manager Routes
@@ -36,6 +37,7 @@ Route::middleware('web.auth')->group(function () {
         Route::view('/dashboard', 'manager.dashboard');
         Route::view('/events', 'manager.events');
         Route::view('/sponsorship', 'manager.sponsorship');
+        Route::view('/event-stats/{id}', 'manager.event-stats');
     });
 
     // Sponsor Routes
@@ -43,6 +45,7 @@ Route::middleware('web.auth')->group(function () {
         Route::view('/dashboard', 'sponsor.dashboard');
         Route::view('/requests', 'sponsor.requests');
         Route::view('/events', 'sponsor.events');
+        Route::view('/history', 'sponsor.history');
     });
 
 });

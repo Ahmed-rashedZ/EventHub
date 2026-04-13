@@ -116,12 +116,21 @@ class AnalyticsController extends Controller
     public function event(Request $request, $id)
     {
         $user = $request->user();
-        if (!in_array($user->role, ['Admin', 'Event Manager'])) {
+        if (!in_array($user->role, ['Admin', 'Event Manager', 'Sponsor'])) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
         $event = Event::with('venue')->findOrFail($id);
         if ($user->role === 'Event Manager' && $event->created_by !== $user->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        if ($user->role === 'Sponsor') {
+            $isSponsor = \App\Models\SponsorshipRequest::where('event_id', $id)
+                ->where('sponsor_id', $user->id)
+                ->where('status', 'accepted')
+                ->exists();
+            if (!$isSponsor) {
+                return response()->json(['message' => 'Unauthorized'], 403);
+            }
         }
         $registered = Ticket::where('event_id', $id)->count();
         $attended   = Ticket::where('event_id', $id)->where('status', 'used')->count();

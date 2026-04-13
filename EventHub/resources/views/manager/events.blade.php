@@ -165,7 +165,7 @@
         <td>${badge(ev.status)} ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''}</td>
         <td style="display:flex;gap:6px;padding:14px 16px;flex-wrap:wrap">
           <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${ev.id})" title="View Details">ℹ️ Details</button>
-          <button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="showEventStats(${ev.id})" title="View Statistics">📊 Stats</button>
+          <button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='/manager/event-stats/${ev.id}'" title="View Statistics">📊 Stats</button>
         </td>
       </tr>`).join('');
   }
@@ -196,6 +196,28 @@ function showEventDetails(eventId) {
     const rejectionSection = (ev.status === 'rejected' && ev.rejection_reason)
       ? `<div class="ed-rejection"><span class="ed-rej-label">⚠ Rejection Reason</span><p>${ev.rejection_reason}</p></div>`
       : '';
+
+    let sponsorsHtml = '';
+    if (ev.sponsors && ev.sponsors.length > 0) {
+        sponsorsHtml = `
+          <div class="ed-section mt-4" style="margin-top: 16px;">
+            <div class="ed-section-label">Current Sponsors</div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              ${ev.sponsors.map(sp => `
+                 <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.04); padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.05); cursor:pointer;" onclick="navigateToProfile(${sp.id})">
+                    <div class="avatar" style="width:32px; height:32px; font-size:12px; display:inline-flex; align-items:center; justify-content:center; background:#333; border-radius:50%; overflow:hidden;">
+                        ${sp.profile?.logo ? `<img src="${sp.profile.logo.startsWith('http') || sp.profile.logo.startsWith('/') ? sp.profile.logo : '/' + sp.profile.logo}" style="width:100%;height:100%;object-fit:cover;">` : (sp.name ? sp.name.charAt(0).toUpperCase() : '?')}
+                    </div>
+                    <div style="flex:1">
+                        <div style="font-size:0.85rem; font-weight:600; color:#fff;">${sp.profile?.company_name || sp.name}</div>
+                        <div style="font-size:0.75rem; color:var(--accent2); text-transform:uppercase; font-weight:700;">${badge(sp.pivot?.tier || 'sponsor')}</div>
+                    </div>
+                 </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+    }
 
     content.innerHTML = `
       ${bannerSection}
@@ -265,10 +287,12 @@ function showEventDetails(eventId) {
               <div class="ed-info-value">${ev.tickets_count ?? '—'}</div>
             </div>
           </div>
-        </div>
+          </div>
+          
+          ${sponsorsHtml}
 
-        <!-- Footer -->
-        <div class="ed-footer">
+          <!-- Footer -->
+          <div class="ed-footer" style="margin-top: 8px;">
           <span class="ed-footer-label">Created by</span>
           <span class="ed-footer-name">${ev.creator?.name || ev.manager?.name || '—'}</span>
         </div>
@@ -283,76 +307,7 @@ function closeEventDetailsModal() {
   document.getElementById('event-details-content').innerHTML = '';
 }
 
-// ── Event Statistics Modal ──
-function showEventStats(eventId) {
-  const modal = document.getElementById('event-stats-modal');
-  const content = document.getElementById('event-stats-content');
-  modal.classList.add('open');
-  content.innerHTML = '<div class="spinner" style="margin:auto"></div>';
-  Promise.all([
-    api.get(`/analytics/event/${eventId}`),
-    api.get(`/events/${eventId}`)
-  ]).then(([statsRes, eventRes]) => {
-    if (!statsRes.ok) {
-      content.innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><p>Could not fetch statistics</p></div>';
-      return;
-    }
-    const s = statsRes.data;
-    const ev = eventRes.ok ? eventRes.data : s.event;
-    const fillRate = ev.capacity > 0 ? Math.round((s.registered_count / ev.capacity) * 100 * 10) / 10 : 0;
-    const frColor = fillRate > 80 ? '#22c55e' : fillRate > 50 ? '#f59e0b' : '#ef4444';
-    const arColor = s.attendance_rate > 80 ? '#22c55e' : s.attendance_rate > 50 ? '#f59e0b' : '#3b82f6';
 
-    content.innerHTML = `
-      <div class="es-header">
-        <h3 class="es-title">📊 ${ev.title || 'Event'} — Statistics</h3>
-      </div>
-      <div class="es-body">
-        <div class="es-metrics">
-          <div class="es-metric">
-            <div class="es-metric-icon" style="background:rgba(110,64,242,.15)">🎟️</div>
-            <div class="es-metric-label">Registered</div>
-            <div class="es-metric-value">${s.registered_count}</div>
-            <div class="es-metric-sub">of ${ev.capacity} capacity</div>
-          </div>
-          <div class="es-metric">
-            <div class="es-metric-icon" style="background:rgba(34,197,94,.15)">✅</div>
-            <div class="es-metric-label">Attended</div>
-            <div class="es-metric-value">${s.attended_count}</div>
-            <div class="es-metric-sub">checked in</div>
-          </div>
-        </div>
-
-        <div class="es-bars">
-          <div class="es-bar-group">
-            <div class="es-bar-header">
-              <span>Fill Rate</span>
-              <span style="font-weight:700;color:#fff">${s.registered_count}/${ev.capacity} (${fillRate}%)</span>
-            </div>
-            <div class="es-bar-track"><div class="es-bar-fill" style="width:${fillRate}%;background:${frColor}"></div></div>
-          </div>
-          <div class="es-bar-group">
-            <div class="es-bar-header">
-              <span>Attendance Rate</span>
-              <span style="font-weight:700;color:#fff">${s.attended_count}/${s.registered_count} (${s.attendance_rate}%)</span>
-            </div>
-            <div class="es-bar-track"><div class="es-bar-fill" style="width:${s.attendance_rate}%;background:${arColor}"></div></div>
-          </div>
-        </div>
-
-        <div class="es-info-row">
-          <div class="es-info-item"><span class="es-info-label">Event Status</span><span>${badge(ev.status)}</span></div>
-          <div class="es-info-item"><span class="es-info-label">Venue</span><span style="color:#fff;font-weight:600">${ev.venue?.name || '—'}</span></div>
-        </div>
-      </div>
-    `;
-  });
-}
-
-function closeEventStatsModal() {
-  document.getElementById('event-stats-modal').classList.remove('open');
-  document.getElementById('event-stats-content').innerHTML = '';
-}
 
 async function toggleSponsorship(eventId, checked) {
     const res = await api.patch(`/events/${eventId}/toggle-sponsorship`);
@@ -485,120 +440,6 @@ document.getElementById('event-form').addEventListener('submit', async (e) => {
 .ed-footer-name  { font-size: 0.85rem; font-weight: 600; color: #fff; }
 </style>
 
-<!-- Event Stats Modal -->
-<div class="modal-overlay" id="event-stats-modal">
-  <div class="modal es-modal">
-    <button class="ed-close-btn" onclick="closeEventStatsModal()">✕</button>
-    <div id="event-stats-content" class="es-content"></div>
-  </div>
-</div>
 
-<style>
-.es-modal {
-  max-width: 520px;
-  padding: 0;
-  overflow: hidden;
-  border-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: 0 32px 80px rgba(0,0,0,0.6);
-  background: #13131f;
-}
-.es-content { position: relative; }
-.es-header {
-  padding: 24px 28px 0;
-}
-.es-title {
-  margin: 0;
-  font-size: 1.2rem;
-  font-weight: 800;
-  color: #fff;
-}
-.es-body {
-  padding: 20px 28px 28px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-.es-metrics {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-.es-metric {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 14px;
-  padding: 18px;
-  text-align: center;
-  transition: background 0.2s;
-}
-.es-metric:hover { background: rgba(255,255,255,0.07); }
-.es-metric-icon {
-  width: 44px; height: 44px;
-  border-radius: 12px;
-  display: grid; place-items: center;
-  font-size: 1.3rem;
-  margin: 0 auto 10px;
-}
-.es-metric-label {
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-muted);
-  margin-bottom: 4px;
-}
-.es-metric-value {
-  font-size: 2rem;
-  font-weight: 800;
-  color: #fff;
-  line-height: 1;
-  margin-bottom: 4px;
-}
-.es-metric-sub {
-  font-size: 0.72rem;
-  color: var(--text-muted);
-}
-.es-bars {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-.es-bar-group {}
-.es-bar-header {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  margin-bottom: 6px;
-}
-.es-bar-track {
-  background: rgba(255,255,255,0.06);
-  border-radius: 6px;
-  height: 10px;
-  overflow: hidden;
-}
-.es-bar-fill {
-  height: 100%;
-  border-radius: 6px;
-  transition: width 0.8s ease;
-}
-.es-info-row {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255,255,255,0.06);
-}
-.es-info-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.es-info-label {
-  font-size: 0.78rem;
-  color: var(--text-muted);
-}
-</style>
 </body>
 </html>

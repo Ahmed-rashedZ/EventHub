@@ -63,6 +63,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/sponsorship',       [SponsorshipController::class, 'store']);
     Route::get('/sponsorship',        [SponsorshipController::class, 'index']);
     Route::put('/sponsorship/{id}',   [SponsorshipController::class, 'update']);
+    Route::patch('/sponsorship/{id}/tier', [SponsorshipController::class, 'updateTier']);
 
     // ── Notifications ──
     Route::get('/notifications',              [NotificationController::class, 'index']);
