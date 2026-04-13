@@ -199,6 +199,16 @@ function showEventDetails(eventId) {
 
     let sponsorsHtml = '';
     if (ev.sponsors && ev.sponsors.length > 0) {
+        const getTierBadge = (tier) => {
+            switch (tier) {
+                case 'diamond': return '<span style="background:rgba(6,182,212,0.15); color:#06b6d4; padding:3px 8px; border-radius:12px; border:1px solid rgba(6,182,212,0.3); font-size:10px;">💎 Diamond</span>';
+                case 'gold': return '<span style="background:rgba(234,179,8,0.15); color:#eab308; padding:3px 8px; border-radius:12px; border:1px solid rgba(234,179,8,0.3); font-size:10px;">🥇 Gold</span>';
+                case 'silver': return '<span style="background:rgba(156,163,175,0.15); color:#9ca3af; padding:3px 8px; border-radius:12px; border:1px solid rgba(156,163,175,0.3); font-size:10px;">🥈 Silver</span>';
+                case 'bronze': return '<span style="background:rgba(217,119,6,0.15); color:#d97706; padding:3px 8px; border-radius:12px; border:1px solid rgba(217,119,6,0.3); font-size:10px;">🥉 Bronze</span>';
+                default: return `<span style="background:rgba(255,255,255,0.1); color:#fff; padding:3px 8px; border-radius:12px; border:1px solid rgba(255,255,255,0.2); font-size:10px;">${tier || 'Sponsor'}</span>`;
+            }
+        };
+
         sponsorsHtml = `
           <div class="ed-section mt-4" style="margin-top: 16px;">
             <div class="ed-section-label">Current Sponsors</div>
@@ -206,11 +216,11 @@ function showEventDetails(eventId) {
               ${ev.sponsors.map(sp => `
                  <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.04); padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.05); cursor:pointer;" onclick="navigateToProfile(${sp.id})">
                     <div class="avatar" style="width:32px; height:32px; font-size:12px; display:inline-flex; align-items:center; justify-content:center; background:#333; border-radius:50%; overflow:hidden;">
-                        ${sp.profile?.logo ? `<img src="${sp.profile.logo.startsWith('http') || sp.profile.logo.startsWith('/') ? sp.profile.logo : '/' + sp.profile.logo}" style="width:100%;height:100%;object-fit:cover;">` : (sp.name ? sp.name.charAt(0).toUpperCase() : '?')}
+                        ${sp.profile?.logo ? `<img src="${sp.profile.logo.startsWith('http') ? sp.profile.logo : (sp.profile.logo.includes('storage') ? '/' + sp.profile.logo.replace(/^\//,'') : '/storage/' + sp.profile.logo)}" style="width:100%;height:100%;object-fit:cover;">` : (sp.name ? sp.name.charAt(0).toUpperCase() : '?')}
                     </div>
                     <div style="flex:1">
                         <div style="font-size:0.85rem; font-weight:600; color:#fff;">${sp.profile?.company_name || sp.name}</div>
-                        <div style="font-size:0.75rem; color:var(--accent2); text-transform:uppercase; font-weight:700;">${badge(sp.pivot?.tier || 'sponsor')}</div>
+                        <div style="margin-top: 2px;">${getTierBadge(sp.pivot?.tier)}</div>
                     </div>
                  </div>
               `).join('')}
@@ -367,12 +377,15 @@ document.getElementById('event-form').addEventListener('submit', async (e) => {
 /* ── Event Details Modal ───────────────────────────── */
 .ed-modal {
   max-width: 560px;
+  width: 95%;
   padding: 0;
-  overflow: hidden;
   border-radius: 20px;
   border: 1px solid rgba(255,255,255,0.08);
   box-shadow: 0 32px 80px rgba(0,0,0,0.6);
   background: #13131f;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 .ed-close-btn {
   position: absolute;
@@ -389,11 +402,12 @@ document.getElementById('event-form').addEventListener('submit', async (e) => {
   transition: background 0.2s;
 }
 .ed-close-btn:hover { background: rgba(255,255,255,0.15); }
-.ed-content { position: relative; }
+.ed-content { position: relative; display: flex; flex-direction: column; max-height: 90vh; }
 .ed-banner {
   width: 100%; height: 200px;
   background-size: cover; background-position: center;
   position: relative;
+  flex-shrink: 0;
 }
 .ed-banner-placeholder {
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
@@ -406,7 +420,7 @@ document.getElementById('event-form').addEventListener('submit', async (e) => {
   height: 80px;
   background: linear-gradient(to bottom, transparent, #13131f);
 }
-.ed-body { padding: 20px 24px 24px; display: flex; flex-direction: column; gap: 20px; }
+.ed-body { padding: 20px 24px 24px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; }
 .ed-header { display: flex; flex-direction: column; gap: 10px; }
 .ed-title-row { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
 .ed-title { margin: 0; font-size: 1.55rem; font-weight: 800; color: #fff; line-height: 1.2; flex: 1; min-width: 0; }

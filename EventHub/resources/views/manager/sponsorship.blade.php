@@ -166,7 +166,9 @@
     const res = await api.get('/sponsorship');
     const tbody = document.getElementById('req-body');
     if (!res.ok || !res.data.length) { tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">💼</div><p>No sponsorship requests yet</p></div></td></tr>'; return; }
-    tbody.innerHTML = res.data.map((r, i) => `
+    tbody.innerHTML = res.data.map((r, i) => {
+      const canEdit = r.event?.start_time && new Date(r.event.start_time) > new Date();
+      return `
       <tr>
         <td style="color:var(--text-muted)">${i+1}</td>
         <td><div style="font-weight:600">${r.event?.title || '—'}</div></td>
@@ -186,10 +188,11 @@
           ${r.status === 'pending' && r.initiator === 'sponsor' ? `
               <button class="btn btn-success" style="padding: 4px 12px; font-size: 12px; font-weight: 600;" onclick="respond(${r.id}, 'accepted')">✅ Accept</button>
               <button class="btn btn-danger" style="padding: 4px 12px; font-size: 12px; font-weight: 600;" onclick="respond(${r.id}, 'rejected')">❌ Reject</button>
-          ` : (r.status === 'accepted' ? `<button class="btn btn-ghost btn-sm" onclick="editRank(${r.id})" style="padding: 4px 12px; font-size: 11px;">✏️ Edit Rank</button>` : `<span style="font-size:12px; color:var(--text-muted)">No Action</span>`)}
+          ` : (r.status === 'accepted' ? (canEdit ? `<button class="btn btn-ghost btn-sm" onclick="editRank(${r.id})" style="padding: 4px 12px; font-size: 11px;">✏️ Edit Rank</button>` : `<span style="font-size:11px; color:var(--text-muted)">Locked (Started)</span>`) : `<span style="font-size:12px; color:var(--text-muted)">No Action</span>`)}
           </div>
         </td>
-      </tr>`).join('');
+      </tr>`;
+    }).join('');
   }
 
   async function loadAvailableSponsors() {
