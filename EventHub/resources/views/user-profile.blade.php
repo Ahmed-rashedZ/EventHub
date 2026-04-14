@@ -189,6 +189,12 @@
           } else {
               statusBadge.innerHTML = '<span class="badge badge-rejected">Currently Not Available</span>';
           }
+      } else if (u.role === 'Event Manager') {
+          if (u.manager_average_rating !== undefined && u.manager_average_rating !== null) {
+              statusBadge.innerHTML = `<div style="display:inline-flex; align-items:center; gap:6px; background:rgba(234,179,8,0.15); border:1px solid rgba(234,179,8,0.3); color:#eab308; padding:4px 10px; border-radius:8px; font-weight:700; font-size:0.85rem; margin-top:8px;"><span style="font-size:1rem">⭐</span> ${Number(u.manager_average_rating).toFixed(1)} / 5.0 Average Event Rating</div>`;
+          } else {
+              statusBadge.innerHTML = '';
+          }
       } else {
           statusBadge.innerHTML = '';
       }

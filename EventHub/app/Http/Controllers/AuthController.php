@@ -183,6 +183,11 @@ public function getPublicProfile($id)
 {
     $user = User::with(['profile.contacts'])->findOrFail($id);
     
+    if ($user->role === 'Event Manager') {
+        $avg = \App\Models\Event::where('created_by', $user->id)->get()->avg('average_rating');
+        $user->manager_average_rating = $avg ? round($avg, 1) : 0;
+    }
+    
     return response()->json([
         'user' => $user
     ]);

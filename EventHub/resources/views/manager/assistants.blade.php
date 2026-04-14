@@ -23,7 +23,7 @@
       <a class="nav-item" href="/manager/sponsorship"><span class="nav-icon">💼</span> Sponsorship</a>
       <span class="nav-section-label">Settings</span>
       <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
-    </nav>
+    </nav> 
     @include('partials._sidebar-footer')
   </aside>
 

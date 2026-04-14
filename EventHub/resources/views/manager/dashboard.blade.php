@@ -79,6 +79,7 @@
       <div class="an-stat"><div class="an-stat-stripe" style="background:#22d3ee"></div><div class="an-stat-icon" style="background:rgba(34,211,238,.15)">🎟️</div><div class="an-stat-label">Tickets Sold</div><div class="an-stat-value" id="s-tickets">—</div><div class="an-stat-sub" id="s-tickets-sub"></div></div>
       <div class="an-stat"><div class="an-stat-stripe" style="background:#22c55e"></div><div class="an-stat-icon" style="background:rgba(34,197,94,.15)">📊</div><div class="an-stat-label">Attendance Rate</div><div class="an-stat-value" id="s-rate">—</div><div class="an-stat-sub" id="s-rate-sub"></div></div>
       <div class="an-stat"><div class="an-stat-stripe" style="background:#f59e0b"></div><div class="an-stat-icon" style="background:rgba(245,158,11,.15)">📈</div><div class="an-stat-label">Capacity Usage</div><div class="an-stat-value" id="s-cap">—</div><div class="an-stat-sub" id="s-cap-sub"></div></div>
+      <div class="an-stat"><div class="an-stat-stripe" style="background:#eab308"></div><div class="an-stat-icon" style="background:rgba(234,179,8,.15)">⭐</div><div class="an-stat-label">Avg Rating</div><div class="an-stat-value" id="s-rating">—</div><div class="an-stat-sub" id="s-rating-sub">Based on all events</div></div>
     </div>
 
     <!-- Dual Rate Indicators -->
@@ -147,6 +148,7 @@ async function loadAnalytics() {
   animVal(document.getElementById('s-tickets'), d.total_tickets);
   animVal(document.getElementById('s-rate'), d.attendance_rate, '%');
   animVal(document.getElementById('s-cap'), d.capacity_utilization, '%');
+  document.getElementById('s-rating').textContent = Number(d.manager_average_rating || 0).toFixed(1);
   document.getElementById('s-events-sub').textContent = `${d.approved_events} approved · ${d.pending_events} pending`;
   document.getElementById('s-tickets-sub').textContent = `${d.used_tickets} checked in`;
   document.getElementById('s-rate-sub').textContent = `${d.used_tickets} of ${d.total_tickets} attended`;
@@ -187,11 +189,13 @@ async function loadAnalytics() {
     const ar = ev.attendance_rate||0;
     const frColor = fr>80?'#22c55e':fr>50?'#f59e0b':'#ef4444';
     const arColor = ar>80?'#22c55e':ar>50?'#f59e0b':'#3b82f6';
+    const evRating = Number(ev.average_rating || 0).toFixed(1);
     return `<div class="an-ev-card">
       <div class="an-ev-header">
         <div class="an-ev-title">${ev.title}</div>
         <span class="an-ev-type" style="background:${tc}18;color:${tc}">${ti} ${ev.event_type}</span>
       </div>
+      <div style="font-size: 0.85rem; color: #eab308; margin-bottom: 12px; font-weight: 600;">⭐ ${evRating} / 5.0</div>
       <div class="an-ev-metrics">
         <div class="an-ev-metric"><div class="an-ev-metric-label">Registered</div><div class="an-ev-metric-val">${ev.tickets_count}</div></div>
         <div class="an-ev-metric"><div class="an-ev-metric-label">Attended</div><div class="an-ev-metric-val">${ev.attended_count}</div></div>

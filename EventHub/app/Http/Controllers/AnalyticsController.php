@@ -94,10 +94,15 @@ class AnalyticsController extends Controller
                 'attendance_rate' => $tc > 0 ? round(($ac / $tc) * 100, 1) : 0,
                 'fill_rate' => $ev->capacity > 0 ? round(($tc / $ev->capacity) * 100, 1) : 0,
                 'start_time' => $ev->start_time, 'image' => $ev->image,
+                'average_rating' => $ev->average_rating,
             ];
         })->values();
 
+        $managerAvg = clone $events;
+        $managerAvg = $managerAvg->avg('average_rating');
+
         return response()->json([
+            'manager_average_rating' => $managerAvg ? round($managerAvg, 1) : 0,
             'total_events' => $events->count(),
             'approved_events' => $eventsByStatus->get('approved', 0),
             'pending_events'  => $eventsByStatus->get('pending', 0),

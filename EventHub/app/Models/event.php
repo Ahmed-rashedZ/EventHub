@@ -27,6 +27,7 @@ class Event extends Model
 
     protected $appends = [
         'time_status',
+        'average_rating',
     ];
 
     protected $casts = [
@@ -48,6 +49,18 @@ class Event extends Model
     public function tickets()
     {
         return $this->hasMany(Ticket::class);
+    }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
+
+    public function getAverageRatingAttribute()
+    {
+        // Compute the average rating on the fly
+        $avg = $this->ratings()->avg('rating');
+        return $avg ? round($avg, 1) : 0;
     }
 
     // ─── Time-Based Status Logic ─────────────────────────────────────────────

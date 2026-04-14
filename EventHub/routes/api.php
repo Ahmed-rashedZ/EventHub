@@ -45,6 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/events/list/my',             [EventController::class, 'myEvents']);
     Route::get('/events/list/all',            [EventController::class, 'all']);
     Route::patch('/events/{id}/toggle-sponsorship', [EventController::class, 'toggleSponsorship']);
+    Route::post('/events/{id}/rate',          [EventController::class, 'rate']);
 
     // ── Venues (Admin) ──
     Route::post('/venues',        [VenueController::class, 'store']);

@@ -186,4 +186,26 @@ class EventController extends Controller
         
         return response()->json($event);
     }
+
+    // POST /api/events/{id}/rate  – User rates an event
+    public function rate($id, Request $request)
+    {
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+        ]);
+
+        $event = Event::findOrFail($id);
+        $user = $request->user();
+
+        $rating = \App\Models\Rating::updateOrCreate(
+            ['event_id' => $event->id, 'user_id' => $user->id],
+            ['rating' => $request->rating]
+        );
+
+        return response()->json([
+            'message' => 'Rating submitted successfully',
+            'rating' => $rating,
+            'average_rating' => $event->fresh()->average_rating
+        ]);
+    }
 }
