@@ -17,6 +17,7 @@ Route::post('/login',    [AuthController::class, 'login']);
 // Public event list (approved only)
 Route::get('/events',       [EventController::class, 'index']);
 Route::get('/events/{id}',  [EventController::class, 'show']);
+Route::get('/events/{id}/reviews', [EventController::class, 'reviews']);
 
 // Public venue list
 Route::get('/venues', [VenueController::class, 'index']);
@@ -27,6 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Profile & Role Management
     Route::get('/profile', [AuthController::class, 'getProfile']);
     Route::get('/profile/{id}', [AuthController::class, 'getPublicProfile']);
+    Route::get('/profile/{id}/portfolio', [AuthController::class, 'getPortfolio']);
     Route::put('/profile', [AuthController::class, 'updateProfile']);
     Route::patch('/profile/availability', [AuthController::class, 'updateAvailability']);
     Route::post('/users', [AuthController::class, 'createUser']); // For Admins and Managers

@@ -192,20 +192,50 @@ class EventController extends Controller
     {
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
+            'review_text' => 'nullable|string|max:1000',
         ]);
 
         $event = Event::findOrFail($id);
         $user = $request->user();
 
+        // Check if user has a ticket
+        $hasTicket = \App\Models\Ticket::where('event_id', $event->id)->where('user_id', $user->id)->exists();
+        if (!$hasTicket) {
+            return response()->json(['message' => 'You cannot review an event without a valid ticket.'], 403);
+        }
+
+        // Check if event has started
+        if ($event->time_status === 'upcoming') {
+            return response()->json(['message' => 'You cannot review an event that has not started yet.'], 403);
+        }
+
         $rating = \App\Models\Rating::updateOrCreate(
             ['event_id' => $event->id, 'user_id' => $user->id],
-            ['rating' => $request->rating]
+            [
+                'rating' => $request->rating,
+                'review_text' => $request->review_text
+            ]
         );
 
         return response()->json([
             'message' => 'Rating submitted successfully',
             'rating' => $rating,
             'average_rating' => $event->fresh()->average_rating
+        ]);
+    }
+
+    // GET /api/events/{id}/reviews  – Get reviews for an event
+    public function reviews($id)
+    {
+        $event = Event::findOrFail($id);
+        $reviews = $event->ratings()->with('user:id,name,image,avatar')->whereNotNull('review_text')->orderBy('updated_at', 'desc')->get();
+        // Fallback or mix: maybe we want all ratings, but specifically reviews with text are more useful to display
+        // We'll return all ratings so we can show stars, but if they have text it acts as a full review
+        $allRatings = $event->ratings()->with('user:id,name,image,avatar')->orderBy('updated_at', 'desc')->get();
+        
+        return response()->json([
+            'average_rating' => $event->average_rating,
+            'reviews' => $allRatings
         ]);
     }
 }

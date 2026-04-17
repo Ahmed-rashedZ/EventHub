@@ -193,6 +193,26 @@ public function getPublicProfile($id)
     ]);
 }
 
+public function getPortfolio($id)
+{
+    $user = User::findOrFail($id);
+    
+    if ($user->role !== 'Event Manager') {
+        return response()->json(['message' => 'Not an event manager'], 400);
+    }
+
+    // Only fetch past/approved events to show as portfolio
+    $events = \App\Models\Event::where('created_by', $user->id)
+                    ->where('status', 'approved')
+                    ->with('venue')
+                    ->orderBy('start_time', 'desc')
+                    ->get();
+
+    return response()->json([
+        'events' => $events
+    ]);
+}
+
 public function getAvailableSponsors(Request $request)
 {
     // Fetch users with the Sponsor role who have a profile with is_available = true

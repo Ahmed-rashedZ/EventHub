@@ -257,12 +257,16 @@
     modal.classList.add('open');
     content.innerHTML = '<div class="spinner" style="margin:auto"></div>';
     
-    api.get(`/events/${eventId}`).then(res => {
+    Promise.all([
+      api.get(`/events/${eventId}`),
+      api.get(`/events/${eventId}/reviews`)
+    ]).then(([res, revRes]) => {
       if (!res.ok) {
         content.innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><p>Could not fetch event details</p></div>';
         return;
       }
       const ev = res.data;
+      const reviewData = revRes.ok ? revRes.data : { average_rating: 0, reviews: [] };
       const eType = ev.event_type || 'Other';
       const tColor = typeColors[eType] || typeColors.Other;
       const tIcon  = typeIcons[eType]  || '📌';
@@ -310,6 +314,34 @@
           `;
       }
 
+      let reviewsHtml = '';
+      if (reviewData.reviews.length > 0) {
+          reviewsHtml = `
+            <div class="ed-section" style="margin-top: 16px;">
+              <div class="ed-section-label" style="display:flex;justify-content:space-between;align-items:center;">
+                 <span>👥 Attendee Reviews</span>
+                 <span style="color:#eab308;font-weight:700;font-size:0.8rem">⭐ ${Number(reviewData.average_rating).toFixed(1)}</span>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:12px; max-height:250px; overflow-y:auto; padding-right:4px;">
+                ${reviewData.reviews.map(r => `
+                  <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:10px; padding:12px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                      <div style="display:flex; align-items:center; gap:8px;">
+                        <div style="width:24px; height:24px; background:#444; border-radius:50%; overflow:hidden;">
+                           <img src="${r.user?.avatar ? '/storage/'+r.user.avatar : '/images/default-avatar.png'}" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='/images/default-avatar.png'">
+                        </div>
+                        <span style="font-size:0.8rem; font-weight:600; color:#fff">${r.user?.name || 'Anonymous'}</span>
+                      </div>
+                      <div style="color:#eab308; font-size:0.8rem;">${'⭐'.repeat(r.rating)}</div>
+                    </div>
+                    ${r.review_text ? `<p style="font-size:0.85rem; color:rgba(255,255,255,0.7); margin:0;">"${r.review_text}"</p>` : '<p style="font-size:0.85rem; color:rgba(255,255,255,0.3); margin:0; font-style:italic">No written comment</p>'}
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
+      }
+
       content.innerHTML = `
         ${bannerSection}
         <div class="ed-body">
@@ -346,6 +378,7 @@
           </div>
           
           ${sponsorsHtml}
+          ${reviewsHtml}
           
           <div class="ed-footer mt-2">
             <span class="ed-footer-label">Event Manager</span>

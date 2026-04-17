@@ -14,6 +14,7 @@ class Rating extends Model
         'event_id',
         'user_id',
         'rating',
+        'review_text',
     ];
 
     public function event(): BelongsTo

@@ -92,9 +92,15 @@
             <div id="u-bio" class="bio-section">No description provided.</div>
         </div>
 
-        <div class="card">
+        <div class="card" style="margin-bottom:24px;">
             <div class="card-header"><span class="card-title">Contact Information</span></div>
             <div class="contact-grid" id="contact-list"></div>
+        </div>
+
+        <div class="card" id="portfolio-card" style="display:none;">
+            <div class="card-header"><span class="card-title">Event Portfolio</span></div>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">Past events managed by this organizer.</p>
+            <div class="portfolio-grid" id="portfolio-list" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:16px;"></div>
         </div>
     </div>
   </main>
@@ -295,6 +301,51 @@
 
       document.getElementById('profile-loader').style.display = 'none';
       document.getElementById('profile-content').style.display = 'block';
+
+      if (u.role === 'Event Manager') {
+          loadPortfolio(u.id);
+      }
+  }
+
+  async function loadPortfolio(userId) {
+      const res = await api.get('/profile/' + userId + '/portfolio');
+      if (!res.ok || !res.data.events || res.data.events.length === 0) {
+          return; // No events to show
+      }
+      
+      const portfolioCard = document.getElementById('portfolio-card');
+      const portfolioList = document.getElementById('portfolio-list');
+      
+      let html = '';
+      res.data.events.forEach(ev => {
+          // Calculate an arbitrary representation or use actual average if we map it
+          const ratingHtml = (ev.average_rating > 0) 
+                ? `<div style="display:inline-flex; align-items:center; background:rgba(234,179,8,0.1); color:#eab308; padding:4px 8px; border-radius:12px; font-weight:700; font-size:0.8rem; border:1px solid rgba(234,179,8,0.2);">⭐ ${Number(ev.average_rating).toFixed(1)}</div>`
+                : `<div style="display:inline-flex; align-items:center; background:rgba(255,255,255,0.05); color:var(--text-muted); padding:4px 8px; border-radius:12px; font-weight:600; font-size:0.75rem; border:1px solid rgba(255,255,255,0.1);">No ratings yet</div>`;
+          
+          html += `
+            <div style="background:var(--bg-dark); border:1px solid var(--border); border-radius:16px; overflow:hidden; transition:transform 0.2s; cursor:pointer;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+               <div style="height:120px; background:linear-gradient(135deg, #1a1a2e, #16213e); position:relative;">
+                  ${ev.image ? `<img src="/storage/${ev.image}" style="width:100%;height:100%;object-fit:cover;opacity:0.8;">` : '<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:2.5rem;opacity:0.5;">📅</div>'}
+                  <div style="position:absolute; bottom:10px; right:10px;">
+                      ${ratingHtml}
+                  </div>
+               </div>
+               <div style="padding:16px;">
+                  <div style="font-weight:700; font-size:1rem; color:#fff; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${ev.title}</div>
+                  <div style="font-size:0.8rem; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
+                      <span>📍</span> <span>${ev.venue?.name || 'TBA'}</span>
+                  </div>
+                  <div style="font-size:0.75rem; color:var(--text-muted); margin-top:8px;">
+                      ${new Date(ev.start_time).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'})}
+                  </div>
+               </div>
+            </div>
+          `;
+      });
+      
+      portfolioList.innerHTML = html;
+      portfolioCard.style.display = 'block';
   }
 </script>
 </body>
