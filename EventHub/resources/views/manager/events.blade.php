@@ -57,8 +57,8 @@
 
 <!-- Create Event Modal -->
 <div class="modal-overlay" id="event-modal">
-  <div class="modal" style="max-width:600px">
-    <div class="modal-header">
+  <div class="modal" style="max-width:600px; max-height: 90vh; overflow-y: auto; margin: 20px 0; padding-top: 0;">
+    <div class="modal-header" style="position: sticky; top: 0; background: rgba(30,33,45,0.95); backdrop-filter: blur(12px); z-index: 10; padding: 24px 0 16px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05);">
       <h3 class="modal-title">Create New Event</h3>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
@@ -69,25 +69,29 @@
       </div>
       <div class="form-group">
         <label class="form-label">Description</label>
-        <textarea id="e-desc" class="form-control" placeholder="Describe your event…" required></textarea>
+        <textarea id="e-desc" class="form-control" placeholder="Describe your event…" required rows="3"></textarea>
       </div>
-      <div class="form-group">
-        <label class="form-label">Event Type</label>
-        <select id="e-type" class="form-control" required>
-          <option value="Conference">Conference</option>
-          <option value="Workshop">Workshop</option>
-          <option value="Exhibition">Exhibition</option>
-          <option value="Entertainment">Entertainment</option>
-          <option value="Seminar">Seminar</option>
-          <option value="Festival">Festival</option>
-          <option value="Other">Other</option>
-        </select>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Event Type</label>
+          <select id="e-type" class="form-control" required onchange="toggleOtherEventType()">
+            <option value="Conference">مؤتمر</option>
+            <option value="Workshop">ورشة عمل</option>
+            <option value="Exhibition">معرض</option>
+            <option value="Seminar">ندوة</option>
+            <option value="Other">أخرى</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Venue</label>
+          <select id="e-venue" class="form-control" required>
+            <option value="">Loading venues…</option>
+          </select>
+        </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Venue</label>
-        <select id="e-venue" class="form-control" required>
-          <option value="">Loading venues…</option>
-        </select>
+      <div class="form-group" id="e-type-other-group" style="display: none;">
+        <label class="form-label">Specify Event Type</label>
+        <input id="e-type-other" type="text" class="form-control" placeholder="اكتب نوع الحدث بدقة..." />
       </div>
       <div class="form-grid">
         <div class="form-group">
@@ -106,10 +110,10 @@
         </div>
         <div class="form-group">
           <label class="form-label">Event Banner Image</label>
-          <input id="e-image" type="file" accept="image/*" class="form-control"/>
+          <input id="e-image" type="file" accept="image/*" class="form-control" style="padding: 7px 10px;"/>
         </div>
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer" style="margin-top: 24px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.06);">
         <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button>
         <button type="submit" class="btn btn-primary">Submit for Approval</button>
       </div>
@@ -122,6 +126,21 @@
 <script src="/js/auth.js"></script>
 <script>
   let allEvents = [];
+  
+  function toggleOtherEventType() {
+    const typeSelect = document.getElementById('e-type');
+    const otherGroup = document.getElementById('e-type-other-group');
+    const otherInput = document.getElementById('e-type-other');
+    if (typeSelect.value === 'Other') {
+      otherGroup.style.display = 'block';
+      otherInput.required = true;
+    } else {
+      otherGroup.style.display = 'none';
+      otherInput.required = false;
+      otherInput.value = '';
+    }
+  }
+
   const user = requireRole('Event Manager');
   if (user) { populateSidebar(user); setActiveNav(); loadEvents(); loadVenues(); }
 
@@ -337,14 +356,23 @@ async function loadVenues() {
 }
 
 function openModal() { document.getElementById('event-modal').classList.add('open'); }
-function closeModal() { document.getElementById('event-modal').classList.remove('open'); document.getElementById('event-form').reset(); }
+function closeModal() { 
+  document.getElementById('event-modal').classList.remove('open'); 
+  document.getElementById('event-form').reset(); 
+  toggleOtherEventType(); 
+}
 
 document.getElementById('event-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const formData = new FormData();
   formData.append('title', document.getElementById('e-title').value);
   formData.append('description', document.getElementById('e-desc').value);
-  formData.append('event_type', document.getElementById('e-type').value);
+  
+  let eventType = document.getElementById('e-type').value;
+  if (eventType === 'Other') {
+      eventType = document.getElementById('e-type-other').value;
+  }
+  formData.append('event_type', eventType);
   formData.append('venue_id', document.getElementById('e-venue').value);
   formData.append('start_time', document.getElementById('e-start').value);
   formData.append('end_time', document.getElementById('e-end').value);

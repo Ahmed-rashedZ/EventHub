@@ -64,7 +64,7 @@ class EventController extends Controller
         $request->validate([
             'title'       => 'required|string|max:255',
             'description' => 'required|string',
-            'event_type'  => 'required|in:Conference,Workshop,Exhibition,Entertainment,Seminar,Festival,Other',
+            'event_type'  => 'required|string|max:255',
             'venue_id'    => 'required|exists:venues,id',
             'start_time'  => 'required|date|after:now',
             'end_time'    => 'required|date|after:start_time',

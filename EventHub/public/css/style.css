@@ -37,6 +37,28 @@ body {
   line-height: 1.6;
 }
 
+/* ── Global Custom Scrollbar ─────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(110, 64, 242, 0.4);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(34, 211, 238, 0.6);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(110, 64, 242, 0.4) rgba(0, 0, 0, 0.1);
+}
+
 a { color: var(--accent); text-decoration: none; }
 a:hover { color: var(--accent-hover); }
 
