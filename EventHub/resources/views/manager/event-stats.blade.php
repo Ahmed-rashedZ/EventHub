@@ -51,6 +51,28 @@
 .es-participants-table tr:hover{background:rgba(255,255,255,.02)}
 
 .es-loading{display:flex;align-items:center;justify-content:center;min-height:400px}
+
+/* ── Reviews Section ─────────────────────────────── */
+.es-reviews-summary{display:flex;align-items:center;gap:32px;flex-wrap:wrap;margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,.06)}
+.es-avg-big{font-size:3.5rem;font-weight:900;color:#fff;line-height:1}
+.es-avg-label{font-size:.8rem;color:var(--text-muted);margin-top:4px}
+.es-stars-bar-wrap{flex:1;min-width:200px}
+.es-star-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.es-star-row-label{font-size:.72rem;color:var(--text-muted);width:12px;text-align:right}
+.es-star-bar{flex:1;background:rgba(255,255,255,.06);border-radius:6px;height:7px;overflow:hidden}
+.es-star-bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,#eab308,#f59e0b);transition:width .8s ease}
+.es-star-bar-count{font-size:.72rem;color:var(--text-muted);width:20px}
+.es-review-list{display:flex;flex-direction:column;gap:16px}
+.es-review-item{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:18px 20px;transition:border-color .2s}
+.es-review-item:hover{border-color:rgba(110,64,242,.3)}
+.es-review-header{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.es-review-name{font-weight:700;color:#fff;font-size:.9rem}
+.es-review-date{font-size:.72rem;color:var(--text-muted);margin-top:2px}
+.es-review-stars{display:flex;gap:3px;margin-left:auto}
+.es-review-star{font-size:1rem}
+.es-review-text{font-size:.85rem;color:#b0bec5;line-height:1.6}
+.es-review-empty{text-align:center;padding:48px 20px;color:var(--text-muted)}
+.es-review-empty-icon{font-size:2.5rem;margin-bottom:12px}
 </style>
 </head>
 <body>
@@ -139,6 +161,25 @@
         </div>
       </div>
 
+      <!-- Reviews & Ratings -->
+      <div class="es-card" style="margin-bottom:24px" id="reviews-section">
+        <div class="es-card-title"><span>⭐</span> Reviews & Ratings (<span id="review-count">0</span>)</div>
+        <div id="reviews-loading" style="text-align:center;padding:32px"><div class="spinner" style="margin:auto"></div></div>
+        <div id="reviews-content" style="display:none">
+          <!-- Summary -->
+          <div class="es-reviews-summary">
+            <div style="text-align:center">
+              <div class="es-avg-big" id="avg-rating-big">—</div>
+              <div style="display:flex;justify-content:center;gap:3px;margin:6px 0" id="avg-stars-display"></div>
+              <div class="es-avg-label" id="avg-label">No ratings yet</div>
+            </div>
+            <div class="es-stars-bar-wrap" id="stars-breakdown"></div>
+          </div>
+          <!-- Review List -->
+          <div class="es-review-list" id="review-list"></div>
+        </div>
+      </div>
+
     </div>
   </main>
 </div>
@@ -180,10 +221,11 @@ async function loadEventStats() {
     return;
   }
 
-  const [statsRes, eventRes, partRes] = await Promise.all([
+  const [statsRes, eventRes, partRes, reviewsRes] = await Promise.all([
     api.get(`/analytics/event/${eventId}`),
     api.get(`/events/${eventId}`),
-    api.get(`/checkin/event/${eventId}`)
+    api.get(`/checkin/event/${eventId}`),
+    api.get(`/events/${eventId}/reviews`)
   ]);
 
   document.getElementById('page-loading').style.display = 'none';
@@ -306,6 +348,84 @@ async function loadEventStats() {
       </tr>
     `).join('');
   }
+
+  // Reviews & Ratings
+  loadReviews(reviewsRes);
+}
+
+function starsHtml(rating, size = '1rem') {
+  const rounded = Math.round(rating); // whole numbers only
+  return [1,2,3,4,5].map(i =>
+    `<span class="es-review-star" style="font-size:${size};color:${i <= rounded ? '#eab308' : 'rgba(255,255,255,.15)'}">★</span>`
+  ).join('');
+}
+
+function loadReviews(res) {
+  const loadEl = document.getElementById('reviews-loading');
+  const contEl = document.getElementById('reviews-content');
+  loadEl.style.display = 'none';
+  contEl.style.display = 'block';
+
+  if (!res.ok) {
+    document.getElementById('review-list').innerHTML = `<div class="es-review-empty"><div class="es-review-empty-icon">⚠️</div><p>Failed to load reviews</p></div>`;
+    return;
+  }
+
+  const data = res.data;
+  const reviews = data.reviews || [];
+  const avgRating = parseFloat(data.average_rating) || 0;
+
+  document.getElementById('review-count').textContent = reviews.length;
+
+  // Summary
+  document.getElementById('avg-rating-big').textContent = reviews.length ? Math.round(avgRating) : '—';
+  document.getElementById('avg-stars-display').innerHTML = reviews.length ? starsHtml(avgRating, '1.3rem') : '';
+  document.getElementById('avg-label').textContent = reviews.length
+    ? `Based on ${reviews.length} rating${reviews.length > 1 ? 's' : ''}`
+    : 'No ratings yet';
+
+  // Star breakdown (5 → 1)
+  const breakdown = {1:0, 2:0, 3:0, 4:0, 5:0};
+  reviews.forEach(r => { if (r.rating >= 1 && r.rating <= 5) breakdown[r.rating]++; });
+  const bHtml = [5,4,3,2,1].map(star => {
+    const cnt = breakdown[star];
+    const pct = reviews.length ? Math.round((cnt / reviews.length) * 100) : 0;
+    return `<div class="es-star-row">
+      <span class="es-star-row-label" style="color:#eab308">${star}</span>
+      <span style="font-size:.85rem;color:#eab308">★</span>
+      <div class="es-star-bar"><div class="es-star-bar-fill" style="width:${pct}%"></div></div>
+      <span class="es-star-bar-count">${cnt}</span>
+    </div>`;
+  }).join('');
+  document.getElementById('stars-breakdown').innerHTML = bHtml;
+
+  // Review list
+  const listEl = document.getElementById('review-list');
+  if (!reviews.length) {
+    listEl.innerHTML = `<div class="es-review-empty"><div class="es-review-empty-icon">💬</div><p>No reviews yet for this event</p></div>`;
+    return;
+  }
+
+  listEl.innerHTML = reviews.map(r => {
+    const avatar = r.user?.avatar || r.user?.image
+      ? `<img src="${r.user.avatar || r.user.image}" style="width:36px;height:36px;border-radius:50%;object-fit:cover">`
+      : `<div class="avatar" style="width:36px;height:36px;font-size:.8rem">${(r.user?.name || '?').charAt(0)}</div>`;
+    const dateStr = r.updated_at ? new Date(r.updated_at).toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'}) : '';
+    const reviewText = r.review_text
+      ? `<div class="es-review-text">"${r.review_text}"</div>`
+      : `<div class="es-review-text" style="color:rgba(255,255,255,.2);font-style:italic">No written review</div>`;
+    return `<div class="es-review-item">
+      <div class="es-review-header">
+        ${avatar}
+        <div>
+          <div class="es-review-name">${r.user?.name || 'Anonymous'}</div>
+          <div class="es-review-date">${dateStr}</div>
+        </div>
+        <div class="es-review-stars">${starsHtml(r.rating)}</div>
+      </div>
+      ${reviewText}
+    </div>`;
+  }).join('');
 }
 </script>
 </body>

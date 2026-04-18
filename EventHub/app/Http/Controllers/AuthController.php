@@ -193,7 +193,7 @@ public function getPublicProfile($id)
     ]);
 }
 
-public function getPortfolio($id)
+public function getPortfolio(Request $request, $id)
 {
     $user = User::findOrFail($id);
     
@@ -201,12 +201,16 @@ public function getPortfolio($id)
         return response()->json(['message' => 'Not an event manager'], 400);
     }
 
-    // Only fetch past/approved events to show as portfolio
-    $events = \App\Models\Event::where('created_by', $user->id)
-                    ->where('status', 'approved')
+    $query = \App\Models\Event::where('created_by', $user->id)
                     ->with('venue')
-                    ->orderBy('start_time', 'desc')
-                    ->get();
+                    ->orderBy('start_time', 'desc');
+
+    $authUser = $request->user();
+    if (!$authUser || ($authUser->role !== 'Admin' && $authUser->id !== $user->id)) {
+        $query->where('status', 'approved');
+    }
+
+    $events = $query->get();
 
     return response()->json([
         'events' => $events

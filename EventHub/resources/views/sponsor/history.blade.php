@@ -20,7 +20,7 @@
     .hc-title { font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
     .hc-meta { font-size: 0.8rem; color: var(--text-muted); display:flex; gap:12px; align-items:center; }
     
-    .hc-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; background: rgba(255,255,255,0.02); padding:15px; border-radius:10px; border:1px solid rgba(255,255,255,0.03); }
+    .hc-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; background: rgba(255,255,255,0.02); padding:15px; border-radius:10px; border:1px solid rgba(255,255,255,0.03); }
     .hc-stat { text-align: center; }
     .hc-stat-val { font-size: 1.4rem; font-weight: 800; color: #fff; line-height: 1.1; margin-bottom:4px; }
     .hc-stat-label { font-size: 0.65rem; font-weight: 600; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; }
@@ -117,15 +117,24 @@
       // 2. Load stats for each accepted event
       let totalAttendees = 0;
       const historyCards = await Promise.all(acceptedReqs.map(async (r) => {
-          const statsRes = await api.get(`/analytics/event/${r.event_id}`);
+          const [statsRes, reviewsRes] = await Promise.all([
+              api.get(`/analytics/event/${r.event_id}`),
+              api.get(`/events/${r.event_id}/reviews`)
+          ]);
           let stats = { registered_count: 0, attended_count: 0, attendance_rate: 0 };
           if (statsRes.ok) {
               stats = statsRes.data;
           }
+          const avgRating = (reviewsRes.ok && reviewsRes.data?.average_rating)
+              ? Math.round(parseFloat(reviewsRes.data.average_rating))
+              : 0;
+          const reviewCount = (reviewsRes.ok && reviewsRes.data?.reviews)
+              ? reviewsRes.data.reviews.length
+              : 0;
           
           totalAttendees += stats.attended_count || 0;
           
-          return renderHistoryCard(r, stats);
+          return renderHistoryCard(r, stats, avgRating, reviewCount);
       }));
       
       // Update totals
@@ -140,7 +149,14 @@
       (function step(t){const p=Math.min((t-st)/800,1);el.textContent=Math.round(s+(end-s)*(1-Math.pow(1-p,3)))+suffix;if(p<1)requestAnimationFrame(step)})(st);
   }
 
-  function renderHistoryCard(req, stats) {
+  function starsHtml(rating) {
+      const r = Math.round(rating);
+      return [1,2,3,4,5].map(i =>
+          `<span style="color:${i <= r ? '#eab308' : 'rgba(255,255,255,.15)'}">★</span>`
+      ).join('');
+  }
+
+  function renderHistoryCard(req, stats, avgRating = 0, reviewCount = 0) {
       const e = req.event;
       if (!e) return '';
       
@@ -169,6 +185,10 @@
                 <div class="hc-stat">
                     <div class="hc-stat-val" style="color:#22c55e">${stats.attended_count}</div>
                     <div class="hc-stat-label">Attended</div>
+                </div>
+                <div class="hc-stat">
+                    <div class="hc-stat-val" style="font-size:1.4rem;line-height:1.1;margin-bottom:4px;letter-spacing:2px">${avgRating > 0 ? starsHtml(avgRating) : '<span style="color:rgba(255,255,255,.2);font-size:1.4rem">★★★★★</span>'}</div>
+                    <div class="hc-stat-label">Rating${avgRating > 0 ? ` (${reviewCount})` : ''}</div>
                 </div>
             </div>
             

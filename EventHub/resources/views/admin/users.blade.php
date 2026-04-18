@@ -108,7 +108,7 @@
         <td style="color:var(--text-muted)">${i+1}</td>
         <td>
           ${(u.role === 'Event Manager' || u.role === 'Sponsor') 
-            ? `<a href="/profile/${u.id}" style="display:flex;align-items:center;gap:8px; text-decoration:none; color:inherit; transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'" title="View Profile">` 
+            ? `<a href="/user-profile?id=${u.id}" style="display:flex;align-items:center;gap:8px; text-decoration:none; color:inherit; transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'" title="View Profile">` 
             : `<div style="display:flex;align-items:center;gap:8px">`
           }
             <span style="font-weight:500; ${(u.role === 'Event Manager' || u.role === 'Sponsor') ? 'color:var(--accent);' : ''}">${u.name}</span>
