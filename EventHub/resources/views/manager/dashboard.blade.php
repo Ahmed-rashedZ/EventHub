@@ -83,20 +83,6 @@
       <div class="an-stat"><div class="an-stat-stripe" style="background:#eab308"></div><div class="an-stat-icon" style="background:rgba(234,179,8,.15)">⭐</div><div class="an-stat-label">Avg Rating</div><div class="an-stat-value" id="s-rating">—</div><div class="an-stat-sub" id="s-rating-sub">Based on all events</div></div>
     </div>
 
-    <!-- Dual Rate Indicators -->
-    <div class="an-rate-card">
-      <div class="an-rate-circle">
-        <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="30" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="6"/><circle id="att-ring" cx="36" cy="36" r="30" fill="none" stroke="#22c55e" stroke-width="6" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5"/></svg>
-        <div class="an-rate-pct" id="att-pct">0%</div>
-      </div>
-      <div class="an-rate-info"><h4>Attendance Rate</h4><p id="att-detail">—</p></div>
-      <div class="an-rate-divider"></div>
-      <div class="an-rate-circle">
-        <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="30" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="6"/><circle id="cap-ring" cx="36" cy="36" r="30" fill="none" stroke="#f59e0b" stroke-width="6" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5"/></svg>
-        <div class="an-rate-pct" id="cap-pct">0%</div>
-      </div>
-      <div class="an-rate-info"><h4>Capacity Utilization</h4><p id="cap-detail">—</p></div>
-    </div>
 
     <!-- Charts Row -->
     <div class="an-row">
@@ -132,12 +118,6 @@ const COLORS = { approved:'#22c55e', pending:'#f59e0b', rejected:'#ef4444' };
 const TYPE_COLORS = { Conference:'#3b82f6', Workshop:'#10b981', Exhibition:'#f59e0b', Entertainment:'#ec4899', Seminar:'#8b5cf6', Festival:'#f97316', Other:'#6b7280' };
 const TYPE_ICONS = { Conference:'🎤', Workshop:'🔧', Exhibition:'🖼️', Entertainment:'🎭', Seminar:'📚', Festival:'🎉', Other:'📌' };
 
-function setRing(id, pct, color) {
-  const el = document.getElementById(id);
-  el.style.transition = 'stroke-dashoffset 1.2s ease';
-  el.style.strokeDashoffset = 188.5 - (188.5 * Math.min(pct,100) / 100);
-  if (color) el.style.stroke = color;
-}
 
 async function loadAnalytics() {
   const res = await api.get('/analytics/manager');
@@ -155,13 +135,6 @@ async function loadAnalytics() {
   document.getElementById('s-rate-sub').textContent = `${d.used_tickets} of ${d.total_tickets} attended`;
   document.getElementById('s-cap-sub').textContent = `${d.total_tickets} of ${d.total_capacity} capacity`;
 
-  // Rings
-  setRing('att-ring', d.attendance_rate);
-  document.getElementById('att-pct').textContent = d.attendance_rate + '%';
-  document.getElementById('att-detail').textContent = `${d.used_tickets} attended out of ${d.total_tickets} registrations`;
-  setRing('cap-ring', d.capacity_utilization);
-  document.getElementById('cap-pct').textContent = d.capacity_utilization + '%';
-  document.getElementById('cap-detail').textContent = `${d.total_tickets} booked of ${d.total_capacity} total capacity`;
 
   // Status donut
   const sLabels = Object.keys(d.events_by_status);
