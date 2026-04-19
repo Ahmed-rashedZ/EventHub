@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -112,15 +112,15 @@
     <form id="accept-form" onsubmit="submitAccept(event)">
       <input type="hidden" id="accept-req-id">
       <div class="form-group">
-        <label class="form-label" style="font-size: 0.8rem;">Select Sponsor Tier / Rank</label>
+        <label class="form-label" style="font-size: 0.8rem;">Select Sponsor Tier</label>
         <select id="a-tier" class="form-control" style="cursor: pointer;">
-          <option value="" selected>🏷️ بدون تصنيف (Unranked)</option>
+          <option value="" selected>🏷️ Unranked</option>
           <option value="diamond">💎 Diamond Sponsor</option>
           <option value="gold">🥇 Gold Sponsor</option>
           <option value="silver">🥈 Silver Sponsor</option>
           <option value="bronze">🥉 Bronze Sponsor</option>
         </select>
-        <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;">اختر التصنيف أو اتركه بدون تصنيف. لا يمكن لراعيين أن يحملا نفس التصنيف.</p>
+        <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;">Choose a tier or leave unranked. Two sponsors cannot have the same tier.</p>
       </div>
       <div class="modal-footer" style="margin-top: 20px;">
         <button type="button" class="btn btn-ghost" onclick="closeAcceptModal()">Cancel</button>
@@ -130,25 +130,25 @@
   </div>
 </div>
 
-<!-- Edit Rank Modal -->
+<!-- Edit Tier Modal -->
 <div class="modal-overlay" id="edit-rank-modal">
   <div class="modal" style="max-width: 400px;">
     <div class="modal-header">
-      <h3 class="modal-title">Edit Sponsor Rank</h3>
+      <h3 class="modal-title">Edit Sponsor Tier</h3>
       <button class="modal-close" onclick="closeEditRankModal()">✕</button>
     </div>
     <form id="edit-rank-form" onsubmit="submitEditRank(event)">
       <input type="hidden" id="edit-req-id">
       <div class="form-group">
-        <label class="form-label" style="font-size: 0.8rem;">Select New Sponsor Tier / Rank</label>
+        <label class="form-label" style="font-size: 0.8rem;">Select New Sponsor Tier</label>
         <select id="e-tier" class="form-control" style="cursor: pointer;">
-          <option value="">🏷️ بدون تصنيف (Unranked)</option>
+          <option value="">🏷️ Unranked</option>
           <option value="diamond">💎 Diamond Sponsor</option>
           <option value="gold">🥇 Gold Sponsor</option>
           <option value="silver">🥈 Silver Sponsor</option>
           <option value="bronze">🥉 Bronze Sponsor</option>
         </select>
-        <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;">هذا التصنيف سيتحدث فوراً في كل تفاصيل الحدث.</p>
+        <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;">This tier will be updated immediately in all event details.</p>
       </div>
       <div class="modal-footer" style="margin-top: 20px;">
         <button type="button" class="btn btn-ghost" onclick="closeEditRankModal()">Cancel</button>
@@ -208,7 +208,7 @@
           ${r.status === 'pending' && r.initiator === 'sponsor' ? `
               <button class="btn btn-success" style="padding: 4px 12px; font-size: 12px; font-weight: 600;" onclick="respond(${r.id}, 'accepted')">✅ Accept</button>
               <button class="btn btn-danger" style="padding: 4px 12px; font-size: 12px; font-weight: 600;" onclick="respond(${r.id}, 'rejected')">❌ Reject</button>
-          ` : (r.status === 'accepted' ? (canEdit ? `<button class="btn btn-ghost btn-sm" onclick="editRank(${r.id})" style="padding: 4px 12px; font-size: 11px;">✏️ Edit Rank</button>` : `<span style="font-size:11px; color:var(--text-muted)">Locked (Started)</span>`) : `<span style="font-size:12px; color:var(--text-muted)">No Action</span>`)}
+          ` : (r.status === 'accepted' ? (canEdit ? `<button class="btn btn-ghost btn-sm" onclick="editRank(${r.id})" style="padding: 4px 12px; font-size: 11px;">✏️ Edit Tier</button>` : `<span style="font-size:11px; color:var(--text-muted)">Locked (Started)</span>`) : `<span style="font-size:12px; color:var(--text-muted)">No Action</span>`)}
           </div>
         </td>
         <td>
@@ -326,11 +326,11 @@
       
       const res = await api.patch(`/sponsorship/${id}/tier`, { tier });
       if (res.ok) {
-          showToast('Sponsor rank updated beautifully! ✨', 'success');
+          showToast('Sponsor tier updated beautifully! ✨', 'success');
           closeEditRankModal();
           loadRequests();
       } else {
-          showToast(res.data?.message || 'Error updating rank', 'error');
+          showToast(res.data?.message || 'Error updating tier', 'error');
       }
   }
 
