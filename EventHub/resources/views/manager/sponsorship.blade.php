@@ -46,9 +46,9 @@
     <div class="card">
       <div class="table-wrap">
         <table>
-          <thead><tr><th>#</th><th>Event</th><th>Message</th><th>Sponsor</th><th>Status</th><th>Action</th></tr></thead>
+          <thead><tr><th>#</th><th>Event</th><th>Message</th><th>Sponsor</th><th>Status</th><th>Action</th><th>Tier</th></tr></thead>
           <tbody id="req-body">
-            <tr class="loading-row"><td colspan="6"><div class="spinner" style="margin:auto"></div></td></tr>
+            <tr class="loading-row"><td colspan="7"><div class="spinner" style="margin:auto"></div></td></tr>
           </tbody>
         </table>
       </div>
@@ -112,13 +112,14 @@
       <input type="hidden" id="accept-req-id">
       <div class="form-group">
         <label class="form-label" style="font-size: 0.8rem;">Select Sponsor Tier / Rank</label>
-        <select id="a-tier" class="form-control" required style="cursor: pointer;">
+        <select id="a-tier" class="form-control" style="cursor: pointer;">
+          <option value="" selected>🏷️ بدون تصنيف (Unranked)</option>
           <option value="diamond">💎 Diamond Sponsor</option>
           <option value="gold">🥇 Gold Sponsor</option>
           <option value="silver">🥈 Silver Sponsor</option>
-          <option value="bronze" selected>🥉 Bronze Sponsor</option>
+          <option value="bronze">🥉 Bronze Sponsor</option>
         </select>
-        <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;">This rank will determine how the sponsor is displayed to the public.</p>
+        <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;">اختر التصنيف أو اتركه بدون تصنيف. لا يمكن لراعيين أن يحملا نفس التصنيف.</p>
       </div>
       <div class="modal-footer" style="margin-top: 20px;">
         <button type="button" class="btn btn-ghost" onclick="closeAcceptModal()">Cancel</button>
@@ -139,13 +140,14 @@
       <input type="hidden" id="edit-req-id">
       <div class="form-group">
         <label class="form-label" style="font-size: 0.8rem;">Select New Sponsor Tier / Rank</label>
-        <select id="e-tier" class="form-control" required style="cursor: pointer;">
+        <select id="e-tier" class="form-control" style="cursor: pointer;">
+          <option value="">🏷️ بدون تصنيف (Unranked)</option>
           <option value="diamond">💎 Diamond Sponsor</option>
           <option value="gold">🥇 Gold Sponsor</option>
           <option value="silver">🥈 Silver Sponsor</option>
           <option value="bronze">🥉 Bronze Sponsor</option>
         </select>
-        <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;">This rank will immediately update across all event details.</p>
+        <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;">هذا التصنيف سيتحدث فوراً في كل تفاصيل الحدث.</p>
       </div>
       <div class="modal-footer" style="margin-top: 20px;">
         <button type="button" class="btn btn-ghost" onclick="closeEditRankModal()">Cancel</button>
@@ -162,10 +164,27 @@
   const user = requireRole('Event Manager');
   if (user) { populateSidebar(user); setActiveNav(); loadRequests(); loadMyEvents(); }
 
+  // Extract tier from event.sponsors pivot for a given sponsorship request
+  function getSponsorTier(r) {
+    if (!r.event?.sponsors || !r.sponsor_id) return null;
+    const match = r.event.sponsors.find(s => s.id === r.sponsor_id);
+    return match?.pivot?.tier || null;
+  }
+
+  function getTierBadge(tier) {
+    switch (tier) {
+      case 'diamond': return '<span style="background:rgba(6,182,212,0.15); color:#06b6d4; padding:3px 10px; border-radius:12px; border:1px solid rgba(6,182,212,0.3); font-size:11px; font-weight:600;">💎 Diamond</span>';
+      case 'gold':    return '<span style="background:rgba(234,179,8,0.15); color:#eab308; padding:3px 10px; border-radius:12px; border:1px solid rgba(234,179,8,0.3); font-size:11px; font-weight:600;">🥇 Gold</span>';
+      case 'silver':  return '<span style="background:rgba(156,163,175,0.15); color:#9ca3af; padding:3px 10px; border-radius:12px; border:1px solid rgba(156,163,175,0.3); font-size:11px; font-weight:600;">🥈 Silver</span>';
+      case 'bronze':  return '<span style="background:rgba(217,119,6,0.15); color:#d97706; padding:3px 10px; border-radius:12px; border:1px solid rgba(217,119,6,0.3); font-size:11px; font-weight:600;">🥉 Bronze</span>';
+      default:        return '<span style="background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.5); padding:3px 10px; border-radius:12px; border:1px solid rgba(255,255,255,0.12); font-size:11px; font-weight:600;">🏷️ Unranked</span>';
+    }
+  }
+
   async function loadRequests() {
     const res = await api.get('/sponsorship');
     const tbody = document.getElementById('req-body');
-    if (!res.ok || !res.data.length) { tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">💼</div><p>No sponsorship requests yet</p></div></td></tr>'; return; }
+    if (!res.ok || !res.data.length) { tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">💼</div><p>No sponsorship requests yet</p></div></td></tr>'; return; }
     tbody.innerHTML = res.data.map((r, i) => {
       const canEdit = r.event?.start_time && new Date(r.event.start_time) > new Date();
       return `
@@ -190,6 +209,9 @@
               <button class="btn btn-danger" style="padding: 4px 12px; font-size: 12px; font-weight: 600;" onclick="respond(${r.id}, 'rejected')">❌ Reject</button>
           ` : (r.status === 'accepted' ? (canEdit ? `<button class="btn btn-ghost btn-sm" onclick="editRank(${r.id})" style="padding: 4px 12px; font-size: 11px;">✏️ Edit Rank</button>` : `<span style="font-size:11px; color:var(--text-muted)">Locked (Started)</span>`) : `<span style="font-size:12px; color:var(--text-muted)">No Action</span>`)}
           </div>
+        </td>
+        <td>
+          ${r.status === 'accepted' ? getTierBadge(getSponsorTier(r)) : '<span style="font-size:12px; color:var(--text-muted)">—</span>'}
         </td>
       </tr>`;
     }).join('');
@@ -264,10 +286,10 @@
     }
   }
 
-  async function processResponse(id, status, tier = 'bronze') {
+  async function processResponse(id, status, tier = null) {
     const payload = { status };
     if (status === 'accepted') {
-        payload.tier = tier;
+        payload.tier = tier || null;
     }
     
     const res = await api.put(`/sponsorship/${id}`, payload);
@@ -281,7 +303,7 @@
   async function submitAccept(e) {
       e.preventDefault();
       const id = document.getElementById('accept-req-id').value;
-      const tier = document.getElementById('a-tier').value;
+      const tier = document.getElementById('a-tier').value || null;
       closeAcceptModal();
       await processResponse(id, 'accepted', tier);
   }
@@ -299,7 +321,7 @@
   async function submitEditRank(e) {
       e.preventDefault();
       const id = document.getElementById('edit-req-id').value;
-      const tier = document.getElementById('e-tier').value;
+      const tier = document.getElementById('e-tier').value || null;
       
       const res = await api.patch(`/sponsorship/${id}/tier`, { tier });
       if (res.ok) {

@@ -96,13 +96,14 @@ class Profile extends Model
      *   silver  → 'Supported by'
      *   bronze  → 'Special thanks to'
      */
-    public static function tierLabel(string $tier): string
+    public static function tierLabel(?string $tier): string
     {
         return match ($tier) {
             'diamond' => 'logo',
             'gold'    => 'Sponsored by',
             'silver'  => 'Supported by',
             'bronze'  => 'Special thanks to',
+            null      => 'Sponsor',
             default   => '',
         };
     }

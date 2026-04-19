@@ -58,7 +58,7 @@ class EventSponsor extends Pivot
      */
     public function tierLabel(): string
     {
-        return Profile::tierLabel($this->tier);
+        return Profile::tierLabel($this->tier ?? null);
     }
 
     /**

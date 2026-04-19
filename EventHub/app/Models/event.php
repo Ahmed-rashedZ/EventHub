@@ -108,7 +108,7 @@ class Event extends Model
                     ->using(EventSponsor::class)
                     ->withPivot(['tier', 'contribution_amount'])
                     ->withTimestamps()
-                    ->orderByRaw("FIELD(event_sponsor.tier, 'diamond', 'gold', 'silver', 'bronze')");
+                    ->orderByRaw("CASE WHEN event_sponsor.tier IS NULL THEN 1 ELSE 0 END, FIELD(event_sponsor.tier, 'diamond', 'gold', 'silver', 'bronze')");
     }
 
     /**
