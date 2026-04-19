@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -193,8 +193,8 @@ Chart.defaults.color = '#7d8590';
 Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
 Chart.defaults.font.family = 'Inter';
 
-const TYPE_COLORS = { Conference:'#3b82f6', Workshop:'#10b981', Exhibition:'#f59e0b', Entertainment:'#ec4899', Seminar:'#8b5cf6', Festival:'#f97316', Other:'#6b7280' };
-const TYPE_ICONS  = { Conference:'🎤', Workshop:'🔧', Exhibition:'🖼️', Entertainment:'🎭', Seminar:'📚', Festival:'🎉', Other:'📌' };
+const TYPE_COLORS = { 'مؤتمر':'#3b82f6', 'ندوة':'#8b5cf6', 'ورشة عمل':'#10b981', 'دورة تدريبية':'#06b6d4', 'ترفيه':'#ec4899', 'ملتقى علمي':'#f59e0b', 'رياضة':'#22c55e', 'تقنية':'#6366f1', 'اجتماعية':'#f97316' };
+const TYPE_ICONS  = { 'مؤتمر':'🎙️', 'ندوة':'📖', 'ورشة عمل':'🔧', 'دورة تدريبية':'🎓', 'ترفيه':'🎭', 'ملتقى علمي':'🔬', 'رياضة':'⚽', 'تقنية':'💻', 'اجتماعية':'🤝' };
 
 function animVal(el, end, suffix='') {
   let s=0; const st=performance.now();

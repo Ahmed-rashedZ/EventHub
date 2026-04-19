@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -324,8 +324,8 @@
     btn.disabled = false;
   });
 
-  const typeIcons = { Conference: '🎤', Workshop: '🔧', Exhibition: '🖼️', Entertainment: '🎭', Seminar: '📚', Festival: '🎉', Other: '📌' };
-  const typeColors = { Conference: '#3b82f6', Workshop: '#10b981', Exhibition: '#f59e0b', Entertainment: '#ec4899', Seminar: '#8b5cf6', Festival: '#f97316', Other: '#6b7280' };
+  const typeIcons  = { 'مؤتمر':'🎙️', 'ندوة':'📖', 'ورشة عمل':'🔧', 'دورة تدريبية':'🎓', 'ترفيه':'🎭', 'ملتقى علمي':'🔬', 'رياضة':'⚽', 'تقنية':'💻', 'اجتماعية':'🤝' };
+  const typeColors = { 'مؤتمر':'#3b82f6', 'ندوة':'#8b5cf6', 'ورشة عمل':'#10b981', 'دورة تدريبية':'#06b6d4', 'ترفيه':'#ec4899', 'ملتقى علمي':'#f59e0b', 'رياضة':'#22c55e', 'تقنية':'#6366f1', 'اجتماعية':'#f97316' };
 
   function showEventDetails(eventId) {
     const modal = document.getElementById('event-details-modal');

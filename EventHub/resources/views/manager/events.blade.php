@@ -85,12 +85,16 @@
       <div class="form-grid">
         <div class="form-group">
           <label class="form-label">Event Type</label>
-          <select id="e-type" class="form-control" required onchange="toggleOtherEventType()">
-            <option value="Conference">مؤتمر</option>
-            <option value="Workshop">ورشة عمل</option>
-            <option value="Exhibition">معرض</option>
-            <option value="Seminar">ندوة</option>
-            <option value="Other">أخرى</option>
+          <select id="e-type" class="form-control" required>
+            <option value="مؤتمر">🎙️ مؤتمر</option>
+            <option value="ندوة">📖 ندوة</option>
+            <option value="ورشة عمل">🔧 ورشة عمل</option>
+            <option value="دورة تدريبية">🎓 دورة تدريبية</option>
+            <option value="ترفيه">🎭 ترفيه</option>
+            <option value="ملتقى علمي">🔬 ملتقى علمي</option>
+            <option value="رياضة">⚽ رياضة</option>
+            <option value="تقنية">💻 تقنية</option>
+            <option value="اجتماعية">🤝 اجتماعية</option>
           </select>
         </div>
         <div class="form-group">
@@ -100,10 +104,7 @@
           </select>
         </div>
       </div>
-      <div class="form-group" id="e-type-other-group" style="display: none;">
-        <label class="form-label">Specify Event Type</label>
-        <input id="e-type-other" type="text" class="form-control" placeholder="اكتب نوع الحدث بدقة..." />
-      </div>
+
       <div class="form-grid">
         <div class="form-group">
           <label class="form-label">Start Date & Time</label>
@@ -138,19 +139,7 @@
 <script>
   let allEvents = [];
   
-  function toggleOtherEventType() {
-    const typeSelect = document.getElementById('e-type');
-    const otherGroup = document.getElementById('e-type-other-group');
-    const otherInput = document.getElementById('e-type-other');
-    if (typeSelect.value === 'Other') {
-      otherGroup.style.display = 'block';
-      otherInput.required = true;
-    } else {
-      otherGroup.style.display = 'none';
-      otherInput.required = false;
-      otherInput.value = '';
-    }
-  }
+
 
   const user = requireRole('Event Manager');
   if (user) { populateSidebar(user); setActiveNav(); loadEvents(); loadVenues(); }
@@ -231,8 +220,8 @@
   }
 
 // Modal for event details
-const typeIcons = { Conference: '🎤', Workshop: '🔧', Exhibition: '🖼️', Entertainment: '🎭', Seminar: '📚', Festival: '🎉', Other: '📌' };
-const typeColors = { Conference: '#3b82f6', Workshop: '#10b981', Exhibition: '#f59e0b', Entertainment: '#ec4899', Seminar: '#8b5cf6', Festival: '#f97316', Other: '#6b7280' };
+const typeIcons  = { 'مؤتمر':'🎙️', 'ندوة':'📖', 'ورشة عمل':'🔧', 'دورة تدريبية':'🎓', 'ترفيه':'🎭', 'ملتقى علمي':'🔬', 'رياضة':'⚽', 'تقنية':'💻', 'اجتماعية':'🤝' };
+const typeColors = { 'مؤتمر':'#3b82f6', 'ندوة':'#8b5cf6', 'ورشة عمل':'#10b981', 'دورة تدريبية':'#06b6d4', 'ترفيه':'#ec4899', 'ملتقى علمي':'#f59e0b', 'رياضة':'#22c55e', 'تقنية':'#6366f1', 'اجتماعية':'#f97316' };
 
 function showEventDetails(eventId) {
   const modal = document.getElementById('event-details-modal');
@@ -434,7 +423,6 @@ function openModal() { document.getElementById('event-modal').classList.add('ope
 function closeModal() { 
   document.getElementById('event-modal').classList.remove('open'); 
   document.getElementById('event-form').reset(); 
-  toggleOtherEventType(); 
 }
 
 document.getElementById('event-form').addEventListener('submit', async (e) => {
@@ -443,10 +431,7 @@ document.getElementById('event-form').addEventListener('submit', async (e) => {
   formData.append('title', document.getElementById('e-title').value);
   formData.append('description', document.getElementById('e-desc').value);
   
-  let eventType = document.getElementById('e-type').value;
-  if (eventType === 'Other') {
-      eventType = document.getElementById('e-type-other').value;
-  }
+  const eventType = document.getElementById('e-type').value;
   formData.append('event_type', eventType);
   formData.append('venue_id', document.getElementById('e-venue').value);
   formData.append('start_time', document.getElementById('e-start').value);

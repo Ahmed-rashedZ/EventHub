@@ -115,8 +115,8 @@ function animVal(el, end, suffix='') {
 }
 
 const COLORS = { approved:'#22c55e', pending:'#f59e0b', rejected:'#ef4444' };
-const TYPE_COLORS = { Conference:'#3b82f6', Workshop:'#10b981', Exhibition:'#f59e0b', Entertainment:'#ec4899', Seminar:'#8b5cf6', Festival:'#f97316', Other:'#6b7280' };
-const TYPE_ICONS = { Conference:'🎤', Workshop:'🔧', Exhibition:'🖼️', Entertainment:'🎭', Seminar:'📚', Festival:'🎉', Other:'📌' };
+const TYPE_COLORS = { 'مؤتمر':'#3b82f6', 'ندوة':'#8b5cf6', 'ورشة عمل':'#10b981', 'دورة تدريبية':'#06b6d4', 'ترفيه':'#ec4899', 'ملتقى علمي':'#f59e0b', 'رياضة':'#22c55e', 'تقنية':'#6366f1', 'اجتماعية':'#f97316' };
+const TYPE_ICONS  = { 'مؤتمر':'🎙️', 'ندوة':'📖', 'ورشة عمل':'🔧', 'دورة تدريبية':'🎓', 'ترفيه':'🎭', 'ملتقى علمي':'🔬', 'رياضة':'⚽', 'تقنية':'💻', 'اجتماعية':'🤝' };
 
 
 async function loadAnalytics() {

@@ -23,7 +23,7 @@ class AnalyticsController extends Controller
         $allEvents    = Event::withCount('tickets')->get();
 
         $eventsByStatus = $allEvents->groupBy('status')->map->count();
-        $eventsByType   = $allEvents->groupBy(fn($e) => $e->event_type ?: 'Other')->map->count();
+        $eventsByType   = $allEvents->groupBy(fn($e) => $e->event_type ?: 'مؤتمر')->map->count();
         $usersByRole    = User::all()->groupBy('role')->map->count();
 
         $monthlyRegs = Ticket::selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month, count(*) as total")
@@ -35,7 +35,7 @@ class AnalyticsController extends Controller
             ->sortByDesc('tickets_count')->take(5)->values()
             ->map(fn($e) => [
                 'id' => $e->id, 'title' => $e->title,
-                'event_type' => $e->event_type ?: 'Other',
+                'event_type' => $e->event_type ?: 'مؤتمر',
                 'capacity' => $e->capacity, 'tickets_count' => $e->tickets_count,
                 'fill_rate' => $e->capacity > 0 ? round(($e->tickets_count / $e->capacity) * 100, 1) : 0,
                 'start_time' => $e->start_time,
@@ -75,7 +75,7 @@ class AnalyticsController extends Controller
         $totalCapacity = $events->where('status', 'approved')->sum('capacity');
 
         $eventsByStatus = $events->groupBy('status')->map->count();
-        $eventsByType   = $events->groupBy(fn($e) => $e->event_type ?: 'Other')->map->count();
+        $eventsByType   = $events->groupBy(fn($e) => $e->event_type ?: 'مؤتمر')->map->count();
 
         $ticketStats = Ticket::whereIn('event_id', $eventIds)
             ->selectRaw("event_id, count(*) as total, SUM(status='used') as used")
@@ -87,7 +87,7 @@ class AnalyticsController extends Controller
             $ac = $s ? (int)$s->used : 0;
             return [
                 'id' => $ev->id, 'title' => $ev->title,
-                'event_type' => $ev->event_type ?: 'Other',
+                'event_type' => $ev->event_type ?: 'مؤتمر',
                 'status' => $ev->status, 'time_status' => $ev->time_status,
                 'capacity' => $ev->capacity, 'tickets_count' => $tc,
                 'attended_count' => $ac,

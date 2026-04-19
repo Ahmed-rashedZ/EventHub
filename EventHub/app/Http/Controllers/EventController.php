@@ -64,7 +64,7 @@ class EventController extends Controller
         $request->validate([
             'title'       => 'required|string|max:255',
             'description' => 'required|string',
-            'event_type'  => 'required|string|max:255',
+            'event_type'  => 'required|string|in:مؤتمر,ندوة,ورشة عمل,دورة تدريبية,ترفيه,ملتقى علمي,رياضة,تقنية,اجتماعية',
             'venue_id'    => 'required|exists:venues,id',
             'start_time'  => 'required|date|after:now',
             'end_time'    => 'required|date|after:start_time',
