@@ -1,6 +1,10 @@
 /**
  * EventHub – Auth Guard Helper
+ * Depends on i18n.js being loaded before this file for the t() function.
  */
+
+/* Safety shim: if i18n.js hasn't loaded yet, t() is a no-op pass-through */
+if (typeof t !== 'function') { window.t = k => k; }
 
 function getUser() {
     try { return JSON.parse(localStorage.getItem('user')); } catch { return null; }
@@ -12,20 +16,18 @@ function getToken() {
 
 /**
  * Maps profile.is_available from the API/database to a boolean.
- * Returns null if the value is missing or not a definite true/false — do not guess ON/OFF in the UI.
  */
 function availabilityFromDatabase(value) {
-    if (value === true || value === 1) return true;
+    if (value === true  || value === 1) return true;
     if (value === false || value === 0) return false;
     return null;
 }
 
 /**
  * Require auth + specific role(s). Redirects if not met.
- * @param {...string} roles   e.g. requireRole('Admin') or requireRole('Admin','Event Manager')
  */
 function requireRole(...roles) {
-    const user = getUser();
+    const user  = getUser();
     const token = getToken();
 
     if (!user || !token) {
@@ -34,18 +36,15 @@ function requireRole(...roles) {
     }
 
     if (roles.length > 0 && !roles.includes(user.role)) {
-        // Redirect to the correct dashboard
         const dashMap = {
-            'Admin': '/admin/dashboard',
+            'Admin':         '/admin/dashboard',
             'Event Manager': '/manager/dashboard',
-            'Sponsor': '/sponsor/dashboard',
-            'User': '/profile',
-            'Assistant': '/profile'
+            'Sponsor':       '/sponsor/dashboard',
+            'User':          '/profile',
+            'Assistant':     '/profile'
         };
         const target = dashMap[user.role] || '/login';
-        if (window.location.pathname !== target) {
-            window.location.href = target;
-        }
+        if (window.location.pathname !== target) window.location.href = target;
         return null;
     }
 
@@ -65,14 +64,61 @@ function logout() {
 }
 
 /**
+ * Build sidebar nav HTML using t() so links are translated automatically.
+ */
+function buildSidebarLinks(role, activePath) {
+    const path = activePath || window.location.pathname;
+
+    const nav = (href, icon, label) => {
+        const active = path.startsWith(href) ? ' active' : '';
+        return `<a class="nav-item${active}" href="${href}"><span class="nav-icon">${icon}</span> ${t(label)}</a>`;
+    };
+
+    let html = '';
+
+    if (role === 'Admin') {
+        html += `<span class="nav-section-label">${t('Overview')}</span>`;
+        html += nav('/admin/dashboard', '📊', 'Dashboard');
+        html += `<span class="nav-section-label">${t('Management')}</span>`;
+        html += nav('/admin/users',   '👥', 'Users');
+        html += nav('/admin/events',  '📅', 'Events');
+        html += nav('/admin/venues',  '🏛️', 'Venues');
+
+    } else if (role === 'Event Manager') {
+        html += `<span class="nav-section-label">${t('Overview')}</span>`;
+        html += nav('/manager/dashboard',   '📊', 'Dashboard');
+        html += `<span class="nav-section-label">${t('Events')}</span>`;
+        html += nav('/manager/events',      '📅', 'My Events');
+        html += nav('/manager/assistants',  '👥', 'Assistants');
+        html += nav('/manager/attendance',  '📍', 'Attendance');
+        html += nav('/manager/sponsorship', '💼', 'Sponsorship');
+
+    } else if (role === 'Sponsor') {
+        html += `<span class="nav-section-label">${t('Overview')}</span>`;
+        html += nav('/sponsor/dashboard', '📊', 'Dashboard');
+        html += `<span class="nav-section-label">${t('Opportunities')}</span>`;
+        html += nav('/sponsor/events',    '🌍', 'Browse Events');
+        html += nav('/sponsor/requests',  '💼', 'Browse Requests');
+        html += nav('/sponsor/history',   '📋', 'History');
+    }
+
+    html += `<span class="nav-section-label">${t('Settings')}</span>`;
+    html += nav('/profile', '⚙️', 'My Profile');
+
+    return html;
+}
+
+/**
  * Populate sidebar with current user info
  */
 function populateSidebar(user) {
-    const nameEl  = document.getElementById('sidebar-username');
-    const roleEl  = document.getElementById('sidebar-role');
-    const avEl    = document.getElementById('sidebar-avatar');
+    const nameEl = document.getElementById('sidebar-username');
+    const roleEl = document.getElementById('sidebar-role');
+    const avEl   = document.getElementById('sidebar-avatar');
+
     if (nameEl && nameEl.textContent.trim() === '') nameEl.textContent = user.name;
     if (roleEl && roleEl.textContent.trim() === '') roleEl.textContent = user.role;
+
     if (avEl && !avEl.querySelector('img')) {
         let imageUrl = '/images/default-avatar.png';
         if (user.image && user.image.trim() !== '') {
@@ -82,9 +128,14 @@ function populateSidebar(user) {
         } else if (user.profile && user.profile.logo) {
             imageUrl = user.profile.logo.startsWith('http') ? user.profile.logo : (user.profile.logo.startsWith('/') ? user.profile.logo : '/' + user.profile.logo);
         }
-
-        avEl.innerHTML = `<img src="${imageUrl}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" alt="Avatar"/>`;
+        avEl.innerHTML = `<img src="${imageUrl}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" alt="Avatar"/>`;
         avEl.style.background = 'transparent';
+    }
+
+    /* Auto-populate sidebar-links if an element with that ID exists */
+    const linksDiv = document.getElementById('sidebar-links');
+    if (linksDiv && linksDiv.innerHTML.trim() === '') {
+        linksDiv.innerHTML = buildSidebarLinks(user.role);
     }
 
     const logoutBtn = document.getElementById('logout-btn');
@@ -98,9 +149,7 @@ function setActiveNav() {
     const path = window.location.pathname;
     document.querySelectorAll('.nav-item').forEach(el => {
         const href = el.getAttribute('href') || '';
-        if (path.endsWith(href) || (href !== '' && path.includes(href))) {
-            el.classList.add('active');
-        }
+        if (path.startsWith(href) && href !== '') el.classList.add('active');
     });
 }
 

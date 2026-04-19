@@ -1,10 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Browse Events – EventHub Sponsor</title>
   <link rel="stylesheet" href="/css/style.css"/>
+  <script src="/js/i18n.js"></script>
   <style>
       .req-btn {
           padding: 6px 12px;
@@ -50,6 +51,22 @@
   <main class="main-content">
     <div class="topbar">
       <div><h1 class="page-title">Browse Events</h1><p class="page-subtitle">Discover opportunities to sponsor upcoming verified events</p></div>
+      <div class="topbar-actions" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <div style="position:relative">
+          <input id="search-input" type="text" class="form-control" placeholder="Search by name or manager..." style="width:220px;padding-left:36px" oninput="applyFilter()">
+          <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted)" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        </div>
+        <div style="position:relative;display:flex;align-items:center">
+          <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
+          <select id="sort-events" class="form-control" style="width:190px;padding-left:32px" onchange="applyFilter()">
+            <option value="soonest">📅 الأقرب زمناً</option>
+            <option value="farthest">🔮 الأبعد زمناً</option>
+            <option value="alpha">🔤 ترتيب أبجدي</option>
+            <option value="live">🔴 الحالية (Live)</option>
+            <option value="ended">✅ المنتهية</option>
+          </select>
+        </div>
+      </div>
     </div>
     
     <div class="availability-load-error" id="availability-load-error">
@@ -158,24 +175,83 @@
       loadEvents();
   }
 
+  let allEvents = [];
+  let myRequestEventIds = [];
+
   async function loadEvents() {
     const [eventsRes, reqsRes] = await Promise.all([
       api.get('/events'),
       api.get('/sponsorship')
     ]);
-    
-    const myRequestEventIds = (reqsRes.ok && reqsRes.data) ? reqsRes.data.map(r => r.event?.id || r.event_id) : [];
+
+    myRequestEventIds = (reqsRes.ok && reqsRes.data) ? reqsRes.data.map(r => r.event?.id || r.event_id) : [];
 
     const tbody = document.getElementById('events-body');
-    const upcomingEvents = eventsRes.data.filter(e => e.time_status === 'upcoming');
-    if (!eventsRes.ok || !upcomingEvents.length) { 
-        tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><p>No upcoming public events available right now.</p></div></td></tr>'; 
-        return; 
+    if (!eventsRes.ok || !eventsRes.data?.length) {
+      tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><p>No public events available right now.</p></div></td></tr>';
+      return;
     }
-    
-    tbody.innerHTML = upcomingEvents.map(e => {
+
+    // Store all approved events — don't pre-filter by time_status;
+    // the sort dropdown handles "live" and "ended" filtering.
+    allEvents = eventsRes.data;
+    applyFilter();
+  }
+
+  function applyFilter() {
+    const q   = (document.getElementById('search-input')?.value || '').toLowerCase().trim();
+    const s   = document.getElementById('sort-events').value;
+    const now = new Date();
+
+    // 1. Start with upcoming + live by default; for "ended" show ended events
+    let filtered;
+    if (s === 'ended') {
+      filtered = allEvents.filter(e => new Date(e.end_time) < now);
+    } else if (s === 'live') {
+      filtered = allEvents.filter(e => {
+        const start = new Date(e.start_time);
+        const end   = new Date(e.end_time);
+        return start <= now && end >= now;
+      });
+    } else {
+      // default: upcoming + live (exclude fully ended)
+      filtered = allEvents.filter(e => new Date(e.end_time) >= now);
+    }
+
+    // 2. Search
+    if (q) {
+      filtered = filtered.filter(e =>
+        (e.title || '').toLowerCase().includes(q) ||
+        (e.creator?.name || '').toLowerCase().includes(q)
+      );
+    }
+
+    // 3. Sort
+    if (s === 'soonest') {
+      filtered.sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
+    } else if (s === 'farthest') {
+      filtered.sort((a, b) => new Date(b.start_time) - new Date(a.start_time));
+    } else if (s === 'alpha') {
+      filtered.sort((a, b) => (a.title || '').localeCompare(b.title || '', 'ar'));
+    } else if (s === 'live') {
+      filtered.sort((a, b) => new Date(a.end_time) - new Date(b.end_time));
+    } else if (s === 'ended') {
+      filtered.sort((a, b) => new Date(b.end_time) - new Date(a.end_time));
+    }
+
+    renderEvents(filtered);
+  }
+
+  function renderEvents(events) {
+    const tbody = document.getElementById('events-body');
+    if (!events.length) {
+      tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><p>No events match your selection.</p></div></td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = events.map(e => {
       const hasRequested = myRequestEventIds.includes(e.id);
-      
+
       let reqBtnHtml = '';
       if (hasRequested) {
           reqBtnHtml = `<span style="font-size:11px; color:var(--text-muted); margin-right:8px; font-style:italic;">Already Requested</span>

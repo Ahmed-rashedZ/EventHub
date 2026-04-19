@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>My Profile – EventHub</title>
   <link rel="stylesheet" href="/css/style.css"/>
+  <script src="/js/i18n.js"></script>
   <style>
     .profile-card { max-width: 600px; margin: 40px auto; padding: 30px; }
   </style>
@@ -105,6 +106,26 @@
           <label class="form-label">New Password</label>
           <input id="p-pass" type="password" class="form-control" placeholder="Leave blank to keep current password" minlength="8"/>
         </div>
+
+        <!-- ── Language Setting ─────────────────────────── -->
+        <h3 style="margin-top:28px; margin-bottom:14px; font-weight:600; border-bottom:1px solid #ddd; padding-bottom:5px;">Language / اللغة</h3>
+        <div class="form-group">
+          <label class="form-label" style="margin-bottom:10px; display:block;">Interface Language — لغة الواجهة</label>
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <button type="button" id="lang-en-btn" onclick="setLanguage('en')"
+              style="display:flex; align-items:center; gap:8px; padding:10px 20px; border-radius:10px; border:2px solid transparent; cursor:pointer; font-size:0.95rem; font-weight:600; transition:all .2s;"
+            >
+              🇬🇧 English
+            </button>
+            <button type="button" id="lang-ar-btn" onclick="setLanguage('ar')"
+              style="display:flex; align-items:center; gap:8px; padding:10px 20px; border-radius:10px; border:2px solid transparent; cursor:pointer; font-size:0.95rem; font-weight:600; transition:all .2s; font-family:'Cairo',sans-serif;"
+            >
+              🇸🇦 العربية
+            </button>
+          </div>
+          <small style="display:block; margin-top:10px; color:#888;">Changes take effect immediately — التغيير يُطبَّق فوراً</small>
+        </div>
+
         <div style="margin-top:24px; text-align:right">
           <button type="submit" class="btn btn-primary" id="save-btn">Save Changes</button>
         </div>
@@ -115,6 +136,26 @@
 
 <div id="toast-container"></div>
 <script src="/js/api.js"></script>
+<script>
+  /* Highlight the active language button */
+  (function() {
+    const lang = localStorage.getItem('lang') || 'en';
+    const activeStyle = 'background:var(--accent,#6e40f2); color:#fff; border-color:var(--accent,#6e40f2); box-shadow:0 4px 14px rgba(110,64,242,0.35);';
+    const inactiveStyle = 'background:rgba(255,255,255,0.05); color:var(--text-muted,#888); border-color:rgba(255,255,255,0.1);';
+    document.addEventListener('DOMContentLoaded', function() {
+      const enBtn = document.getElementById('lang-en-btn');
+      const arBtn = document.getElementById('lang-ar-btn');
+      if (!enBtn || !arBtn) return;
+      if (lang === 'ar') {
+        arBtn.style.cssText += activeStyle;
+        enBtn.style.cssText += inactiveStyle;
+      } else {
+        enBtn.style.cssText += activeStyle;
+        arBtn.style.cssText += inactiveStyle;
+      }
+    });
+  })();
+</script>
 <script src="/js/auth.js"></script>
 <script>
   // Sponsors: load /profile first so is_available matches the database (no UI default).
@@ -135,38 +176,12 @@
     }
 
     populateSidebar(u);
-    
-    // Inject links based on role
+
+    // Inject links using the shared helper (respects i18n)
     const linksDiv = document.getElementById('sidebar-links');
-    if (u.role === 'Admin') {
-      linksDiv.innerHTML = `
-        <span class="nav-section-label">Overview</span>
-        <a class="nav-item" href="/admin/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
-        <span class="nav-section-label">Management</span>
-        <a class="nav-item" href="/admin/users"><span class="nav-icon">👥</span> Users</a>
-        <a class="nav-item" href="/admin/events"><span class="nav-icon">📅</span> Events</a>
-        <a class="nav-item" href="/admin/venues"><span class="nav-icon">🏛️</span> Venues</a>`;
-    } else if (u.role === 'Event Manager') {
-      linksDiv.innerHTML = `
-        <span class="nav-section-label">Overview</span>
-        <a class="nav-item" href="/manager/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
-        <span class="nav-section-label">Events</span>
-        <a class="nav-item" href="/manager/events"><span class="nav-icon">📅</span> My Events</a>
-        <a class="nav-item" href="/manager/assistants"><span class="nav-icon">👥</span> Assistants</a>
-        <a class="nav-item" href="/manager/attendance"><span class="nav-icon">📍</span> Attendance</a>
-        <a class="nav-item" href="/manager/sponsorship"><span class="nav-icon">💼</span> Sponsorship</a>`;
-    } else if (u.role === 'Sponsor') {
-      linksDiv.innerHTML = `
-        <span class="nav-section-label">Overview</span>
-        <a class="nav-item" href="/sponsor/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
-        <span class="nav-section-label">Sponsorships</span>
-        <a class="nav-item" href="/sponsor/requests"><span class="nav-icon">💼</span> Browse Requests</a>`;
-    }
-    // Add Profile link at the bottom
-    linksDiv.innerHTML += `
-      <span class="nav-section-label">Settings</span>
-      <a class="nav-item active" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>`;
-      
+    if (linksDiv) linksDiv.innerHTML = buildSidebarLinks(u.role, '/profile');
+
+
     // Populate form
     document.getElementById('p-name').value = u.name || '';
     document.getElementById('p-email').value = u.email || '';

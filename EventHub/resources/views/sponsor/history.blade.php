@@ -1,10 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>My Sponsorships History – EventHub</title>
   <link rel="stylesheet" href="/css/style.css"/>
+  <script src="/js/i18n.js"></script>
   <style>
     .history-card {
         background: var(--bg-card);

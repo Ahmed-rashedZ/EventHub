@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>My Analytics – EventHub Manager</title>
   <link rel="stylesheet" href="/css/style.css"/>
+  <script src="/js/i18n.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <style>
 .an-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px;margin-bottom:24px}

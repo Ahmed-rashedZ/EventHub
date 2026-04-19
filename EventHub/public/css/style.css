@@ -817,3 +817,120 @@ select.form-control option { background: var(--bg-card); }
   .form-grid { grid-template-columns: 1fr; }
   .stats-grid { grid-template-columns: 1fr 1fr; }
 }
+
+/* ══════════════════════════════════════════════════════
+   RTL  –  Arabic layout overrides
+   Applied when <html dir="rtl"> is set by i18n.js
+   ══════════════════════════════════════════════════════ */
+
+/* Sidebar moves to the RIGHT */
+[dir="rtl"] .sidebar {
+  left:  auto !important;
+  right: 0    !important;
+  border-right: none !important;
+  border-left: 1px solid var(--border) !important;
+}
+
+/* Main content margin flips */
+[dir="rtl"] .main-content {
+  margin-left:  0                    !important;
+  margin-right: var(--sidebar-w)     !important;
+}
+
+/* Sidebar internals */
+[dir="rtl"] .sidebar-logo   { flex-direction: row-reverse; }
+[dir="rtl"] .nav-item       { flex-direction: row-reverse; }
+[dir="rtl"] .nav-item .nav-icon { margin-right: 0 !important; margin-left: 10px !important; }
+[dir="rtl"] .nav-section-label { text-align: right; }
+[dir="rtl"] .sidebar-user   { flex-direction: row-reverse; }
+[dir="rtl"] .user-info      { text-align: right; }
+
+/* Topbar */
+[dir="rtl"] .topbar         { flex-direction: row-reverse; }
+[dir="rtl"] .topbar > div:first-child { text-align: right; }
+[dir="rtl"] .topbar-actions { flex-direction: row-reverse; }
+[dir="rtl"] .page-title,
+[dir="rtl"] .page-subtitle  { text-align: right; }
+
+/* Cards and typography */
+[dir="rtl"] .card           { text-align: right; }
+[dir="rtl"] .card-header    { flex-direction: row-reverse; }
+[dir="rtl"] .stat-icon      { right: auto !important; left: 20px !important; }
+
+/* Tables */
+[dir="rtl"] thead th,
+[dir="rtl"] tbody td        { text-align: right; }
+[dir="rtl"] .table-wrap     { direction: rtl; }
+
+/* Forms */
+[dir="rtl"] .form-group     { text-align: right; }
+[dir="rtl"] .form-label     { text-align: right; }
+[dir="rtl"] .form-control   { text-align: right; direction: rtl; }
+[dir="rtl"] .form-control::placeholder { text-align: right; }
+[dir="rtl"] .form-grid      { direction: rtl; }
+
+/* Modals */
+[dir="rtl"] .modal-header   { flex-direction: row-reverse; }
+[dir="rtl"] .modal-body     { text-align: right; direction: rtl; }
+[dir="rtl"] .modal-footer   { flex-direction: row-reverse; justify-content: flex-start; }
+
+/* Toasts */
+[dir="rtl"] #toast-container {
+  right: auto  !important;
+  left: 24px   !important;
+}
+[dir="rtl"] .toast { direction: rtl; text-align: right; }
+
+/* Auth pages (login/register) */
+[dir="rtl"] .auth-logo      { flex-direction: row-reverse; }
+[dir="rtl"] .auth-card      { text-align: right; direction: rtl; }
+[dir="rtl"] .auth-footer    { text-align: center; }
+
+/* Badges – keep LTR inside RTL */
+[dir="rtl"] .badge,
+[dir="rtl"] .role-badge     { direction: ltr; }
+
+/* RTL responsive override */
+@media (max-width: 768px) {
+  [dir="rtl"] .main-content { margin-right: 0 !important; }
+}
+
+/* ── Language Toggle Buttons ─────────────────────────── */
+.lang-buttons-wrap {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.lang-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 26px;
+  border-radius: 50px;
+  border: 2px solid var(--border);
+  cursor: pointer;
+  font-size: 0.92rem;
+  font-weight: 700;
+  transition: all .22s;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+  line-height: 1;
+}
+
+.lang-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(110,64,242,.08);
+}
+
+.lang-btn.active {
+  background: linear-gradient(135deg, var(--accent), #8b5cf6);
+  color: #fff !important;
+  border-color: transparent;
+  box-shadow: 0 4px 20px rgba(110,64,242,.45);
+}
+
+.lang-btn .flag { font-size: 1.15rem; line-height: 1; }

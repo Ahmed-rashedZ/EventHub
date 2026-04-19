@@ -1,10 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Events – EventHub Admin</title>
   <link rel="stylesheet" href="/css/style.css"/>
+  <script src="/js/i18n.js"></script>
 </head>
 <body>
 <div class="app-layout">
@@ -26,17 +27,27 @@
   <main class="main-content">
     <div class="topbar">
       <div><h1 class="page-title">Events</h1><p class="page-subtitle">Approve, reject and monitor all events</p></div>
-      <div class="topbar-actions" style="display:flex;gap:10px;align-items:center">
+      <div class="topbar-actions" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
         <div style="position:relative">
-          <input id="search-input" type="text" class="form-control" placeholder="Search by event or manager name..." style="width:280px;padding-left:36px" oninput="applyFilter()">
+          <input id="search-input" type="text" class="form-control" placeholder="Search by event or manager name..." style="width:240px;padding-left:36px" oninput="applyFilter()">
           <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted)" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
         </div>
-        <select id="filter-status" class="form-control" style="width:160px" onchange="applyFilter()">
-          <option value="">All Events</option>
+        <select id="filter-status" class="form-control" style="width:145px" onchange="applyFilter()">
+          <option value="">All Status</option>
           <option value="pending" selected>Pending</option>
           <option value="approved">Approved</option>
           <option value="rejected">Rejected</option>
         </select>
+        <div style="position:relative;display:flex;align-items:center">
+          <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
+          <select id="sort-events" class="form-control" style="width:190px;padding-left:32px" onchange="applyFilter()">
+            <option value="soonest">📅 الأقرب زمناً</option>
+            <option value="farthest">🔮 الأبعد زمناً</option>
+            <option value="alpha">🔤 ترتيب أبجدي</option>
+            <option value="live">🔴 الحالية (Live)</option>
+            <option value="ended">✅ المنتهية</option>
+          </select>
+        </div>
       </div>
     </div>
 
@@ -69,16 +80,47 @@
   }
 
   function applyFilter() {
-    const f = document.getElementById('filter-status').value;
-    const q = (document.getElementById('search-input').value || '').toLowerCase().trim();
+    const f   = document.getElementById('filter-status').value;
+    const q   = (document.getElementById('search-input').value || '').toLowerCase().trim();
+    const s   = document.getElementById('sort-events').value;
+    const now = new Date();
+
+    // 1. Filter by status
     let filtered = f ? allEvents.filter(e => e.status === f) : [...allEvents];
+
+    // 2. Filter by search
     if (q) {
       filtered = filtered.filter(e => {
-        const title = (e.title || '').toLowerCase();
+        const title   = (e.title || '').toLowerCase();
         const manager = (e.creator?.name || '').toLowerCase();
         return title.includes(q) || manager.includes(q);
       });
     }
+
+    // 3. Filter by time when sort is live/ended
+    if (s === 'live') {
+      filtered = filtered.filter(e => {
+        const start = new Date(e.start_time);
+        const end   = new Date(e.end_time);
+        return start <= now && end >= now;
+      });
+    } else if (s === 'ended') {
+      filtered = filtered.filter(e => new Date(e.end_time) < now);
+    }
+
+    // 4. Sort
+    if (s === 'soonest') {
+      filtered.sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
+    } else if (s === 'farthest') {
+      filtered.sort((a, b) => new Date(b.start_time) - new Date(a.start_time));
+    } else if (s === 'alpha') {
+      filtered.sort((a, b) => (a.title || '').localeCompare(b.title || '', 'ar'));
+    } else if (s === 'live') {
+      filtered.sort((a, b) => new Date(a.end_time) - new Date(b.end_time));
+    } else if (s === 'ended') {
+      filtered.sort((a, b) => new Date(b.end_time) - new Date(a.end_time));
+    }
+
     renderEvents(filtered);
   }
 

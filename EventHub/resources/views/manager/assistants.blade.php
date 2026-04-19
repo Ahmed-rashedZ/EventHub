@@ -1,10 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Assistants – EventHub Manager</title>
   <link rel="stylesheet" href="/css/style.css"/>
+  <script src="/js/i18n.js"></script>
   <style>
     .assistant-card { background: var(--surface2); padding: 20px; border-radius: 12px; border: 1px solid var(--border); max-width: 600px; }
   </style>
