@@ -30,7 +30,6 @@
       <div><h1 class="page-title">Users</h1><p class="page-subtitle">Manage all platform users</p></div>
       <div class="topbar-actions">
         <div class="search-bar"><span>🔍</span><input id="search-input" type="text" placeholder="Search users…" oninput="filterTable()"/></div>
-        <button class="btn btn-primary" onclick="openModal()">+ Add User</button>
       </div>
     </div>
 
@@ -51,39 +50,7 @@
   </main>
 </div>
 
-<!-- Add User Modal -->
-<div class="modal-overlay" id="user-modal">
-  <div class="modal">
-    <div class="modal-header">
-      <h3 class="modal-title">Create User</h3>
-      <button class="modal-close" onclick="closeModal()">✕</button>
-    </div>
-    <form id="user-form">
-      <div class="form-group">
-        <label class="form-label">Full Name</label>
-        <input id="u-name" type="text" class="form-control" required/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Email Address</label>
-        <input id="u-email" type="email" class="form-control" required/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Password</label>
-        <input id="u-pass" type="password" class="form-control" required minlength="8"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Role</label>
-        <select id="u-role" class="form-control">
-          <option value="User">Attendee (User)</option>
-        </select>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-        <button type="submit" class="btn btn-primary" id="save-btn">Create User</button>
-      </div>
-    </form>
-  </div>
-</div>
+
 <div id="toast-container"></div>
 <script src="/js/api.js"></script>
 <script src="/js/auth.js"></script>
@@ -173,32 +140,7 @@ Suspended users will be logged out and unable to log back in.`)) return;
       }
   }
 
-  function openModal() { document.getElementById('user-modal').classList.add('open'); }
-  function closeModal() { document.getElementById('user-modal').classList.remove('open'); document.getElementById('user-form').reset(); }
 
-  document.getElementById('user-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = document.getElementById('save-btn');
-    btn.textContent = 'Creating...'; btn.disabled = true;
-
-    const body = {
-      name: document.getElementById('u-name').value,
-      email: document.getElementById('u-email').value,
-      password: document.getElementById('u-pass').value,
-      role: document.getElementById('u-role').value
-    };
-
-    const res = await api.post('/users', body);
-    if (res.ok) {
-      showToast('User created successfully!', 'success');
-      closeModal();
-      loadUsers();
-    } else {
-      const msg = res.data?.errors ? Object.values(res.data.errors).flat().join('. ') : res.data?.message || 'Error creating user';
-      showToast(msg, 'error');
-    }
-    btn.textContent = 'Create User'; btn.disabled = false;
-  });
 </script>
 </body>
 </html>

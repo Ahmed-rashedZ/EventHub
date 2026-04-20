@@ -101,15 +101,6 @@
       <!-- Back Link -->
       <a class="es-back" href="/manager/events">← Back to My Events</a>
 
-      <!-- Hero Section -->
-      <div class="es-hero" id="es-hero">
-        <div class="es-hero-stripe" id="hero-stripe" style="background:#6e40f2"></div>
-        <div class="es-hero-top">
-          <h1 class="es-hero-title" id="hero-title">—</h1>
-          <span class="es-hero-type" id="hero-type"></span>
-        </div>
-        <div class="es-hero-meta" id="hero-meta"></div>
-      </div>
 
       <!-- Stat Cards -->
       <div class="es-stats" id="stats-row">
@@ -243,21 +234,6 @@ async function loadEventStats() {
   const tColor = TYPE_COLORS[eType] || '#6b7280';
   const tIcon  = TYPE_ICONS[eType]  || '📌';
 
-  // Hero
-  document.getElementById('hero-title').textContent = ev.title;
-  document.getElementById('hero-stripe').style.background = tColor;
-  const heroType = document.getElementById('hero-type');
-  heroType.innerHTML = `${tIcon} ${eType}`;
-  heroType.style.background = tColor + '18';
-  heroType.style.color = tColor;
-  heroType.style.border = `1px solid ${tColor}40`;
-
-  document.getElementById('hero-meta').innerHTML = `
-    <span>🏛️ ${ev.venue?.name || '—'}</span>
-    <span>📍 ${ev.venue?.location || '—'}</span>
-    <span>🕐 ${fmtDate(ev.start_time)} — ${fmtDate(ev.end_time)}</span>
-    <span>${badge(ev.status)} ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''}</span>
-  `;
 
   // Stats
   const remaining = s.registered_count - s.attended_count;
