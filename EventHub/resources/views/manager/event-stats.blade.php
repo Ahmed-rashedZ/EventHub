@@ -244,24 +244,24 @@ async function loadEventStats() {
   animVal(document.getElementById('s-attended'), s.attended_count);
   animVal(document.getElementById('s-remaining'), remaining);
 
-  document.getElementById('s-registered-sub').textContent = `${fillRate}% of capacity`;
-  document.getElementById('s-attended-sub').textContent = `${s.attendance_rate}% attendance`;
+  document.getElementById('s-registered-sub').textContent = `${fillRate}% ${t('of capacity')}`;
+  document.getElementById('s-attended-sub').textContent = `${s.attendance_rate}% ${t('attendance')}`;
 
   // Rings
   setRing('fill-ring', fillRate);
   document.getElementById('fill-pct').textContent = fillRate + '%';
-  document.getElementById('fill-detail').textContent = `${s.registered_count} registered out of ${ev.capacity} capacity`;
+  document.getElementById('fill-detail').textContent = `${s.registered_count} ${t('registered out of')} ${ev.capacity} ${t('capacity')}`;
 
   setRing('att-ring', s.attendance_rate);
   document.getElementById('att-pct').textContent = s.attendance_rate + '%';
-  document.getElementById('att-detail').textContent = `${s.attended_count} checked in out of ${s.registered_count} registrations`;
+  document.getElementById('att-detail').textContent = `${s.attended_count} ${t('checked in out of')} ${s.registered_count} ${t('registrations')}`;
 
   // Charts
   // 1. Registration vs Attendance bar
   new Chart(document.getElementById('regAttChart'), {
     type: 'bar',
     data: {
-      labels: ['Registered', 'Checked In', 'Not Scanned'],
+      labels: [t('Registered'), t('Checked In'), t('Not Scanned')],
       datasets: [{
         data: [s.registered_count, s.attended_count, remaining],
         backgroundColor: ['#22d3ee', '#22c55e', '#f59e0b'],
@@ -284,7 +284,7 @@ async function loadEventStats() {
   new Chart(document.getElementById('capChart'), {
     type: 'doughnut',
     data: {
-      labels: ['Checked In', 'Registered (Not Scanned)', 'Available Slots'],
+      labels: [t('Checked In'), t('Registered (Not Scanned)'), t('Available Slots')],
       datasets: [{
         data: [s.attended_count, remaining, emptySlots],
         backgroundColor: ['#22c55e', '#f59e0b', 'rgba(255,255,255,.08)'],
@@ -305,7 +305,7 @@ async function loadEventStats() {
   document.getElementById('part-count').textContent = participants.length;
 
   if (!participants.length) {
-    tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state" style="padding:30px"><div class="empty-icon">🎟️</div><p>No registrations yet</p></div></td></tr>';
+    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state" style="padding:30px"><div class="empty-icon">🎟️</div><p>${t('No registrations yet')}</p></div></td></tr>`;
   } else {
     tbody.innerHTML = participants.map((t, i) => `
       <tr>
@@ -344,7 +344,7 @@ function loadReviews(res) {
   contEl.style.display = 'block';
 
   if (!res.ok) {
-    document.getElementById('review-list').innerHTML = `<div class="es-review-empty"><div class="es-review-empty-icon">⚠️</div><p>Failed to load reviews</p></div>`;
+    document.getElementById('review-list').innerHTML = `<div class="es-review-empty"><div class="es-review-empty-icon">⚠️</div><p>${t('Failed to load reviews')}</p></div>`;
     return;
   }
 
@@ -358,8 +358,8 @@ function loadReviews(res) {
   document.getElementById('avg-rating-big').textContent = reviews.length ? Math.round(avgRating) : '—';
   document.getElementById('avg-stars-display').innerHTML = reviews.length ? starsHtml(avgRating, '1.3rem') : '';
   document.getElementById('avg-label').textContent = reviews.length
-    ? `Based on ${reviews.length} rating${reviews.length > 1 ? 's' : ''}`
-    : 'No ratings yet';
+    ? `${t('Based on')} ${reviews.length} ${t('rating(s)')}`
+    : t('No ratings yet');
 
   // Star breakdown (5 → 1)
   const breakdown = {1:0, 2:0, 3:0, 4:0, 5:0};
@@ -379,7 +379,7 @@ function loadReviews(res) {
   // Review list
   const listEl = document.getElementById('review-list');
   if (!reviews.length) {
-    listEl.innerHTML = `<div class="es-review-empty"><div class="es-review-empty-icon">💬</div><p>No reviews yet for this event</p></div>`;
+    listEl.innerHTML = `<div class="es-review-empty"><div class="es-review-empty-icon">💬</div><p>${t('No reviews yet for this event')}</p></div>`;
     return;
   }
 
@@ -388,19 +388,16 @@ function loadReviews(res) {
       ? `<img src="${r.user.avatar || r.user.image}" style="width:36px;height:36px;border-radius:50%;object-fit:cover">`
       : `<div class="avatar" style="width:36px;height:36px;font-size:.8rem">${(r.user?.name || '?').charAt(0)}</div>`;
     const dateStr = r.updated_at ? new Date(r.updated_at).toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'}) : '';
-    const reviewText = r.review_text
-      ? `<div class="es-review-text">"${r.review_text}"</div>`
-      : `<div class="es-review-text" style="color:rgba(255,255,255,.2);font-style:italic">No written review</div>`;
     return `<div class="es-review-item">
       <div class="es-review-header">
         ${avatar}
         <div>
-          <div class="es-review-name">${r.user?.name || 'Anonymous'}</div>
+          <div class="es-review-name">${r.user?.name || t('Anonymous')}</div>
           <div class="es-review-date">${dateStr}</div>
         </div>
         <div class="es-review-stars">${starsHtml(r.rating)}</div>
       </div>
-      ${reviewText}
+      ${r.review_text ? `<div class="es-review-text">"${r.review_text}"</div>` : `<div class="es-review-text" style="color:rgba(255,255,255,.2);font-style:italic">${t('No written review')}</div>`}
     </div>`;
   }).join('');
 }

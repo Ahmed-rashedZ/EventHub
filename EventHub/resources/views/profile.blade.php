@@ -107,24 +107,6 @@
           <input id="p-pass" type="password" class="form-control" placeholder="Leave blank to keep current password" minlength="8"/>
         </div>
 
-        <!-- ── Language Setting ─────────────────────────── -->
-        <h3 style="margin-top:28px; margin-bottom:14px; font-weight:600; border-bottom:1px solid #ddd; padding-bottom:5px;">Language / اللغة</h3>
-        <div class="form-group">
-          <label class="form-label" style="margin-bottom:10px; display:block;">Interface Language — لغة الواجهة</label>
-          <div style="display:flex; gap:12px; flex-wrap:wrap;">
-            <button type="button" id="lang-en-btn" onclick="setLanguage('en')"
-              style="display:flex; align-items:center; gap:8px; padding:10px 20px; border-radius:10px; border:2px solid transparent; cursor:pointer; font-size:0.95rem; font-weight:600; transition:all .2s;"
-            >
-              🇬🇧 English
-            </button>
-            <button type="button" id="lang-ar-btn" onclick="setLanguage('ar')"
-              style="display:flex; align-items:center; gap:8px; padding:10px 20px; border-radius:10px; border:2px solid transparent; cursor:pointer; font-size:0.95rem; font-weight:600; transition:all .2s; font-family:'Cairo',sans-serif;"
-            >
-              🇸🇦 العربية
-            </button>
-          </div>
-          <small style="display:block; margin-top:10px; color:#888;">Changes take effect immediately — التغيير يُطبَّق فوراً</small>
-        </div>
 
         <div style="margin-top:24px; text-align:right">
           <button type="submit" class="btn btn-primary" id="save-btn">Save Changes</button>
@@ -137,24 +119,6 @@
 <div id="toast-container"></div>
 <script src="/js/api.js"></script>
 <script>
-  /* Highlight the active language button */
-  (function() {
-    const lang = localStorage.getItem('lang') || 'en';
-    const activeStyle = 'background:var(--accent,#6e40f2); color:#fff; border-color:var(--accent,#6e40f2); box-shadow:0 4px 14px rgba(110,64,242,0.35);';
-    const inactiveStyle = 'background:rgba(255,255,255,0.05); color:var(--text-muted,#888); border-color:rgba(255,255,255,0.1);';
-    document.addEventListener('DOMContentLoaded', function() {
-      const enBtn = document.getElementById('lang-en-btn');
-      const arBtn = document.getElementById('lang-ar-btn');
-      if (!enBtn || !arBtn) return;
-      if (lang === 'ar') {
-        arBtn.style.cssText += activeStyle;
-        enBtn.style.cssText += inactiveStyle;
-      } else {
-        enBtn.style.cssText += activeStyle;
-        arBtn.style.cssText += inactiveStyle;
-      }
-    });
-  })();
 </script>
 <script src="/js/auth.js"></script>
 <script>

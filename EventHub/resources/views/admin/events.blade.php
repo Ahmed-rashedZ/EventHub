@@ -111,9 +111,9 @@
 
     // 4. Sort
     if (s === 'soonest') {
-      filtered.sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
-    } else if (s === 'farthest') {
       filtered.sort((a, b) => new Date(b.start_time) - new Date(a.start_time));
+    } else if (s === 'farthest') {
+      filtered.sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
     } else if (s === 'alpha') {
       filtered.sort((a, b) => (a.title || '').localeCompare(b.title || '', 'ar'));
     } else if (s === 'live') {

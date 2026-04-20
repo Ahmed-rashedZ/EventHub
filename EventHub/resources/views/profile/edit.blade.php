@@ -244,23 +244,6 @@
                     </form>
                 </div>
 
-                <!-- ── Language Settings Card ───────────────────── -->
-                <div class="profile-card" style="margin-top: 2rem;">
-                    <h3 style="margin-top: 0; margin-bottom: 6px;">Language / اللغة</h3>
-                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.4rem;">Choose the interface language for all pages in the system.</p>
-
-                    <div class="lang-buttons-wrap">
-                        <button type="button" id="lang-en-btn" class="lang-btn" onclick="setLanguage('en')">
-                            <span class="flag">🇬🇧</span> English
-                        </button>
-                        <button type="button" id="lang-ar-btn" class="lang-btn" onclick="setLanguage('ar')" style="font-family:'Cairo',sans-serif;">
-                            <span class="flag">🇸🇦</span> العربية
-                        </button>
-                    </div>
-                    <small style="display:block; margin-top:12px; color:var(--text-muted); font-size:0.8rem;">
-                        Changes take effect immediately &mdash; التغيير يُطبَّق فوراً
-                    </small>
-                </div>
 
             </div>
         </main>
@@ -270,14 +253,6 @@
     <script src="/js/api.js"></script>
     <script src="/js/auth.js"></script>
     <script>
-        /* ── Highlight the active language button (✖ no reload needed) ── */
-        document.addEventListener('DOMContentLoaded', function () {
-            const lang  = localStorage.getItem('lang') || 'en';
-            const enBtn = document.getElementById('lang-en-btn');
-            const arBtn = document.getElementById('lang-ar-btn');
-            if (enBtn) enBtn.classList.toggle('active', lang === 'en');
-            if (arBtn) arBtn.classList.toggle('active', lang === 'ar');
-        });
     </script>
     <script>
         const user = requireAuth();
