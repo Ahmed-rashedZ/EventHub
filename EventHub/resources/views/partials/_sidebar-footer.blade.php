@@ -19,5 +19,7 @@
             </div>
         @endif
     </div>
-    <button class="btn btn-logout" id="logout-btn">🚪 Sign Out</button>
+    <div style="display: flex; gap: 12px; margin-top: 15px; align-items: center;">
+        <button class="btn btn-logout" id="logout-btn" style="flex: 1;">🚪 Sign Out</button>
+    </div>
 </div>
