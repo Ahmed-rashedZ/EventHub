@@ -42,11 +42,11 @@
         <div style="position:relative;display:flex;align-items:center">
           <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
           <select id="sort-events" class="form-control" style="width:190px;padding-left:32px" onchange="applyFilter()">
-            <option value="soonest">📅 الأقرب زمناً</option>
-            <option value="farthest">🔮 الأبعد زمناً</option>
-            <option value="alpha">🔤 ترتيب أبجدي</option>
-            <option value="live">🔴 الحالية (Live)</option>
-            <option value="ended">✅ المنتهية</option>
+            <option value="soonest">Soonest First</option>
+            <option value="farthest">Farthest First</option>
+            <option value="alpha">Alphabetical</option>
+            <option value="live">Live Now</option>
+            <option value="ended">Ended</option>
           </select>
         </div>
         <button class="btn btn-primary" onclick="openModal()">+ Create Event</button>

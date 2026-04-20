@@ -60,6 +60,13 @@ const I18N_AR = {
   'Approved':    'معتمد',
   'Rejected':    'مرفوض',
 
+  /* ── Sort Dropdown Options ───────────────────────────────── */
+  'Soonest First':   'الأقرب زمناً',
+  'Farthest First':  'الأبعد زمناً',
+  'Alphabetical':    'ترتيب أبجدي',
+  'Live Now':        'الحالية الآن',
+  'Ended':           'المنتهية',
+
   /* ── Table Headers ────────────────────────────────────── */
   'Title':          'العنوان',
   'Venue':          'القاعة',
