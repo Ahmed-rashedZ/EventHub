@@ -48,7 +48,12 @@
     const hasCookie = document.cookie.split('; ').some(row => row.startsWith('auth_token='));
     
     if (user && token && hasCookie) {
-      redirectByRole(JSON.parse(user).role);
+      const u = JSON.parse(user);
+      if (['Event Manager', 'Sponsor'].includes(u.role) && u.verification_status !== 'verified') {
+        window.location.href = '/pending-verification';
+      } else {
+        redirectByRole(u.role);
+      }
     } else {
       localStorage.removeItem('user');
       localStorage.removeItem('token');
@@ -76,7 +81,14 @@
       localStorage.setItem('user', JSON.stringify(res.data.user));
       document.cookie = "auth_token=" + res.data.token + "; path=/; max-age=86400;";
       showToast('Welcome back, ' + res.data.user.name + '!', 'success');
-      setTimeout(() => redirectByRole(res.data.user.role), 600);
+      
+      setTimeout(() => {
+        if (['Event Manager', 'Sponsor'].includes(res.data.user.role) && res.data.user.verification_status !== 'verified') {
+          window.location.href = '/pending-verification';
+        } else {
+          redirectByRole(res.data.user.role);
+        }
+      }, 600);
     } else {
       showToast(res.data?.message || 'Login failed', 'error');
       btn.textContent = 'Sign In'; btn.disabled = false;

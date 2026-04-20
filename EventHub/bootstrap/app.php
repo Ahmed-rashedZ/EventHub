@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'web.auth' => \App\Http\Middleware\TokenWebAuthMiddleware::class,
             'web.guest' => \App\Http\Middleware\TokenGuestMiddleware::class,
+            'verified_partner' => \App\Http\Middleware\EnsurePartnerVerified::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

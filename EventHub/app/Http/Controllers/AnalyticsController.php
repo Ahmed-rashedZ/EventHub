@@ -153,7 +153,19 @@ class AnalyticsController extends Controller
         if ($request->user()->role !== 'Admin') {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
-        return response()->json(User::with('profile')->orderBy('created_at', 'desc')->get());
+
+        $users = User::with('profile')
+            ->where(function ($q) {
+                $q->whereIn('role', ['Admin', 'User', 'Assistant'])
+                  ->orWhere(function ($q2) {
+                      $q2->whereIn('role', ['Event Manager', 'Sponsor'])
+                         ->where('verification_status', 'verified');
+                  });
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json($users);
     }
 
     // PATCH /api/analytics/users/{id}/status

@@ -9,7 +9,10 @@ Route::redirect('/', '/login');
 Route::middleware('web.guest')->group(function () {
     Route::view('/login', 'login');
     Route::view('/register', 'register');
+    Route::view('/register/partner', 'auth.partner-register');
 });
+
+Route::view('/pending-verification', 'auth.pending-verification');
 
 // Authenticated Routes
 Route::middleware('web.auth')->group(function () {
@@ -27,11 +30,12 @@ Route::middleware('web.auth')->group(function () {
         Route::view('/events', 'admin.events');
         Route::view('/users', 'admin.users');
         Route::view('/venues', 'admin.venues');
+        Route::view('/verifications', 'admin.verifications');
         Route::view('/event-stats/{id}', 'admin.event-stats');
     });
 
     // Manager Routes
-    Route::middleware('web.auth:Event Manager')->prefix('manager')->group(function () {
+    Route::middleware(['web.auth:Event Manager', 'verified_partner'])->prefix('manager')->group(function () {
         Route::view('/assistants', 'manager.assistants');
         Route::view('/attendance', 'manager.attendance');
         Route::view('/dashboard', 'manager.dashboard');
@@ -41,7 +45,7 @@ Route::middleware('web.auth')->group(function () {
     });
 
     // Sponsor Routes
-    Route::middleware('web.auth:Sponsor')->prefix('sponsor')->group(function () {
+    Route::middleware(['web.auth:Sponsor', 'verified_partner'])->prefix('sponsor')->group(function () {
         Route::view('/dashboard', 'sponsor.dashboard');
         Route::view('/requests', 'sponsor.requests');
         Route::view('/events', 'sponsor.events');

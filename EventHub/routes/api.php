@@ -9,9 +9,11 @@ use App\Http\Controllers\CheckinController;
 use App\Http\Controllers\SponsorshipController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\AnalyticsController;
+use App\Http\Controllers\VerificationController;
 
 // ─── Public routes ────────────────────────────────────────────────────────────
 Route::post('/register', [AuthController::class, 'register']);
+Route::post('/register/partner', [AuthController::class, 'registerPartner']);
 Route::post('/login',    [AuthController::class, 'login']);
 
 // Public event list (approved only)
@@ -80,4 +82,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/analytics/users',        [AnalyticsController::class, 'users']);
     Route::patch('/analytics/users/{id}/status', [AnalyticsController::class, 'toggleStatus']);
     Route::delete('/analytics/users/{id}',[AnalyticsController::class, 'deleteUser']);
+
+    // ── Verifications (Admin) ──
+    Route::get('/verifications/pending', [VerificationController::class, 'pendingRequests']);
+    Route::put('/verifications/{id}/approve', [VerificationController::class, 'approve']);
+    Route::put('/verifications/{id}/reject', [VerificationController::class, 'reject']);
+    Route::put('/verifications/{id}/request-changes', [VerificationController::class, 'requestChanges']);
+    Route::get('/verifications/{id}/document', [VerificationController::class, 'downloadDocument']);
+    
+    // ── Resubmit (For Partners) ──
+    Route::post('/verifications/reupload', [VerificationController::class, 'reuploadDocument']);
 });

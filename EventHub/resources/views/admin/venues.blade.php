@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -18,6 +18,7 @@
       <a class="nav-item" href="/admin/users"><span class="nav-icon">👥</span> Users</a>
       <a class="nav-item" href="/admin/events"><span class="nav-icon">📅</span> Events</a>
       <a class="nav-item active" href="/admin/venues"><span class="nav-icon">🏛️</span> Venues</a>
+      <a class="nav-item" href="/admin/verifications"><span class="nav-icon">🛡️</span> Verifications</a>
       <span class="nav-section-label">Settings</span>
       <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
     </nav>

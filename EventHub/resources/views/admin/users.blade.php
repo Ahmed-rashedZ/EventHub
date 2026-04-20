@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -18,6 +18,7 @@
       <a class="nav-item active" href="/admin/users"><span class="nav-icon">👥</span> Users</a>
       <a class="nav-item" href="/admin/events"><span class="nav-icon">📅</span> Events</a>
       <a class="nav-item" href="/admin/venues"><span class="nav-icon">🏛️</span> Venues</a>
+      <a class="nav-item" href="/admin/verifications"><span class="nav-icon">🛡️</span> Verifications</a>
       <span class="nav-section-label">Settings</span>
       <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
     </nav>
@@ -73,9 +74,7 @@
       <div class="form-group">
         <label class="form-label">Role</label>
         <select id="u-role" class="form-control">
-          <option value="Event Manager">Event Manager</option>
           <option value="User">Attendee (User)</option>
-          <option value="Sponsor">Sponsor</option>
         </select>
       </div>
       <div class="modal-footer">
@@ -119,13 +118,15 @@
         <td>${roleBadge(u.role)}</td>
         <td style="color:var(--text-muted)">${fmtDateShort(u.created_at)}</td>
         <td>
-          <div style="display:flex; gap:8px;">
+          <div style="display:flex; gap:8px; align-items:center;">
             ${u.role !== 'Admin' ? (
               u.is_active 
                 ? `<button class="btn btn-warning btn-sm" onclick="toggleUserStatus(${u.id}, '${u.name}', false)">⏸ Suspend</button>` 
                 : `<button class="btn btn-success btn-sm" onclick="toggleUserStatus(${u.id}, '${u.name}', true)">▶ Activate</button>`
             ) : ''}
             ${u.role !== 'Admin' ? `<button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id}, '${u.name}')">🗑 Delete</button>` : ''}
+            ${(u.role === 'Event Manager' || u.role === 'Sponsor') && u.verification_status === 'verified' && u.verification_document ? 
+              `<button class="btn btn-ghost btn-sm" style="background: rgba(139, 92, 246, 0.1); color: #a78bfa;" onclick="downloadDoc(${u.id}, '${u.name}')" title="View Verification File">📄 Docs</button>` : ''}
           </div>
         </td>
       </tr>`).join('');
@@ -149,7 +150,27 @@ Suspended users will be logged out and unable to log back in.`)) return;
     if (!confirm(`Delete user "${name}"? This cannot be undone.`)) return;
     const res = await api.delete(`/analytics/users/${id}`);
     if (res.ok) { showToast('User deleted', 'success'); loadUsers(); }
-    else showToast(res.data?.message || 'Error', 'error');
+    else showToast(res.data?.message || 'Error deleting user', 'error');
+  }
+
+  async function downloadDoc(id, name) {
+      showToast('Downloading document for ' + name + '...', 'info');
+      try {
+          const res = await fetch(`/api/verifications/${id}/document`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+          if (!res.ok) throw new Error('File not found');
+          const blob = await res.blob();
+          const urlObj = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.style.display = 'none';
+          a.href = urlObj;
+          a.download = `document_${id}`;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(urlObj);
+          showToast('Download complete', 'success');
+      } catch(e) {
+          showToast('Error downloading file, it may be unavailable.', 'error');
+      }
   }
 
   function openModal() { document.getElementById('user-modal').classList.add('open'); }

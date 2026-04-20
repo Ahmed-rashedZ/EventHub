@@ -36,6 +36,44 @@ public function register(Request $request)
         'token' => $token
     ]);
 }
+
+public function registerPartner(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|min:8',
+        'role' => 'required|string|in:Event Manager,Sponsor',
+        'verification_document' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+    ]);
+
+    $docPath = $request->file('verification_document')->store('verifications');
+
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+        'role' => $request->role,
+        'verification_status' => 'pending',
+        'verification_document' => $docPath
+    ]);
+
+    if ($request->role === 'Sponsor') {
+        Profile::create([
+            'user_id' => $user->id,
+            'profile_type' => 'company',
+            'is_available' => true,
+        ]);
+    }
+
+    $token = $user->createToken('auth_token')->plainTextToken;
+
+    return response()->json([
+        'user' => $user->load(['profile']),
+        'token' => $token,
+        'message' => 'Registration successful. Your account is pending verification.'
+    ]);
+}
     public function login(Request $request)
 {
     $credentials = $request->only('email', 'password');
@@ -244,9 +282,9 @@ public function createUser(Request $request)
 
     // Role constraints
     if ($authUser->role === 'Admin') {
-        $allowedRoles = ['Event Manager', 'Sponsor', 'User'];
+        $allowedRoles = ['User', 'Admin'];
         if (!in_array($request->role, $allowedRoles)) {
-            return response()->json(['message' => 'Invalid role creation for Admin'], 403);
+            return response()->json(['message' => 'Invalid role creation for Admin. Event Managers and Sponsors must self-register for verification.'], 403);
         }
     } elseif ($authUser->role === 'Event Manager') {
         // Manager can ONLY create Assistants for their own events

@@ -29,6 +29,9 @@ class User extends Authenticatable
         'phone',
         'bio',
         'social_links',
+        'verification_status',
+        'verification_document',
+        'verification_notes',
     ];
 
     protected $hidden = [
