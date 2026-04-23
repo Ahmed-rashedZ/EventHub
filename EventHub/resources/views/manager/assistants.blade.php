@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -106,7 +106,7 @@
     const listDiv = document.getElementById('assistants-list');
     if (res.ok && res.data.length > 0) {
       listDiv.innerHTML = '<table style="width:100%; border-collapse: collapse;"><thead><tr><th style="text-align:left; padding:8px; border-bottom:1px solid var(--border);">Name</th><th style="text-align:left; padding:8px; border-bottom:1px solid var(--border);">Email</th><th style="text-align:left; padding:8px; border-bottom:1px solid var(--border);">Event</th><th style="text-align:left; padding:8px; border-bottom:1px solid var(--border);">Actions</th></tr></thead><tbody>' +
-        res.data.map(a => `<tr><td style="padding:8px; border-bottom:1px solid var(--border);">${a.name}</td><td style="padding:8px; border-bottom:1px solid var(--border);">${a.email}</td><td style="padding:8px; border-bottom:1px solid var(--border);">${a.event ? a.event.title : 'N/A'}</td><td style="padding:8px; border-bottom:1px solid var(--border);"><button class="btn btn-danger btn-sm" onclick="deleteAssistant(${a.id})">Delete</button></td></tr>`).join('') +
+        res.data.map(a => `<tr><td style="padding:8px; border-bottom:1px solid var(--border);" class="i18n-skip">${a.name}</td><td style="padding:8px; border-bottom:1px solid var(--border);">${a.email}</td><td style="padding:8px; border-bottom:1px solid var(--border);">${a.event ? a.event.title : 'N/A'}</td><td style="padding:8px; border-bottom:1px solid var(--border);"><button class="btn btn-danger btn-sm" onclick="deleteAssistant(${a.id})">Delete</button></td></tr>`).join('') +
         '</tbody></table>';
     } else {
       listDiv.innerHTML = '<p style="color:var(--text-muted); font-size: 0.9rem;">No assistants created yet.</p>';

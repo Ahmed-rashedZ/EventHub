@@ -14,12 +14,12 @@
                 @endif
             </a>
             <div class="user-info">
-                <div class="user-name" id="sidebar-username">{{ Auth::user()->name }}</div>
+                <div class="user-name i18n-skip" id="sidebar-username">{{ Auth::user()->name }}</div>
                 <div class="user-role" id="sidebar-role">{{ Auth::user()->role }}</div>
             </div>
         @endif
     </div>
     <div style="display: flex; gap: 12px; margin-top: 15px; align-items: center;">
-        <button class="btn btn-logout" id="logout-btn" style="flex: 1;">🚪 Sign Out</button>
+        <button class="btn btn-logout" id="logout-btn" style="flex: 1;">🚪 <script>document.write(t('Sign Out'))</script></button>
     </div>
 </div>

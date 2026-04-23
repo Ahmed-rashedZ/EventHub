@@ -27,7 +27,7 @@
 
   <main class="main-content">
     <div class="topbar">
-      <div><h1 class="page-title">Users</h1><p class="page-subtitle">Manage all platform users</p></div>
+      <div><h1 class="page-title"><script>document.write(t('Users'))</script></h1><p class="page-subtitle"><script>document.write(t('Manage all platform users'))</script></p></div>
       <div class="topbar-actions">
         <div class="search-bar"><span>🔍</span><input id="search-input" type="text" placeholder="Search users…" oninput="filterTable()"/></div>
       </div>
@@ -38,7 +38,12 @@
         <table id="users-table">
           <thead>
             <tr>
-              <th>#</th><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th>Actions</th>
+              <th>#</th>
+              <th><script>document.write(t('Name'))</script></th>
+              <th><script>document.write(t('Email'))</script></th>
+              <th><script>document.write(t('Role'))</script></th>
+              <th><script>document.write(t('Joined'))</script></th>
+              <th><script>document.write(t('Actions'))</script></th>
             </tr>
           </thead>
           <tbody id="users-body">
@@ -69,7 +74,7 @@
 
   function renderUsers(users) {
     const tbody = document.getElementById('users-body');
-    if (!users.length) { tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">👥</div><p>No users found</p></div></td></tr>'; return; }
+    if (!users.length) { tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">👥</div><p>${t('No users found')}</p></div></td></tr>`; return; }
     tbody.innerHTML = users.map((u, i) => `
       <tr>
         <td style="color:var(--text-muted)">${i+1}</td>
@@ -78,7 +83,7 @@
             ? `<a href="/user-profile?id=${u.id}" style="display:flex;align-items:center;gap:8px; text-decoration:none; color:inherit; transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'" title="View Profile">` 
             : `<div style="display:flex;align-items:center;gap:8px">`
           }
-            <span style="font-weight:500; ${(u.role === 'Event Manager' || u.role === 'Sponsor') ? 'color:var(--accent);' : ''}">${u.name}</span>
+            <span class="i18n-skip" style="font-weight:500; ${(u.role === 'Event Manager' || u.role === 'Sponsor') ? 'color:var(--accent);' : ''}">${u.name}</span>
           ${(u.role === 'Event Manager' || u.role === 'Sponsor') ? `</a>` : `</div>`}
         </td>
         <td style="color:var(--text-muted)">${u.email}</td>
@@ -88,12 +93,12 @@
           <div style="display:flex; gap:8px; align-items:center;">
             ${u.role !== 'Admin' ? (
               u.is_active 
-                ? `<button class="btn btn-warning btn-sm" onclick="toggleUserStatus(${u.id}, '${u.name}', false)">⏸ Suspend</button>` 
-                : `<button class="btn btn-success btn-sm" onclick="toggleUserStatus(${u.id}, '${u.name}', true)">▶ Activate</button>`
+                ? `<button class="btn btn-warning btn-sm" onclick="toggleUserStatus(${u.id}, '${u.name}', false)">${t('⏸ Suspend')}</button>` 
+                : `<button class="btn btn-success btn-sm" onclick="toggleUserStatus(${u.id}, '${u.name}', true)">${t('▶ Activate')}</button>`
             ) : ''}
-            ${u.role !== 'Admin' ? `<button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id}, '${u.name}')">🗑 Delete</button>` : ''}
+            ${u.role !== 'Admin' ? `<button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id}, '${u.name}')">${t('🗑 Delete')}</button>` : ''}
             ${(u.role === 'Event Manager' || u.role === 'Sponsor') && u.verification_status === 'verified' && u.verification_document ? 
-              `<button class="btn btn-ghost btn-sm" style="background: rgba(139, 92, 246, 0.1); color: #a78bfa;" onclick="downloadDoc(${u.id}, '${u.name}')" title="View Verification File">📄 Docs</button>` : ''}
+              `<button class="btn btn-ghost btn-sm" style="background: rgba(139, 92, 246, 0.1); color: #a78bfa;" onclick="downloadDoc(${u.id}, '${u.name}')" title="${t('View Verification File')}">${t('📄 Docs')}</button>` : ''}
           </div>
         </td>
       </tr>`).join('');

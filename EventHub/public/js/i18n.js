@@ -99,10 +99,20 @@ const I18N_AR = {
   'Already Requested': 'تم الطلب مسبقاً',
   '+ Add Link':        '+ إضافة رابط',
   '+ Add Phone':       '+ إضافة رقم',
+  '+ Add Venue':       '+ إضافة قاعة',
+  'Add Venue':         'إضافة قاعة',
+  'Save Venue':        'حفظ القاعة',
+  'Edit Venue':        'تعديل القاعة',
   'Confirm Rejection': 'تأكيد الرفض',
   'View Public Profile': 'عرض الملف العام',
   'Save Information':  'حفظ المعلومات',
   'Update Security Settings': 'تحديث إعدادات الأمان',
+  '⏸ Suspend':         '⏸ تعليق',
+  '▶ Activate':        '▶ تفعيل',
+  '🗑 Delete':          '🗑 حذف',
+  '📄 Docs':            '📄 المستندات',
+  'Sign Out':          'تسجيل الخروج',
+
 
   /* ── Profile Page Form Labels ─────────────────────────── */
   'Profile Information':    'معلومات الملف الشخصي',
@@ -411,6 +421,12 @@ const I18N_AR = {
   'accepted': 'مقبول',
   'available': 'متاح',
   'maintenance': 'صيانة',
+  'Admin': 'الأدمن',
+  'Event Manager': 'مدير أحداث',
+  'Sponsor': 'الراعي',
+  'User': 'مستخدم',
+  'Assistant': 'مساعد',
+
 
   /* ── General ──────────────────────────────────────────── */
   '🔄 Refresh': '🔄 تحديث',
@@ -455,6 +471,16 @@ const I18N_AR = {
   'registrations': 'تسجيلات',
   'Based on': 'بناءً على',
   'rating(s)': 'تقييم(ات)',
+  '✏️ Edit': '✏️ تعديل',
+  'Venue Name': 'اسم القاعة',
+  'Google Maps Link': 'رابط خرائط جوجل',
+  'Open in Maps': 'فتح في الخرائط',
+  '📍 Open in Maps': '📍 فتح في الخرائط',
+  'No venues yet. Add one!': 'لا توجد قاعات بعد. أضف واحدة!',
+  'Create Assistant': 'إنشاء مساعد',
+  'Existing Assistants': 'المساعدون الحاليون',
+  'Generate Assistant Account': 'إنشاء حساب مساعد',
+
 };
 
 /* ─────────────────────────────────────────────────────────────────
@@ -703,10 +729,12 @@ function translateSubtree(root) {
       acceptNode(node) {
         if (node.nodeType === Node.ELEMENT_NODE) {
           if (SKIP_TAGS.has(node.tagName)) return NodeFilter.FILTER_REJECT;
+          if (node.classList.contains('i18n-skip') || node.hasAttribute('data-no-translate')) return NodeFilter.FILTER_REJECT;
           return NodeFilter.FILTER_SKIP;
         }
         const parent = node.parentElement;
         if (!parent || SKIP_TAGS.has(parent.tagName)) return NodeFilter.FILTER_REJECT;
+        if (parent.classList.contains('i18n-skip') || parent.hasAttribute('data-no-translate')) return NodeFilter.FILTER_REJECT;
         return NodeFilter.FILTER_ACCEPT;
       }
     }

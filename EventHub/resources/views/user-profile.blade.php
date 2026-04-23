@@ -100,7 +100,7 @@
             <img id="u-avatar" src="" class="profile-avatar-large" alt="Avatar"/>
             <div class="profile-info-main">
                 <div id="u-role-badge" class="role-badge" style="margin-bottom:10px;"></div>
-                <h1 id="u-name">User Name</h1>
+                <h1 id="u-name" class="i18n-skip">User Name</h1>
                 <div id="u-status-badge"></div>
             </div>
         </div>
@@ -466,7 +466,7 @@
             ${reviews.map(r => `
               <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:10px">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-                  <span style="font-size:.82rem;font-weight:600;color:#fff">${r.user?.name || 'Anonymous'}</span>
+                  <span style="font-size:.82rem;font-weight:600;color:#fff" class="i18n-skip">${r.user?.name || 'Anonymous'}</span>
                   <span style="color:#eab308;font-size:.85rem;letter-spacing:1px">${[1,2,3,4,5].map(i=>i<=Math.round(r.rating)?'★':'☆').join('')}</span>
                 </div>
                 ${r.review_text ? `<p style="font-size:.82rem;color:rgba(255,255,255,.6);margin:0">${r.review_text}</p>` : '<p style="font-size:.78rem;color:rgba(255,255,255,.25);margin:0;font-style:italic">No written review</p>'}

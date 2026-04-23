@@ -98,7 +98,8 @@ function showToast(message, type = 'info') {
  */
 function fmtDate(dt) {
     if (!dt) return '—';
-    return new Date(dt).toLocaleString('en-US', {
+    const locale = (typeof getLang === 'function' && getLang() === 'ar') ? 'ar-EG' : 'en-US';
+    return new Date(dt).toLocaleString(locale, {
         month: 'short', day: 'numeric', year: 'numeric',
         hour: '2-digit', minute: '2-digit'
     });
@@ -106,7 +107,8 @@ function fmtDate(dt) {
 
 function fmtDateShort(dt) {
     if (!dt) return '—';
-    return new Date(dt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const locale = (typeof getLang === 'function' && getLang() === 'ar') ? 'ar-EG' : 'en-US';
+    return new Date(dt).toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 /**
@@ -118,7 +120,7 @@ function badge(status) {
         accepted: 'badge-accepted', used: 'badge-used', unused: 'badge-unused',
         available: 'badge-approved', maintenance: 'badge-rejected'
     }[status] || 'badge-pending';
-    return `<span class="badge ${cls}">${status}</span>`;
+    return `<span class="badge ${cls}">${t(status)}</span>`;
 }
 
 function timeBadge(time_status) {
@@ -128,10 +130,10 @@ function timeBadge(time_status) {
         live: 'badge-live',
         ended: 'badge-ended'
     }[time_status] || 'badge-unused';
-    return `<span class="badge ${cls}">${time_status}</span>`;
+    return `<span class="badge ${cls}">${t(time_status)}</span>`;
 }
 
 function roleBadge(role) {
     const map = { Admin: 'role-admin', 'Event Manager': 'role-manager', Sponsor: 'role-sponsor', User: 'role-user', Assistant: 'role-assistant' };
-    return `<span class="role-badge ${map[role] || ''}">${role}</span>`;
+    return `<span class="role-badge ${map[role] || ''}">${t(role)}</span>`;
 }
