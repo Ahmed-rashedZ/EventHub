@@ -786,27 +786,56 @@ function startObserver() {
 applyDirection();   // ← runs synchronously, before any render
 
 function injectLanguageToggle() {
-  const nav = document.querySelector('.sidebar-nav');
-  if (nav && !document.getElementById('injected-lang-toggle')) {
-      const langToggle = document.createElement('a');
-      langToggle.id = 'injected-lang-toggle';
-      langToggle.className = 'nav-item';
-      langToggle.href = 'javascript:void(0)';
-      langToggle.onclick = () => setLanguage(getLang() === 'ar' ? 'en' : 'ar');
-      langToggle.style.cssText = 'display: flex; justify-content: space-between; align-items: center; cursor: pointer; text-decoration: none; padding: 9px 12px;';
-      
-      const l = getLang() === 'ar' ? 'العربية' : 'English';
-      const label = getLang() === 'ar' ? 'اللغة' : 'Language';
-      
-      langToggle.innerHTML = `
-          <div style="display:flex; align-items:center; gap:12px; color:#fff;">
-              <span class="nav-icon" style="font-size:1.1rem; line-height:1;">🌐</span>
-              <span style="font-weight:600; color:#ffffff;">${label}</span>
-          </div>
-          <span style="color:rgba(255,255,255,0.4); font-size:0.75rem; font-weight:500;">${l}</span>
-      `;
-      nav.appendChild(langToggle);
-  }
+  if (document.getElementById('injected-lang-toggle')) return;
+
+  const logoArea = document.querySelector('.sidebar-logo');
+  if (!logoArea) return;
+
+  const isAr = getLang() === 'ar';
+  const toggleBtn = document.createElement('button');
+  toggleBtn.id = 'injected-lang-toggle';
+  toggleBtn.onclick = () => setLanguage(isAr ? 'en' : 'ar');
+  toggleBtn.title = isAr ? 'Switch Language' : 'تبديل اللغة';
+  
+  // Style for the button integrated into the logo area
+  const style = document.createElement('style');
+  style.textContent = `
+    #injected-lang-toggle {
+      margin-${isAr ? 'right' : 'left'}: auto;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      padding: 0;
+      flex-shrink: 0;
+    }
+    #injected-lang-toggle:hover {
+      background: rgba(110, 64, 242, 0.15);
+      border-color: rgba(110, 64, 242, 0.3);
+      color: var(--accent2);
+      transform: scale(1.05);
+    }
+    #injected-lang-toggle svg {
+      width: 18px;
+      height: 18px;
+    }
+  `;
+  document.head.appendChild(style);
+
+  toggleBtn.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20"/><path d="M12 2a14.5 14.5 0 0 1 0 20"/><path d="M2 12h20"/>
+    </svg>
+  `;
+  
+  logoArea.appendChild(toggleBtn);
 }
 
 if (document.readyState === 'loading') {
