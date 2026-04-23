@@ -86,8 +86,8 @@
 
     <!-- Charts Row -->
     <div class="an-row">
-      <div class="an-card"><div class="an-card-title"><span>📊</span> Events by Status</div><div class="an-chart-wrap"><canvas id="statusChart"></canvas></div></div>
-      <div class="an-card"><div class="an-card-title"><span>🏷️</span> Events by Type</div><div class="an-chart-wrap"><canvas id="typeChart"></canvas></div></div>
+      <div class="an-card"><div class="an-card-title"><span>📊</span> الأحداث حسب الحالة</div><div class="an-chart-wrap"><canvas id="statusChart"></canvas></div></div>
+      <div class="an-card"><div class="an-card-title"><span>🏷️</span> الأحداث حسب النوع</div><div class="an-chart-wrap"><canvas id="typeChart"></canvas></div></div>
     </div>
 
     <!-- Event Performance -->
@@ -139,14 +139,14 @@ async function loadAnalytics() {
   // Status donut
   const sLabels = Object.keys(d.events_by_status);
   if (sLabels.length) new Chart(document.getElementById('statusChart'), {
-    type:'doughnut', data:{ labels:sLabels.map(s=>s.charAt(0).toUpperCase()+s.slice(1)), datasets:[{data:Object.values(d.events_by_status),backgroundColor:sLabels.map(s=>COLORS[s]||'#6b7280'),borderWidth:0,hoverOffset:8}]},
+    type:'doughnut', data:{ labels:sLabels.map(s=>t(s.charAt(0).toUpperCase()+s.slice(1))), datasets:[{data:Object.values(d.events_by_status),backgroundColor:sLabels.map(s=>COLORS[s]||'#6b7280'),borderWidth:0,hoverOffset:8}]},
     options:{cutout:'68%',plugins:{legend:{position:'bottom',labels:{padding:14,usePointStyle:true,pointStyleWidth:10}}},responsive:true,maintainAspectRatio:false}
   });
 
   // Type bar
   const tLabels = Object.keys(d.events_by_type);
   if (tLabels.length) new Chart(document.getElementById('typeChart'), {
-    type:'bar', data:{ labels:tLabels, datasets:[{data:Object.values(d.events_by_type),backgroundColor:tLabels.map(t=>TYPE_COLORS[t]||'#6b7280'),borderRadius:6,maxBarThickness:36}]},
+    type:'bar', data:{ labels:tLabels.map(tl=>t(tl)), datasets:[{data:Object.values(d.events_by_type),backgroundColor:tLabels.map(t=>TYPE_COLORS[t]||'#6b7280'),borderRadius:6,maxBarThickness:36}]},
     options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{stepSize:1}},y:{grid:{display:false}}},responsive:true,maintainAspectRatio:false}
   });
 

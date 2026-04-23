@@ -131,11 +131,11 @@
       <!-- Charts Row -->
       <div class="es-row">
         <div class="es-card">
-          <div class="es-card-title"><span>📊</span> Registration vs Attendance</div>
+          <div class="es-card-title"><span>📊</span> التسجيل مقابل الحضور</div>
           <div class="es-chart-wrap"><canvas id="regAttChart"></canvas></div>
         </div>
         <div class="es-card">
-          <div class="es-card-title"><span>🎯</span> Capacity Breakdown</div>
+          <div class="es-card-title"><span>🎯</span> تفصيل السعة الاستيعابية</div>
           <div class="es-chart-wrap"><canvas id="capChart"></canvas></div>
         </div>
       </div>

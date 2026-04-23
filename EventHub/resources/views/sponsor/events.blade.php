@@ -369,9 +369,16 @@
               <div style="display:flex; flex-direction:column; gap:8px;">
                 ${ev.sponsors.map(sp => `
                    <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.04); padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.05); cursor:pointer;" onclick="navigateToProfile(${sp.id})">
-                      <div class="avatar" style="width:32px; height:32px; font-size:12px; display:inline-flex; align-items:center; justify-content:center; background:#333; border-radius:50%; overflow:hidden;">
-                          ${sp.profile?.logo ? `<img src="${sp.profile.logo.startsWith('http') ? sp.profile.logo : (sp.profile.logo.includes('storage') ? '/' + sp.profile.logo.replace(/^\//,'') : '/storage/' + sp.profile.logo)}" style="width:100%;height:100%;object-fit:cover;">` : (sp.name ? sp.name.charAt(0).toUpperCase() : '?')}
-                      </div>
+                    <div class="avatar" style="width:36px; height:36px; font-size:14px; display:inline-flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:50%; overflow:hidden;">
+                        ${(() => {
+                           const src = sp.image || sp.avatar || sp.profile?.logo;
+                           if (src) {
+                             const fullSrc = (src.startsWith('http') || src.startsWith('/')) ? src : '/storage/' + src;
+                             return `<img src="${fullSrc}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'; this.parentElement.innerText='${sp.name?.charAt(0).toUpperCase() || '?'}'">`;
+                           }
+                           return sp.name ? sp.name.charAt(0).toUpperCase() : '?';
+                        })()}
+                    </div>
                       <div style="flex:1">
                           <div style="font-size:0.85rem; font-weight:600; color:#fff;">${sp.profile?.company_name || sp.name}</div>
                           <div style="margin-top: 2px;">${getTierBadge(sp.pivot?.tier)}</div>
@@ -403,8 +410,15 @@
                   <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:10px; padding:12px;">
                     <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
                       <div style="display:flex; align-items:center; gap:8px;">
-                        <div style="width:24px; height:24px; background:#444; border-radius:50%; overflow:hidden;">
-                           <img src="${r.user?.avatar ? '/storage/'+r.user.avatar : '/images/default-avatar.png'}" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='/images/default-avatar.png'">
+                        <div class="avatar" style="width:28px; height:28px; font-size:12px; display:inline-flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:50%; overflow:hidden;">
+                          ${(() => {
+                             const src = r.user?.image || r.user?.avatar || r.user?.profile?.logo;
+                             if (src) {
+                               const fullSrc = (src.startsWith('http') || src.startsWith('/')) ? src : '/storage/' + src;
+                               return `<img src="${fullSrc}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'; this.parentElement.innerText='${r.user?.name?.charAt(0).toUpperCase() || '?'}'">`;
+                             }
+                             return r.user?.name ? r.user.name.charAt(0).toUpperCase() : '?';
+                          })()}
                         </div>
                         <span style="font-size:0.8rem; font-weight:600; color:#fff">${r.user?.name || 'Anonymous'}</span>
                       </div>

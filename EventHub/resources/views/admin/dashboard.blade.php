@@ -89,8 +89,8 @@
 
     <!-- Charts Row: Status + Type -->
     <div class="an-row">
-      <div class="an-card"><div class="an-card-title"><span>📊</span> Events by Status</div><div class="an-chart-wrap"><canvas id="statusChart"></canvas></div></div>
-      <div class="an-card"><div class="an-card-title"><span>🏷️</span> Events by Type</div><div class="an-chart-wrap"><canvas id="typeChart"></canvas></div></div>
+      <div class="an-card"><div class="an-card-title"><span>📊</span> الأحداث حسب الحالة</div><div class="an-chart-wrap"><canvas id="statusChart"></canvas></div></div>
+      <div class="an-card"><div class="an-card-title"><span>🏷️</span> الأحداث حسب النوع</div><div class="an-chart-wrap"><canvas id="typeChart"></canvas></div></div>
     </div>
 
     <!-- Registration Trend -->
@@ -104,7 +104,7 @@
 
     <!-- Bottom Row: Users by Role + Pending -->
     <div class="an-row">
-      <div class="an-card"><div class="an-card-title"><span>👥</span> Users by Role</div><div class="an-chart-wrap" style="height:220px"><canvas id="rolesChart"></canvas></div></div>
+      <div class="an-card"><div class="an-card-title"><span>👥</span> المستخدمون حسب الدور</div><div class="an-chart-wrap" style="height:220px"><canvas id="rolesChart"></canvas></div></div>
       <div class="an-card">
         <div class="an-card-title"><span>⚠️</span> Pending Approvals</div>
         <div id="pending-list"><div class="empty-state" style="padding:30px"><div class="empty-icon">🎉</div><p>No pending events</p></div></div>
@@ -160,7 +160,7 @@ async function loadDashboard() {
   const statusLabels = Object.keys(d.events_by_status);
   new Chart(document.getElementById('statusChart'), {
     type: 'doughnut',
-    data: { labels: statusLabels.map(s=>s.charAt(0).toUpperCase()+s.slice(1)), datasets: [{ data: Object.values(d.events_by_status), backgroundColor: statusLabels.map(s=>COLORS[s]||'#6b7280'), borderWidth: 0, hoverOffset: 8 }] },
+    data: { labels: statusLabels.map(s=>t(s.charAt(0).toUpperCase()+s.slice(1))), datasets: [{ data: Object.values(d.events_by_status), backgroundColor: statusLabels.map(s=>COLORS[s]||'#6b7280'), borderWidth: 0, hoverOffset: 8 }] },
     options: { cutout: '68%', plugins: { legend: { position:'bottom', labels:{ padding:14, usePointStyle:true, pointStyleWidth:10 } } }, responsive:true, maintainAspectRatio:false }
   });
 
@@ -168,7 +168,7 @@ async function loadDashboard() {
   const typeLabels = Object.keys(d.events_by_type);
   new Chart(document.getElementById('typeChart'), {
     type: 'bar',
-    data: { labels: typeLabels, datasets: [{ data: Object.values(d.events_by_type), backgroundColor: typeLabels.map(t=>TYPE_COLORS[t]||'#6b7280'), borderRadius: 6, maxBarThickness: 36 }] },
+    data: { labels: typeLabels.map(tv=>t(tv)), datasets: [{ data: Object.values(d.events_by_type), backgroundColor: typeLabels.map(t=>TYPE_COLORS[t]||'#6b7280'), borderRadius: 6, maxBarThickness: 36 }] },
     options: { indexAxis:'y', plugins:{ legend:{display:false} }, scales:{ x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{stepSize:1}}, y:{grid:{display:false}} }, responsive:true, maintainAspectRatio:false }
   });
 
@@ -191,7 +191,7 @@ async function loadDashboard() {
   const roleLabels = Object.keys(d.users_by_role);
   new Chart(document.getElementById('rolesChart'), {
     type: 'doughnut',
-    data: { labels: roleLabels, datasets: [{ data: Object.values(d.users_by_role), backgroundColor: roleLabels.map(r=>ROLE_COLORS[r]||'#6b7280'), borderWidth: 0, hoverOffset: 8 }] },
+    data: { labels: roleLabels.map(rl=>t(rl)), datasets: [{ data: Object.values(d.users_by_role), backgroundColor: roleLabels.map(r=>ROLE_COLORS[r]||'#6b7280'), borderWidth: 0, hoverOffset: 8 }] },
     options: { cutout:'65%', plugins:{ legend:{ position:'bottom', labels:{padding:12,usePointStyle:true,pointStyleWidth:10} } }, responsive:true, maintainAspectRatio:false }
   });
 
