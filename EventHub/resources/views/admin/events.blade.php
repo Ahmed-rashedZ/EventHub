@@ -34,8 +34,8 @@
           <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted)" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
         </div>
         <select id="filter-status" class="form-control" style="width:145px" onchange="applyFilter()">
-          <option value="">All Status</option>
-          <option value="pending" selected>Pending</option>
+          <option value="" selected>All Status</option>
+          <option value="pending">Pending</option>
           <option value="approved">Approved</option>
           <option value="rejected">Rejected</option>
         </select>
