@@ -504,7 +504,200 @@ const I18N_AR = {
   'Existing Assistants': 'المساعدون الحاليون',
   'Generate Assistant Account': 'إنشاء حساب مساعد',
 
+  /* ── Event Types (English → Arabic) ────────────────────── */
+  'Conference': 'مؤتمر',
+  'Seminar': 'ندوة',
+  'Workshop': 'ورشة عمل',
+  'Training Course': 'دورة تدريبية',
+  'Entertainment': 'ترفيه',
+  'Scientific Forum': 'ملتقى علمي',
+  'Sports': 'رياضة',
+  'Technology': 'تقنية',
+  'Social': 'اجتماعية',
+
+  /* ── Login / Register / Auth Pages ─────────────────────── */
+  'Welcome back': 'مرحباً بعودتك',
+  'Sign in to your account to continue': 'سجّل الدخول إلى حسابك للمتابعة',
+  'Email Address': 'البريد الإلكتروني',
+  'Sign In': 'تسجيل الدخول',
+  'Signing in…': 'جاري تسجيل الدخول…',
+  "Don't have an account?": 'ليس لديك حساب؟',
+  'Register': 'تسجيل',
+  'Registration Restricted': 'التسجيل مقيّد',
+  'To join the EventHub platform:': 'للانضمام إلى منصة EventHub:',
+  'Attendees (Users)': 'الحضور (المستخدمون)',
+  'Please download the': 'يرجى تحميل',
+  'EventHub Mobile App': 'تطبيق EventHub',
+  'to create your account and buy tickets.': 'لإنشاء حسابك وشراء التذاكر.',
+  'Managers & Sponsors': 'المديرون والرعاة',
+  'Accounts for Event Managers and Sponsors must be verified by the System Administrator.': 'يجب التحقق من حسابات مديري الأحداث والرعاة من قبل مدير النظام.',
+  'Apply as Partner →': 'التقديم كشريك →',
+  'Already have an account?': 'لديك حساب بالفعل؟',
+  'Sign in here': 'سجّل الدخول هنا',
+  'Partner Registration': 'تسجيل الشركاء',
+  'Apply as an Event Manager or Sponsor.': 'التقديم كمدير أحداث أو راعٍ.',
+  'Role / Account Type': 'الدور / نوع الحساب',
+  'Select Role': 'اختر الدور',
+  'Company / Individual Name': 'اسم الشركة / الفرد',
+  'Business Email Address': 'البريد الإلكتروني للأعمال',
+  'Verification Document (KYB / KYC)': 'وثيقة التحقق (KYB / KYC)',
+  'Please upload your Commercial Register, License, or Authorization Letter (PDF/JPG/PNG up to 5MB).': 'يرجى رفع السجل التجاري أو الرخصة أو خطاب التفويض (PDF/JPG/PNG حتى 5 ميجا).',
+  'Click to select file...': 'انقر لاختيار ملف...',
+  'Submit Application': 'تقديم الطلب',
+  'Submitting...': 'جاري التقديم...',
+  'Already confirmed?': 'تم التأكيد بالفعل؟',
+  'Sign in': 'تسجيل الدخول',
+  'Application Under Review': 'الطلب قيد المراجعة',
+  'Your partner application has been received successfully. Our administration team is currently verifying the documents you uploaded. You will receive full access to the platform once your status is approved.': 'تم استلام طلب الشراكة بنجاح. فريق الإدارة يتحقق حالياً من المستندات التي رفعتها. ستحصل على وصول كامل للمنصة بمجرد الموافقة.',
+  'Current Status': 'الحالة الحالية',
+  'PENDING': 'قيد الانتظار',
+  'REJECTED': 'مرفوض',
+  'ACTION REQUIRED': 'مطلوب إجراء',
+  'Upload Revised Document (PDF/JPG)': 'ارفع المستند المعدّل (PDF/JPG)',
+  'Resubmit': 'إعادة التقديم',
+
+  /* ── Venues Page ────────────────────────────────────────── */
+  'Open Google Maps → Select location → Copy share link and paste here': 'افتح Google Maps ← اختر الموقع ← انسخ رابط المشاركة والصقه هنا',
+  'Venue updated!': 'تم تحديث القاعة!',
+  'Venue added!': 'تمت إضافة القاعة!',
+  'Available': 'متاح',
+  'Maintenance': 'صيانة',
+
+  /* ── Attendance Page ────────────────────────────────────── */
+  'No Live Events': 'لا توجد أحداث مباشرة',
+  "You don't have any events that are currently live.": 'ليس لديك أي أحداث مباشرة حالياً.',
+  'Events will appear here during their scheduled time.': 'ستظهر الأحداث هنا خلال وقتها المحدد.',
+  'Attendance Progress': 'تقدم الحضور',
+  'View Participants': 'عرض المشاركين',
+  'not scanned': 'لم يُفحص',
+  'full': 'ممتلئ',
+  'No registrations': 'لا توجد تسجيلات',
+  'Failed to load events': 'فشل تحميل الأحداث',
+  'Please try again': 'يرجى المحاولة مجدداً',
+
+  /* ── Verification Page ──────────────────────────────────── */
+  'Document Review': 'مراجعة المستند',
+  'Review Application': 'مراجعة الطلب',
+  'This user has uploaded a verification document. Click below to securely download and review it.': 'قام المستخدم برفع مستند تحقق. انقر أدناه لتحميله ومراجعته بأمان.',
+  'Previous Feedback Requested': 'الملاحظات السابقة المطلوبة',
+  'Download Document': 'تحميل المستند',
+  '⬇️ Download Document': '⬇️ تحميل المستند',
+  '✓ Approve': '✓ اعتماد',
+  '🔄 Request Changes': '🔄 طلب تعديلات',
+  '✕ Reject': '✕ رفض',
+  'Feedback Notes': 'ملاحظات التقييم',
+  'Explain what changes are needed or why it was rejected...': 'اشرح التعديلات المطلوبة أو سبب الرفض...',
+  'Confirm Rejection': 'تأكيد الرفض',
+  'Confirm Changes Request': 'تأكيد طلب التعديلات',
+  'Rejection Reason': 'سبب الرفض',
+  'Changes Needed': 'تعديلات مطلوبة',
+  'Please provide a reason': 'يرجى تقديم السبب',
+  'Please describe what changes are needed': 'يرجى وصف التعديلات المطلوبة',
+  'Partner Approved!': 'تمت الموافقة على الشريك!',
+  'Partner Rejected': 'تم رفض الشريك',
+  'Changes Requested': 'تم طلب التعديلات',
+  'Downloading document...': 'جاري تحميل المستند...',
+  'Download complete': 'اكتمل التحميل',
+  'Error downloading file': 'خطأ في تحميل الملف',
+  'Failed to load requests.': 'فشل تحميل الطلبات.',
+
+  /* ── Toast / Confirm Messages ───────────────────────────── */
+  'Approved!': 'تمت الموافقة!',
+  'Rejected.': 'تم الرفض.',
+  'Event approved!': 'تم اعتماد الحدث!',
+  'Event rejected.': 'تم رفض الحدث.',
+  'Event submitted for approval!': 'تم إرسال الحدث للاعتماد!',
+  'Request submitted!': 'تم إرسال الطلب!',
+  'Assistant created!': 'تم إنشاء المساعد!',
+  'Assistant deleted!': 'تم حذف المساعد!',
+  'Failed to load events': 'فشل تحميل الأحداث',
+  'Failed to delete assistant': 'فشل حذف المساعد',
+  'Error creating assistant': 'خطأ في إنشاء المساعد',
+  'User deleted': 'تم حذف المستخدم',
+  'All notifications marked as read': 'تم تحديد جميع الإشعارات كمقروءة',
+  'Registration successful! Redirecting...': 'تم التسجيل بنجاح! جاري التحويل...',
+  'Document submitted successfully!': 'تم تقديم المستند بنجاح!',
+  'Error re-uploading document.': 'خطأ في إعادة رفع المستند.',
+  'Please select a document first.': 'يرجى اختيار مستند أولاً.',
+  'No users found': 'لا يوجد مستخدمون',
+  'Failed to load users': 'فشل تحميل المستخدمين',
+  'View Verification File': 'عرض ملف التحقق',
+  'N/A': 'غير متوفر',
+  'Sponsor tier updated beautifully! ✨': 'تم تحديث مستوى الراعي بنجاح! ✨',
+  'Error updating tier': 'خطأ في تحديث المستوى',
+  'Company Name / Entity Name': 'اسم الشركة / الجهة',
+  'Manager Full Name': 'اسم المدير الكامل',
+  'No written comment': 'لا يوجد تعليق مكتوب',
+  'Notifications': 'الإشعارات',
+  'Mark all read': 'تحديد الكل كمقروء',
+  'Just now': 'الآن',
+  'm ago': 'دقيقة مضت',
+  'h ago': 'ساعة مضت',
+  'd ago': 'يوم مضى',
+
+  /* ── Dynamic Notifications ──────────────────────────────── */
+  'New Event Pending': 'حدث جديد قيد الانتظار',
+  'Event "': 'الحدث "',
+  '" was submitted by ': '" تم إرساله بواسطة ',
+  ' and needs your approval.': ' ويحتاج إلى موافقتك.',
+  'Event Approved ✅': 'تم اعتماد الحدث ✅',
+  'Your event "': 'الحدث الخاص بك "',
+  '" has been approved and is now live!': '" تم اعتماده وهو الآن متاح للعامة!',
+  'Event Rejected ❌': 'تم رفض الحدث ❌',
+  '" has been rejected': '" تم رفضه',
+  'New Rating Received': 'تم تلقي تقييم جديد',
+  '" received a ': '" حصل على تقييم ',
+  '-star rating ': ' نجوم ',
+  ' has applied as a Partner (': ' قدم كشريك (',
+  ') and requires document verification.': ') ويحتاج إلى التحقق من المستندات.',
+  'Your Partner Account has been APPROVED! 🎉': 'تمت الموافقة على حساب الشريك الخاص بك! 🎉',
+  'Your Partner application has been REJECTED.': 'تم رفض طلب الشريك الخاص بك.',
+  'Your Partner application requires changes.': 'طلب الشريك الخاص بك يحتاج إلى تعديلات.',
+  'New ticket purchase for "': 'شراء تذكرة جديدة للحدث "',
+  '" (': '" (',
+  ' tickets).': ' تذاكر).',
+  'Sponsorship Request from ': 'طلب رعاية من ',
+  'Sponsorship Approved! 🎉': 'تمت الموافقة على الرعاية! 🎉',
+  'Sponsorship Request Denied': 'تم رفض طلب الرعاية',
+  'Sponsorship Tier Assigned: ': 'تم تخصيص مستوى الرعاية: ',
+  'Sponsorship Cancelled': 'تم إلغاء الرعاية',
+
 };
+
+/* ─────────────────────────────────────────────────────────────────
+   Reverse Dictionary (Arabic → English) – auto-built from I18N_AR
+   ───────────────────────────────────────────────────────────────── */
+const I18N_EN = {};
+for (const [en, ar] of Object.entries(I18N_AR)) {
+  I18N_EN[ar] = en;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Event Type display helper
+   Maps Arabic DB values to English display names.
+   ───────────────────────────────────────────────────────────────── */
+const EVENT_TYPE_MAP = {
+  'مؤتمر':        { en: 'Conference',       icon: '🎙️' },
+  'ندوة':         { en: 'Seminar',          icon: '📖' },
+  'ورشة عمل':     { en: 'Workshop',         icon: '🔧' },
+  'دورة تدريبية': { en: 'Training Course',  icon: '🎓' },
+  'ترفيه':        { en: 'Entertainment',     icon: '🎭' },
+  'ملتقى علمي':   { en: 'Scientific Forum',  icon: '🔬' },
+  'رياضة':        { en: 'Sports',           icon: '⚽' },
+  'تقنية':        { en: 'Technology',        icon: '💻' },
+  'اجتماعية':     { en: 'Social',           icon: '🤝' },
+};
+
+/**
+ * Translate an event type (stored as Arabic in DB) to the current language.
+ * tType('مؤتمر') → 'Conference' (en) or 'مؤتمر' (ar)
+ */
+function tType(arabicType) {
+  if (!arabicType) return arabicType;
+  const entry = EVENT_TYPE_MAP[arabicType];
+  if (!entry) return arabicType;
+  return getLang() === 'ar' ? arabicType : entry.en;
+}
 
 /* ─────────────────────────────────────────────────────────────────
    Core API
@@ -516,10 +709,48 @@ function getLang() {
 
 /**
  * Translate a key. Returns Arabic if lang=ar, otherwise the original key.
+ * Also handles Arabic→English reverse lookup when lang=en.
  * Use: t('My Events') → 'أحداثي'
  */
 function t(key) {
-  return (getLang() === 'ar' && I18N_AR[key]) ? I18N_AR[key] : key;
+  const lang = getLang();
+  if (lang === 'ar' && I18N_AR[key]) return I18N_AR[key];
+  if (lang === 'en' && I18N_EN[key]) return I18N_EN[key];
+  return key;
+}
+
+/**
+ * Translate an arbitrary string by applying exact and partial dictionary matches.
+ * Useful for dynamic messages containing variables (e.g. "Your event X is approved").
+ */
+function translateText(text) {
+  if (!text) return text;
+  const lang = getLang();
+  const dict = lang === 'ar' ? I18N_AR : I18N_EN;
+
+  if (dict[text]) return dict[text];
+
+  let updated = text;
+  let changed = false;
+
+  const hasEventHub = updated.includes('EventHub');
+  if (hasEventHub) {
+    updated = updated.split('EventHub').join('__EHUB_TOKEN__');
+  }
+
+  const entries = Object.entries(dict).sort((a, b) => b[0].length - a[0].length);
+  for (const [key, val] of entries) {
+    if (updated.includes(key)) {
+      updated = updated.split(key).join(val);
+      changed = true;
+    }
+  }
+
+  if (hasEventHub) {
+    updated = updated.split('__EHUB_TOKEN__').join('EventHub');
+  }
+
+  return changed ? updated : text;
 }
 
 /**
@@ -693,9 +924,12 @@ function translateNode(node) {
   const trimmed  = original.trim();
   if (!trimmed) return;
 
+  const lang = getLang();
+  const dict = lang === 'ar' ? I18N_AR : I18N_EN;
+
   /* 1️⃣  Try exact match first */
-  if (I18N_AR[trimmed]) {
-    node.textContent = original.replace(trimmed, I18N_AR[trimmed]);
+  if (dict[trimmed]) {
+    node.textContent = original.replace(trimmed, dict[trimmed]);
     return;
   }
 
@@ -711,10 +945,10 @@ function translateNode(node) {
   }
 
   // Sort entries by length descending to prevent partial translations
-  const entries = Object.entries(I18N_AR).sort((a, b) => b[0].length - a[0].length);
-  for (const [en, ar] of entries) {
-    if (updated.includes(en)) {
-      updated = updated.split(en).join(ar); // Replace all occurrences
+  const entries = Object.entries(dict).sort((a, b) => b[0].length - a[0].length);
+  for (const [key, val] of entries) {
+    if (updated.includes(key)) {
+      updated = updated.split(key).join(val); // Replace all occurrences
       changed = true;
     }
   }
@@ -731,9 +965,11 @@ function translateNode(node) {
 
 /** Translate placeholder / title attributes on a single element */
 function translateAttrs(el) {
+  const lang = getLang();
+  const dict = lang === 'ar' ? I18N_AR : I18N_EN;
   ['placeholder', 'title'].forEach(attr => {
     const val = el.getAttribute(attr);
-    if (val && I18N_AR[val]) el.setAttribute(attr, I18N_AR[val]);
+    if (val && dict[val]) el.setAttribute(attr, dict[val]);
   });
 }
 
@@ -743,8 +979,6 @@ const SKIP_TAGS = new Set(['SCRIPT','STYLE','NOSCRIPT','CODE','PRE','TEMPLATE'])
  * Walk through a subtree and translate all text nodes + attributes.
  */
 function translateSubtree(root) {
-  if (getLang() !== 'ar') return;
-
   const walker = document.createTreeWalker(
     root,
     NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
@@ -775,7 +1009,6 @@ function translateSubtree(root) {
 
 /** Full DOM pass on document.body */
 function translateDOM() {
-  if (getLang() !== 'ar') return;
   translateSubtree(document.body);
 }
 
@@ -785,7 +1018,6 @@ function translateDOM() {
 let _observer = null;
 
 function startObserver() {
-  if (getLang() !== 'ar') return;
   if (_observer) return;
 
   _observer = new MutationObserver(mutations => {

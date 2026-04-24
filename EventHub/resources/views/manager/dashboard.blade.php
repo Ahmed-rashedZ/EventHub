@@ -86,8 +86,8 @@
 
     <!-- Charts Row -->
     <div class="an-row">
-      <div class="an-card"><div class="an-card-title"><span>📊</span> الأحداث حسب الحالة</div><div class="an-chart-wrap"><canvas id="statusChart"></canvas></div></div>
-      <div class="an-card"><div class="an-card-title"><span>🏷️</span> الأحداث حسب النوع</div><div class="an-chart-wrap"><canvas id="typeChart"></canvas></div></div>
+      <div class="an-card"><div class="an-card-title"><span>📊</span> Events by Status</div><div class="an-chart-wrap"><canvas id="statusChart"></canvas></div></div>
+      <div class="an-card"><div class="an-card-title"><span>🏷️</span> Events by Type</div><div class="an-chart-wrap"><canvas id="typeChart"></canvas></div></div>
     </div>
 
     <!-- Event Performance -->

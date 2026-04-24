@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Partner Registration – EventHub</title>
   <link rel="stylesheet" href="/css/style.css" />
+  <script src="/js/i18n.js"></script>
   <style>
     .pr-file-input {
       display: block; width: 100%; padding: 10px; background: rgba(255,255,255,.03);
@@ -34,8 +35,8 @@
           <label class="form-label">Role / Account Type</label>
           <select id="pr-role" class="form-control" required style="cursor:pointer;">
             <option value="" disabled selected>Select Role</option>
-            <option value="Event Manager">Event Manager (منظم فعاليات)</option>
-            <option value="Sponsor">Sponsor (جهة راعية)</option>
+            <option value="Event Manager">Event Manager</option>
+            <option value="Sponsor">Sponsor</option>
           </select>
         </div>
 

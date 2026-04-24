@@ -63,7 +63,7 @@
         <div class="form-group">
           <label class="form-label">Google Maps Link</label>
           <input id="v-location" type="url" class="form-control" placeholder="https://maps.google.com/..." required/>
-          <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block">افتح Google Maps → اختر الموقع → انسخ رابط المشاركة والصقه هنا</small>
+          <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block">Open Google Maps → Select location → Copy share link and paste here</small>
         </div>
         <div class="form-group">
           <label class="form-label">Capacity</label>

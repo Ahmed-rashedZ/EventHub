@@ -86,15 +86,15 @@
         <div class="form-group">
           <label class="form-label">Event Type</label>
           <select id="e-type" class="form-control" required>
-            <option value="مؤتمر">🎙️ مؤتمر</option>
-            <option value="ندوة">📖 ندوة</option>
-            <option value="ورشة عمل">🔧 ورشة عمل</option>
-            <option value="دورة تدريبية">🎓 دورة تدريبية</option>
-            <option value="ترفيه">🎭 ترفيه</option>
-            <option value="ملتقى علمي">🔬 ملتقى علمي</option>
-            <option value="رياضة">⚽ رياضة</option>
-            <option value="تقنية">💻 تقنية</option>
-            <option value="اجتماعية">🤝 اجتماعية</option>
+            <option value="مؤتمر"><script>document.write(t('Conference'))</script></option>
+            <option value="ندوة"><script>document.write(t('Seminar'))</script></option>
+            <option value="ورشة عمل"><script>document.write(t('Workshop'))</script></option>
+            <option value="دورة تدريبية"><script>document.write(t('Training Course'))</script></option>
+            <option value="ترفيه"><script>document.write(t('Entertainment'))</script></option>
+            <option value="ملتقى علمي"><script>document.write(t('Scientific Forum'))</script></option>
+            <option value="رياضة"><script>document.write(t('Sports'))</script></option>
+            <option value="تقنية"><script>document.write(t('Technology'))</script></option>
+            <option value="اجتماعية"><script>document.write(t('Social'))</script></option>
           </select>
         </div>
         <div class="form-group">

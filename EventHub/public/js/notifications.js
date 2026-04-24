@@ -59,13 +59,13 @@ function _injectBellHTML() {
     dropdown.id = 'notif-dropdown';
     dropdown.innerHTML = `
         <div class="notif-dropdown-header">
-            <span class="notif-dropdown-title">🔔 Notifications</span>
-            <button class="notif-mark-all" id="notif-mark-all-btn" onclick="_markAllRead()">Mark all read</button>
+            <span class="notif-dropdown-title">🔔 ${t('Notifications')}</span>
+            <button class="notif-mark-all" id="notif-mark-all-btn" onclick="_markAllRead()">${t('Mark all read')}</button>
         </div>
         <div class="notif-dropdown-body" id="notif-dropdown-body">
             <div class="notif-empty">
                 <div style="font-size:2rem; opacity:.4; margin-bottom:8px;">🔕</div>
-                <span>No notifications yet</span>
+                <span>${t('No notifications yet')}</span>
             </div>
         </div>
     `;
@@ -113,7 +113,14 @@ function _toggleDropdown(e) {
         if (btn) {
             const rect = btn.getBoundingClientRect();
             panel.style.top = (rect.bottom + 10) + 'px';
-            panel.style.right = Math.max(16, window.innerWidth - rect.right) + 'px';
+            const isRTL = document.documentElement.getAttribute('dir') === 'rtl';
+            if (isRTL) {
+                panel.style.right = 'auto';
+                panel.style.left = Math.max(16, rect.left) + 'px';
+            } else {
+                panel.style.left = 'auto';
+                panel.style.right = Math.max(16, window.innerWidth - rect.right) + 'px';
+            }
         }
         _renderDropdown();
         panel.classList.add('open');
@@ -136,7 +143,7 @@ function _renderDropdown() {
         body.innerHTML = `
             <div class="notif-empty">
                 <div style="font-size:2rem; opacity:.4; margin-bottom:8px;">🔕</div>
-                <span>No notifications yet</span>
+                <span>${t('No notifications yet')}</span>
             </div>`;
         return;
     }
@@ -149,8 +156,8 @@ function _renderDropdown() {
             <div class="notif-item${unreadClass}" ${actionAttr}>
                 <div class="notif-item-icon">${n.icon || '🔔'}</div>
                 <div class="notif-item-content">
-                    <div class="notif-item-title">${_escHtml(n.title)}</div>
-                    <div class="notif-item-message">${_escHtml(n.message)}</div>
+                    <div class="notif-item-title">${_escHtml(translateText(n.title))}</div>
+                    <div class="notif-item-message">${_escHtml(translateText(n.message))}</div>
                     <div class="notif-item-time">${timeAgo}</div>
                 </div>
                 ${!n.is_read ? '<div class="notif-item-unread-dot"></div>' : ''}
@@ -183,12 +190,12 @@ function _timeAgo(dateStr) {
     const then = new Date(dateStr);
     const diffMs = now - then;
     const diffMin = Math.floor(diffMs / 60000);
-    if (diffMin < 1) return 'Just now';
-    if (diffMin < 60) return `${diffMin}m ago`;
+    if (diffMin < 1) return t('Just now');
+    if (diffMin < 60) return diffMin + ' ' + t('m ago');
     const diffHr = Math.floor(diffMin / 60);
-    if (diffHr < 24) return `${diffHr}h ago`;
+    if (diffHr < 24) return diffHr + ' ' + t('h ago');
     const diffDay = Math.floor(diffHr / 24);
-    if (diffDay < 7) return `${diffDay}d ago`;
+    if (diffDay < 7) return diffDay + ' ' + t('d ago');
     return fmtDateShort(dateStr);
 }
 

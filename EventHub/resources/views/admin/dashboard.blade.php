@@ -89,8 +89,8 @@
 
     <!-- Charts Row: Status + Type -->
     <div class="an-row">
-      <div class="an-card"><div class="an-card-title"><span>📊</span> الأحداث حسب الحالة</div><div class="an-chart-wrap"><canvas id="statusChart"></canvas></div></div>
-      <div class="an-card"><div class="an-card-title"><span>🏷️</span> الأحداث حسب النوع</div><div class="an-chart-wrap"><canvas id="typeChart"></canvas></div></div>
+      <div class="an-card"><div class="an-card-title"><span>📊</span> Events by Status</div><div class="an-chart-wrap"><canvas id="statusChart"></canvas></div></div>
+      <div class="an-card"><div class="an-card-title"><span>🏷️</span> Events by Type</div><div class="an-chart-wrap"><canvas id="typeChart"></canvas></div></div>
     </div>
 
     <!-- Registration Trend -->
@@ -104,7 +104,7 @@
 
     <!-- Bottom Row: Users by Role + Pending -->
     <div class="an-row">
-      <div class="an-card"><div class="an-card-title"><span>👥</span> المستخدمون حسب الدور</div><div class="an-chart-wrap" style="height:220px"><canvas id="rolesChart"></canvas></div></div>
+      <div class="an-card"><div class="an-card-title"><span>👥</span> Users by Role</div><div class="an-chart-wrap" style="height:220px"><canvas id="rolesChart"></canvas></div></div>
       <div class="an-card">
         <div class="an-card-title"><span>⚠️</span> Pending Approvals</div>
         <div id="pending-list"><div class="empty-state" style="padding:30px"><div class="empty-icon">🎉</div><p>No pending events</p></div></div>

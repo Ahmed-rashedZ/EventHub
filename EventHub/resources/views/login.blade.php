@@ -6,6 +6,7 @@
   <title>Login – EventHub</title>
   <meta name="description" content="Sign in to EventHub Smart Event Management Platform"/>
   <link rel="stylesheet" href="/css/style.css"/>
+  <script src="/js/i18n.js"></script>
 </head>
 <body>
 <div class="auth-page">
