@@ -81,7 +81,7 @@
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('user', JSON.stringify(res.data.user));
       document.cookie = "auth_token=" + res.data.token + "; path=/; max-age=86400;";
-      showToast('Welcome back, ' + res.data.user.name + '!', 'success');
+      showToast(translateText('Welcome back, ' + res.data.user.name + '!'), 'success');
       
       setTimeout(() => {
         if (['Event Manager', 'Sponsor'].includes(res.data.user.role) && res.data.user.verification_status !== 'verified') {

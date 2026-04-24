@@ -145,9 +145,9 @@ async function loadDashboard() {
   animVal(document.getElementById('s-pending'), d.pending_events);
   animVal(document.getElementById('s-tickets'), d.total_tickets);
   animVal(document.getElementById('s-users'), d.total_users);
-  document.getElementById('s-events-sub').textContent = `${d.rejected_events || 0} rejected`;
-  document.getElementById('s-approved-sub').textContent = d.total_events > 0 ? `${Math.round(d.approved_events/d.total_events*100)}% of all events` : '';
-  document.getElementById('s-tickets-sub').textContent = `${d.used_tickets} checked in`;
+  document.getElementById('s-events-sub').textContent = `${d.rejected_events || 0} ${t('rejected')}`;
+  document.getElementById('s-approved-sub').textContent = d.total_events > 0 ? `${Math.round(d.approved_events/d.total_events*100)}% ${t('of all events')}` : '';
+  document.getElementById('s-tickets-sub').textContent = `${d.used_tickets} ${t('checked in')}`;
 
   // Attendance ring
   const rate = d.attendance_rate || 0;
@@ -155,7 +155,7 @@ async function loadDashboard() {
   ring.style.transition = 'stroke-dashoffset 1.2s ease';
   ring.style.strokeDashoffset = 188.5 - (188.5 * rate / 100);
   document.getElementById('rate-pct').textContent = rate + '%';
-  document.getElementById('rate-detail').textContent = `${d.used_tickets} checked in out of ${d.total_tickets} total tickets`;
+  document.getElementById('rate-detail').textContent = `${d.used_tickets} ${t('checked in out of')} ${d.total_tickets} ${t('total tickets')}`;
 
   // Status donut
   const statusLabels = Object.keys(d.events_by_status);
@@ -177,7 +177,7 @@ async function loadDashboard() {
   const mLabels = Object.keys(d.monthly_registrations);
   new Chart(document.getElementById('trendChart'), {
     type: 'line',
-    data: { labels: mLabels.length ? mLabels : ['No data'], datasets: [{ data: mLabels.length ? Object.values(d.monthly_registrations) : [0], borderColor:'#6e40f2', backgroundColor:'rgba(110,64,242,.12)', fill:true, tension:.4, pointRadius:5, pointHoverRadius:7, pointBackgroundColor:'#6e40f2' }] },
+    data: { labels: mLabels.length ? mLabels : [t('No data')], datasets: [{ data: mLabels.length ? Object.values(d.monthly_registrations) : [0], borderColor:'#6e40f2', backgroundColor:'rgba(110,64,242,.12)', fill:true, tension:.4, pointRadius:5, pointHoverRadius:7, pointBackgroundColor:'#6e40f2' }] },
     options: { plugins:{legend:{display:false}}, scales:{ x:{grid:{color:'rgba(255,255,255,.04)'}}, y:{grid:{color:'rgba(255,255,255,.04)'},beginAtZero:true,ticks:{stepSize:1}} }, responsive:true, maintainAspectRatio:false }
   });
 

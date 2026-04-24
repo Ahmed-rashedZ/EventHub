@@ -33,8 +33,7 @@
 
         <div class="card" style="padding: 16px; background: rgba(16,185,129,0.1); border: 1px solid var(--success);">
           <h4 style="margin: 0 0 8px 0; color: var(--success);">💼 Managers & Sponsors</h4>
-          <p style="margin: 0 0 12px 0; font-size: 0.85rem; color: var(--text-secondary);">Accounts for Event Managers and
-            Sponsors must be verified by the System Administrator.</p>
+          <p style="margin: 0 0 12px 0; font-size: 0.85rem; color: var(--text-secondary);">Accounts for Event Managers and Sponsors must be verified by the System Administrator.</p>
           <a href="/register/partner" class="btn btn-success btn-sm" style="display:inline-block; text-decoration:none;">Apply as Partner →</a>
         </div>
       </div>

@@ -518,6 +518,7 @@ const I18N_AR = {
 
   /* ── Login / Register / Auth Pages ─────────────────────── */
   'Welcome back': 'مرحباً بعودتك',
+  'Welcome back, ': 'مرحباً بعودتك، ',
   'Sign in to your account to continue': 'سجّل الدخول إلى حسابك للمتابعة',
   'Email Address': 'البريد الإلكتروني',
   'Sign In': 'تسجيل الدخول',
@@ -532,6 +533,8 @@ const I18N_AR = {
   'to create your account and buy tickets.': 'لإنشاء حسابك وشراء التذاكر.',
   'Managers & Sponsors': 'المديرون والرعاة',
   'Accounts for Event Managers and Sponsors must be verified by the System Administrator.': 'يجب التحقق من حسابات مديري الأحداث والرعاة من قبل مدير النظام.',
+  'I declare that all the information and documents provided are authentic, and I agree to EventHub\'s Partner Terms of Service.': 'أقر بأن جميع المعلومات والمستندات المقدمة صحيحة، وأوافق على شروط خدمة شركاء EventHub.',
+  'No data': 'لا توجد بيانات',
   'Apply as Partner →': 'التقديم كشريك →',
   'Already have an account?': 'لديك حساب بالفعل؟',
   'Sign in here': 'سجّل الدخول هنا',
@@ -635,6 +638,13 @@ const I18N_AR = {
   'm ago': 'دقيقة مضت',
   'h ago': 'ساعة مضت',
   'd ago': 'يوم مضى',
+  'rejected': 'مرفوض',
+  'of all events': 'من جميع الأحداث',
+  'checked in': 'تم تسجيل دخولهم',
+  'checked in out of': 'تم تسجيل دخولهم من أصل',
+  'total tickets': 'إجمالي التذاكر',
+  'Login failed': 'فشل تسجيل الدخول',
+  'Network error': 'خطأ في الشبكة',
 
   /* ── Dynamic Notifications ──────────────────────────────── */
   'New Event Pending': 'حدث جديد قيد الانتظار',
@@ -1054,8 +1064,10 @@ applyDirection();   // ← runs synchronously, before any render
 function injectLanguageToggle() {
   if (document.getElementById('injected-lang-toggle')) return;
 
-  const logoArea = document.querySelector('.sidebar-logo');
-  if (!logoArea) return;
+  const sidebarLogo = document.querySelector('.sidebar-logo');
+  const authCard = document.querySelector('.auth-card');
+  
+  if (!sidebarLogo && !authCard) return;
 
   const isAr = getLang() === 'ar';
   const toggleBtn = document.createElement('button');
@@ -1063,11 +1075,10 @@ function injectLanguageToggle() {
   toggleBtn.onclick = () => setLanguage(isAr ? 'en' : 'ar');
   toggleBtn.title = isAr ? 'Switch Language' : 'تبديل اللغة';
   
-  // Style for the button integrated into the logo area
+  // Style for the button
   const style = document.createElement('style');
   style.textContent = `
     #injected-lang-toggle {
-      margin-${isAr ? 'right' : 'left'}: auto;
       width: 32px;
       height: 32px;
       border-radius: 8px;
@@ -1081,6 +1092,7 @@ function injectLanguageToggle() {
       transition: all 0.2s ease;
       padding: 0;
       flex-shrink: 0;
+      z-index: 1000;
     }
     #injected-lang-toggle:hover {
       background: rgba(110, 64, 242, 0.15);
@@ -1092,6 +1104,16 @@ function injectLanguageToggle() {
       width: 18px;
       height: 18px;
     }
+    ${sidebarLogo ? `
+      #injected-lang-toggle { margin-left: auto; }
+    ` : ''}
+    ${authCard ? `
+      #injected-lang-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+      }
+    ` : ''}
   `;
   document.head.appendChild(style);
 
@@ -1101,7 +1123,8 @@ function injectLanguageToggle() {
     </svg>
   `;
   
-  logoArea.appendChild(toggleBtn);
+  if (sidebarLogo) sidebarLogo.appendChild(toggleBtn);
+  else if (authCard) authCard.appendChild(toggleBtn);
 }
 
 if (document.readyState === 'loading') {
