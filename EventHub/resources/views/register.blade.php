@@ -27,8 +27,7 @@
         <div class="card"
           style="padding: 16px; margin-bottom: 16px; background: rgba(59,130,246,0.1); border: 1px solid var(--primary);">
           <h4 style="margin: 0 0 8px 0; color: var(--primary);">📱 Attendees (Users)</h4>
-          <p style="margin: 0; font-size: 0.85rem; color: var(--text-secondary);">Please download the <strong>EventHub
-              Mobile App</strong> to create your account and buy tickets.</p>
+          <p style="margin: 0; font-size: 0.85rem; color: var(--text-secondary);">Please download the <strong>EventHub Mobile App</strong> to create your account and buy tickets.</p>
         </div>
 
         <div class="card" style="padding: 16px; background: rgba(16,185,129,0.1); border: 1px solid var(--success);">

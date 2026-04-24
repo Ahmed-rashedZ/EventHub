@@ -74,8 +74,7 @@
 
         <div class="form-group">
           <label class="form-label">Verification Document (KYB / KYC)</label>
-          <p style="font-size:0.75rem; color:var(--text-muted); margin:0 0 8px 0;">Please upload your Commercial
-            Register, License, or Authorization Letter (PDF/JPG/PNG up to 5MB).</p>
+          <p style="font-size:0.75rem; color:var(--text-muted); margin:0 0 8px 0;">Please upload your Commercial Register, License, or Authorization Letter (PDF/JPG/PNG up to 5MB).</p>
           <label class="pr-file-input">
             <span id="file-name-display">📁 Click to select file...</span>
             <input id="pr-doc" type="file" accept=".pdf,.png,.jpg,.jpeg" required
@@ -86,8 +85,7 @@
         <div class="form-group" style="margin-top:20px; font-size:0.8rem; color:var(--text-muted);">
           <label style="display:flex; gap:10px; align-items:flex-start; cursor:pointer;">
             <input type="checkbox" required style="margin-top:3px;">
-            <span>I declare that all the information and documents provided are authentic, and I agree to EventHub's
-              Partner Terms of Service.</span>
+            <span>I declare that all the information and documents provided are authentic, and I agree to EventHub's Partner Terms of Service.</span>
           </label>
         </div>
 
