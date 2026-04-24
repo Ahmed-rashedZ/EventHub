@@ -113,6 +113,13 @@ class SponsorshipController extends Controller
     {
         $user = $request->user();
 
+        // Auto-reject pending sponsorship requests if the event has already started
+        SponsorshipRequest::where('status', 'pending')
+            ->whereHas('event', function($query) {
+                $query->where('start_time', '<=', now());
+            })
+            ->update(['status' => 'rejected']);
+
         if ($user->role === 'Sponsor') {
             $requests = SponsorshipRequest::with(['event.venue', 'manager'])
                 ->where('sponsor_id', $user->id)
