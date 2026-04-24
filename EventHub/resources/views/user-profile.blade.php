@@ -438,83 +438,219 @@
     const modal   = document.getElementById('prof-event-modal');
     const content = document.getElementById('prof-event-content');
     modal.classList.add('open');
-    content.innerHTML = '<div class="spinner" style="margin:60px auto"></div>';
+    content.innerHTML = '<div class="spinner" style="margin:auto"></div>';
 
-    Promise.all([
-      api.get(`/events/${eventId}`),
-      api.get(`/events/${eventId}/reviews`)
-    ]).then(([res, revRes]) => {
+    api.get(`/events/${eventId}`).then(res => {
       if (!res.ok) {
-        content.innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><p>Could not load details</p></div>';
+        content.innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><p>Could not fetch event details</p></div>';
         return;
       }
       const ev = res.data;
-      const reviewData = revRes.ok ? revRes.data : { average_rating: 0, reviews: [] };
-      const eType  = ev.event_type || 'Other';
+      const eType = ev.event_type || 'Other';
       const tColor = _tColors[eType] || '#6b7280';
       const tIcon  = _tIcons[eType]  || '📌';
 
       const bannerSection = ev.image
-        ? `<div style="width:100%;height:180px;background:url('/storage/${ev.image}') center/cover;position:relative"><div style="position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(transparent,#13131f)"></div></div>`
-        : `<div style="width:100%;height:180px;background:linear-gradient(135deg,#1a1a2e,#0f3460);display:flex;align-items:center;justify-content:center;font-size:4rem;position:relative">${tIcon}<div style="position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(transparent,#13131f)"></div></div>`;
+        ? `<div class="ed-banner" style="background-image:url('/storage/${ev.image}')"><div class="ed-banner-fade"></div></div>`
+        : `<div class="ed-banner ed-banner-placeholder"><span class="ed-banner-emoji">${tIcon}</span><div class="ed-banner-fade"></div></div>`;
 
-      const reviews = reviewData.reviews || [];
-      let reviewsHtml = '';
-      if (reviews.length > 0) {
-        reviewsHtml = `<div style="margin-top:16px">
-          <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.35);margin-bottom:10px">Reviews (${reviews.length})</div>
-          <div style="display:flex;flex-direction:column;gap:8px;max-height:220px;overflow-y:auto;padding-right:4px">
-            ${reviews.map(r => `
-              <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:10px">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-                  <span style="font-size:.82rem;font-weight:600;color:#fff" class="i18n-skip">${r.user?.name || 'Anonymous'}</span>
-                  <span style="color:#eab308;font-size:.85rem;letter-spacing:1px">${[1,2,3,4,5].map(i=>i<=Math.round(r.rating)?'★':'☆').join('')}</span>
-                </div>
-                ${r.review_text ? `<p style="font-size:.82rem;color:rgba(255,255,255,.6);margin:0">${r.review_text}</p>` : '<p style="font-size:.78rem;color:rgba(255,255,255,.25);margin:0;font-style:italic">No written review</p>'}
-              </div>`).join('')}
-          </div>
-        </div>`;
+      const rejectionSection = (ev.status === 'rejected' && ev.rejection_reason)
+        ? `<div class="ed-rejection"><span class="ed-rej-label">⚠ Rejection Reason</span><p>${ev.rejection_reason}</p></div>`
+        : '';
+
+      let sponsorsHtml = '';
+      if (ev.sponsors && ev.sponsors.length > 0) {
+          const getTierBadge = (tier) => {
+              switch (tier) {
+                  case 'diamond': return '<span style="background:rgba(6,182,212,0.15); color:#06b6d4; padding:3px 8px; border-radius:12px; border:1px solid rgba(6,182,212,0.3); font-size:10px;">💎 Diamond</span>';
+                  case 'gold': return '<span style="background:rgba(234,179,8,0.15); color:#eab308; padding:3px 8px; border-radius:12px; border:1px solid rgba(234,179,8,0.3); font-size:10px;">🥇 Gold</span>';
+                  case 'silver': return '<span style="background:rgba(156,163,175,0.15); color:#9ca3af; padding:3px 8px; border-radius:12px; border:1px solid rgba(156,163,175,0.3); font-size:10px;">🥈 Silver</span>';
+                  case 'bronze': return '<span style="background:rgba(217,119,6,0.15); color:#d97706; padding:3px 8px; border-radius:12px; border:1px solid rgba(217,119,6,0.3); font-size:10px;">🥉 Bronze</span>';
+                  default: return `<span style="background:rgba(255,255,255,0.1); color:#fff; padding:3px 8px; border-radius:12px; border:1px solid rgba(255,255,255,0.2); font-size:10px;">${tier || 'Sponsor'}</span>`;
+              }
+          };
+
+          sponsorsHtml = `
+            <div class="ed-section mt-4" style="margin-top: 16px;">
+              <div class="ed-section-label">Current Sponsors</div>
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                ${ev.sponsors.map(sp => `
+                   <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.04); padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.05); cursor:pointer;" onclick="window.location.href='/user-profile?id=${sp.id}'">
+                      <div class="avatar" style="width:36px; height:36px; font-size:14px; display:inline-flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:50%; overflow:hidden;">
+                          ${(() => {
+                             const src = sp.image || sp.avatar || sp.profile?.logo;
+                             if (src) {
+                               const fullSrc = (src.startsWith('http') || src.startsWith('/')) ? src : '/storage/' + src;
+                               return `<img src="${fullSrc}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'; this.parentElement.innerText='${sp.name?.charAt(0).toUpperCase() || '?'}'">`;
+                             }
+                             return sp.name ? sp.name.charAt(0).toUpperCase() : '?';
+                          })()}
+                      </div>
+                      <div style="flex:1">
+                          <div style="font-size:0.85rem; font-weight:600; color:#fff;">${sp.profile?.company_name || sp.name}</div>
+                          <div style="margin-top: 2px;">${getTierBadge(sp.pivot?.tier)}</div>
+                      </div>
+                   </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
       }
 
       content.innerHTML = `
         ${bannerSection}
-        <div style="padding:20px 24px 24px">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap">
-            <h2 style="margin:0;font-size:1.4rem;font-weight:800;color:#fff;flex:1">${ev.title}</h2>
-            <span style="background:${tColor}18;color:${tColor};border:1px solid ${tColor}40;padding:4px 12px;border-radius:20px;font-size:.72rem;font-weight:700;text-transform:uppercase">${tIcon} ${eType}</span>
-          </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">${badge(ev.status)} ${ev.status==='approved'?timeBadge(ev.time_status):''}</div>
-          <p style="color:rgba(255,255,255,.7);font-size:.9rem;line-height:1.7;margin-bottom:16px">${ev.description || 'No description.'}</p>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px">
-            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px 14px">
-              <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;color:var(--accent2);letter-spacing:.06em;margin-bottom:2px">Venue</div>
-              <div style="font-weight:600;color:#fff">${ev.venue?.name || '—'}</div>
+        <div class="ed-body">
+
+          <div class="ed-header">
+            <div class="ed-title-row">
+              <h2 class="ed-title">${ev.title}</h2>
+              <span class="ed-type-pill" style="--tcolor:${tColor}">${tIcon} ${eType}</span>
             </div>
-            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px 14px">
-              <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;color:var(--accent2);letter-spacing:.06em;margin-bottom:2px">Capacity</div>
-              <div style="font-weight:600;color:#fff">${ev.capacity}</div>
-            </div>
-            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px 14px">
-              <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;color:var(--accent);letter-spacing:.06em;margin-bottom:2px">Start</div>
-              <div style="font-weight:600;color:#fff">${fmtDate(ev.start_time)}</div>
-            </div>
-            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px 14px">
-              <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;color:var(--accent);letter-spacing:.06em;margin-bottom:2px">End</div>
-              <div style="font-weight:600;color:#fff">${fmtDate(ev.end_time)}</div>
+            <div class="ed-badges">
+              ${ev.status ? badge(ev.status) : ''}
+              ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''}
             </div>
           </div>
-          ${reviewsHtml}
-        </div>`;
+
+          ${rejectionSection}
+
+          <div class="ed-section">
+            <div class="ed-section-label">About this Event</div>
+            <p class="ed-description">${ev.description || 'No description provided.'}</p>
+          </div>
+
+          <div class="ed-info-grid">
+            <div class="ed-info-card ed-info-accent2">
+              <div class="ed-info-icon">🏛️</div>
+              <div><div class="ed-info-label">Venue</div><div class="ed-info-value">${ev.venue?.name || '—'}</div></div>
+            </div>
+            <div class="ed-info-card ed-info-accent2">
+              <div class="ed-info-icon">📍</div>
+              <div><div class="ed-info-label">Location</div><div class="ed-info-value">${ev.venue?.location || '—'}</div></div>
+            </div>
+            <div class="ed-info-card ed-info-accent">
+              <div class="ed-info-icon">🕐</div>
+              <div><div class="ed-info-label">Start</div><div class="ed-info-value">${fmtDate(ev.start_time)}</div></div>
+            </div>
+            <div class="ed-info-card ed-info-accent">
+              <div class="ed-info-icon">🕔</div>
+              <div><div class="ed-info-label">End</div><div class="ed-info-value">${fmtDate(ev.end_time)}</div></div>
+            </div>
+            <div class="ed-info-card ed-info-warning">
+              <div class="ed-info-icon">👥</div>
+              <div><div class="ed-info-label">Capacity</div><div class="ed-info-value">${ev.capacity}</div></div>
+            </div>
+            <div class="ed-info-card ed-info-warning">
+              <div class="ed-info-icon">🎟️</div>
+              <div><div class="ed-info-label">Tickets Booked</div><div class="ed-info-value">${ev.tickets_count ?? '—'}</div></div>
+            </div>
+          </div>
+          
+          ${sponsorsHtml}
+
+          <div class="ed-footer" style="margin-top: 8px;">
+            <span class="ed-footer-label">Created by</span>
+            <span class="ed-footer-name">${ev.creator?.name || ev.manager?.name || '—'}</span>
+          </div>
+
+        </div>
+      `;
     });
+  }
+
+  function closeProfEventModal() {
+    document.getElementById('prof-event-modal').classList.remove('open');
+    document.getElementById('prof-event-content').innerHTML = '';
   }
 </script>
 
 <!-- Event Details Modal (Profile Page) -->
 <div class="modal-overlay" id="prof-event-modal">
-  <div class="modal" style="max-width:540px;width:95%;padding:0;border-radius:20px;border:1px solid rgba(255,255,255,.08);box-shadow:0 32px 80px rgba(0,0,0,.6);background:#13131f;max-height:90vh;overflow-y:auto;position:relative">
-    <button onclick="document.getElementById('prof-event-modal').classList.remove('open')" style="position:sticky;top:14px;right:14px;float:right;z-index:20;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.15);color:#fff;width:32px;height:32px;border-radius:50%;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-right:14px;margin-top:14px">✕</button>
-    <div id="prof-event-content" style="clear:both"></div>
+  <div class="modal ed-modal">
+    <button class="ed-close-btn" onclick="closeProfEventModal()">✕</button>
+    <div id="prof-event-content" class="ed-content"></div>
   </div>
 </div>
+
+<style>
+/* ── Event Details Modal ───────────────────────────── */
+.ed-modal {
+  max-width: 560px;
+  width: 95%;
+  padding: 0;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+  background: #13131f;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+.ed-close-btn {
+  position: absolute;
+  top: 14px; right: 14px;
+  z-index: 20;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #fff;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.ed-close-btn:hover { background: rgba(255,255,255,0.15); }
+.ed-content { position: relative; display: flex; flex-direction: column; max-height: 90vh; }
+.ed-banner {
+  width: 100%; height: 200px;
+  background-size: cover; background-position: center;
+  position: relative;
+  flex-shrink: 0;
+}
+.ed-banner-placeholder {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  display: flex; align-items: center; justify-content: center;
+}
+.ed-banner-emoji { font-size: 4.5rem; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5)); }
+.ed-banner-fade {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, #13131f);
+}
+.ed-body { padding: 20px 24px 24px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; }
+.ed-header { display: flex; flex-direction: column; gap: 10px; }
+.ed-title-row { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.ed-title { margin: 0; font-size: 1.55rem; font-weight: 800; color: #fff; line-height: 1.2; flex: 1; min-width: 0; }
+.ed-type-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: color-mix(in srgb, var(--tcolor) 18%, transparent);
+  color: var(--tcolor);
+  border: 1px solid color-mix(in srgb, var(--tcolor) 40%, transparent);
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 0.78rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  white-space: nowrap; flex-shrink: 0;
+}
+.ed-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+.ed-rejection { background: rgba(239,68,68,0.09); border-left: 3px solid #ef4444; border-radius: 8px; padding: 12px 14px; }
+.ed-rej-label { display: block; font-size: 0.72rem; font-weight: 700; color: #ef4444; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+.ed-rejection p { margin: 0; color: #e2e8f0; font-size: 0.9rem; line-height: 1.5; }
+.ed-section-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.35); margin-bottom: 6px; }
+.ed-description { margin: 0; color: rgba(255,255,255,0.75); font-size: 0.95rem; line-height: 1.7; }
+.ed-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ed-info-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; transition: background 0.2s; }
+.ed-info-card:hover { background: rgba(255,255,255,0.07); }
+.ed-info-icon { font-size: 1.3rem; flex-shrink: 0; }
+.ed-info-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+.ed-info-value { font-weight: 600; font-size: 0.88rem; color: #fff; }
+.ed-info-accent  .ed-info-label { color: var(--accent); }
+.ed-info-accent2 .ed-info-label { color: var(--accent2); }
+.ed-info-warning .ed-info-label { color: var(--warning); }
+.ed-footer { display: flex; align-items: center; gap: 8px; padding-top: 4px; border-top: 1px solid rgba(255,255,255,0.06); }
+.ed-footer-label { font-size: 0.8rem; color: rgba(255,255,255,0.35); }
+.ed-footer-name  { font-size: 0.85rem; font-weight: 600; color: #fff; }
+</style>
 </body>
 </html>
