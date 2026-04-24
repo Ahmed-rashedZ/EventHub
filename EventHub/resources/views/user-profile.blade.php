@@ -358,16 +358,29 @@
       document.getElementById('profile-content').style.display = 'block';
 
       if (u.role === 'Event Manager') {
-          loadManagerEvents(u.id);
+          loadManagerEvents(u.id, u.role);
+      } else if (u.role === 'Sponsor') {
+          loadManagerEvents(u.id, u.role);
       }
   }
 
   let allMgrEvents = [];
 
-  async function loadManagerEvents(userId) {
+  async function loadManagerEvents(userId, role) {
       const res = await api.get('/profile/' + userId + '/portfolio');
       const section = document.getElementById('mgr-stats-section');
       section.style.display = 'block';
+      
+      if (role === 'Sponsor') {
+          const title = document.querySelector('.mgr-section-title');
+          if (title) title.innerHTML = '<span>💼</span> Sponsored Events History';
+          
+          const msTotalLabel = document.querySelector('#ms-total').previousElementSibling;
+          if (msTotalLabel) msTotalLabel.textContent = 'Sponsored';
+          
+          const ratingStat = document.querySelector('#ms-rating').parentElement;
+          if (ratingStat) ratingStat.style.display = 'none';
+      }
 
       const tbody = document.getElementById('mgr-events-body');
       if (!res.ok) {

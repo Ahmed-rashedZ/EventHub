@@ -235,24 +235,37 @@ public function getPortfolio(Request $request, $id)
 {
     $user = User::findOrFail($id);
     
-    if ($user->role !== 'Event Manager') {
-        return response()->json(['message' => 'Not an event manager'], 400);
+    if ($user->role === 'Event Manager') {
+        $query = \App\Models\Event::where('created_by', $user->id)
+                        ->with('venue')
+                        ->orderBy('start_time', 'desc');
+
+        $authUser = $request->user();
+        if (!$authUser || ($authUser->role !== 'Admin' && $authUser->id !== $user->id)) {
+            $query->where('status', 'approved');
+        }
+
+        $events = $query->get();
+
+        return response()->json([
+            'events' => $events
+        ]);
+    } elseif ($user->role === 'Sponsor') {
+        $query = $user->sponsoredEvents()->with('venue')->orderBy('start_time', 'desc');
+        
+        $authUser = $request->user();
+        if (!$authUser || ($authUser->role !== 'Admin' && $authUser->id !== $user->id)) {
+            $query->where('events.status', 'approved');
+        }
+
+        $events = $query->get();
+
+        return response()->json([
+            'events' => $events
+        ]);
     }
 
-    $query = \App\Models\Event::where('created_by', $user->id)
-                    ->with('venue')
-                    ->orderBy('start_time', 'desc');
-
-    $authUser = $request->user();
-    if (!$authUser || ($authUser->role !== 'Admin' && $authUser->id !== $user->id)) {
-        $query->where('status', 'approved');
-    }
-
-    $events = $query->get();
-
-    return response()->json([
-        'events' => $events
-    ]);
+    return response()->json(['message' => 'Not an event manager or sponsor'], 400);
 }
 
 public function getAvailableSponsors(Request $request)
