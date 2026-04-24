@@ -298,7 +298,7 @@
                 <div style="flex-grow: 1;">
                     <input type="text" name="phones[]" class="form-control" placeholder="+218 (092) 000-0000" value="${value}" maxlength="20">
                 </div>
-                <button type="button" class="btn btn-ghost" style="color: var(--danger); font-size: 1.25rem; min-width: 44px; height: 44px; padding: 0;" onclick="this.parentElement.remove()">✕</button>
+                <button type="button" class="btn btn-ghost" style="color: var(--danger); font-size: 1.25rem; min-width: 44px; height: 44px; padding: 0; justify-content: center;" onclick="this.parentElement.remove()">✕</button>
             `;
             container.appendChild(row);
         }
@@ -337,7 +337,7 @@
                 <div style="flex-grow: 1;">
                     <input type="url" name="social_links[${platformKey || 'link_'+currentIdx}]" class="form-control url-input" placeholder="https://..." value="${urlValue}" required>
                 </div>
-                <button type="button" class="btn btn-ghost" style="color: var(--danger); font-size: 1.25rem; min-width: 44px; height: 44px; padding: 0;" onclick="this.parentElement.remove()">✕</button>
+                <button type="button" class="btn btn-ghost" style="color: var(--danger); font-size: 1.25rem; min-width: 44px; height: 44px; padding: 0; justify-content: center;" onclick="this.parentElement.remove()">✕</button>
             `;
             container.appendChild(row);
         }
