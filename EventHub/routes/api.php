@@ -72,7 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // ── Notifications ──
     Route::get('/notifications',              [NotificationController::class, 'index']);
-    Route::post('/notifications',             [NotificationController::class, 'store']);
+    Route::put('/notifications/read-all',     [NotificationController::class, 'markAllRead']);
     Route::put('/notifications/{id}/read',    [NotificationController::class, 'markRead']);
 
     // ── Analytics ──

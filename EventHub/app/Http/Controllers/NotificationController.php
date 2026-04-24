@@ -2,51 +2,64 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\EventNotification;
 use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {
-    // GET /api/notifications  – user's notifications
+    /**
+     * GET /api/notifications – current user's notifications (latest 50)
+     */
     public function index(Request $request)
     {
-        $notifications = EventNotification::where('user_id', $request->user()->id)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $notifications = $request->user()
+            ->notifications()
+            ->latest()
+            ->take(50)
+            ->get()
+            ->map(function ($n) {
+                return [
+                    'id'         => $n->id,
+                    'title'      => $n->data['title'] ?? '',
+                    'message'    => $n->data['message'] ?? '',
+                    'type'       => $n->data['type'] ?? 'system',
+                    'icon'       => $n->data['icon'] ?? '🔔',
+                    'action_url' => $n->data['action_url'] ?? null,
+                    'related_id' => $n->data['related_id'] ?? null,
+                    'is_read'    => $n->read_at !== null,
+                    'created_at' => $n->created_at->toISOString(),
+                ];
+            });
 
-        return response()->json($notifications);
+        $unread_count = $request->user()->unreadNotifications()->count();
+
+        return response()->json([
+            'notifications' => $notifications,
+            'unread_count'  => $unread_count,
+        ]);
     }
 
-    // PUT /api/notifications/{id}/read
+    /**
+     * PUT /api/notifications/{id}/read – mark a single notification as read
+     */
     public function markRead(Request $request, $id)
     {
-        $notification = EventNotification::where('id', $id)
-            ->where('user_id', $request->user()->id)
+        $notification = $request->user()
+            ->notifications()
+            ->where('id', $id)
             ->firstOrFail();
 
-        $notification->is_read = true;
-        $notification->save();
+        $notification->markAsRead();
 
         return response()->json(['message' => 'Marked as read']);
     }
 
-    // POST /api/notifications  – Internal: create notification (Admin/System)
-    public function store(Request $request)
+    /**
+     * PUT /api/notifications/read-all – mark all notifications as read
+     */
+    public function markAllRead(Request $request)
     {
-        if (!in_array($request->user()->role, ['Admin', 'Event Manager'])) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
+        $request->user()->unreadNotifications->markAsRead();
 
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'message' => 'required|string|max:1000',
-        ]);
-
-        $notification = EventNotification::create([
-            'user_id' => $request->user_id,
-            'message' => $request->message,
-        ]);
-
-        return response()->json($notification, 201);
+        return response()->json(['message' => 'All notifications marked as read']);
     }
 }

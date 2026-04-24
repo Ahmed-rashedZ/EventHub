@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\User;
 use Illuminate\Http\Request;
+use App\Notifications\SystemNotification;
 
 class EventController extends Controller
 {
@@ -114,6 +116,19 @@ class EventController extends Controller
             'image'       => $imagePath,
         ]);
 
+        // ── Notify all Admins about new pending event ──
+        $admins = User::where('role', 'Admin')->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new SystemNotification(
+                'New Event Pending',
+                "Event \"{$event->title}\" was submitted by {$request->user()->name} and needs your approval.",
+                'event',
+                '📋',
+                '/admin/events',
+                $event->id
+            ));
+        }
+
         return response()->json($event->load('venue'), 201);
     }
 
@@ -127,6 +142,19 @@ class EventController extends Controller
         $event = Event::findOrFail($id);
         $event->status = 'approved';
         $event->save();
+
+        // ── Notify the Event Manager ──
+        $manager = User::find($event->created_by);
+        if ($manager) {
+            $manager->notify(new SystemNotification(
+                'Event Approved ✅',
+                "Your event \"{$event->title}\" has been approved and is now live!",
+                'event',
+                '✅',
+                '/manager/events',
+                $event->id
+            ));
+        }
 
         return response()->json(['message' => 'Event approved', 'event' => $event]);
     }
@@ -142,6 +170,20 @@ class EventController extends Controller
         $event->status = 'rejected';
         $event->rejection_reason = $request->input('rejection_reason');
         $event->save();
+
+        // ── Notify the Event Manager ──
+        $manager = User::find($event->created_by);
+        if ($manager) {
+            $reason = $event->rejection_reason ? ": {$event->rejection_reason}" : '.';
+            $manager->notify(new SystemNotification(
+                'Event Rejected ❌',
+                "Your event \"{$event->title}\" has been rejected{$reason}",
+                'event',
+                '❌',
+                '/manager/events',
+                $event->id
+            ));
+        }
 
         return response()->json(['message' => 'Event rejected', 'event' => $event]);
     }
@@ -216,6 +258,20 @@ class EventController extends Controller
                 'review_text' => $request->review_text
             ]
         );
+
+        // ── Notify the Event Manager about new rating ──
+        $manager = User::find($event->created_by);
+        if ($manager && $manager->id !== $user->id) {
+            $stars = str_repeat('⭐', $request->rating);
+            $manager->notify(new SystemNotification(
+                'New Rating Received',
+                "Your event \"{$event->title}\" received a {$request->rating}-star rating {$stars}",
+                'event',
+                '⭐',
+                '/manager/event-stats/' . $event->id,
+                $event->id
+            ));
+        }
 
         return response()->json([
             'message' => 'Rating submitted successfully',

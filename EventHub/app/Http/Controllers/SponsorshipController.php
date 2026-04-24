@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\SponsorshipRequest;
 use App\Models\Event;
+use App\Models\User;
 use Illuminate\Http\Request;
+use App\Notifications\SystemNotification;
 
 class SponsorshipController extends Controller
 {
@@ -45,10 +47,21 @@ class SponsorshipController extends Controller
                 'event_id'   => $event->id,
                 'sponsor_id' => $targetSponsor->id,
                 'event_manager_id' => $user->id,
-                'initiator'  => 'event_manager',
                 'message'    => $request->message,
                 'status'     => 'pending',
+                'initiator'  => 'event_manager',
             ]);
+
+            // ── Notify the Sponsor about the invitation ──
+            $targetSponsor->notify(new SystemNotification(
+                'Sponsorship Invitation 💼',
+                "You received a sponsorship invitation for \"{$event->title}\" from {$user->name}.",
+                'sponsorship',
+                '💼',
+                '/sponsor/requests',
+                $event->id
+            ));
+
             return response()->json($sreq, 201);
         }
 
@@ -76,6 +89,21 @@ class SponsorshipController extends Controller
                 'message'    => $request->message,
                 'status'     => 'pending',
             ]);
+
+            // ── Notify the Event Manager about the request ──
+            $manager = User::find($event->created_by);
+            if ($manager) {
+                $sponsorName = $user->profile?->company_name ?? $user->name;
+                $manager->notify(new SystemNotification(
+                    'New Sponsorship Request 🤝',
+                    "{$sponsorName} sent a sponsorship request for \"{$event->title}\".",
+                    'sponsorship',
+                    '🤝',
+                    '/manager/sponsorship',
+                    $event->id
+                ));
+            }
+
             return response()->json($sreq, 201);
         }
     }
@@ -179,6 +207,41 @@ class SponsorshipController extends Controller
         }
         
         $sreq->save();
+
+        // ── Notify the other party about the decision ──
+        $sreq->load('event');
+        $eventTitle = $sreq->event->title ?? 'Unknown Event';
+
+        if ($sreq->initiator === 'sponsor') {
+            // Manager responded to sponsor’s request → notify sponsor
+            $sponsor = User::find($sreq->sponsor_id);
+            if ($sponsor) {
+                $statusText = $request->status === 'accepted' ? 'accepted ✅' : 'rejected ❌';
+                $sponsor->notify(new SystemNotification(
+                    "Sponsorship {$statusText}",
+                    "Your sponsorship request for \"{$eventTitle}\" has been {$request->status}.",
+                    'sponsorship',
+                    $request->status === 'accepted' ? '✅' : '❌',
+                    '/sponsor/requests',
+                    $sreq->event_id
+                ));
+            }
+        } else {
+            // Sponsor responded to manager’s invitation → notify manager
+            $manager = User::find($sreq->event_manager_id);
+            if ($manager) {
+                $sponsorName = User::find($sreq->sponsor_id)?->profile?->company_name ?? User::find($sreq->sponsor_id)?->name ?? 'A sponsor';
+                $statusText = $request->status === 'accepted' ? 'accepted ✅' : 'rejected ❌';
+                $manager->notify(new SystemNotification(
+                    "Invitation {$statusText}",
+                    "{$sponsorName} has {$request->status} your sponsorship invitation for \"{$eventTitle}\".",
+                    'sponsorship',
+                    $request->status === 'accepted' ? '✅' : '❌',
+                    '/manager/sponsorship',
+                    $sreq->event_id
+                ));
+            }
+        }
 
         return response()->json($sreq);
     }

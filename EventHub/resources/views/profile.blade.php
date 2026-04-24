@@ -120,6 +120,7 @@
 <script src="/js/api.js"></script>
 <script>
 </script>
+<script src="/js/notifications.js"></script>
 <script src="/js/auth.js"></script>
 <script>
   // Sponsors: load /profile first so is_available matches the database (no UI default).

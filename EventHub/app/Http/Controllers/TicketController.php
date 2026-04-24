@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Ticket;
 use App\Models\Event;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Notifications\SystemNotification;
 
 class TicketController extends Controller
 {
@@ -44,6 +46,20 @@ class TicketController extends Controller
             'qr_code'  => $qrCode,
             'status'   => 'unused',
         ]);
+
+        // ── Notify Event Manager about new ticket booking ──
+        $manager = User::find($event->created_by);
+        if ($manager && $manager->id !== $user->id) {
+            $bookedNow = Ticket::where('event_id', $event->id)->count();
+            $manager->notify(new SystemNotification(
+                'New Ticket Booked 🎟️',
+                "{$user->name} booked a ticket for \"{$event->title}\" ({$bookedNow}/{$event->capacity})",
+                'ticket',
+                '🎟️',
+                '/manager/event-stats/' . $event->id,
+                $event->id
+            ));
+        }
 
         return response()->json([
             'ticket'  => $ticket,

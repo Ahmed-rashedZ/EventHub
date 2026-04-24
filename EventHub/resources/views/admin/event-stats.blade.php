@@ -176,6 +176,7 @@
 
 <div id="toast-container"></div>
 <script src="/js/api.js"></script>
+<script src="/js/notifications.js"></script>
 <script src="/js/auth.js"></script>
 <script>
 const user = requireRole('Admin');

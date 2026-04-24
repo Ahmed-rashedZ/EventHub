@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Notifications\SystemNotification;
 
 class VerificationController extends Controller
 {
@@ -32,6 +33,15 @@ class VerificationController extends Controller
         $user->verification_status = 'verified';
         $user->save();
 
+        // ── Notify the partner ──
+        $user->notify(new SystemNotification(
+            'Verification Approved ✅',
+            'Your account has been verified! You now have full access to the platform.',
+            'verification',
+            '✅',
+            $user->role === 'Event Manager' ? '/manager/dashboard' : '/sponsor/dashboard'
+        ));
+
         return response()->json(['message' => 'User verification approved.']);
     }
 
@@ -49,6 +59,15 @@ class VerificationController extends Controller
         $user->verification_status = 'rejected';
         $user->verification_notes = $request->notes;
         $user->save();
+
+        // ── Notify the partner ──
+        $user->notify(new SystemNotification(
+            'Verification Rejected ❌',
+            "Your verification was rejected: {$request->notes}",
+            'verification',
+            '❌',
+            '/pending-verification'
+        ));
 
         return response()->json(['message' => 'User verification rejected.']);
     }
@@ -83,6 +102,15 @@ class VerificationController extends Controller
         $user->verification_status = 'changes_requested';
         $user->verification_notes = $request->notes;
         $user->save();
+
+        // ── Notify the partner ──
+        $user->notify(new SystemNotification(
+            'Changes Requested ⚠️',
+            "The admin requested changes on your verification: {$request->notes}",
+            'verification',
+            '⚠️',
+            '/pending-verification'
+        ));
 
         return response()->json(['message' => 'Changes requested properly.']);
     }

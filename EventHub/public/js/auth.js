@@ -140,6 +140,11 @@ function populateSidebar(user) {
 
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) logoutBtn.addEventListener('click', logout);
+
+    // Initialize notification bell if the script is loaded
+    if (typeof initNotificationBell === 'function') {
+        initNotificationBell();
+    }
 }
 
 /**
