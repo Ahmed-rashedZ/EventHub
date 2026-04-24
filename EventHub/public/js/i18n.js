@@ -61,11 +61,11 @@ const I18N_AR = {
   'Rejected':    'مرفوض',
 
   /* ── Sort Dropdown Options ───────────────────────────────── */
-  'Soonest First':   'الأقرب زمناً',
-  'Farthest First':  'الأبعد زمناً',
-  'Alphabetical':    'ترتيب أبجدي',
-  'Live Now':        'الحالية الآن',
-  'Ended':           'المنتهية',
+  'Soonest First':   'الأقرب أولا',
+  'Farthest First':  'الأبعد أولا',
+  'Alphabetical':    'أبجدي',
+  'Live Now':        'مباشر الآن',
+  'Ended':           'منتهي',
 
   /* ── Table Headers ────────────────────────────────────── */
   'Title':          'العنوان',
