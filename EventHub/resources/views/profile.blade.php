@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>My Profile – EventHub</title>
   <link rel="stylesheet" href="/css/style.css"/>
-  <script src="/js/i18n.js"></script>
+  <script src="/js/i18n.js?v=2"></script>
   <style>
     .profile-card { max-width: 600px; margin: 40px auto; padding: 30px; }
   </style>
@@ -121,7 +121,7 @@
 <script>
 </script>
 <script src="/js/notifications.js"></script>
-<script src="/js/auth.js"></script>
+<script src="/js/auth.js?v=2"></script>
 <script>
   // Sponsors: load /profile first so is_available matches the database (no UI default).
   let u = JSON.parse(localStorage.getItem('user'));

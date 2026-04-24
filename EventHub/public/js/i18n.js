@@ -34,6 +34,7 @@ const I18N_AR = {
   'Users':             'المستخدمون',
   'Venues':            'القاعات',
   'Opportunities':     'الفرص',
+  'Verifications':     'التحقق',
   'Browse Events':     'تصفح الأحداث',
   'Sponsorships':      'الرعايات',
   'Browse Requests':   'الطلبات',

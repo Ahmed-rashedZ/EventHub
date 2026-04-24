@@ -104,6 +104,7 @@
                     <a class="nav-item" href="/admin/users"><span class="nav-icon">👥</span> Users</a>
                     <a class="nav-item" href="/admin/events"><span class="nav-icon">📅</span> Events</a>
                     <a class="nav-item" href="/admin/venues"><span class="nav-icon">🏛️</span> Venues</a>
+                    <a class="nav-item" href="/admin/verifications"><span class="nav-icon">🛡️</span> Verifications</a>
                 @elseif(Auth::user()->role === 'Event Manager')
                     <span class="nav-section-label">Overview</span>
                     <a class="nav-item" href="/manager/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
