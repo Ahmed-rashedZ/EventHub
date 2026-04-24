@@ -83,6 +83,7 @@ function buildSidebarLinks(role, activePath) {
         html += nav('/admin/users',   '👥', 'Users');
         html += nav('/admin/events',  '📅', 'Events');
         html += nav('/admin/venues',  '🏛️', 'Venues');
+        html += nav('/admin/verifications', '🛡️', 'Verifications');
 
     } else if (role === 'Event Manager') {
         html += `<span class="nav-section-label">${t('Overview')}</span>`;

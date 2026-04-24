@@ -662,6 +662,16 @@ const I18N_AR = {
   'Sponsorship Tier Assigned: ': 'تم تخصيص مستوى الرعاية: ',
   'Sponsorship Cancelled': 'تم إلغاء الرعاية',
 
+  /* ── Event Type Tooltips ────────────────────────────────── */
+  'Business Conference\nTech Conference\nMedical Conference\nAcademic Conference\nStartup Conference': 'مؤتمر أعمال\nمؤتمر تقني\nمؤتمر طبي\nمؤتمر أكاديمي\nمؤتمر الشركات الناشئة',
+  'Educational Seminar\nScientific Seminar\nCultural Seminar\nFinancial Seminar\nManagement Seminar': 'ندوة تعليمية\nندوة علمية\nندوة ثقافية\nندوة مالية\nندوة إدارية',
+  'Programming Workshop\nDesign Workshop\nWriting Workshop\nArt Workshop\nStrategy Workshop': 'ورشة برمجة\nورشة تصميم\nورشة كتابة\nورشة فنون\nورشة تخطيط استراتيجي',
+  'Language Course\nLeadership Course\nMarketing Course\nHR Course\nIT Course': 'دورة لغات\nدورة قيادة\nدورة تسويق\nدورة موارد بشرية\nدورة تقنية معلومات',
+  'Music Concerts\nFestivals\nStand-up Comedy\nMagic Shows\nGaming Events': 'حفلات موسيقية\nمهرجانات\nكوميديا ارتجالية\nعروض سحرية\nفعاليات ألعاب',
+  'Research Forum\nPhysics Forum\nMedical Forum\nEngineering Forum\nAI Forum': 'ملتقى أبحاث\nملتقى فيزياء\nملتقى طبي\nملتقى هندسي\nملتقى ذكاء اصطناعي',
+  'Football Tournaments\nMarathons\nE-Sports\nYoga Classes\nMartial Arts': 'بطولات كرة قدم\nماراثون\nرياضات إلكترونية\nجلسات يوغا\nفنون قتالية',
+  'Hackathons\nTech Expos\nCloud Computing\nCybersecurity\nDeveloper Meetups': 'هاكاثون\nمعارض تقنية\nحوسبة سحابية\nأمن سيبراني\nملتقيات المطورين',
+  'Networking Events\nCharity Events\nCommunity Gatherings\nAlumni Meetings\nGala Dinners': 'لقاءات تعارف\nفعاليات خيرية\nتجمعات مجتمعية\nاجتماعات خريجين\nحفلات عشاء',
 };
 
 /* ─────────────────────────────────────────────────────────────────

@@ -86,15 +86,15 @@
         <div class="form-group">
           <label class="form-label">Event Type</label>
           <select id="e-type" class="form-control" required>
-            <option value="مؤتمر"><script>document.write(t('Conference'))</script></option>
-            <option value="ندوة"><script>document.write(t('Seminar'))</script></option>
-            <option value="ورشة عمل"><script>document.write(t('Workshop'))</script></option>
-            <option value="دورة تدريبية"><script>document.write(t('Training Course'))</script></option>
-            <option value="ترفيه"><script>document.write(t('Entertainment'))</script></option>
-            <option value="ملتقى علمي"><script>document.write(t('Scientific Forum'))</script></option>
-            <option value="رياضة"><script>document.write(t('Sports'))</script></option>
-            <option value="تقنية"><script>document.write(t('Technology'))</script></option>
-            <option value="اجتماعية"><script>document.write(t('Social'))</script></option>
+            <option value="مؤتمر" title="Business Conference&#10;Tech Conference&#10;Medical Conference&#10;Academic Conference&#10;Startup Conference"><script>document.write(t('Conference'))</script></option>
+            <option value="ندوة" title="Educational Seminar&#10;Scientific Seminar&#10;Cultural Seminar&#10;Financial Seminar&#10;Management Seminar"><script>document.write(t('Seminar'))</script></option>
+            <option value="ورشة عمل" title="Programming Workshop&#10;Design Workshop&#10;Writing Workshop&#10;Art Workshop&#10;Strategy Workshop"><script>document.write(t('Workshop'))</script></option>
+            <option value="دورة تدريبية" title="Language Course&#10;Leadership Course&#10;Marketing Course&#10;HR Course&#10;IT Course"><script>document.write(t('Training Course'))</script></option>
+            <option value="ترفيه" title="Music Concerts&#10;Festivals&#10;Stand-up Comedy&#10;Magic Shows&#10;Gaming Events"><script>document.write(t('Entertainment'))</script></option>
+            <option value="ملتقى علمي" title="Research Forum&#10;Physics Forum&#10;Medical Forum&#10;Engineering Forum&#10;AI Forum"><script>document.write(t('Scientific Forum'))</script></option>
+            <option value="رياضة" title="Football Tournaments&#10;Marathons&#10;E-Sports&#10;Yoga Classes&#10;Martial Arts"><script>document.write(t('Sports'))</script></option>
+            <option value="تقنية" title="Hackathons&#10;Tech Expos&#10;Cloud Computing&#10;Cybersecurity&#10;Developer Meetups"><script>document.write(t('Technology'))</script></option>
+            <option value="اجتماعية" title="Networking Events&#10;Charity Events&#10;Community Gatherings&#10;Alumni Meetings&#10;Gala Dinners"><script>document.write(t('Social'))</script></option>
           </select>
         </div>
         <div class="form-group">
