@@ -324,7 +324,7 @@
       const u = res.data.user;
       const p = u.profile || {};
 
-      document.getElementById('u-name').innerText = (u.role === 'Sponsor' && p.company_name) ? p.company_name : u.name;
+      document.getElementById('u-name').innerText = u.name;
 
       let avatar = '/images/default-avatar.png';
       if (u.image && u.image.trim() !== '') {
@@ -603,7 +603,7 @@
             })()}
                       </div>
                       <div style="flex:1">
-                          <div style="font-size:0.85rem; font-weight:600; color:#fff;">${sp.profile?.company_name || sp.name}</div>
+                          <div style="font-size:0.85rem; font-weight:600; color:#fff;">${sp.name}</div>
                           <div style="margin-top: 2px;">${getTierBadge(sp.pivot?.tier)}</div>
                       </div>
                    </div>

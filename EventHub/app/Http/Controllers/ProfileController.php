@@ -40,7 +40,6 @@ class ProfileController extends Controller
             'phones' => 'nullable|array',
             'phones.*' => 'nullable|string|max:20',
             'bio' => 'nullable|string',
-            'company_name' => 'nullable|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'social_links' => 'nullable|array',
             'social_links.*' => 'nullable|url',
@@ -75,7 +74,6 @@ class ProfileController extends Controller
                 ['user_id' => $user->id],
                 [
                     'profile_type' => 'company',
-                    'company_name' => $request->input('company_name'),
                     'bio' => $request->input('bio'),
                 ]
             );

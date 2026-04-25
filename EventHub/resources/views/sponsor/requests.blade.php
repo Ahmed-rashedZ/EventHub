@@ -159,7 +159,7 @@
           actionHtml = `<span style="font-size:11px; color:var(--text-muted); font-style:italic">Awaiting Manager</span>`;
         }
       } else if (r.status === 'accepted') {
-        actionHtml = `<a href="/storage/agreements/agreement_${r.id}.pdf" target="_blank" class="btn btn-ghost btn-sm">📄 PDF</a>`;
+        actionHtml = `<a href="/storage/agreements/agreement_${r.id}.pdf" target="_blank" class="btn btn-sm" style="background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.15)" title="${t('Agreement')}">📄 ${t('Agreement')}</a>`;
       }
 
       return `
@@ -264,7 +264,7 @@
           })()}
                   </div>
                     <div style="flex:1">
-                        <div style="font-size:0.85rem; font-weight:600; color:#fff;">${sp.profile?.company_name || sp.name}</div>
+                        <div style="font-size:0.85rem; font-weight:600; color:#fff;">${sp.name}</div>
                         <div style="margin-top: 2px;">${getTierBadge(sp.pivot?.tier)}</div>
                     </div>
                  </div>

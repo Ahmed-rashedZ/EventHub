@@ -93,7 +93,7 @@ class SponsorshipController extends Controller
             // ── Notify the Event Manager about the request ──
             $manager = User::find($event->created_by);
             if ($manager) {
-                $sponsorName = $user->profile?->company_name ?? $user->name;
+                $sponsorName = $user->name;
                 $manager->notify(new SystemNotification(
                     'New Sponsorship Request 🤝',
                     "{$sponsorName} sent a sponsorship request for \"{$event->title}\".",
@@ -237,7 +237,7 @@ class SponsorshipController extends Controller
             // Sponsor responded to manager’s invitation → notify manager
             $manager = User::find($sreq->event_manager_id);
             if ($manager) {
-                $sponsorName = User::find($sreq->sponsor_id)?->profile?->company_name ?? User::find($sreq->sponsor_id)?->name ?? 'A sponsor';
+                $sponsorName = $sreq->sponsor->name ?? 'A sponsor';
                 $statusText = $request->status === 'accepted' ? 'accepted ✅' : 'rejected ❌';
                 $manager->notify(new SystemNotification(
                     "Invitation {$statusText}",

@@ -201,7 +201,7 @@
         </td>
         <td>
           ${badge(r.status)}
-          ${r.status === 'accepted' ? `<a href="/storage/agreements/agreement_${r.id}.pdf" target="_blank" style="margin-left:8px;font-size:12px;text-decoration:none">📄 PDF</a>` : ''}
+          ${r.status === 'accepted' ? `<a href="/storage/agreements/agreement_${r.id}.pdf" target="_blank" style="margin-left:8px;font-size:12px;text-decoration:none;color:#fff;background:rgba(255,255,255,0.08);padding:4px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.15);display:inline-flex;align-items:center;gap:4px">📄 ${t('Agreement')}</a>` : ''}
           ${r.status === 'pending' && r.initiator === 'event_manager' ? `<div style="font-size: 11px; margin-top: 4px; color: var(--text-muted);">Awaiting Sponsor</div>` : ''}
         </td>
         <td>
@@ -248,12 +248,12 @@
                 </div>
             </div>
         </td>
-        <td style="color:var(--text-muted)" class="i18n-skip">${s.profile?.company_name || '—'}</td>
+        <td style="color:var(--text-muted)" class="i18n-skip">${s.name}</td>
         <td style="color:var(--text-muted)">${s.email}</td>
         <td>
            <div style="display:flex; gap:8px;">
                <button class="btn btn-ghost btn-sm" onclick="navigateToProfile(${s.id})">View Profile</button>
-               <button class="btn btn-primary btn-sm" onclick="openModal(${s.id}, '${s.profile?.company_name || s.name}')">Request</button>
+               <button class="btn btn-primary btn-sm" onclick="openModal(${s.id}, '${s.name}')">Request</button>
            </div>
         </td>
       </tr>`;

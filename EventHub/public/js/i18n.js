@@ -378,6 +378,7 @@ const I18N_AR = {
   'Attended': 'الحضور',
   'Rating': 'التقييم',
   'Manager: ': 'المدير: ',
+  'Agreement': 'اتفاقية',
   '📄 Agreement': '📄 الاتفاقية',
   'TBA': 'يُحدد لاحقاً',
 

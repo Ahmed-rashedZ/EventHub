@@ -52,10 +52,7 @@
         <!-- Extended Profile Fields -->
         <h3 style="margin-top:20px; margin-bottom:10px; font-weight:600; border-bottom:1px solid #ddd; padding-bottom:5px;">Public Profile</h3>
         
-        <div class="form-group" id="company-name-group" style="display:none;">
-          <label class="form-label">Company Name</label>
-          <input id="p-company" type="text" class="form-control" placeholder="Acme Corp"/>
-        </div>
+
 
         <div id="sponsor-visibility-notice" style="display:none; margin-bottom:14px; padding:12px 14px; background:rgba(239, 68, 68, 0.08); border:1px solid rgba(239, 68, 68, 0.25); border-radius:8px; color:#b91c1c; font-size:0.9rem; line-height:1.5;">
           You are currently not visible to event managers.<br/>
@@ -152,9 +149,7 @@
     document.getElementById('p-email').value = u.email || '';
     
     // Show company name field only for sponsors
-    if (u.role === 'Sponsor') {
-        document.getElementById('company-name-group').style.display = 'block';
-    }
+
 
     if (u.profile) {
         document.getElementById('p-bio').value = u.profile.bio || '';
@@ -169,7 +164,6 @@
         }
 
         if (u.role === 'Sponsor') {
-            document.getElementById('p-company').value = u.profile.company_name || '';
             document.getElementById('availability-group').style.display = 'block';
             const avail = availabilityFromDatabase(u.profile.is_available);
             if (avail === null) {
@@ -331,7 +325,6 @@
     fd.append('contacts', JSON.stringify(dynamicContacts));
     
     if (u.role === 'Sponsor') {
-        fd.append('company_name', document.getElementById('p-company').value);
         fd.append('is_available', document.getElementById('p-available').checked ? '1' : '0');
     }
 

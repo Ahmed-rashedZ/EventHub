@@ -105,7 +105,6 @@ public function updateProfile(Request $request)
         'password' => 'nullable|string|min:8',
         'bio' => 'nullable|string',
         'logo' => 'nullable|image|max:2048', // 2MB max image
-        'company_name' => 'nullable|string',
         'company_description' => 'nullable|string',
         'is_available' => 'nullable|boolean',
         'contacts' => 'nullable|string', // Will interpret as JSON array [{"type":"phone", "value":"..."}]
@@ -125,7 +124,6 @@ public function updateProfile(Request $request)
     $profilePayload = [
         'profile_type' => $profileType,
         'bio' => $request->bio,
-        'company_name' => $request->company_name,
         'company_description' => $request->company_description,
     ];
     

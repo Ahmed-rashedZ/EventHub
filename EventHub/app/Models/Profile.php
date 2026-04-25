@@ -16,7 +16,6 @@ class Profile extends Model
         'logo',
         'bio',
         // Company info
-        'company_name',
         'company_description',
         // Admin workflow
         'is_approved',
@@ -109,13 +108,10 @@ class Profile extends Model
     }
 
     /**
-     * Returns the full display name for this profile.
-     * Prefers company_name for company profiles, falls back to the user name.
+     * Returns the full display name for this profile (user name).
      */
     public function displayName(): string
     {
-        return $this->profile_type === 'company' && $this->company_name
-            ? $this->company_name
-            : $this->user->name;
+        return $this->user->name;
     }
 }

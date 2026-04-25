@@ -251,7 +251,7 @@
         <td style="color:var(--text-muted)">${fmtDateShort(r.event?.start_time)}</td>
         <td>
           ${badge(r.status)}
-          ${r.status === 'accepted' ? `<a href="/storage/agreements/agreement_${r.id}.pdf" target="_blank" style="margin-left:8px;font-size:12px;text-decoration:none">📄 PDF</a>` : ''}
+          ${r.status === 'accepted' ? `<a href="/storage/agreements/agreement_${r.id}.pdf" target="_blank" style="margin-left:8px;font-size:12px;text-decoration:none;color:#fff;background:rgba(255,255,255,0.08);padding:4px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.15);display:inline-flex;align-items:center;gap:4px">📄 ${t('Agreement')}</a>` : ''}
         </td>
       </tr>`).join('');
   }

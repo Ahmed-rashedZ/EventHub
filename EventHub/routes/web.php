@@ -102,7 +102,6 @@ Route::get('/demo-branding', function () {
             ['user_id' => $user->id],
             [
                 'profile_type' => 'company',
-                'company_name' => $data['name'],
                 'logo' => $data['logo'],
                 'bio' => $data['bio'],
                 'is_approved' => true
