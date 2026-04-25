@@ -1,8 +1,8 @@
 # 📋 EventHub - توثيق المشروع الكامل
 # EventHub - Complete Project Documentation
 
-> **آخر تحديث:** 2026-04-14
-> **التقنيات:** Laravel 11 + Sanctum + Blade + MySQL + DomPDF
+> **آخر تحديث:** 2026-04-25
+> **التقنيات:** Laravel 11 + Sanctum + Blade + MySQL + DomPDF + Laravel Notifications
 > **نوع المشروع:** نظام إدارة فعاليات (Event Management System)
 
 ---
@@ -120,7 +120,7 @@
 
 ## 🗄 قاعدة البيانات
 
-### جداول قاعدة البيانات (31 migration)
+### جداول قاعدة البيانات (39 migration)
 
 #### 1. `users` - المستخدمين
 | العمود | النوع | الوصف |
@@ -137,6 +137,9 @@
 | phone | string (nullable) | رقم الهاتف |
 | bio | text (nullable) | نبذة شخصية |
 | social_links | json (nullable) | روابط التواصل الاجتماعي |
+| verification_status | enum | حالة التحقق: verified, pending, rejected, changes_requested (default: verified للمستخدمين العاديين) |
+| verification_document | string (nullable) | مسار وثيقة التحقق (PDF/صورة) |
+| verification_notes | text (nullable) | ملاحظات الـ Admin على طلب التحقق |
 
 #### 2. `events` - الفعاليات
 | العمود | النوع | الوصف |
@@ -154,6 +157,8 @@
 | is_sponsorship_open | boolean | هل باب الرعاية مفتوح |
 | rejection_reason | text (nullable) | سبب الرفض |
 | image | string (nullable) | صورة الفعالية |
+
+> **ملاحظة:** `event_type` أصبح string يدعم القيم العربية: مؤتمر، ندوة، ورشة عمل، دورة تدريبية، ترفيه، ملتقى علمي، رياضة، تقنية، اجتماعية
 
 #### 3. `venues` - الأماكن
 | العمود | النوع | الوصف |
@@ -226,13 +231,26 @@
 | message | text (nullable) | رسالة الطلب |
 | status | enum | الحالة: pending, accepted, rejected |
 
-#### 10. `event_notifications` - الإشعارات
+#### 10. `notifications` - الإشعارات (Laravel Standard)
+| العمود | النوع | الوصف |
+|--------|-------|-------|
+| id | uuid (primary) | المعرف |
+| type | string | كلاس الإشعار (SystemNotification) |
+| notifiable_type | string | نوع المستلم (App\Models\User) |
+| notifiable_id | bigint | معرف المستلم |
+| data | text (JSON) | البيانات: title, message, type, icon, action_url, related_id |
+| read_at | timestamp (nullable) | وقت القراءة (null = غير مقروء) |
+
+#### 11. `ratings` - تقييمات الفعاليات
 | العمود | النوع | الوصف |
 |--------|-------|-------|
 | id | bigint | المعرف |
-| user_id | foreign | المستخدم |
-| message | text | محتوى الإشعار |
-| is_read | boolean | مقروء أم لا |
+| event_id | foreign | الفعالية |
+| user_id | foreign | المستخدم المُقيِّم |
+| rating | tinyint (1-5) | التقييم من 1 إلى 5 نجوم |
+| review_text | text (nullable) | نص المراجعة |
+
+> **قيد:** `UNIQUE(user_id, event_id)` - تقييم واحد لكل مستخدم لكل فعالية (يمكن تحديثه)
 
 ---
 
@@ -251,11 +269,19 @@ User ─→ belongsToMany Event (كـ sponsor عبر event_sponsor)
 Event ─→ belongsTo Venue
 Event ─→ belongsTo User (creator)
 Event ─→ hasMany Ticket
+Event ─→ hasMany Rating
 Event ─→ belongsToMany User (sponsors عبر event_sponsor)
 ```
 - **Scopes:** `upcoming()`, `live()`, `ended()`
-- **Accessor:** `time_status` → (upcoming / live / ended)
+- **Accessors:** `time_status` → (upcoming / live / ended) | `average_rating` → متوسط التقييم (محسوب ديناميكياً)
 - **Methods:** `sponsorsWithProfiles()`, `sponsorsByTier($tier)`
+
+### Rating Model
+```
+Rating ─→ belongsTo Event
+Rating ─→ belongsTo User
+```
+- قيد UNIQUE على (user_id + event_id) — تقييم واحد لكل مستخدم قابل للتحديث
 
 ### Ticket Model
 ```
@@ -283,34 +309,37 @@ EventSponsor ─→ belongsTo User (sponsor)
 
 ## 🎮 الـ Controllers والوظائف
 
-### 1. AuthController (9 وظائف)
+### 1. AuthController (11 وظيفة)
 | الوظيفة | HTTP Method | الوصف |
 |---------|-------------|-------|
 | `register()` | POST | تسجيل مستخدم جديد (دور User فقط) |
+| `registerPartner()` | POST | تسجيل شريك (Event Manager أو Sponsor) مع رفع وثيقة تحقق |
 | `login()` | POST | تسجيل الدخول + فحص is_active |
 | `logout()` | POST | تسجيل الخروج (حذف جميع التوكنات) |
 | `getProfile()` | GET | عرض بروفايل المستخدم الحالي |
-| `getPublicProfile($id)` | GET | عرض بروفايل مستخدم عام |
+| `getPublicProfile($id)` | GET | عرض بروفايل مستخدم عام + متوسط تقييم المدير |
+| `getPortfolio($id)` | GET | محفظة أعمال: فعاليات المدير أو فعاليات الراعي |
 | `updateProfile()` | PUT | تحديث البروفايل (اسم، بريد، صورة، جهات اتصال) |
 | `updateAvailability()` | PATCH | تبديل توفر الراعي |
-| `createUser()` | POST | إنشاء مستخدم (Admin يخلق أي دور, Manager يخلق Assistant فقط) |
+| `createUser()` | POST | إنشاء مستخدم (Admin: User/Admin فقط، Manager: Assistant فقط) |
 | `getAssistants()` | GET | قائمة المساعدين التابعين للمدير |
 | `deleteAssistant($id)` | DELETE | حذف مساعد |
 | `getAvailableSponsors()` | GET | قائمة الرعاة المتوفرين |
 
-### 2. EventController (8 وظائف)
+### 2. EventController (10 وظائف)
 | الوظيفة | HTTP Method | الوصف |
 |---------|-------------|-------|
-| `index()` | GET | قائمة الفعاليات المعتمدة والمفتوحة (عام) |
-| `show($id)` | GET | تفاصيل فعالية واحدة |
-| `store()` | POST | إنشاء فعالية جديدة (Event Manager) + فحص تعارض المكان |
-| `approve($id)` | PUT | الموافقة على فعالية (Admin) |
-| `reject($id)` | PUT | رفض فعالية مع السبب (Admin) |
-| `pending()` | GET | الفعاليات المعلقة (Admin) |
-| `myEvents()` | GET | فعاليات المدير الخاصة |
-| `liveEvents()` | GET | الفعاليات الحية الآن للمدير |
+| `index()` | GET | قائمة الفعاليات المعتمدة (للسبونسر: يتطلب is_available=true) |
+| `show($id)` | GET | تفاصيل فعالية واحدة مع الرعاة |
+| `store()` | POST | إنشاء فعالية (Manager) + فحص السعة + فحص تعارض المكان + إشعار Admin |
+| `approve($id)` | PUT | الموافقة (Admin) + إشعار المدير |
+| `reject($id)` | PUT | الرفض مع السبب (Admin) + إشعار المدير |
+| `pending()` | GET | الفعاليات المعلقة (Admin) + auto-reject المنتهية |
+| `myEvents()` | GET | فعاليات المدير + auto-reject المنتهية |
 | `all()` | GET | جميع الفعاليات (Admin) |
 | `toggleSponsorship($id)` | PATCH | فتح/إغلاق الرعاية (Manager) |
+| `rate($id)` | POST | تقييم فعالية 1-5 نجوم + نص مراجعة (User لديه تذكرة + الفعالية بدأت) + إشعار المدير |
+| `reviews($id)` | GET | عرض كل تقييمات ومراجعات فعالية مع متوسط التقييم |
 
 ### 3. VenueController (4 وظائف)
 | الوظيفة | HTTP Method | الوصف |
@@ -343,28 +372,45 @@ EventSponsor ─→ belongsTo User (sponsor)
 ### 7. NotificationController (3 وظائف)
 | الوظيفة | HTTP Method | الوصف |
 |---------|-------------|-------|
-| `index()` | GET | عرض إشعارات المستخدم |
-| `store()` | POST | إنشاء إشعار (Admin/Manager) |
-| `markRead($id)` | PUT | تحديد إشعار كمقروء |
+| `index()` | GET | آخر 50 إشعار + عدد غير المقروءة |
+| `markRead($id)` | PUT | تحديد إشعار واحد كمقروء |
+| `markAllRead()` | PUT | تحديد كل الإشعارات كمقروءة |
 
-### 8. AnalyticsController (6 وظائف)
+### 8. VerificationController (5 وظائف) - جديد
 | الوظيفة | HTTP Method | الوصف |
 |---------|-------------|-------|
-| `system()` | GET | إحصائيات النظام الشاملة (Admin): مستخدمين، فعاليات، تذاكر، حضور، رسوم شهرية، أفضل الفعاليات |
-| `managerOverview()` | GET | ملخص المدير: فعالياته + إحصائيات التذاكر والحضور لكل فعالية |
-| `event($id)` | GET | إحصائيات فعالية واحدة (مسجلين + حاضرين + نسبة الحضور) |
-| `eventStatistics($id)` | GET | إحصائيات مفصلة: جدول زمني للحضور بالساعة + رعاة + إيرادات + آخر 10 check-ins |
-| `users()` | GET | قائمة كل المستخدمين (Admin) |
-| `toggleStatus($id)` | PATCH | تعليق/تفعيل حساب مستخدم (Admin) |
-| `deleteUser($id)` | DELETE | حذف مستخدم (Admin) |
+| `pendingRequests()` | GET | طلبات التحقق المعلقة (Admin) - verified_status: pending أو changes_requested |
+| `approve($id)` | PUT | قبول تحقق شريك + إشعاره (Admin) |
+| `reject($id)` | PUT | رفض تحقق مع ملاحظات + إشعار الشريك (Admin) |
+| `requestChanges($id)` | PUT | طلب تعديلات على الوثيقة + إشعار الشريك (Admin) |
+| `downloadDocument($id)` | GET | تحميل وثيقة التحقق (Admin) |
+| `reuploadDocument()` | POST | إعادة رفع الوثيقة بعد طلب التعديل (Partner) |
 
 ### 9. ProfileController (4 وظائف) - خاص بـ Web Views
 | الوظيفة | HTTP Method | الوصف |
 |---------|-------------|-------|
 | `show($user)` | GET | عرض بروفايل مستخدم (صفحة عامة) |
 | `edit()` | GET | صفحة تعديل البروفايل |
-| `updateInformation()` | PUT | تحديث المعلومات الشخصية (اسم، صورة، هاتف، سوشال ميديا) |
+| `updateInformation()` | PUT | تحديث المعلومات الشخصية |
 | `updateSecurity()` | PUT | تحديث البريد وكلمة المرور |
+
+### 🔔 SystemNotification (Notification Class)
+- **الموقع:** `app/Notifications/SystemNotification.php`
+- **القناة:** `database` فقط (يُخزن في جدول notifications)
+- **الحقول:** `title`, `message`, `type` (event/sponsorship/ticket/verification/system), `icon` (emoji), `action_url`, `related_id`
+- **يُستخدم في:** EventController, SponsorshipController, VerificationController
+
+### 10. AnalyticsController (6 وظائف)
+| الوظيفة | HTTP Method | الوصف |
+|---------|-------------|-------|
+| `system()` | GET | إحصائيات النظام الشاملة (Admin): مستخدمين، فعاليات، تذاكر، حضور، اشتراكات شهرية، أفضل 5 فعاليات |
+| `managerOverview()` | GET | ملخص المدير: فعالياته + إحصائيات التذاكر والحضور + متوسط التقييم |
+| `event($id)` | GET | إحصائيات فعالية (Admin/Manager/Sponsor المرتبط) |
+| `users()` | GET | قائمة المستخدمين الموثقين فقط (Admin) |
+| `toggleStatus($id)` | PATCH | تعليق/تفعيل حساب + حذف توكناته (Admin) |
+| `deleteUser($id)` | DELETE | حذف مستخدم (Admin) |
+
+
 
 ---
 
@@ -372,11 +418,13 @@ EventSponsor ─→ belongsTo User (sponsor)
 
 ### المسارات العامة (بدون مصادقة)
 ```
-POST   /api/register          → تسجيل مستخدم جديد
-POST   /api/login             → تسجيل الدخول
-GET    /api/events             → قائمة الفعاليات المعتمدة
-GET    /api/events/{id}        → تفاصيل فعالية
-GET    /api/venues             → قائمة الأماكن المتاحة
+POST   /api/register                    → تسجيل مستخدم عادي (User)
+POST   /api/register/partner            → تسجيل شريك (Manager/Sponsor) مع وثيقة تحقق
+POST   /api/login                       → تسجيل الدخول
+GET    /api/events                      → قائمة الفعاليات المعتمدة
+GET    /api/events/{id}                 → تفاصيل فعالية
+GET    /api/events/{id}/reviews         → تقييمات ومراجعات فعالية
+GET    /api/venues                      → قائمة الأماكن المتاحة
 ```
 
 ### المسارات المحمية (auth:sanctum)
@@ -424,18 +472,28 @@ PUT    /api/sponsorship/{id}               → قبول/رفض طلب
 PATCH  /api/sponsorship/{id}/tier          → تحديث تصنيف/رتبة الممول (Event Manager)
 
 ── الإشعارات ──
-GET    /api/notifications                  → إشعاراتي
-POST   /api/notifications                  → إنشاء إشعار (Admin/Manager)
-PUT    /api/notifications/{id}/read        → تحديد كمقروء
+GET    /api/notifications                  → آخر 50 إشعار + عدد غير المقروء
+PUT    /api/notifications/read-all         → تحديد الكل كمقروء
+PUT    /api/notifications/{id}/read        → تحديد إشعار كمقروء
 
 ── الإحصائيات ──
 GET    /api/analytics/system               → إحصائيات النظام (Admin)
 GET    /api/analytics/manager              → ملخص المدير
 GET    /api/analytics/event/{id}           → إحصائيات فعالية
-GET    /api/analytics/event/{id}/statistics → إحصائيات مفصلة
-GET    /api/analytics/users                → قائمة المستخدمين (Admin)
+GET    /api/analytics/users                → قائمة المستخدمين الموثقين (Admin)
 PATCH  /api/analytics/users/{id}/status    → تعليق/تفعيل مستخدم (Admin)
 DELETE /api/analytics/users/{id}           → حذف مستخدم (Admin)
+
+── التحقق (Verification) ──
+GET    /api/verifications/pending              → طلبات التحقق المعلقة (Admin)
+PUT    /api/verifications/{id}/approve         → قبول التحقق (Admin)
+PUT    /api/verifications/{id}/reject          → رفض التحقق (Admin)
+PUT    /api/verifications/{id}/request-changes → طلب تعديلات (Admin)
+GET    /api/verifications/{id}/document        → تحميل الوثيقة (Admin)
+POST   /api/verifications/reupload             → إعادة رفع الوثيقة (Partner)
+
+── التقييمات ──
+POST   /api/events/{id}/rate               → تقييم فعالية (User)
 ```
 
 ---
@@ -443,35 +501,40 @@ DELETE /api/analytics/users/{id}           → حذف مستخدم (Admin)
 ## 🌐 الـ Web Routes
 
 ```
-/                              → يحول لـ /login
-/login                         → صفحة تسجيل الدخول (Guest)
-/register                      → صفحة التسجيل (Guest)
+/                                  → يحول لـ /login
+/login                             → تسجيل الدخول (Guest)
+/register                          → تسجيل مستخدم عادي (Guest)
+/register/partner                  → تسجيل شريك بوثيقة تحقق (Guest)
+/pending-verification              → صفحة انتظار مراجعة التحقق
 
 ── مسارات مشتركة (مصادق) ──
-/profile                       → صفحة البروفايل
-/profile/edit                  → تعديل البروفايل
-/profile/{user}                → بروفايل مستخدم عام
-PUT /profile/information       → تحديث المعلومات
-PUT /profile/security          → تحديث الأمان
+/profile                           → صفحة البروفايل
+/profile/edit                      → تعديل البروفايل
+/profile/{user}                    → بروفايل مستخدم عام
+PUT /profile/information           → تحديث المعلومات
+PUT /profile/security              → تحديث الأمان
 
-── مسارات Admin ──
-/admin/dashboard               → لوحة تحكم المدير العام
-/admin/events                  → إدارة الفعاليات
-/admin/users                   → إدارة المستخدمين
-/admin/venues                  → إدارة الأماكن
+── مسارات Admin (+ verified_partner middleware) ──
+/admin/dashboard                   → لوحة تحكم Admin
+/admin/events                      → إدارة الفعاليات (موافقة/رفض + إحصائيات)
+/admin/users                       → إدارة المستخدمين
+/admin/venues                      → إدارة الأماكن
+/admin/verifications               → مراجعة طلبات تحقق الشركاء
+/admin/event-stats/{id}            → إحصائيات فعالية محددة
 
-── مسارات Event Manager ──
-/manager/dashboard             → لوحة تحكم مدير الفعاليات
-/manager/events                → إدارة فعالياتي
-/manager/assistants            → إدارة المساعدين
-/manager/attendance            → سجل الحضور
-/manager/sponsorship           → الرعاية
-/manager/statistics            → الإحصائيات
+── مسارات Event Manager (+ verified_partner middleware) ──
+/manager/dashboard                 → لوحة تحكم المدير
+/manager/events                    → إنشاء وإدارة الفعاليات
+/manager/assistants                → إدارة المساعدين
+/manager/attendance                → سجل الحضور
+/manager/sponsorship               → إدارة الرعاية
+/manager/event-stats/{id}          → إحصائيات فعالية محددة
 
-── مسارات Sponsor ──
-/sponsor/dashboard             → لوحة تحكم الراعي
-/sponsor/events                → استعراض الفعاليات
-/sponsor/requests              → طلبات الرعاية
+── مسارات Sponsor (+ verified_partner middleware) ──
+/sponsor/dashboard                 → لوحة تحكم الراعي
+/sponsor/events                    → تصفح الفعاليات المتاحة
+/sponsor/requests                  → طلبات الرعاية
+/sponsor/history                   → سجل الرعايات السابقة
 ```
 
 ---
@@ -482,7 +545,7 @@ PUT /profile/security          → تحديث الأمان
 - يتحقق من وجود `auth_token` في الـ cookies
 - يبحث عن التوكن في `personal_access_tokens`
 - يسجل دخول المستخدم في Session Guard
-- يفحص الدور ويحول لصفحة المناسبة إذا الدور غير مطابق
+- يفحص الدور ويحول للصفحة المناسبة إذا الدور غير مطابق
 
 ### 2. TokenGuestMiddleware (`web.guest`)
 - يتحقق إذا المستخدم مسجل دخول عبر الـ cookie
@@ -490,9 +553,13 @@ PUT /profile/security          → تحديث الأمان
 - يمنع المستخدمين المسجلين من الوصول لصفحات login/register
 
 ### 3. RoleMiddleware (`role`)
-- يتحقق من دور المستخدم
-- يستخدم في API Routes
+- يتحقق من دور المستخدم في API Routes
 - يدعم أدوار متعددة: `middleware('role:Admin,Event Manager')`
+
+### 4. EnsurePartnerVerified (`verified_partner`) - جديد
+- يتحقق أن Event Manager أو Sponsor لديه `verification_status = verified`
+- إذا لم يكن موثقاً: API → 403 JSON | Web → redirect `/pending-verification`
+- مُطبَّق على جميع مسارات Manager و Sponsor
 
 ---
 
@@ -507,30 +574,41 @@ PUT /profile/security          → تحديث الأمان
 | `profile.blade.php` | صفحة البروفايل الكاملة (19KB) |
 | `user-profile.blade.php` | صفحة بروفايل المستخدم العام |
 
-### صفحات Admin (4 صفحات)
+### صفحات Auth (4 صفحات)
 | الملف | الوصف |
 |-------|-------|
-| `admin/dashboard.blade.php` | لوحة التحكم + الإحصائيات |
-| `admin/events.blade.php` | إدارة الفعاليات (موافقة/رفض + بحث + إحصائيات) |
-| `admin/users.blade.php` | إدارة المستخدمين (بحث + تعليق + حذف) |
+| `login.blade.php` | تسجيل الدخول |
+| `register.blade.php` | تسجيل مستخدم عادي |
+| `auth/partner-register.blade.php` | تسجيل شريك مع رفع وثيقة تحقق |
+| `auth/pending-verification.blade.php` | صفحة انتظار مراجعة التحقق |
+
+### صفحات Admin (6 صفحات)
+| الملف | الوصف |
+|-------|-------|
+| `admin/dashboard.blade.php` | لوحة التحكم + إحصائيات شاملة |
+| `admin/events.blade.php` | إدارة الفعاليات (موافقة/رفض + بحث + modal إحصائيات) |
+| `admin/users.blade.php` | إدارة المستخدمين الموثقين (بحث + تعليق + حذف) |
 | `admin/venues.blade.php` | إدارة الأماكن (إنشاء + تعديل) |
+| `admin/verifications.blade.php` | مراجعة طلبات تحقق الشركاء (قبول/رفض/طلب تعديل) |
+| `admin/event-stats.blade.php` | إحصائيات مفصلة لفعالية محددة |
 
 ### صفحات Manager (6 صفحات)
 | الملف | الوصف |
 |-------|-------|
-| `manager/dashboard.blade.php` | لوحة التحكم + إحصائيات |
-| `manager/events.blade.php` | إنشاء وإدارة الفعاليات (30KB - الأكبر) |
+| `manager/dashboard.blade.php` | لوحة التحكم + إحصائيات + متوسط التقييم |
+| `manager/events.blade.php` | إنشاء وإدارة الفعاليات مع شارات الرعاة |
 | `manager/assistants.blade.php` | إدارة المساعدين |
 | `manager/attendance.blade.php` | سجل الحضور |
-| `manager/sponsorship.blade.php` | إدارة الرعاية |
-| `manager/statistics.blade.php` | إحصائيات مفصلة (35KB - أكبر ملف) |
+| `manager/sponsorship.blade.php` | إدارة الرعاية (ثنائي الاتجاه + تصنيف الرعاة) |
+| `manager/event-stats.blade.php` | إحصائيات مفصلة: حضور بالساعة + تقييمات + رعاة |
 
-### صفحات Sponsor (3 صفحات)
+### صفحات Sponsor (4 صفحات)
 | الملف | الوصف |
 |-------|-------|
 | `sponsor/dashboard.blade.php` | لوحة التحكم |
-| `sponsor/events.blade.php` | تصفح الفعاليات المتاحة |
-| `sponsor/requests.blade.php` | طلبات الرعاية |
+| `sponsor/events.blade.php` | تصفح الفعاليات المفتوحة للرعاية |
+| `sponsor/requests.blade.php` | طلبات الرعاية (قبول/رفض) |
+| `sponsor/history.blade.php` | سجل الرعايات السابقة |
 
 ### صفحات البروفايل (2 صفحتين)
 | الملف | الوصف |
@@ -585,17 +663,30 @@ PUT /profile/security          → تحديث الأمان
 - جهات اتصال ديناميكية (ProfileContact)
 - حالة التوفر (is_available) للرعاة
 
-### 7. 🔔 نظام الإشعارات
-- إشعارات داخلية للمستخدمين
-- يمكن للـ Admin و Manager إرسال إشعارات
-- تحديد كمقروء
+### 7. 🔔 نظام الإشعارات (Laravel Notifications)
+- قناة `database` فقط — مُخزّن في جدول `notifications` (UUID)
+- كلاس واحد `SystemNotification` بحقول: title, message, type, icon, action_url, related_id
+- أنواع الإشعارات: `event` | `sponsorship` | `ticket` | `verification` | `system`
+- يُرسَل تلقائياً عند: موافقة/رفض فعالية، قبول/رفض رعاية، تقييم جديد، تحقق الهوية
+- دعم `markAllRead` لتحديد كل الإشعارات دفعة واحدة
 
 ### 8. 📄 إنشاء PDF تلقائي
 - عند قبول طلب الرعاية يتم إنشاء عقد PDF
 - يُحفظ في `storage/app/public/agreements/`
 - يستخدم قالب `pdf/agreement.blade.php`
 
----
+### 9. ✅ نظام التحقق من هوية الشركاء (Verification)
+- يُطلب من كل Event Manager وSponsor رفع وثيقة تحقق عند التسجيل
+- حالات التحقق: `pending` → `verified` أو `rejected` أو `changes_requested`
+- Middleware `EnsurePartnerVerified` يحجب الوصول حتى تتم الموافقة
+- Admin يراجع الطلبات ويستطيع قبول/رفض/طلب تعديل الوثيقة
+- الشريك المرفوض يُبلَّغ ويستطيع رفع وثيقة جديدة (`reupload`)
+
+### 10. ⭐ نظام التقييمات
+- User يُقيّم فعالية (1-5 نجوم) + نص مراجعة شرط: لديه تذكرة + الفعالية بدأت
+- قيد UNIQUE(user_id, event_id): تقييم واحد قابل للتحديث
+- `average_rating` محسوب ديناميكياً على Event model
+- إشعار تلقائي للمدير عند كل تقييم جديد
 
 ## 📁 هيكل الملفات
 
@@ -605,45 +696,55 @@ EventHub/
 │   ├── Http/
 │   │   ├── Controllers/
 │   │   │   ├── AnalyticsController.php      # إحصائيات النظام والمدير
-│   │   │   ├── AuthController.php           # تسجيل/دخول/مستخدمين/بروفايل API
+│   │   │   ├── AuthController.php           # تسجيل/دخول/بروفايل/مساعدين
 │   │   │   ├── CheckinController.php        # مسح QR + سجل الحضور
-│   │   │   ├── EventController.php          # CRUD فعاليات + موافقة/رفض
-│   │   │   ├── NotificationController.php   # إشعارات
+│   │   │   ├── EventController.php          # CRUD فعاليات + تقييمات
+│   │   │   ├── NotificationController.php   # إشعارات (Laravel Notifications)
 │   │   │   ├── ProfileController.php        # بروفايل Web Views
-│   │   │   ├── SponsorshipController.php    # طلبات الرعاية ثنائية الاتجاه
+│   │   │   ├── SponsorshipController.php    # رعاية ثنائية الاتجاه + PDF
 │   │   │   ├── TicketController.php         # حجز تذاكر + QR
-│   │   │   └── VenueController.php          # إدارة الأماكن
+│   │   │   ├── VenueController.php          # إدارة الأماكن
+│   │   │   └── VerificationController.php  # تحقق هوية الشركاء
 │   │   └── Middleware/
+│   │       ├── EnsurePartnerVerified.php   # فحص التحقق (Managers/Sponsors)
 │   │       ├── RoleMiddleware.php           # فحص الأدوار (API)
 │   │       ├── TokenGuestMiddleware.php     # حماية صفحات الضيف
 │   │       └── TokenWebAuthMiddleware.php   # مصادقة Blade عبر Token
+│   ├── Notifications/
+│   │   └── SystemNotification.php          # كلاس الإشعارات (قناة database)
 │   └── Models/
-│       ├── AttendanceLog.php                # سجل الحضور
-│       ├── Event.php                        # الفعالية + scopes + sponsors
-│       ├── EventNotification.php            # الإشعارات
+│       ├── AttendanceLog.php
+│       ├── Event.php                        # + average_rating accessor
 │       ├── EventSponsor.php                 # Pivot الرعاية + tier branding
-│       ├── Profile.php                      # البروفايل الموحد
-│       ├── ProfileContact.php              # جهات اتصال
-│       ├── SponsorshipRequest.php           # طلبات الرعاية
-│       ├── Ticket.php                       # التذاكر
-│       ├── User.php                         # المستخدم + العلاقات
-│       └── Venue.php                        # المكان
+│       ├── Profile.php
+│       ├── ProfileContact.php
+│       ├── Rating.php                       # تقييمات الفعاليات
+│       ├── SponsorshipRequest.php
+│       ├── Ticket.php
+│       ├── User.php                         # + verification fields
+│       └── Venue.php
 ├── database/
-│   └── migrations/                          # 31 migration
+│   └── migrations/                          # 39 migration
 ├── resources/views/
-│   ├── admin/                               # 4 صفحات لوحة Admin
-│   ├── manager/                             # 6 صفحات لوحة Manager
-│   ├── sponsor/                             # 3 صفحات لوحة Sponsor
-│   ├── profile/                             # 2 صفحة بروفايل
+│   ├── admin/                               # 6 صفحات (+ verifications + event-stats)
+│   ├── auth/                                # partner-register + pending-verification
+│   ├── manager/                             # 6 صفحات (+ event-stats)
+│   ├── sponsor/                             # 4 صفحات (+ history)
+│   ├── profile/
 │   ├── pdf/                                 # قالب عقد PDF
-│   ├── login.blade.php                      # تسجيل الدخول
-│   ├── register.blade.php                   # التسجيل
-│   └── welcome.blade.php                    # الصفحة الرئيسية
+│   ├── login.blade.php
+│   └── register.blade.php
 ├── routes/
-│   ├── api.php                              # API endpoints (81 سطر)
-│   └── web.php                              # Web routes (118 سطر)
+│   ├── api.php                              # API endpoints
+│   └── web.php                              # Web routes
 └── public/
-    └── storage/ → storage/app/public        # الملفات العامة (صور + عقود)
+    ├── css/style.css                        # تصميم موحد للواجهة
+    ├── js/
+    │   ├── api.js                           # مساعد استدعاء API
+    │   ├── auth.js                          # تسجيل/دخول JS
+    │   ├── notifications.js                 # نظام الإشعارات realtime-like
+    │   └── i18n.js                          # ترجمات العربية/الإنجليزية
+    └── storage/ → storage/app/public        # صور + عقود PDF
 ```
 
 ---
@@ -652,16 +753,174 @@ EventHub/
 
 | العنصر | العدد |
 |--------|-------|
-| **Controllers** | 9 (+ Controller base) |
-| **Models** | 10 |
-| **Migrations** | 31 |
-| **API Endpoints** | ~30 |
-| **Web Routes** | ~20 |
-| **Middleware** | 3 |
-| **Blade Views** | ~20 |
+| **Controllers** | 10 |
+| **Models** | 11 (+ Rating) |
+| **Notification Classes** | 1 (SystemNotification) |
+| **Migrations** | 39 |
+| **API Endpoints** | ~45 |
+| **Web Routes** | ~28 |
+| **Middleware** | 4 (+ EnsurePartnerVerified) |
+| **Blade Views** | ~24 |
 | **أدوار** | 5 (Admin, Event Manager, Sponsor, User, Assistant) |
-| **جداول قاعدة البيانات** | ~10 جداول رئيسية |
+| **جداول قاعدة البيانات** | 11 جدول رئيسي |
 
 ---
 
-> 📝 **ملاحظة:** هذا الملف يمثل التوثيق الكامل للمشروع حتى تاريخ 2026-04-14. أي تعديلات مستقبلية يجب تحديث هذا الملف.
+> 📝 **ملاحظة:** هذا الملف يمثل التوثيق الكامل للمشروع حتى تاريخ 2026-04-25. أي تعديلات مستقبلية يجب تحديث هذا الملف.
+
+---
+
+## 📱 تطبيق الموبايل (Flutter)
+
+> التطبيق يتصل بنفس الـ Laravel Backend عبر Sanctum Token API.
+> Base URL: `http://127.0.0.1:8000/api` (للتطوير عبر USB: `adb reverse tcp:8000 tcp:8000`)
+
+### الأدوار المدعومة في الموبايل
+| الدور | الوصول |
+|-------|--------|
+| User | الشاشة الرئيسية + تذاكر + بروفايل |
+| Assistant | شاشة مسح QR فقط |
+
+---
+
+### 📋 واجهات تطبيق المستخدم العادي (User)
+
+#### 1. Splash Screen
+- **الملف:** `screens/splash_screen.dart`
+- **الوظيفة:** شاشة البداية مع أنيميشن (fade + scale)
+- **المنطق:** تحقق من `SharedPreferences` للتوكن → توجيه لـ HomeScreen أو LoginScreen أو ScannerScreen
+- **API المستخدم:** لا شيء (محلي فقط)
+
+#### 2. Login Screen
+- **الملف:** `screens/auth/login_screen.dart`
+- **الحقول:** Email + Password
+- **API:** `POST /api/login` → يحفظ token + user في SharedPreferences
+- **التوجيه بعد الدخول:** `role == 'Assistant'` → ScannerScreen | غيره → MainNavigation
+
+#### 3. Register Screen
+- **الملف:** `screens/auth/register_screen.dart`
+- **الحقول:** Full Name + Email + Password + Confirm Password
+- **التحقق:** كلمة مرور 8 أحرف على الأقل + تطابق
+- **API:** `POST /api/register` (يسجّل بدور User فقط)
+
+#### 4. Main Navigation
+- **الملف:** `screens/user/main_navigation.dart`
+- **التنقل:** Bottom Navigation Bar بـ 3 تبويبات
+  - 🔍 **Explore** → HomeScreen
+  - 🎫 **Tickets** → MyTicketsScreen
+  - 👤 **Profile** → ProfileScreen
+
+#### 5. Home Screen (Explore)
+- **الملف:** `screens/user/home_screen.dart`
+- **API:** `GET /api/events`
+- **الميزات:**
+  - بحث نصي (عنوان + مكان + وصف)
+  - فلاتر أفقية: All, Technical, Workshop, Conference, Seminar, Cultural, Other
+  - التصنيف يعتمد على تحليل النص (keyword matching)
+  - Pull-to-refresh + عدد الفعاليات المعروضة
+  - الضغط على فعالية → EventDetailsScreen
+
+#### 6. Event Details Screen
+- **الملف:** `screens/user/event_details_screen.dart`
+- **البيانات المعروضة:** عنوان + تاريخ + وقت + مكان + سعة + المنظم + وصف + رعاة
+- **رعاة الفعالية:** شريط أفقي يعرض اسم + شعار + رتبة (Diamond/Gold/Silver/Bronze) بألوان مميزة
+- **API:** `POST /api/tickets` (`event_id`) → حجز تذكرة
+- **بعد الحجز الناجح:** رسالة نجاح + العودة للقائمة
+
+#### 7. My Tickets Screen
+- **الملف:** `screens/user/my_tickets_screen.dart`
+- **API:** `GET /api/my-tickets`
+- **الميزات:**
+  - تبويبان: Upcoming | History (مُقسَّم حسب تاريخ الفعالية)
+  - كارد التذكرة: اسم الفعالية + تاريخ + مكان + رقم التذكرة + حالة (ACTIVE/USED)
+  - زر QR Code → QRCodeScreen
+  - Pull-to-refresh
+  - Offline cache عبر SharedPreferences
+
+#### 8. QR Code Screen
+- **الملف:** `screens/user/qr_code_screen.dart`
+- **الحزمة:** `qr_flutter`
+- **المعروض:** كارد تذكرة بيضاء مع QR Code + شريط ملون علوي + حالة (VALID/USED) + رقم التذكرة
+- **البيانات:** qr_code string مباشرة من الـ Backend
+
+#### 9. Profile Screen
+- **الملف:** `screens/profile_screen.dart`
+- **المعروض:** اسم + دور + بريد + تاريخ التسجيل + إحصائيات (Total Tickets, Attended, Upcoming)
+- **الميزات:**
+  - 🔔 جرس الإشعارات مع badge عدد غير المقروء → Bottom Sheet للإشعارات
+  - ✏️ Edit Profile Dialog: تعديل اسم + بريد + كلمة مرور
+  - 🚪 Logout مع تأكيد
+- **API:**
+  - `GET /api/notifications` → قائمة الإشعارات
+  - `PUT /api/notifications/{id}/read` → تحديد كمقروء
+  - `PUT /api/profile` → تحديث البروفايل
+
+---
+
+### 📋 واجهة المساعد (Assistant)
+
+#### Scanner Screen
+- **الملف:** `screens/assistant/scanner_screen.dart`
+- **الحزمة:** `mobile_scanner`
+- **الوظيفة:** كاميرا مستمرة مع overlay مخصص لمسح QR Codes
+- **API:** `POST /api/checkin` (`{ qr_code: "..." }`)
+- **نتائج المسح:**
+  | الكود | النتيجة |
+  |-------|--------|
+  | 200 | ✅ Entry Allowed |
+  | 422 | ⚠️ Already Entered (تذكرة مُستخدمة) |
+  | 404 | ❌ Invalid Ticket |
+  | 403 | 🚫 Not Your Event |
+- **حماية:** cooldown 2 ثانية بعد كل مسح لمنع التكرار
+- **Logout:** زر في الأعلى مع تأكيد
+
+---
+
+### 🏗 بنية الموبايل التقنية
+
+#### State Management
+| Provider | البيانات المُدارة |
+|----------|------------------|
+| `AuthProvider` | user, token, role, isAuthenticated |
+| `EventProvider` | قائمة الفعاليات + حالة التحميل |
+| `TicketProvider` | تذاكر المستخدم + upcoming/past/totalAttended |
+
+#### ApiService
+- **الملف:** `services/api_service.dart`
+- **الطرق:** `get()`, `post()`, `put()`, `delete()`
+- **المصادقة:** Bearer Token من SharedPreferences في كل طلب
+- **Token Expiry:** isTokenExpired() تتحقق من 401
+
+#### التبعيات (pubspec.yaml)
+| الحزمة | الوظيفة |
+|--------|--------|
+| `http` | HTTP requests |
+| `provider` | State management |
+| `shared_preferences` | تخزين token + cache |
+| `mobile_scanner` | مسح QR Camera |
+| `qr_flutter` | عرض QR Code |
+| `google_fonts` | خط Inter |
+
+#### تصميم التطبيق (AppColors)
+| اللون | القيمة | الاستخدام |
+|-------|---------|----------|
+| bgDark | #0D1117 | خلفية رئيسية |
+| bgCard | #161B22 | كروت |
+| accent | #6E40F2 | لون رئيسي (بنفسجي) |
+| accent2 | #22D3EE | لون ثانوي (سماوي) |
+| success | #22C55E | نجاح |
+| danger | #EF4444 | خطأ |
+| warning | #F59E0B | تحذير |
+
+---
+
+### 🔲 الواجهات المطلوب تطويرها (مستقبلاً)
+
+| الواجهة | الدور | API المطلوب |
+|---------|-------|------------|
+| Rating/Review Screen | User | `POST /api/events/{id}/rate` |
+| Notifications Mark All Read | User | `PUT /api/notifications/read-all` |
+| Partner Registration | Manager/Sponsor | `POST /api/register/partner` |
+| Verification Status Screen | Manager/Sponsor | `GET /api/verifications/pending` |
+| Document Re-upload | Manager/Sponsor | `POST /api/verifications/reupload` |
+
