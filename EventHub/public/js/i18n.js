@@ -153,6 +153,7 @@ const I18N_AR = {
   'Sponsor Event':         'رعاية الحدث',
   'Selected Event':        'الحدث المحدد',
   'Message / Intro':       'رسالة / مقدمة',
+  'Introduce yourself and state what sponsorship options you are interested in...': 'قدم نفسك واذكر خيارات الرعاية التي تهتم بها...',
 
   /* ── JS Dynamic Strings & Substrings ────────────────────── */
   ' approved · ': ' معتمد · ',
@@ -348,10 +349,14 @@ const I18N_AR = {
   'Open Requests': 'الطلبات المفتوحة',
   'No requests found': 'لا توجد طلبات',
   'Untitled Event': 'حدث غير معنون',
+  '⏳ Awaiting Event Manager to respond': '⏳ بانتظار رد مدير الحدث',
+  'Awaiting Event Manager to respond': 'بانتظار رد مدير الحدث',
+  'Sponsorship accepted! 🎉': 'تم قبول الرعاية! 🎉',
+  'Sponsorship accepted!': 'تم قبول الرعاية!',
+  'Request declined.': 'تم رفض الطلب.',
   '📥 Received': '📥 مُستلم',
   '📤 Sent': '📤 مُرسل',
   '❌ Decline': '❌ رفض',
-  '⏳ Awaiting Event Manager to respond': '⏳ بانتظار رد مدير الحدث',
   'Closed to Sponsorship': 'مغلق للرعاية',
   'You are currently visible to event managers and can browse opportunities.': 'أنت مرئي حالياً لمديري الأحداث ويمكنك تصفح الفرص.',
   'Available': 'متاح',
@@ -1041,9 +1046,13 @@ function translateSubtree(root) {
   allEls.forEach(translateAttrs);
 }
 
-/** Full DOM pass on document.body */
+/** Full DOM pass on document.body + title */
 function translateDOM() {
   translateSubtree(document.body);
+  
+  // Also translate page title
+  const tTitle = t(document.title);
+  if (tTitle !== document.title) document.title = tTitle;
 }
 
 /* ─────────────────────────────────────────────────────────────────

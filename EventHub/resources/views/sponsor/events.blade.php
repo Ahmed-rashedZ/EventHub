@@ -130,9 +130,9 @@
       </div>
       <form id="req-form">
         <input type="hidden" id="r-event-id" value="" />
-        <div style="background:#f4f6f8; padding:15px; border-radius:6px; margin-bottom:15px;">
+        <div style="margin-bottom:20px; padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.1);">
           <div style="font-size:12px; color:var(--text-muted)">Selected Event</div>
-          <div id="r-event-title" style="font-weight:bold; font-size:16px;">--</div>
+          <div id="r-event-title" style="font-weight:bold; font-size:18px; color:#ffffff;">--</div>
         </div>
         <div class="form-group">
           <label class="form-label">Message / Intro</label>

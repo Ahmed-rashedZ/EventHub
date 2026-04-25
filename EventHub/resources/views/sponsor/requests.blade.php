@@ -103,7 +103,7 @@
                 <button class="btn btn-success" style="flex:1" onclick="respond(${r.id}, 'accepted')">✅ Accept</button>
                 <button class="btn btn-danger" style="flex:1" onclick="respond(${r.id}, 'rejected')">❌ Decline</button>
             ` : `
-                <div style="flex:1; text-align: center; font-size: 12px; color: var(--text-muted); background: #eef2f5; padding: 6px; border-radius: 4px;">⏳ Awaiting Event Manager to respond</div>
+                <div style="flex:1; text-align: center; font-size: 12px; color: var(--text-muted); background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 6px; border-radius: 4px;">⏳ Awaiting Event Manager to respond</div>
             `}
           </div>` : ''}
       </div>`).join('');
