@@ -100,7 +100,7 @@ function buildSidebarLinks(role, activePath) {
         html += `<span class="nav-section-label">${t('Opportunities')}</span>`;
         html += nav('/sponsor/events',    '🌍', 'Browse Events');
         html += nav('/sponsor/requests',  '💼', 'Browse Requests');
-        html += nav('/sponsor/history',   '📋', 'History');
+        html += nav('/sponsor/history',   '📜', 'History');
     }
 
     html += `<span class="nav-section-label">${t('Settings')}</span>`;

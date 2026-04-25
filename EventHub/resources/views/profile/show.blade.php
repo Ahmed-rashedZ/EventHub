@@ -96,7 +96,7 @@
         <!-- Dynamic Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-logo"><div class="logo-icon">🎯</div><span>EventHub</span></div>
-            <nav class="sidebar-nav">
+            <nav class="sidebar-nav" id="sidebar-links">
                 @if(Auth::user()->role === 'Admin')
                     <span class="nav-section-label">Overview</span>
                     <a class="nav-item" href="/admin/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
@@ -119,10 +119,11 @@
                     <span class="nav-section-label">Opportunities</span>
                     <a class="nav-item" href="/sponsor/events"><span class="nav-icon">🌍</span> Browse Events</a>
                     <a class="nav-item" href="/sponsor/requests"><span class="nav-icon">💼</span> Sponsorships</a>
+                    <a class="nav-item" href="/sponsor/history"><span class="nav-icon">📜</span> History</a>
                 @endif
 
                 <span class="nav-section-label">Settings</span>
-                <a class="nav-item" href="{{ route('profile.edit') }}"><span class="nav-icon">⚙️</span> My Profile</a>
+                <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
             </nav>
             @include('partials._sidebar-footer')
         </aside>
@@ -218,7 +219,7 @@
     <script src="/js/notifications.js"></script>
 <script src="/js/auth.js"></script>
     <script>
-        const user = AuthUser();
+        const user = requireAuth();
         if (user) {
             populateSidebar(user);
             setActiveNav();
