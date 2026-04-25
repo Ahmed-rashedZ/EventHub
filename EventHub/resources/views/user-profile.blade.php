@@ -696,11 +696,13 @@
       padding: 0;
       border-radius: 20px;
       border: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 3.5px solid var(--accent2);
       box-shadow: 0 32px 80px rgba(0, 0, 0, 0.6);
       background: #13131f;
       max-height: 90vh;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
 
     .ed-close-btn {

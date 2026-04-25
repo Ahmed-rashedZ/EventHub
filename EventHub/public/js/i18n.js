@@ -895,9 +895,12 @@ function injectRTLStyles() {
     [dir="rtl"] select            { text-align: right; direction: rtl; }
     [dir="rtl"] input::placeholder,
     [dir="rtl"] textarea::placeholder { text-align: right; }
-    /* Fix inline search bars */
-    [dir="rtl"] input[style*="padding-left"] { padding-right: 36px !important; padding-left: 12px !important; }
+    /* Fix inline search/select bars */
+    [dir="rtl"] input[style*="padding-left"], 
+    [dir="rtl"] select[style*="padding-left"] { padding-right: 36px !important; padding-left: 12px !important; }
+    [dir="rtl"] select[style*="padding-left:32px"] { padding-right: 32px !important; padding-left: 12px !important; }
     [dir="rtl"] [style*="left:10px"]         { left: auto !important; right: 10px !important; }
+    [dir="rtl"] [style*="left: 10px"]        { left: auto !important; right: 10px !important; }
     [dir="rtl"] [style*="padding-right: 20px"] { padding-right: 0 !important; padding-left: 20px !important; }
 
     /* ════════════════════════════════════════════════════
