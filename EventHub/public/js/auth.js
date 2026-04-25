@@ -135,7 +135,7 @@ function populateSidebar(user) {
 
     /* Auto-populate sidebar-links if an element with that ID exists */
     const linksDiv = document.getElementById('sidebar-links');
-    if (linksDiv && linksDiv.innerHTML.trim() === '') {
+    if (linksDiv && !linksDiv.querySelector('.nav-item')) {
         linksDiv.innerHTML = buildSidebarLinks(user.role);
     }
 

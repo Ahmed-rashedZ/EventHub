@@ -8,11 +8,15 @@
 
 let _notifData = [];
 let _notifDropdownOpen = false;
+let _notifInitialized = false;
 
 /**
  * Initialize the notification bell. Call this once on page load.
  */
 function initNotificationBell() {
+    if (_notifInitialized) return;
+    _notifInitialized = true;
+
     const topbarActions = document.querySelector('.topbar-actions');
     if (!topbarActions) {
         // If there's no topbar-actions div, create one inside the topbar

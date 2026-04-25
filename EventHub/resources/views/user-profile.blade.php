@@ -195,7 +195,7 @@
       <div class="sidebar-logo">
         <div class="logo-icon">🎯</div><span>EventHub</span>
       </div>
-      <nav class="sidebar-nav" id="sidebar-nav">
+      <nav class="sidebar-nav" id="sidebar-links">
         <!-- Will be populated by JS -->
       </nav>
       @include('partials._sidebar-footer')
@@ -302,43 +302,6 @@
     const me = requireAuth();
     if (me) {
       populateSidebar(me);
-      // Manual sidebar since we aren't in a nav-item
-      const nav = document.getElementById('sidebar-nav');
-      const roleHtml = {
-        'Admin': `
-        <span class="nav-section-label">Overview</span>
-        <a class="nav-item" href="/admin/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
-        <a class="nav-item" href="/admin/users"><span class="nav-icon">👥</span> Users</a>
-        <a class="nav-item" href="/admin/events"><span class="nav-icon">📅</span> Events</a>
-        <a class="nav-item" href="/admin/venues"><span class="nav-icon">🏢</span> Venues</a>
-        <a class="nav-item" href="/admin/verifications"><span class="nav-icon">🛡️</span> Verifications</a>
-      `,
-        'Event Manager': `
-        <span class="nav-section-label">Overview</span>
-        <a class="nav-item" href="/manager/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
-        <span class="nav-section-label">Events</span>
-        <a class="nav-item" href="/manager/events"><span class="nav-icon">📅</span> My Events</a>
-        <a class="nav-item" href="/manager/assistants"><span class="nav-icon">👥</span> Assistants</a>
-        <a class="nav-item" href="/manager/attendance"><span class="nav-icon">📍</span> Attendance</a>
-        <a class="nav-item" href="/manager/sponsorship"><span class="nav-icon">💼</span> Sponsorship</a>
-      `,
-        'Sponsor': `
-        <span class="nav-section-label">Overview</span>
-        <a class="nav-item" href="/sponsor/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
-        <span class="nav-section-label">Opportunities</span>
-        <a class="nav-item" href="/sponsor/events"><span class="nav-icon">🌍</span> Browse Events</a>
-        <a class="nav-item" href="/sponsor/requests"><span class="nav-icon">💼</span> Sponsorships</a>
-      `,
-        'User': `
-        <a class="nav-item" href="/dashboard"><span class="nav-icon">🏠</span> Home</a>
-        <a class="nav-item" href="/events"><span class="nav-icon">📅</span> Find Events</a>
-        <a class="nav-item" href="/tickets"><span class="nav-icon">🎟️</span> My Tickets</a>
-      `
-      };
-      nav.innerHTML = (roleHtml[me.role] || '') + `
-      <span class="nav-section-label">Settings</span>
-      <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
-    `;
     }
 
     const urlParams = new URLSearchParams(window.location.search);

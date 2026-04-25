@@ -81,8 +81,6 @@
               <option value="soonest">Soonest First</option>
               <option value="farthest">Farthest First</option>
               <option value="alpha">Alphabetical</option>
-              <option value="live">Live Now</option>
-              <option value="ended">Ended</option>
             </select>
           </div>
         </div>
@@ -203,6 +201,7 @@
 
     let allEvents = [];
     let myRequestEventIds = [];
+    let resolvedRequestEventIds = [];
 
     async function loadEvents() {
       const [eventsRes, reqsRes] = await Promise.all([
@@ -210,7 +209,18 @@
         api.get('/sponsorship')
       ]);
 
-      myRequestEventIds = (reqsRes.ok && reqsRes.data) ? reqsRes.data.map(r => r.event?.id || r.event_id) : [];
+      myRequestEventIds = [];
+      resolvedRequestEventIds = [];
+      if (reqsRes.ok && reqsRes.data) {
+        reqsRes.data.forEach(r => {
+           const evId = r.event?.id || r.event_id;
+           if (r.status === 'accepted' || r.status === 'rejected') {
+               resolvedRequestEventIds.push(evId);
+           } else {
+               myRequestEventIds.push(evId);
+           }
+        });
+      }
 
       const tbody = document.getElementById('events-body');
       if (!eventsRes.ok || !eventsRes.data?.length) {
@@ -229,20 +239,8 @@
       const s = document.getElementById('sort-events').value;
       const now = new Date();
 
-      // 1. Start with upcoming + live by default; for "ended" show ended events
-      let filtered;
-      if (s === 'ended') {
-        filtered = allEvents.filter(e => new Date(e.end_time) < now);
-      } else if (s === 'live') {
-        filtered = allEvents.filter(e => {
-          const start = new Date(e.start_time);
-          const end = new Date(e.end_time);
-          return start <= now && end >= now;
-        });
-      } else {
-        // default: upcoming + live (exclude fully ended)
-        filtered = allEvents.filter(e => new Date(e.end_time) >= now);
-      }
+      // 1. Show only upcoming events AND exclude resolved requests
+      let filtered = allEvents.filter(e => new Date(e.start_time) > now && !resolvedRequestEventIds.includes(e.id));
 
       // 2. Search
       if (q) {
@@ -259,10 +257,6 @@
         filtered.sort((a, b) => new Date(b.start_time) - new Date(a.start_time));
       } else if (s === 'alpha') {
         filtered.sort((a, b) => (a.title || '').localeCompare(b.title || '', 'ar'));
-      } else if (s === 'live') {
-        filtered.sort((a, b) => new Date(a.end_time) - new Date(b.end_time));
-      } else if (s === 'ended') {
-        filtered.sort((a, b) => new Date(b.end_time) - new Date(a.end_time));
       }
 
       renderEvents(filtered);
