@@ -243,23 +243,11 @@
               <div class="mgr-stat-label">Total Events</div>
               <div class="mgr-stat-value" id="ms-total">—</div>
             </div>
-            <div class="mgr-stat">
+            <div class="mgr-stat" id="mgr-stat-attendance">
               <div class="mgr-stat-stripe" style="background:#22c55e"></div>
-              <div class="mgr-stat-icon" style="background:rgba(34,197,94,.15)">✅</div>
-              <div class="mgr-stat-label">Approved</div>
-              <div class="mgr-stat-value" id="ms-approved">—</div>
-            </div>
-            <div class="mgr-stat">
-              <div class="mgr-stat-stripe" style="background:#f59e0b"></div>
-              <div class="mgr-stat-icon" style="background:rgba(245,158,11,.15)">⏳</div>
-              <div class="mgr-stat-label">Pending</div>
-              <div class="mgr-stat-value" id="ms-pending">—</div>
-            </div>
-            <div class="mgr-stat">
-              <div class="mgr-stat-stripe" style="background:#ef4444"></div>
-              <div class="mgr-stat-icon" style="background:rgba(239,68,68,.15)">❌</div>
-              <div class="mgr-stat-label">Rejected</div>
-              <div class="mgr-stat-value" id="ms-rejected">—</div>
+              <div class="mgr-stat-icon" style="background:rgba(34,197,94,.15)">👥</div>
+              <div class="mgr-stat-label">Total Attendees</div>
+              <div class="mgr-stat-value" id="ms-attendance">—</div>
             </div>
             <div class="mgr-stat">
               <div class="mgr-stat-stripe" style="background:#eab308"></div>
@@ -274,12 +262,6 @@
             <div class="mgr-section-title"><span>📅</span> All Events</div>
             <div class="mgr-filter-row">
               <input id="mgr-search" type="text" placeholder="Search by name…" oninput="applyMgrFilter()">
-              <select id="mgr-filter-status" onchange="applyMgrFilter()">
-                <option value="">All Statuses</option>
-                <option value="approved">Approved</option>
-                <option value="pending">Pending</option>
-                <option value="rejected">Rejected</option>
-              </select>
             </div>
             <div class="card">
               <div class="table-wrap">
@@ -551,16 +533,15 @@
 
       // Compute stats
       const total = allMgrEvents.length;
-      const approved = allMgrEvents.filter(e => e.status === 'approved').length;
-      const pending = allMgrEvents.filter(e => e.status === 'pending').length;
-      const rejected = allMgrEvents.filter(e => e.status === 'rejected').length;
+      const attendees = allMgrEvents.reduce((sum, e) => sum + (e.tickets_count || 0), 0);
       const ratings = allMgrEvents.filter(e => e.average_rating > 0).map(e => e.average_rating);
       const avgRating = ratings.length ? Math.round(ratings.reduce((a, b) => a + b, 0) / ratings.length) : null;
 
       document.getElementById('ms-total').textContent = total;
-      document.getElementById('ms-approved').textContent = approved;
-      document.getElementById('ms-pending').textContent = pending;
-      document.getElementById('ms-rejected').textContent = rejected;
+      
+      const msAttendance = document.getElementById('ms-attendance');
+      if (msAttendance) msAttendance.textContent = attendees;
+
       document.getElementById('ms-rating').innerHTML = avgRating !== null
         ? [1, 2, 3, 4, 5].map(i => `<span style="color:${i <= avgRating ? '#eab308' : 'rgba(255,255,255,.15)'};font-size:1.1rem">★</span>`).join('')
         : '—';
@@ -596,7 +577,7 @@
             <td>${badge(ev.status)} ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''}</td>
             <td style="display:flex;gap:6px;flex-wrap:wrap">
               <button class="btn btn-ghost btn-sm" onclick="showMgrEventDetails(${ev.id})">ℹ️ Details</button>
-              <button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='/admin/event-stats/${ev.id}'">📊 Stats</button>
+              ${(me && me.role !== 'Sponsor') ? `<button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='/admin/event-stats/${ev.id}'">📊 Stats</button>` : ''}
             </td>
           </tr>`;
       }).join('');
