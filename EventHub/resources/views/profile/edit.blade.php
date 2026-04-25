@@ -151,7 +151,7 @@
                         </div>
                         <div id="phones-container"></div>
                         @error('phones.*')
-                            <p style="color: red; font-size: 0.8rem;">Some phone numbers are invalid (max 20 chars).</p>
+                            <p style="color: red; font-size: 0.8rem;">Invalid Libyan mobile number. Use 10 digits starting with 091, 092, 093, or 094.</p>
                         @enderror
 
                         <div class="form-group">
@@ -263,7 +263,12 @@
             row.style.cssText = "display: flex; gap: 1rem; margin-bottom: 1rem; align-items: center; animation: slideUp 0.3s ease;";
             row.innerHTML = `
                 <div style="flex-grow: 1;">
-                    <input type="text" name="phones[]" class="form-control" placeholder="+218 (092) 000-0000" value="${value}" maxlength="20">
+                    <input type="text" name="phones[]" class="form-control" 
+                           placeholder="09X 0000000" value="${value}" 
+                           maxlength="10" 
+                           pattern="09[1234][0-9]{7}"
+                           oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 10)"
+                           title="Please enter a valid Libyan mobile number (091, 092, 093, or 094 followed by 7 digits)">
                 </div>
                 <button type="button" class="btn btn-ghost" style="color: var(--danger); font-size: 1.25rem; min-width: 44px; height: 44px; padding: 0; justify-content: center;" onclick="this.parentElement.remove()">✕</button>
             `;

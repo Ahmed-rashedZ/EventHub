@@ -38,7 +38,7 @@ class ProfileController extends Controller
             'name' => 'required|string|max:255',
             'contact_email' => 'nullable|email|max:255',
             'phones' => 'nullable|array',
-            'phones.*' => 'nullable|string|max:20',
+            'phones.*' => 'nullable|string|regex:/^09[1234][0-9]{7}$/',
             'bio' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'social_links' => 'nullable|array',

@@ -76,7 +76,7 @@
         
         <div class="form-group">
           <label class="form-label">Contact Phone</label>
-          <input id="p-phone" type="tel" class="form-control" placeholder="+123456789"/>
+          <input id="p-phone" type="tel" class="form-control" placeholder="09X 0000000"/>
         </div>
 
         <div class="form-group">
@@ -253,11 +253,9 @@
               msg = 'Must be a valid email (e.g., user@email.com)'; 
           }
           else if (t === 'phone') { 
-              // Strip all non-numeric/plus chars easily just for checking logic if they type letters
-              isValid = /^[\+0-9\-\(\)\s]{7,25}$/.test(v) && !/[a-zA-Z]/.test(v);
-              msg = 'Must be a valid phone number, digits only';
-              // Force clean up
-              if(!isValid) inputValue.value = v.replace(/[^\+0-9\-\(\)\s]/g, '');
+              isValid = /^09[1234][0-9]{7}$/.test(v);
+              msg = 'Must be a valid Libyan mobile (10 digits starting with 091, 092, 093, or 094)';
+              if(!isValid && v.length > 10) inputValue.value = v.substring(0, 10);
           }
           else { 
               isValid = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/.test(v); 
