@@ -188,6 +188,7 @@
             <td>${avgRating ? `<span style="color:#eab308;font-weight:700">⭐ ${avgRating}</span>` : '<span style="color:var(--text-muted)">—</span>'}</td>
             <td style="display:flex;gap:6px;padding:14px 16px;flex-wrap:wrap;align-items:center">
                 <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${e.id})">ℹ️ Details</button>
+                <button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='/sponsor/event-stats/${e.id}'" title="View Statistics">📊 Stats</button>
                 <a href="/storage/agreements/agreement_${req.id}.pdf" target="_blank" class="btn btn-ghost btn-sm" title="Agreement PDF">📄 PDF</a>
             </td>
         </tr>`;

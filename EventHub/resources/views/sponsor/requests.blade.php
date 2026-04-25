@@ -77,6 +77,20 @@
   </div>
 </div>
 
+<!-- Message Modal -->
+<div class="modal-overlay" id="message-modal">
+  <div class="modal card" style="max-width:400px; width:90%; padding:24px; border-top: 3.5px solid var(--accent2);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h3 id="message-sender" style="margin:0; font-size:1rem; color:var(--text-muted);">Request Message</h3>
+        <button class="btn btn-ghost btn-sm" onclick="closeMessageModal()" style="padding:4px 8px;">✕</button>
+    </div>
+    <div id="message-text" style="font-size:0.95rem; line-height:1.6; color:#fff; background:rgba(255,255,255,0.03); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.05); min-height:80px; white-space:pre-wrap;"></div>
+    <div style="margin-top:20px; text-align:right;">
+        <button class="btn btn-primary" onclick="closeMessageModal()" style="padding:6px 20px;">Got it</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast-container"></div>
 <script src="/js/api.js"></script>
 <script src="/js/notifications.js"></script>
@@ -165,10 +179,24 @@
         <td>${badge(r.status)}</td>
         <td style="display:flex;gap:6px;padding:14px 16px;flex-wrap:wrap;align-items:center">
           <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${e.id})" title="View Details">ℹ️ Details</button>
+          ${r.message ? `<button class="btn btn-ghost btn-sm" onclick="viewMessage(${r.id})" title="View Message">💬 Msg</button>` : ''}
           ${actionHtml}
         </td>
       </tr>`;
     }).join('');
+  }
+
+  function viewMessage(requestId) {
+    const req = allRequests.find(r => r.id === requestId);
+    if (!req) return;
+    const modal = document.getElementById('message-modal');
+    document.getElementById('message-text').innerText = req.message || 'No message provided.';
+    document.getElementById('message-sender').innerText = req.initiator === 'event_manager' ? 'From Event Manager' : 'From You';
+    modal.classList.add('open');
+  }
+
+  function closeMessageModal() {
+    document.getElementById('message-modal').classList.remove('open');
   }
 
   async function respond(id, status) {

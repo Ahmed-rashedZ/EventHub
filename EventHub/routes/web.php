@@ -50,6 +50,7 @@ Route::middleware('web.auth')->group(function () {
         Route::view('/requests', 'sponsor.requests');
         Route::view('/events', 'sponsor.events');
         Route::view('/history', 'sponsor.history');
+        Route::view('/event-stats/{id}', 'sponsor.event-stats');
     });
 
 });
