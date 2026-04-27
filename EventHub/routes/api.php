@@ -85,10 +85,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // ── Verifications (Admin) ──
     Route::get('/verifications/pending', [VerificationController::class, 'pendingRequests']);
-    Route::put('/verifications/{id}/approve', [VerificationController::class, 'approve']);
+    Route::put('/verifications/{id}/review', [VerificationController::class, 'reviewDocuments']);
     Route::put('/verifications/{id}/reject', [VerificationController::class, 'reject']);
-    Route::put('/verifications/{id}/request-changes', [VerificationController::class, 'requestChanges']);
-    Route::get('/verifications/{id}/document', [VerificationController::class, 'downloadDocument']);
+    Route::get('/verifications/{id}/document/{type}', [VerificationController::class, 'downloadDocument']);
     
     // ── Resubmit (For Partners) ──
     Route::post('/verifications/reupload', [VerificationController::class, 'reuploadDocument']);

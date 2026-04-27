@@ -30,8 +30,19 @@ class User extends Authenticatable
         'bio',
         'social_links',
         'verification_status',
-        'verification_document',
         'verification_notes',
+        'doc_commercial_register',
+        'doc_tax_number',
+        'doc_articles_of_association',
+        'doc_practice_license',
+        'doc_commercial_register_status',
+        'doc_tax_number_status',
+        'doc_articles_of_association_status',
+        'doc_practice_license_status',
+        'doc_commercial_register_note',
+        'doc_tax_number_note',
+        'doc_articles_of_association_note',
+        'doc_practice_license_note',
     ];
 
     protected $hidden = [

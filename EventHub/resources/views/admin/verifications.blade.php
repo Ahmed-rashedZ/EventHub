@@ -26,6 +26,97 @@
     .vf-role { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; background: rgba(110,64,242,.1); color: #a78bfa; margin-top: 6px; }
     .vf-actions { display: flex; gap: 8px; }
     .vf-date { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px; text-align: right; }
+
+    /* ── Document Review Cards ── */
+    .doc-review-card {
+      background: rgba(255,255,255,.02);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      transition: border-color .2s;
+    }
+    .doc-review-card.status-approved { border-color: rgba(16,185,129,.4); background: rgba(16,185,129,.04); }
+    .doc-review-card.status-rejected { border-color: rgba(239,68,68,.4); background: rgba(239,68,68,.04); }
+    .doc-review-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .doc-review-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      color: #fff;
+      font-size: 0.9rem;
+    }
+    .doc-review-title .doc-icon { font-size: 1.2rem; }
+    .doc-review-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .doc-review-actions .btn {
+      padding: 5px 12px;
+      font-size: 0.75rem;
+      border-radius: 6px;
+    }
+    .doc-btn-approve { background: rgba(16,185,129,.15); color: #10b981; border: 1px solid rgba(16,185,129,.3); }
+    .doc-btn-approve:hover, .doc-btn-approve.active { background: #10b981; color: #fff; }
+    .doc-btn-reject { background: rgba(239,68,68,.1); color: #ef4444; border: 1px solid rgba(239,68,68,.3); }
+    .doc-btn-reject:hover, .doc-btn-reject.active { background: #ef4444; color: #fff; }
+    .doc-btn-download { background: rgba(110,64,242,.1); color: #a78bfa; border: 1px solid rgba(110,64,242,.2); }
+    .doc-btn-download:hover { background: var(--primary); color: #fff; }
+    .doc-reject-note {
+      margin-top: 8px;
+      display: none;
+    }
+    .doc-reject-note textarea {
+      width: 100%;
+      background: rgba(239,68,68,.05);
+      border: 1px solid rgba(239,68,68,.2);
+      border-radius: 6px;
+      color: #fff;
+      padding: 8px 10px;
+      font-size: 0.8rem;
+      resize: vertical;
+      min-height: 50px;
+    }
+    .doc-reject-note textarea::placeholder { color: rgba(239,68,68,.5); }
+
+    /* ── Previous status badges ── */
+    .doc-prev-status {
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .doc-prev-approved { background: rgba(16,185,129,.15); color: #10b981; }
+    .doc-prev-rejected { background: rgba(239,68,68,.15); color: #ef4444; }
+    .doc-prev-pending { background: rgba(245,158,11,.15); color: #f59e0b; }
+
+    /* ── Direct Reject Area ── */
+    .direct-reject-area {
+      display: none;
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      background: rgba(239, 68, 68, 0.03);
+    }
+    .direct-reject-area textarea {
+      width: 100%;
+      background: rgba(239,68,68,.05);
+      border: 1px solid rgba(239,68,68,.25);
+      border-radius: 8px;
+      color: #fff;
+      padding: 10px 12px;
+      font-size: 0.85rem;
+      resize: vertical;
+      min-height: 60px;
+      margin-bottom: 10px;
+    }
+    .direct-reject-area textarea::placeholder { color: rgba(239,68,68,.4); }
   </style>
 </head>
 <body>
@@ -57,39 +148,34 @@
   </main>
 </div>
 
-<!-- Document Modal -->
+<!-- ── Document Review Modal ── -->
 <div class="modal-overlay" id="doc-modal">
-  <div class="modal" style="max-width: 600px;">
+  <div class="modal" style="max-width: 640px;">
     <div class="modal-header">
       <h3 class="modal-title" id="doc-title">Document Review</h3>
       <button class="modal-close" onclick="closeDocModal()">✕</button>
     </div>
-    <div style="padding: 20px; text-align: center;">
-      <p style="color:var(--text-muted); margin-bottom: 16px;">This user has uploaded a verification document. Click below to securely download and review it.</p>
-      
-      <div id="prev-feedback-box" style="display:none; text-align:left; background: rgba(14, 165, 233, 0.05); border: 1px solid rgba(14, 165, 233, 0.2); padding: 12px; border-radius: 8px; margin-bottom: 16px;">
-          <h5 style="color: #0ea5e9; font-size: 0.8rem; margin:0 0 4px 0; text-transform: uppercase;">Previous Feedback Requested</h5>
-          <p id="prev-feedback-text" style="color: #fff; font-size: 0.85rem; margin:0; line-height: 1.4;"></p>
-      </div>
 
-      <a href="#" id="doc-download-btn" target="_blank" class="btn btn-primary" style="display:inline-block; text-decoration:none; padding:10px 20px;">⬇️ Download Document</a>
+    <div style="padding: 20px;" id="doc-cards-container">
+      <!-- Document cards will be injected here -->
     </div>
+
     <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center;">
       <div style="display:flex; gap: 8px;">
-        <button class="btn btn-success" id="btn-approve">✓ Approve</button>
-        <button class="btn" style="background:#f59e0b; color:#fff;" id="btn-request-changes">🔄 Request Changes</button>
-        <button class="btn btn-danger" id="btn-reject">✕ Reject</button>
+        <button class="btn btn-primary" id="btn-submit-review" onclick="submitReview()">📤 Submit Review</button>
+        <button class="btn btn-danger" id="btn-direct-reject" onclick="toggleDirectReject()">🚫 Reject Entirely</button>
       </div>
       <button class="btn btn-ghost" onclick="closeDocModal()">Close</button>
     </div>
-    
-    <div id="feedback-area" style="display:none; padding: 20px; border-top: 1px solid var(--border); background: rgba(255, 255, 255, 0.02);">
-        <label class="form-label" id="feedback-label" style="color: #fff;">Feedback Notes</label>
-        <textarea id="feedback-reason" class="form-control" rows="3" placeholder="Explain what changes are needed or why it was rejected..."></textarea>
-        <div style="display:flex; gap: 10px; margin-top:10px;">
-          <button class="btn btn-danger" style="width:100%; display:none;" id="btn-confirm-reject">Confirm Rejection</button>
-          <button class="btn" style="width:100%; display:none; background:#f59e0b; color:#fff;" id="btn-confirm-changes">Confirm Changes Request</button>
-        </div>
+
+    <!-- Direct Reject Area -->
+    <div class="direct-reject-area" id="direct-reject-area">
+      <label class="form-label" style="color: #ef4444; font-size: 0.85rem;">🚫 Rejection Reason</label>
+      <textarea id="direct-reject-reason" placeholder="Enter the reason for rejecting this entire application..."></textarea>
+      <div style="display:flex; gap: 8px;">
+        <button class="btn btn-danger" style="flex:1;" onclick="confirmDirectReject()">Confirm Rejection</button>
+        <button class="btn btn-ghost" style="flex:1;" onclick="toggleDirectReject()">Cancel</button>
+      </div>
     </div>
   </div>
 </div>
@@ -100,6 +186,16 @@
 <script src="/js/auth.js"></script>
 <script>
   let currentReq = null;
+  const DOC_TYPES = [
+    { key: 'doc_commercial_register',     icon: '📋', label: 'Commercial Register',     labelAr: 'السجل التجاري' },
+    { key: 'doc_tax_number',              icon: '🔢', label: 'Tax Number Certificate',  labelAr: 'شهادة الرقم الضريبي' },
+    { key: 'doc_articles_of_association', icon: '📝', label: 'Articles of Association',  labelAr: 'عقد التأسيس' },
+    { key: 'doc_practice_license',        icon: '🏢', label: 'Practice License',         labelAr: 'إذن المزاولة' },
+  ];
+
+  // Track review decisions
+  let docDecisions = {};
+
   const user = requireRole('Admin');
   if (user) { populateSidebar(user); setActiveNav(); loadRequests(); }
 
@@ -125,12 +221,13 @@
 
     container.innerHTML = data.map(req => {
       const icon = req.role === 'Sponsor' ? '💼' : '🎭';
+      const isResubmit = req.verification_status === 'changes_requested';
       return `
         <div class="vf-card">
           <div class="vf-info">
             <div class="vf-icon">${icon}</div>
             <div>
-              <div class="vf-name">${req.name} ${req.verification_notes ? '<span style="font-size: 0.7rem; background:#0ea5e9; color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px;">🔄 Resubmitted</span>' : '<span style="font-size: 0.7rem; background:#10b981; color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px;">✨ New Request</span>'}</div>
+              <div class="vf-name">${req.name} ${isResubmit ? '<span style="font-size: 0.7rem; background:#0ea5e9; color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px;">🔄 Resubmitted</span>' : '<span style="font-size: 0.7rem; background:#10b981; color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px;">✨ New Request</span>'}</div>
               <div class="vf-email">${req.email}</div>
               <div class="vf-role">${req.role}</div>
             </div>
@@ -148,118 +245,166 @@
 
   function openDocModal(req) {
     currentReq = req;
-    const statusText = req.verification_status === 'changes_requested' ? ' (Waiting for Partner)' : '';
-    document.getElementById('doc-title').textContent = `Review: ${req.name}${statusText}`;
-    
-    if (req.verification_notes) {
-        document.getElementById('prev-feedback-box').style.display = 'block';
-        document.getElementById('prev-feedback-text').textContent = req.verification_notes;
+    docDecisions = {};
+    document.getElementById('doc-title').textContent = `Review: ${req.name}`;
+    document.getElementById('direct-reject-area').style.display = 'none';
+    document.getElementById('direct-reject-reason').value = '';
+
+    const container = document.getElementById('doc-cards-container');
+    container.innerHTML = DOC_TYPES.map(doc => {
+      const hasFile = !!req[doc.key];
+      const currentStatus = req[doc.key + '_status'] || 'pending';
+      const currentNote = req[doc.key + '_note'] || '';
+      
+      // Pre-populate decisions for already-approved docs
+      if (currentStatus === 'approved') {
+        docDecisions[doc.key] = { status: 'approved' };
+      }
+
+      const statusBadgeClass = currentStatus === 'approved' ? 'doc-prev-approved' : currentStatus === 'rejected' ? 'doc-prev-rejected' : 'doc-prev-pending';
+
+      return `
+        <div class="doc-review-card" id="review-card-${doc.key}">
+          <div class="doc-review-header">
+            <div class="doc-review-title">
+              <span class="doc-icon">${doc.icon}</span>
+              <span>${doc.label}</span>
+              <span class="doc-prev-status ${statusBadgeClass}">${currentStatus}</span>
+            </div>
+            <div class="doc-review-actions">
+              ${hasFile ? `<button class="btn doc-btn-download" onclick="downloadDoc('${req.id}', '${doc.key}')">⬇️ Download</button>` : '<span style="color:var(--text-muted); font-size:0.75rem;">No file</span>'}
+            </div>
+          </div>
+          
+          ${currentNote && currentStatus === 'rejected' ? `<div style="font-size:0.75rem; color:#ef4444; background:rgba(239,68,68,.06); padding:6px 10px; border-radius:6px; margin-bottom:8px;">Previous note: ${currentNote}</div>` : ''}
+
+          <div style="display:flex; gap:6px; margin-top:4px;">
+            <button class="btn doc-btn-approve" id="btn-approve-${doc.key}" onclick="setDocDecision('${doc.key}', 'approved')">✅ Accept</button>
+            <button class="btn doc-btn-reject" id="btn-reject-${doc.key}" onclick="setDocDecision('${doc.key}', 'rejected')">❌ Reject</button>
+          </div>
+          
+          <div class="doc-reject-note" id="note-area-${doc.key}">
+            <textarea id="note-${doc.key}" placeholder="Reason for rejecting this document...">${currentNote}</textarea>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    document.getElementById('doc-modal').classList.add('open');
+  }
+
+  function setDocDecision(docKey, status) {
+    const approveBtn = document.getElementById('btn-approve-' + docKey);
+    const rejectBtn = document.getElementById('btn-reject-' + docKey);
+    const noteArea = document.getElementById('note-area-' + docKey);
+    const card = document.getElementById('review-card-' + docKey);
+
+    // Reset classes
+    approveBtn.classList.remove('active');
+    rejectBtn.classList.remove('active');
+    card.classList.remove('status-approved', 'status-rejected');
+
+    if (status === 'approved') {
+      approveBtn.classList.add('active');
+      card.classList.add('status-approved');
+      noteArea.style.display = 'none';
+      docDecisions[docKey] = { status: 'approved' };
     } else {
-        document.getElementById('prev-feedback-box').style.display = 'none';
+      rejectBtn.classList.add('active');
+      card.classList.add('status-rejected');
+      noteArea.style.display = 'block';
+      docDecisions[docKey] = { status: 'rejected', note: '' };
+    }
+  }
+
+  async function submitReview() {
+    if (!currentReq) return;
+
+    // Validate: all docs must have a decision
+    for (const doc of DOC_TYPES) {
+      if (!docDecisions[doc.key]) {
+        showToast(`Please review "${doc.label}" before submitting.`, 'error');
+        return;
+      }
+      if (docDecisions[doc.key].status === 'rejected') {
+        const note = document.getElementById('note-' + doc.key).value.trim();
+        if (!note) {
+          showToast(`Please provide a rejection reason for "${doc.label}".`, 'error');
+          return;
+        }
+        docDecisions[doc.key].note = note;
+      }
     }
 
-    const dlBtn = document.getElementById('doc-download-btn');
-    
-    const token = localStorage.getItem('token');
-    // For protected file downloads, we can append token or handle it nicely. 
-    // Usually browser downloads might not send Authorization header easily. A simple way for the demo is a query param if backend supports,
-    // or fetch as blob. Let's use fetch API to download nicely with the bearer token.
-    dlBtn.onclick = (e) => {
-        e.preventDefault();
-        downloadWithAuth(`/api/verifications/${req.id}/document`, `document_${req.id}`);
-    };
+    const btn = document.getElementById('btn-submit-review');
+    btn.textContent = '...'; btn.disabled = true;
 
-    document.getElementById('feedback-area').style.display = 'none';
-    document.getElementById('doc-modal').classList.add('open');
+    const res = await api.put(`/verifications/${currentReq.id}/review`, { documents: docDecisions });
+
+    if (res.ok) {
+      showToast(res.data.message || 'Review submitted!', 'success');
+      closeDocModal();
+      loadRequests();
+    } else {
+      showToast(res.data?.message || 'Error submitting review', 'error');
+    }
+
+    btn.textContent = '📤 Submit Review'; btn.disabled = false;
+  }
+
+  function toggleDirectReject() {
+    const area = document.getElementById('direct-reject-area');
+    area.style.display = area.style.display === 'none' ? 'block' : 'none';
+  }
+
+  async function confirmDirectReject() {
+    if (!currentReq) return;
+    const notes = document.getElementById('direct-reject-reason').value.trim();
+    if (!notes) {
+      showToast('Please provide a rejection reason.', 'error');
+      return;
+    }
+
+    if (!confirm('Are you sure you want to reject this entire application?')) return;
+
+    const res = await api.put(`/verifications/${currentReq.id}/reject`, { notes });
+    if (res.ok) {
+      showToast('Application rejected.', 'info');
+      closeDocModal();
+      loadRequests();
+    } else {
+      showToast('Error rejecting application.', 'error');
+    }
   }
 
   function closeDocModal() {
     currentReq = null;
+    docDecisions = {};
     document.getElementById('doc-modal').classList.remove('open');
-    document.getElementById('feedback-reason').value = '';
+    document.getElementById('direct-reject-area').style.display = 'none';
   }
 
-  async function downloadWithAuth(url, filename) {
-      showToast('Downloading document...', 'info');
-      try {
-          const res = await fetch(url, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
-          if (!res.ok) throw new Error('File not found');
-          const blob = await res.blob();
-          const urlObj = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.style.display = 'none';
-          a.href = urlObj;
-          a.download = filename;
-          document.body.appendChild(a);
-          a.click();
-          window.URL.revokeObjectURL(urlObj);
-          showToast('Download complete', 'success');
-      } catch(e) {
-          showToast('Error downloading file', 'error');
-      }
+  async function downloadDoc(userId, docType) {
+    showToast('Downloading document...', 'info');
+    try {
+      const res = await fetch(`/api/verifications/${userId}/document/${docType}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      if (!res.ok) throw new Error('File not found');
+      const blob = await res.blob();
+      const urlObj = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = urlObj;
+      a.download = `${docType}_${userId}`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(urlObj);
+      showToast('Download complete', 'success');
+    } catch(e) {
+      showToast('Error downloading file', 'error');
+    }
   }
-
-  document.getElementById('btn-approve').onclick = async () => {
-      if(!currentReq) return;
-      if(!confirm('Are you sure you want to approve this application?')) return;
-      
-      const res = await api.put(`/verifications/${currentReq.id}/approve`);
-      if(res.ok) {
-          showToast('Partner Approved!', 'success');
-          closeDocModal();
-          loadRequests();
-      } else {
-          showToast('Error approving', 'error');
-      }
-  };
-
-  document.getElementById('btn-reject').onclick = () => {
-      document.getElementById('feedback-area').style.display = 'block';
-      document.getElementById('feedback-area').style.background = 'rgba(239, 68, 68, 0.05)';
-      document.getElementById('feedback-label').textContent = 'Rejection Reason';
-      document.getElementById('feedback-label').style.color = '#ef4444';
-      document.getElementById('btn-confirm-reject').style.display = 'block';
-      document.getElementById('btn-confirm-changes').style.display = 'none';
-  };
-
-  document.getElementById('btn-request-changes').onclick = () => {
-      document.getElementById('feedback-area').style.display = 'block';
-      document.getElementById('feedback-area').style.background = 'rgba(245, 158, 11, 0.05)';
-      document.getElementById('feedback-label').textContent = 'Changes Needed';
-      document.getElementById('feedback-label').style.color = '#f59e0b';
-      document.getElementById('btn-confirm-reject').style.display = 'none';
-      document.getElementById('btn-confirm-changes').style.display = 'block';
-  };
-
-  document.getElementById('btn-confirm-reject').onclick = async () => {
-      if(!currentReq) return;
-      const notes = document.getElementById('feedback-reason').value;
-      if(!notes.trim()) { showToast('Please provide a reason', 'error'); return; }
-      
-      const res = await api.put(`/verifications/${currentReq.id}/reject`, { notes });
-      if(res.ok) {
-          showToast('Partner Rejected', 'info');
-          closeDocModal();
-          loadRequests();
-      } else {
-          showToast('Error rejecting', 'error');
-      }
-  };
-
-  document.getElementById('btn-confirm-changes').onclick = async () => {
-      if(!currentReq) return;
-      const notes = document.getElementById('feedback-reason').value;
-      if(!notes.trim()) { showToast('Please describe what changes are needed', 'error'); return; }
-      
-      const res = await api.put(`/verifications/${currentReq.id}/request-changes`, { notes });
-      if(res.ok) {
-          showToast('Changes Requested', 'success');
-          closeDocModal();
-          loadRequests();
-      } else {
-          showToast('Error requesting changes', 'error');
-      }
-  };
 </script>
 </body>
 </html>

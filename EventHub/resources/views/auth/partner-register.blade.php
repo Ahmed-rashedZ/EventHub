@@ -8,27 +8,75 @@
   <link rel="stylesheet" href="/css/style.css" />
   <script src="/js/i18n.js"></script>
   <style>
-    .pr-file-input {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      background: rgba(255, 255, 255, .03);
+    .pr-docs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    @media (max-width: 540px) {
+      .pr-docs-grid { grid-template-columns: 1fr; }
+    }
+
+    .pr-doc-card {
+      background: rgba(255, 255, 255, .02);
       border: 1px dashed var(--border);
-      border-radius: 8px;
-      color: var(--text-muted);
+      border-radius: 10px;
+      padding: 14px;
+      transition: all .25s;
       cursor: pointer;
-      transition: all .2s;
-      font-size: 0.85rem;
+      position: relative;
     }
 
-    .pr-file-input:hover {
+    .pr-doc-card:hover {
       border-color: var(--primary);
-      background: rgba(110, 64, 242, .05);
-      color: #fff;
+      background: rgba(110, 64, 242, .04);
     }
 
-    .pr-file-input input[type="file"] {
-      display: none;
+    .pr-doc-card.has-file {
+      border-color: #10b981;
+      border-style: solid;
+      background: rgba(16, 185, 129, .05);
+    }
+
+    .pr-doc-card .doc-icon {
+      font-size: 1.4rem;
+      margin-bottom: 6px;
+    }
+
+    .pr-doc-card .doc-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .pr-doc-card .doc-hint {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .pr-doc-card .doc-file-name {
+      font-size: 0.72rem;
+      color: #10b981;
+      word-break: break-all;
+    }
+
+    .pr-doc-card input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .pr-doc-card .doc-status {
+      display: inline-block;
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-top: 4px;
     }
   </style>
 </head>
@@ -38,7 +86,7 @@
     <div class="auth-bg-glow"></div>
     <div class="auth-bg-glow auth-bg-glow-2"></div>
 
-    <div class="auth-card" style="max-width: 500px;">
+    <div class="auth-card" style="max-width: 560px;">
       <div class="auth-logo">
         <div class="logo-icon">🎯</div>
         <h1>EventHub Partner</h1>
@@ -72,14 +120,52 @@
           <input id="pr-pass" type="password" class="form-control" required minlength="8" />
         </div>
 
+        <!-- ── Verification Documents ── -->
         <div class="form-group">
-          <label class="form-label">Verification Document (KYB / KYC)</label>
-          <p style="font-size:0.75rem; color:var(--text-muted); margin:0 0 8px 0;">Please upload your Commercial Register, License, or Authorization Letter (PDF/JPG/PNG up to 5MB).</p>
-          <label class="pr-file-input">
-            <span id="file-name-display">📁 Click to select file...</span>
-            <input id="pr-doc" type="file" accept=".pdf,.png,.jpg,.jpeg" required
-              onchange="document.getElementById('file-name-display').textContent = '📄 ' + this.files[0].name" />
-          </label>
+          <label class="form-label" style="margin-bottom: 4px;">Verification Documents (KYB)</label>
+          <p style="font-size:0.73rem; color:var(--text-muted); margin:0 0 12px 0;">Upload all required documents below (PDF/JPG/PNG, max 5 MB each).</p>
+
+          <div class="pr-docs-grid">
+            <!-- Commercial Register -->
+            <label class="pr-doc-card" id="card-doc_commercial_register">
+              <div class="doc-icon">📋</div>
+              <div class="doc-label">Commercial Register</div>
+              <div class="doc-hint i18n-skip">السجل التجاري</div>
+              <div class="doc-file-name" id="fname-doc_commercial_register">Click to select file...</div>
+              <input type="file" accept=".pdf,.png,.jpg,.jpeg" required
+                onchange="onDocSelected(this, 'doc_commercial_register')" />
+            </label>
+
+            <!-- Tax Number -->
+            <label class="pr-doc-card" id="card-doc_tax_number">
+              <div class="doc-icon">🔢</div>
+              <div class="doc-label">Tax Number Certificate</div>
+              <div class="doc-hint i18n-skip">شهادة الرقم الضريبي</div>
+              <div class="doc-file-name" id="fname-doc_tax_number">Click to select file...</div>
+              <input type="file" accept=".pdf,.png,.jpg,.jpeg" required
+                onchange="onDocSelected(this, 'doc_tax_number')" />
+            </label>
+
+            <!-- Articles of Association -->
+            <label class="pr-doc-card" id="card-doc_articles_of_association">
+              <div class="doc-icon">📝</div>
+              <div class="doc-label">Articles of Association</div>
+              <div class="doc-hint i18n-skip">عقد التأسيس</div>
+              <div class="doc-file-name" id="fname-doc_articles_of_association">Click to select file...</div>
+              <input type="file" accept=".pdf,.png,.jpg,.jpeg" required
+                onchange="onDocSelected(this, 'doc_articles_of_association')" />
+            </label>
+
+            <!-- Practice License -->
+            <label class="pr-doc-card" id="card-doc_practice_license">
+              <div class="doc-icon">🏢</div>
+              <div class="doc-label">Practice License</div>
+              <div class="doc-hint i18n-skip">إذن المزاولة</div>
+              <div class="doc-file-name" id="fname-doc_practice_license">Click to select file...</div>
+              <input type="file" accept=".pdf,.png,.jpg,.jpeg" required
+                onchange="onDocSelected(this, 'doc_practice_license')" />
+            </label>
+          </div>
         </div>
 
         <div class="form-group" style="margin-top:20px; font-size:0.8rem; color:var(--text-muted);">
@@ -110,6 +196,18 @@
       setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
     }
 
+    function onDocSelected(input, docType) {
+      const card = document.getElementById('card-' + docType);
+      const label = document.getElementById('fname-' + docType);
+      if (input.files.length > 0) {
+        label.textContent = '📄 ' + input.files[0].name;
+        card.classList.add('has-file');
+      } else {
+        label.textContent = 'Click to select file...';
+        card.classList.remove('has-file');
+      }
+    }
+
     document.getElementById('partner-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('pr-btn');
@@ -121,9 +219,14 @@
       fd.append('email', document.getElementById('pr-email').value);
       fd.append('password', document.getElementById('pr-pass').value);
 
-      const fileInput = document.getElementById('pr-doc');
-      if (fileInput.files.length > 0) {
-        fd.append('verification_document', fileInput.files[0]);
+      // Append all 4 documents
+      const docTypes = ['doc_commercial_register', 'doc_tax_number', 'doc_articles_of_association', 'doc_practice_license'];
+      for (const dt of docTypes) {
+        const card = document.getElementById('card-' + dt);
+        const fileInput = card.querySelector('input[type="file"]');
+        if (fileInput.files.length > 0) {
+          fd.append(dt, fileInput.files[0]);
+        }
       }
 
       try {

@@ -36,8 +36,16 @@ class PruneRejectedPartners extends Command
         $count = $usersToPrune->count();
 
         foreach ($usersToPrune as $user) {
-            if ($user->verification_document && Storage::exists($user->verification_document)) {
-                Storage::delete($user->verification_document);
+            $docTypes = [
+                'doc_commercial_register',
+                'doc_tax_number',
+                'doc_articles_of_association',
+                'doc_practice_license',
+            ];
+            foreach ($docTypes as $docType) {
+                if ($user->{$docType} && Storage::exists($user->{$docType})) {
+                    Storage::delete($user->{$docType});
+                }
             }
             $user->delete();
         }

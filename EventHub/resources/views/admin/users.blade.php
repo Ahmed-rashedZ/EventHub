@@ -98,8 +98,8 @@
                 : `<button class="btn btn-success btn-sm" onclick="toggleUserStatus(${u.id}, '${u.name}', true)">${t('▶ Activate')}</button>`
             ) : ''}
             ${u.role !== 'Admin' ? `<button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id}, '${u.name}')">${t('🗑 Delete')}</button>` : ''}
-            ${(u.role === 'Event Manager' || u.role === 'Sponsor') && u.verification_status === 'verified' && u.verification_document ? 
-              `<button class="btn btn-ghost btn-sm" style="background: rgba(139, 92, 246, 0.1); color: #a78bfa;" onclick="downloadDoc(${u.id}, '${u.name}')" title="${t('View Verification File')}">${t('📄 Docs')}</button>` : ''}
+            ${(u.role === 'Event Manager' || u.role === 'Sponsor') && u.verification_status === 'verified' && (u.doc_commercial_register || u.doc_tax_number) ? 
+              `<button class="btn btn-ghost btn-sm" style="background: rgba(139, 92, 246, 0.1); color: #a78bfa;" onclick="viewDocs(${u.id})" title="${t('View Verification Documents')}">${t('📄 Docs')}</button>` : ''}
           </div>
         </td>
       </tr>`).join('');
@@ -126,24 +126,26 @@ Suspended users will be logged out and unable to log back in.`)) return;
     else showToast(res.data?.message || 'Error deleting user', 'error');
   }
 
-  async function downloadDoc(id, name) {
-      showToast('Downloading document for ' + name + '...', 'info');
-      try {
-          const res = await fetch(`/api/verifications/${id}/document`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
-          if (!res.ok) throw new Error('File not found');
+  async function viewDocs(id) {
+      const docTypes = ['doc_commercial_register', 'doc_tax_number', 'doc_articles_of_association', 'doc_practice_license'];
+      const labels = ['Commercial Register', 'Tax Number', 'Articles of Association', 'Practice License'];
+      showToast('Downloading documents...', 'info');
+      for (let i = 0; i < docTypes.length; i++) {
+        try {
+          const res = await fetch(`/api/verifications/${id}/document/${docTypes[i]}`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+          if (!res.ok) continue;
           const blob = await res.blob();
           const urlObj = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.style.display = 'none';
           a.href = urlObj;
-          a.download = `document_${id}`;
+          a.download = `${docTypes[i]}_${id}`;
           document.body.appendChild(a);
           a.click();
           window.URL.revokeObjectURL(urlObj);
-          showToast('Download complete', 'success');
-      } catch(e) {
-          showToast('Error downloading file, it may be unavailable.', 'error');
+        } catch(e) {}
       }
+      showToast('Downloads complete', 'success');
   }
 
 

@@ -44,10 +44,11 @@ public function registerPartner(Request $request)
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8',
         'role' => 'required|string|in:Event Manager,Sponsor',
-        'verification_document' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+        'doc_commercial_register' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+        'doc_tax_number' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+        'doc_articles_of_association' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+        'doc_practice_license' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
     ]);
-
-    $docPath = $request->file('verification_document')->store('verifications');
 
     $user = User::create([
         'name' => $request->name,
@@ -55,7 +56,14 @@ public function registerPartner(Request $request)
         'password' => Hash::make($request->password),
         'role' => $request->role,
         'verification_status' => 'pending',
-        'verification_document' => $docPath
+        'doc_commercial_register' => $request->file('doc_commercial_register')->store('verifications'),
+        'doc_tax_number' => $request->file('doc_tax_number')->store('verifications'),
+        'doc_articles_of_association' => $request->file('doc_articles_of_association')->store('verifications'),
+        'doc_practice_license' => $request->file('doc_practice_license')->store('verifications'),
+        'doc_commercial_register_status' => 'pending',
+        'doc_tax_number_status' => 'pending',
+        'doc_articles_of_association_status' => 'pending',
+        'doc_practice_license_status' => 'pending',
     ]);
 
     if ($request->role === 'Sponsor') {
