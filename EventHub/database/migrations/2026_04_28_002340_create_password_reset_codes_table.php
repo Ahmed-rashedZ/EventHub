@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('password_reset_codes', function (Blueprint $table) {
             $table->id();
             $table->string('email')->index();
-            $table->string('code', 6);
+            $table->string('code'); // stores bcrypt hash of the 6-digit code
             $table->unsignedTinyInteger('attempts')->default(0);
             $table->timestamp('created_at')->nullable();
         });

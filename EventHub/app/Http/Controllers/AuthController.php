@@ -5,17 +5,25 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Models\Profile;
 use App\Models\User;
-use App\Mail\PasswordResetCode;
+use App\Services\OtpService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Carbon;
 use App\Notifications\SystemNotification;
 
 class AuthController extends Controller
 {
+    /**
+     * Injected OTP service — handles code generation, storage, email, verification.
+     */
+    private OtpService $otp;
+
+    public function __construct(OtpService $otp)
+    {
+        $this->otp = $otp;
+    }
 
 
 public function register(Request $request)
@@ -426,6 +434,7 @@ public function logout(Request $request)
 
 /**
  * Send a 6-digit OTP code to the user's email for password reset.
+ * Delegates entirely to OtpService (rate-limit, generate, hash, email).
  */
 public function forgotPassword(Request $request)
 {
@@ -433,89 +442,43 @@ public function forgotPassword(Request $request)
         'email' => 'required|email',
     ]);
 
-    $user = User::where('email', $request->email)->first();
+    $result = $this->otp->send($request->email);
 
-    // Always return success (security: don't reveal if email exists)
-    if (!$user) {
-        return response()->json(['message' => 'If this email is registered, a reset code has been sent.']);
+    $status = $result['status'] ?? 200;
+    $response = ['message' => $result['message']];
+
+    if (isset($result['debug_code'])) {
+        $response['debug_code'] = $result['debug_code'];
     }
 
-    // Delete any existing codes for this email
-    DB::table('password_reset_codes')->where('email', $request->email)->delete();
-
-    // Generate 6-digit code
-    $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-
-    // Store the code
-    DB::table('password_reset_codes')->insert([
-        'email'      => $request->email,
-        'code'       => $code,
-        'attempts'   => 0,
-        'created_at' => Carbon::now(),
-    ]);
-
-    // Send the email (silently fail in dev if mail isn't configured)
-    try {
-        Mail::to($request->email)->send(new PasswordResetCode($code, $user->name));
-    } catch (\Exception $e) {
-        // Mail not configured — that's fine in dev mode
-    }
-
-    $response = ['message' => 'If this email is registered, a reset code has been sent.'];
-
-    // In debug/dev mode, include the code in the response so the user can see it
-    if (config('app.debug')) {
-        $response['debug_code'] = $code;
-    }
-
-    return response()->json($response);
+    return response()->json($response, $status);
 }
 
 /**
  * Verify the OTP code and reset the password.
+ * Delegates verification to OtpService, then resets password on success.
  */
 public function resetPassword(Request $request)
 {
     $request->validate([
-        'email'                 => 'required|email',
-        'code'                  => 'required|string|size:6',
-        'password'              => 'required|string|min:8|confirmed',
+        'email'    => 'required|email',
+        'code'     => 'required|string|size:6',
+        'password' => 'required|string|min:8|confirmed',
     ]);
 
-    $record = DB::table('password_reset_codes')
-        ->where('email', $request->email)
-        ->first();
+    // ── Verify OTP via service ──
+    $result = $this->otp->verify($request->email, $request->code);
 
-    if (!$record) {
-        return response()->json(['message' => 'No reset code found. Please request a new one.'], 422);
+    if (!$result['success']) {
+        return response()->json(
+            ['message' => $result['message']],
+            $result['status'] ?? 422
+        );
     }
 
-    // Check expiry (5 minutes)
-    if (Carbon::parse($record->created_at)->addMinutes(5)->isPast()) {
-        DB::table('password_reset_codes')->where('email', $request->email)->delete();
-        return response()->json(['message' => 'Reset code has expired. Please request a new one.'], 422);
-    }
-
-    // Check max attempts (3)
-    if ($record->attempts >= 3) {
-        DB::table('password_reset_codes')->where('email', $request->email)->delete();
-        return response()->json(['message' => 'Too many failed attempts. Please request a new code.'], 422);
-    }
-
-    // Verify code
-    if ($record->code !== $request->code) {
-        DB::table('password_reset_codes')
-            ->where('email', $request->email)
-            ->increment('attempts');
-
-        $remaining = 3 - ($record->attempts + 1);
-        return response()->json([
-            'message' => "Invalid code. {$remaining} attempt(s) remaining."
-        ], 422);
-    }
-
-    // Code is valid — reset password
+    // ── OTP valid — reset the password ──
     $user = User::where('email', $request->email)->first();
+
     if (!$user) {
         return response()->json(['message' => 'User not found.'], 404);
     }
@@ -523,11 +486,8 @@ public function resetPassword(Request $request)
     $user->password = Hash::make($request->password);
     $user->save();
 
-    // Revoke all tokens (logout from all devices)
+    // Revoke all tokens (force logout from all devices)
     $user->tokens()->delete();
-
-    // Clean up the code
-    DB::table('password_reset_codes')->where('email', $request->email)->delete();
 
     return response()->json(['message' => 'Password reset successfully. You can now log in.']);
 }
