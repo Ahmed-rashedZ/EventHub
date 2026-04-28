@@ -8,18 +8,17 @@ use App\Mail\PasswordResetCode as PasswordResetMail;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 /**
  * ──────────────────────────────────────────────────────────────
  *  OtpService — Modular OTP (One-Time Password) Engine
  * ──────────────────────────────────────────────────────────────
- *  Responsibilities:
- *   1. Generate cryptographically-secure 6-digit codes
- *   2. Store hashed codes with automatic TTL (5 min)
- *   3. Send OTP via email (Mail driver agnostic)
- *   4. Verify code, increment attempts, delete on success
- *   5. Rate-limit: cooldown between sends + hourly cap
- *   6. Lock after N failed verification attempts
+ *  Flow: send() → verify() → resetWithToken()
+ *
+ *  1. send()           — Rate-limit → generate → hash+store → email
+ *  2. verify()         — Validate code → issue reset_token
+ *  3. resetWithToken() — Validate token → reset password → cleanup
  * ──────────────────────────────────────────────────────────────
  */
 class OtpService
@@ -44,7 +43,7 @@ class OtpService
     /**
      * Full "send OTP" pipeline for a given email.
      *
-     * @return array{success: bool, message: string, debug_code?: string}
+     * @return array{success: bool, message: string}
      */
     public function send(string $email): array
     {
@@ -103,28 +102,21 @@ class OtpService
         // ── Send email ──
         $this->dispatchEmail($email, $plainCode, $user->name);
 
-        // ── Response ──
-        $response = [
+        return [
             'success' => true,
             'message' => 'If this email is registered, a reset code has been sent.',
         ];
-
-        // In debug/dev mode, include the plain code so frontend can auto-fill
-        if (config('app.debug')) {
-            $response['debug_code'] = $plainCode;
-        }
-
-        return $response;
     }
 
     /* ═══════════════════════════════════════════════════════════
-     *  3. VERIFY — Validate the code, lock/delete as needed
+     *  3. VERIFY — Validate the code → issue a reset_token
      * ═══════════════════════════════════════════════════════════ */
 
     /**
      * Verify a submitted OTP code for a given email.
+     * On success, generates a one-time reset_token (does NOT delete the record).
      *
-     * @return array{success: bool, message: string}
+     * @return array{success: bool, message: string, reset_token?: string}
      */
     public function verify(string $email, string $code): array
     {
@@ -182,17 +174,72 @@ class OtpService
             ];
         }
 
-        // ── Success: delete the code immediately ──
-        $record->delete();
+        // ── Success: generate a one-time reset token ──
+        $token = Str::random(64);
+        $record->update([
+            'reset_token' => hash('sha256', $token),
+            'code'        => '', // Invalidate the OTP code
+        ]);
 
         return [
-            'success' => true,
-            'message' => 'Code verified successfully.',
+            'success'     => true,
+            'message'     => 'Code verified successfully.',
+            'reset_token' => $token,
         ];
     }
 
     /* ═══════════════════════════════════════════════════════════
-     *  4. CLEANUP — Purge expired codes (for scheduler)
+     *  4. RESET WITH TOKEN — Validate token → allow password change
+     * ═══════════════════════════════════════════════════════════ */
+
+    /**
+     * Validate a reset_token and delete the record on success.
+     *
+     * @return array{success: bool, message: string}
+     */
+    public function validateResetToken(string $email, string $token): array
+    {
+        $record = PasswordResetCode::where('email', $email)->first();
+
+        if (!$record || !$record->reset_token) {
+            return [
+                'success' => false,
+                'message' => 'Invalid or expired reset token. Please start over.',
+                'status'  => 422,
+            ];
+        }
+
+        // ── TTL check (token inherits the 5-min TTL) ──
+        if ($record->isExpired()) {
+            $record->delete();
+            return [
+                'success' => false,
+                'message' => 'Reset token has expired. Please start over.',
+                'status'  => 422,
+            ];
+        }
+
+        // ── Token comparison ──
+        if (!hash_equals($record->reset_token, hash('sha256', $token))) {
+            $record->delete();
+            return [
+                'success' => false,
+                'message' => 'Invalid reset token. Please start over.',
+                'status'  => 422,
+            ];
+        }
+
+        // ── Valid — delete the record ──
+        $record->delete();
+
+        return [
+            'success' => true,
+            'message' => 'Token validated. Password can be reset.',
+        ];
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+     *  5. CLEANUP — Purge expired codes (for scheduler)
      * ═══════════════════════════════════════════════════════════ */
 
     /**
@@ -209,7 +256,7 @@ class OtpService
     }
 
     /* ═══════════════════════════════════════════════════════════
-     *  5. EMAIL DISPATCH (private)
+     *  6. EMAIL DISPATCH (private)
      * ═══════════════════════════════════════════════════════════ */
 
     /**

@@ -16,6 +16,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/register/partner', [AuthController::class, 'registerPartner']);
 Route::post('/login',    [AuthController::class, 'login']);
 Route::post('/password/forgot', [AuthController::class, 'forgotPassword']);
+Route::post('/password/verify-code', [AuthController::class, 'verifyCode']);
 Route::post('/password/reset',  [AuthController::class, 'resetPassword']);
 
 // Public event list (approved only)

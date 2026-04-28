@@ -433,8 +433,7 @@ public function logout(Request $request)
 }
 
 /**
- * Send a 6-digit OTP code to the user's email for password reset.
- * Delegates entirely to OtpService (rate-limit, generate, hash, email).
+ * Step 1: Send a 6-digit OTP code to the user's email.
  */
 public function forgotPassword(Request $request)
 {
@@ -443,30 +442,22 @@ public function forgotPassword(Request $request)
     ]);
 
     $result = $this->otp->send($request->email);
-
     $status = $result['status'] ?? 200;
-    $response = ['message' => $result['message']];
 
-    if (isset($result['debug_code'])) {
-        $response['debug_code'] = $result['debug_code'];
-    }
-
-    return response()->json($response, $status);
+    return response()->json(['message' => $result['message']], $status);
 }
 
 /**
- * Verify the OTP code and reset the password.
- * Delegates verification to OtpService, then resets password on success.
+ * Step 2: Verify the OTP code only.
+ * Returns a one-time reset_token for use in step 3.
  */
-public function resetPassword(Request $request)
+public function verifyCode(Request $request)
 {
     $request->validate([
-        'email'    => 'required|email',
-        'code'     => 'required|string|size:6',
-        'password' => 'required|string|min:8|confirmed',
+        'email' => 'required|email',
+        'code'  => 'required|string|size:6',
     ]);
 
-    // ── Verify OTP via service ──
     $result = $this->otp->verify($request->email, $request->code);
 
     if (!$result['success']) {
@@ -476,7 +467,34 @@ public function resetPassword(Request $request)
         );
     }
 
-    // ── OTP valid — reset the password ──
+    return response()->json([
+        'message'     => $result['message'],
+        'reset_token' => $result['reset_token'],
+    ]);
+}
+
+/**
+ * Step 3: Reset password using the reset_token from step 2.
+ */
+public function resetPassword(Request $request)
+{
+    $request->validate([
+        'email'       => 'required|email',
+        'reset_token' => 'required|string',
+        'password'    => 'required|string|min:8|confirmed',
+    ]);
+
+    // ── Validate reset token ──
+    $result = $this->otp->validateResetToken($request->email, $request->reset_token);
+
+    if (!$result['success']) {
+        return response()->json(
+            ['message' => $result['message']],
+            $result['status'] ?? 422
+        );
+    }
+
+    // ── Token valid — reset the password ──
     $user = User::where('email', $request->email)->first();
 
     if (!$user) {
@@ -492,3 +510,4 @@ public function resetPassword(Request $request)
     return response()->json(['message' => 'Password reset successfully. You can now log in.']);
 }
 }
+

@@ -748,7 +748,12 @@ const I18N_AR = {
   'New code sent!': 'تم إرسال رمز جديد!',
   'Error resending code': 'خطأ في إعادة إرسال الرمز',
   'Code expired. Please request a new one.': 'انتهت صلاحية الرمز. يرجى طلب رمز جديد.',
-  'Dev mode — code auto-filled:': 'وضع التطوير — تم ملء الرمز تلقائياً:',
+  'Verify Code': 'تأكيد الرمز',
+  'Verifying...': 'جاري التحقق...',
+  'Code verified!': 'تم التحقق من الرمز!',
+  'Invalid code': 'رمز غير صالح',
+  'Set New Password': 'تعيين كلمة مرور جديدة',
+  'Your code was verified. Now set a new password for your account.': 'تم التحقق من الرمز. الآن قم بتعيين كلمة مرور جديدة لحسابك.',
 
   /* ── Toast / Confirm Messages ───────────────────────────── */
   'Approved!': 'تمت الموافقة!',

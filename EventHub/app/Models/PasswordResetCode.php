@@ -13,6 +13,7 @@ class PasswordResetCode extends Model
         'email',
         'code',
         'attempts',
+        'reset_token',
         'created_at',
     ];
 

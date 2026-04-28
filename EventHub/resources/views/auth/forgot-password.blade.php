@@ -18,14 +18,23 @@
       display: flex; gap: 8px; justify-content: center; margin: 20px 0;
     }
     .otp-input input {
-      width: 48px; height: 56px;
-      text-align: center; font-size: 1.4rem; font-weight: 700;
+      width: 50px; height: 58px;
+      box-sizing: border-box;
+      text-align: center !important;
+      direction: ltr !important;
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 54px;
       font-family: 'Courier New', monospace;
       background: var(--bg-dark);
       border: 2px solid var(--border);
       border-radius: var(--radius-sm);
       color: var(--accent);
       outline: none;
+      padding: 0;
+      margin: 0;
+      -webkit-appearance: none;
+      -moz-appearance: textfield;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
     .otp-input input:focus {
@@ -53,6 +62,19 @@
       50%  { transform: scale(1.1); }
       100% { transform: scale(1); opacity: 1; }
     }
+    .step-indicator {
+      display: flex; justify-content: center; gap: 8px; margin-bottom: 24px;
+    }
+    .step-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--border); transition: all 0.3s ease;
+    }
+    .step-dot.active { background: var(--accent); transform: scale(1.3); }
+    .step-dot.done { background: #22c55e; }
+    .lock-icon {
+      font-size: 2.5rem; margin-bottom: 8px;
+      animation: fadeSlideIn 0.4s ease;
+    }
   </style>
 </head>
 <body>
@@ -68,6 +90,11 @@
 
     <!-- ═══ STEP 1: Enter Email ═══ -->
     <div id="step-1" class="step active">
+      <div class="step-indicator">
+        <div class="step-dot active"></div>
+        <div class="step-dot"></div>
+        <div class="step-dot"></div>
+      </div>
       <h2 class="auth-heading"><script>document.write(t('Forgot Password?'))</script></h2>
       <p class="auth-subheading"><script>document.write(t('Enter your email and we\'ll send you a verification code.'))</script></p>
 
@@ -86,13 +113,19 @@
       </div>
     </div>
 
-    <!-- ═══ STEP 2: Enter Code + New Password ═══ -->
+    <!-- ═══ STEP 2: Enter OTP Code ONLY ═══ -->
     <div id="step-2" class="step">
+      <div class="step-indicator">
+        <div class="step-dot done"></div>
+        <div class="step-dot active"></div>
+        <div class="step-dot"></div>
+      </div>
+      <div class="lock-icon">🔐</div>
       <h2 class="auth-heading"><script>document.write(t('Enter Verification Code'))</script></h2>
       <p class="auth-subheading" id="step2-subtitle"></p>
 
-      <form id="reset-form">
-        <div class="otp-input" id="otp-container">
+      <form id="verify-form">
+        <div class="otp-input" id="otp-container" dir="ltr">
           <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="0" autocomplete="off"/>
           <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="1" autocomplete="off"/>
           <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="2" autocomplete="off"/>
@@ -105,7 +138,35 @@
           <div class="timer-badge" id="timer-badge">⏱ <span id="timer">5:00</span></div>
         </div>
 
-        <div class="form-group" style="margin-top: 20px;">
+        <button type="submit" class="btn btn-primary btn-block" id="btn-verify" style="margin-top: 20px;">
+          <script>document.write(t('Verify Code'))</script>
+        </button>
+      </form>
+
+      <div style="text-align:center;">
+        <span class="resend-link" id="resend-link" onclick="resendCode()">
+          <script>document.write(t('Didn\'t receive the code? Resend'))</script>
+        </span>
+      </div>
+
+      <div class="auth-footer">
+        <a href="#" onclick="goToStep(1)" style="color:var(--text-muted);"><script>document.write(t('← Back'))</script></a>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 3: Set New Password ═══ -->
+    <div id="step-3" class="step">
+      <div class="step-indicator">
+        <div class="step-dot done"></div>
+        <div class="step-dot done"></div>
+        <div class="step-dot active"></div>
+      </div>
+      <div class="lock-icon">🔑</div>
+      <h2 class="auth-heading"><script>document.write(t('Set New Password'))</script></h2>
+      <p class="auth-subheading"><script>document.write(t('Your code was verified. Now set a new password for your account.'))</script></p>
+
+      <form id="reset-form">
+        <div class="form-group">
           <label class="form-label" for="new-password"><script>document.write(t('New Password'))</script></label>
           <input id="new-password" type="password" class="form-control" placeholder="••••••••" required minlength="8"/>
         </div>
@@ -118,20 +179,10 @@
           <script>document.write(t('Reset Password'))</script>
         </button>
       </form>
-
-      <div style="text-align:center;">
-        <span class="resend-link" id="resend-link" onclick="resendCode()">
-          <script>document.write(t('Didn\'t receive the code? Resend'))</script>
-        </span>
-      </div>
-
-      <div class="auth-footer">
-        <a href="#" onclick="goBack()" style="color:var(--text-muted);"><script>document.write(t('← Back'))</script></a>
-      </div>
     </div>
 
-    <!-- ═══ STEP 3: Success ═══ -->
-    <div id="step-3" class="step" style="text-align:center;">
+    <!-- ═══ STEP 4: Success ═══ -->
+    <div id="step-4" class="step" style="text-align:center;">
       <div class="success-icon">✅</div>
       <h2 class="auth-heading"><script>document.write(t('Password Changed!'))</script></h2>
       <p class="auth-subheading" style="margin-bottom:24px;"><script>document.write(t('Your password has been reset successfully. You can now sign in with your new password.'))</script></p>
@@ -144,6 +195,7 @@
 <script src="/js/api.js"></script>
 <script>
   let userEmail = '';
+  let resetToken = '';
   let timerInterval = null;
   let timerSeconds = 300; // 5 minutes
 
@@ -173,14 +225,10 @@
   }
 
   // ── Step Navigation ──
-  function showStep(n) {
+  function goToStep(n) {
+    clearInterval(timerInterval);
     document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
     document.getElementById('step-' + n).classList.add('active');
-  }
-
-  function goBack() {
-    clearInterval(timerInterval);
-    showStep(1);
   }
 
   // ── Timer ──
@@ -222,18 +270,11 @@
       showToast(t('Verification code sent to your email!'), 'success');
       document.getElementById('step2-subtitle').textContent =
         t('We sent a 6-digit code to') + ' ' + userEmail;
-      showStep(2);
+      goToStep(2);
       otpInputs[0].focus();
       startTimer();
       document.getElementById('resend-link').classList.add('disabled');
       setTimeout(() => document.getElementById('resend-link').classList.remove('disabled'), 30000);
-
-      // Dev mode: auto-fill the code if returned by the API
-      if (res.data.debug_code) {
-        const code = res.data.debug_code;
-        code.split('').forEach((ch, j) => { if (otpInputs[j]) otpInputs[j].value = ch; });
-        showToast('🔧 ' + t('Dev mode — code auto-filled:') + ' ' + code, 'info');
-      }
     } else {
       showToast(res.data?.message || t('Error sending code'), 'error');
     }
@@ -242,17 +283,47 @@
     btn.disabled = false;
   });
 
-  // ── Step 2: Reset Password ──
-  document.getElementById('reset-form').addEventListener('submit', async (e) => {
+  // ── Step 2: Verify Code Only ──
+  document.getElementById('verify-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const code = getOtpValue();
-    const pwd = document.getElementById('new-password').value;
-    const confirm = document.getElementById('confirm-password').value;
 
     if (code.length !== 6) {
       showToast(t('Please enter the full 6-digit code.'), 'error');
       return;
     }
+
+    const btn = document.getElementById('btn-verify');
+    btn.textContent = t('Verifying...');
+    btn.disabled = true;
+
+    const res = await api.post('/password/verify-code', {
+      email: userEmail,
+      code: code,
+    });
+
+    if (res.ok) {
+      clearInterval(timerInterval);
+      resetToken = res.data.reset_token;
+      showToast(t('Code verified!'), 'success');
+      goToStep(3);
+      document.getElementById('new-password').focus();
+    } else {
+      showToast(res.data?.message || t('Invalid code'), 'error');
+      otpInputs.forEach(inp => inp.value = '');
+      otpInputs[0].focus();
+    }
+
+    btn.textContent = t('Verify Code');
+    btn.disabled = false;
+  });
+
+  // ── Step 3: Reset Password ──
+  document.getElementById('reset-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const pwd = document.getElementById('new-password').value;
+    const confirm = document.getElementById('confirm-password').value;
+
     if (pwd !== confirm) {
       showToast(t('Passwords do not match.'), 'error');
       return;
@@ -268,19 +339,15 @@
 
     const res = await api.post('/password/reset', {
       email: userEmail,
-      code: code,
+      reset_token: resetToken,
       password: pwd,
       password_confirmation: confirm,
     });
 
     if (res.ok) {
-      clearInterval(timerInterval);
-      showStep(3);
+      goToStep(4);
     } else {
       showToast(res.data?.message || t('Error resetting password'), 'error');
-      // Clear OTP inputs on error
-      otpInputs.forEach(inp => inp.value = '');
-      otpInputs[0].focus();
     }
 
     btn.textContent = t('Reset Password');
@@ -299,13 +366,6 @@
       otpInputs.forEach(inp => inp.value = '');
       otpInputs[0].focus();
       setTimeout(() => link.classList.remove('disabled'), 30000);
-
-      // Dev mode: auto-fill the code if returned by the API
-      if (res.data.debug_code) {
-        const code = res.data.debug_code;
-        code.split('').forEach((ch, j) => { if (otpInputs[j]) otpInputs[j].value = ch; });
-        showToast('🔧 ' + t('Dev mode — code auto-filled:') + ' ' + code, 'info');
-      }
     } else {
       showToast(res.data?.message || t('Error resending code'), 'error');
       link.classList.remove('disabled');
