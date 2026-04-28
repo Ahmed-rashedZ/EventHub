@@ -15,6 +15,8 @@ use App\Http\Controllers\VerificationController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/register/partner', [AuthController::class, 'registerPartner']);
 Route::post('/login',    [AuthController::class, 'login']);
+Route::post('/password/forgot', [AuthController::class, 'forgotPassword']);
+Route::post('/password/reset',  [AuthController::class, 'resetPassword']);
 
 // Public event list (approved only)
 Route::get('/events',       [EventController::class, 'index']);

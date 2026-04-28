@@ -11,6 +11,7 @@ Route::middleware('web.guest')->group(function () {
     Route::view('/login', 'login');
     Route::view('/register', 'register');
     Route::view('/register/partner', 'auth.partner-register');
+    Route::view('/forgot-password', 'auth.forgot-password');
 });
 
 Route::view('/pending-verification', 'auth.pending-verification');

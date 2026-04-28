@@ -31,6 +31,11 @@
         <label class="form-label" for="password">Password</label>
         <input id="password" type="password" class="form-control" placeholder="••••••••" required/>
       </div>
+      <div style="text-align: right; margin: -8px 0 16px;">
+        <a href="/forgot-password" style="font-size: 0.82rem; color: var(--accent); font-weight: 500; text-decoration: none; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
+          <script>document.write(t('Forgot Password?'))</script>
+        </a>
+      </div>
       <button type="submit" class="btn btn-primary btn-block" id="login-btn">Sign In</button>
     </form>
 
