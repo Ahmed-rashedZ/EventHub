@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Notifications\SystemNotification;
 
 class AuthController extends Controller
 {
@@ -39,18 +40,26 @@ public function register(Request $request)
 
 public function registerPartner(Request $request)
 {
-    $request->validate([
+    // Base validation rules (shared by both roles)
+    $rules = [
         'name' => 'required|string|max:255',
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8',
         'role' => 'required|string|in:Event Manager,Sponsor',
         'doc_commercial_register' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
         'doc_tax_number' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
-        'doc_articles_of_association' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
-        'doc_practice_license' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
-    ]);
+    ];
 
-    $user = User::create([
+    // Manager requires 2 additional documents
+    if ($request->role === 'Event Manager') {
+        $rules['doc_articles_of_association'] = 'required|file|mimes:pdf,jpg,jpeg,png|max:5120';
+        $rules['doc_practice_license'] = 'required|file|mimes:pdf,jpg,jpeg,png|max:5120';
+    }
+
+    $request->validate($rules);
+
+    // Build user data
+    $userData = [
         'name' => $request->name,
         'email' => $request->email,
         'password' => Hash::make($request->password),
@@ -58,13 +67,19 @@ public function registerPartner(Request $request)
         'verification_status' => 'pending',
         'doc_commercial_register' => $request->file('doc_commercial_register')->store('verifications'),
         'doc_tax_number' => $request->file('doc_tax_number')->store('verifications'),
-        'doc_articles_of_association' => $request->file('doc_articles_of_association')->store('verifications'),
-        'doc_practice_license' => $request->file('doc_practice_license')->store('verifications'),
         'doc_commercial_register_status' => 'pending',
         'doc_tax_number_status' => 'pending',
-        'doc_articles_of_association_status' => 'pending',
-        'doc_practice_license_status' => 'pending',
-    ]);
+    ];
+
+    // Add Manager-only documents
+    if ($request->role === 'Event Manager') {
+        $userData['doc_articles_of_association'] = $request->file('doc_articles_of_association')->store('verifications');
+        $userData['doc_practice_license'] = $request->file('doc_practice_license')->store('verifications');
+        $userData['doc_articles_of_association_status'] = 'pending';
+        $userData['doc_practice_license_status'] = 'pending';
+    }
+
+    $user = User::create($userData);
 
     if ($request->role === 'Sponsor') {
         Profile::create([
@@ -72,6 +87,19 @@ public function registerPartner(Request $request)
             'profile_type' => 'company',
             'is_available' => true,
         ]);
+    }
+
+    // ── Notify all Admins about new partner registration ──
+    $roleLabel = $request->role === 'Event Manager' ? 'Event Manager' : 'Sponsor';
+    $admins = User::where('role', 'Admin')->get();
+    foreach ($admins as $admin) {
+        $admin->notify(new SystemNotification(
+            'New Partner Registration 🎉',
+            "A new {$roleLabel} \"{{$user->name}}\" has registered and is waiting for verification.",
+            'verification',
+            '🛡️',
+            '/admin/verifications'
+        ));
     }
 
     $token = $user->createToken('auth_token')->plainTextToken;

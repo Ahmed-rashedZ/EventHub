@@ -97,72 +97,68 @@
 
       <form id="partner-form" style="text-align:left; margin-top: 24px;">
         <div class="form-group">
-          <label class="form-label">Role / Account Type</label>
+          <label class="form-label"><script>document.write(t('Role / Account Type'))</script></label>
           <select id="pr-role" class="form-control" required style="cursor:pointer;">
-            <option value="" disabled selected>Select Role</option>
-            <option value="Event Manager">Event Manager</option>
-            <option value="Sponsor">Sponsor</option>
+            <option value="" disabled selected><script>document.write(t('Select Role'))</script></option>
+            <option value="Event Manager"><script>document.write(t('Event Manager'))</script></option>
+            <option value="Sponsor"><script>document.write(t('Sponsor'))</script></option>
           </select>
         </div>
 
         <div class="form-group">
-          <label class="form-label" id="lbl-name">Company / Individual Name</label>
+          <label class="form-label" id="lbl-name"><script>document.write(t('Company / Individual Name'))</script></label>
           <input id="pr-name" type="text" class="form-control" required />
         </div>
 
         <div class="form-group">
-          <label class="form-label">Business Email Address</label>
+          <label class="form-label"><script>document.write(t('Business Email Address'))</script></label>
           <input id="pr-email" type="email" class="form-control" required />
         </div>
 
         <div class="form-group">
-          <label class="form-label">Password</label>
+          <label class="form-label"><script>document.write(t('Password'))</script></label>
           <input id="pr-pass" type="password" class="form-control" required minlength="8" />
         </div>
 
         <!-- ── Verification Documents ── -->
         <div class="form-group">
-          <label class="form-label" style="margin-bottom: 4px;">Verification Documents (KYB)</label>
-          <p style="font-size:0.73rem; color:var(--text-muted); margin:0 0 12px 0;">Upload all required documents below (PDF/JPG/PNG, max 5 MB each).</p>
+          <label class="form-label" style="margin-bottom: 4px;"><script>document.write(t('Verification Documents (KYB)'))</script></label>
+          <p style="font-size:0.73rem; color:var(--text-muted); margin:0 0 12px 0;"><script>document.write(t('Upload all required documents below (PDF/JPG/PNG, max 5 MB each).'))</script></p>
 
-          <div class="pr-docs-grid">
-            <!-- Commercial Register -->
-            <label class="pr-doc-card" id="card-doc_commercial_register">
+          <div class="pr-docs-grid" id="pr-docs-grid">
+            <!-- Commercial Register (both roles) -->
+            <label class="pr-doc-card" id="card-doc_commercial_register" data-roles="Event Manager,Sponsor">
               <div class="doc-icon">📋</div>
-              <div class="doc-label">Commercial Register</div>
-              <div class="doc-hint i18n-skip">السجل التجاري</div>
-              <div class="doc-file-name" id="fname-doc_commercial_register">Click to select file...</div>
+              <div class="doc-label"><script>document.write(t('Commercial Register'))</script></div>
+              <div class="doc-file-name" id="fname-doc_commercial_register"><script>document.write(t('Click to select file...'))</script></div>
               <input type="file" accept=".pdf,.png,.jpg,.jpeg" required
                 onchange="onDocSelected(this, 'doc_commercial_register')" />
             </label>
 
-            <!-- Tax Number -->
-            <label class="pr-doc-card" id="card-doc_tax_number">
+            <!-- Tax Number (both roles) -->
+            <label class="pr-doc-card" id="card-doc_tax_number" data-roles="Event Manager,Sponsor">
               <div class="doc-icon">🔢</div>
-              <div class="doc-label">Tax Number Certificate</div>
-              <div class="doc-hint i18n-skip">شهادة الرقم الضريبي</div>
-              <div class="doc-file-name" id="fname-doc_tax_number">Click to select file...</div>
+              <div class="doc-label"><script>document.write(t('Tax Number Certificate'))</script></div>
+              <div class="doc-file-name" id="fname-doc_tax_number"><script>document.write(t('Click to select file...'))</script></div>
               <input type="file" accept=".pdf,.png,.jpg,.jpeg" required
                 onchange="onDocSelected(this, 'doc_tax_number')" />
             </label>
 
-            <!-- Articles of Association -->
-            <label class="pr-doc-card" id="card-doc_articles_of_association">
+            <!-- Articles of Association (Manager only) -->
+            <label class="pr-doc-card" id="card-doc_articles_of_association" data-roles="Event Manager" style="display:none;">
               <div class="doc-icon">📝</div>
-              <div class="doc-label">Articles of Association</div>
-              <div class="doc-hint i18n-skip">عقد التأسيس</div>
-              <div class="doc-file-name" id="fname-doc_articles_of_association">Click to select file...</div>
-              <input type="file" accept=".pdf,.png,.jpg,.jpeg" required
+              <div class="doc-label"><script>document.write(t('Articles of Association'))</script></div>
+              <div class="doc-file-name" id="fname-doc_articles_of_association"><script>document.write(t('Click to select file...'))</script></div>
+              <input type="file" accept=".pdf,.png,.jpg,.jpeg"
                 onchange="onDocSelected(this, 'doc_articles_of_association')" />
             </label>
 
-            <!-- Practice License -->
-            <label class="pr-doc-card" id="card-doc_practice_license">
+            <!-- Practice License (Manager only) -->
+            <label class="pr-doc-card" id="card-doc_practice_license" data-roles="Event Manager" style="display:none;">
               <div class="doc-icon">🏢</div>
-              <div class="doc-label">Practice License</div>
-              <div class="doc-hint i18n-skip">إذن المزاولة</div>
-              <div class="doc-file-name" id="fname-doc_practice_license">Click to select file...</div>
-              <input type="file" accept=".pdf,.png,.jpg,.jpeg" required
+              <div class="doc-label"><script>document.write(t('Practice License'))</script></div>
+              <div class="doc-file-name" id="fname-doc_practice_license"><script>document.write(t('Click to select file...'))</script></div>
+              <input type="file" accept=".pdf,.png,.jpg,.jpeg"
                 onchange="onDocSelected(this, 'doc_practice_license')" />
             </label>
           </div>
@@ -171,16 +167,16 @@
         <div class="form-group" style="margin-top:20px; font-size:0.8rem; color:var(--text-muted);">
           <label style="display:flex; gap:10px; align-items:flex-start; cursor:pointer;">
             <input type="checkbox" required style="margin-top:3px;">
-            <span>I declare that all the information and documents provided are authentic, and I agree to EventHub's Partner Terms of Service.</span>
+            <span><script>document.write(t("I declare that all the information and documents provided are authentic, and I agree to EventHub's Partner Terms of Service."))</script></span>
           </label>
         </div>
 
         <button type="submit" class="btn btn-primary" id="pr-btn"
-          style="width: 100%; margin-top:10px; padding: 14px; font-size:1rem; justify-content: center;">Submit Application</button>
+          style="width: 100%; margin-top:10px; padding: 14px; font-size:1rem; justify-content: center;"><script>document.write(t('Submit Application'))</script></button>
       </form>
 
       <div class="auth-footer" style="margin-top: 24px;">
-        Already confirmed? <a href="/login">Sign in</a>
+        <script>document.write(t('Already confirmed?'))</script> <a href="/login"><script>document.write(t('Sign in'))</script></a>
       </div>
     </div>
   </div>
@@ -203,31 +199,61 @@
         label.textContent = '📄 ' + input.files[0].name;
         card.classList.add('has-file');
       } else {
-        label.textContent = 'Click to select file...';
+        label.textContent = t('Click to select file...');
         card.classList.remove('has-file');
       }
     }
 
+    // ── Role-based document visibility ──
+    function updateDocsForRole(role) {
+      const allCards = document.querySelectorAll('.pr-doc-card[data-roles]');
+      allCards.forEach(card => {
+        const roles = card.getAttribute('data-roles').split(',');
+        const visible = roles.includes(role);
+        card.style.display = visible ? '' : 'none';
+        const fileInput = card.querySelector('input[type="file"]');
+        if (fileInput) {
+          fileInput.required = visible;
+          if (!visible) {
+            // Clear file if hidden
+            fileInput.value = '';
+            card.classList.remove('has-file');
+            const fnameEl = card.querySelector('.doc-file-name');
+            if (fnameEl) fnameEl.textContent = t('Click to select file...');
+          }
+        }
+      });
+    }
+
+    document.getElementById('pr-role').addEventListener('change', (e) => {
+      const role = e.target.value;
+      document.getElementById('lbl-name').textContent = role === 'Sponsor' ? t('Company Name / Entity Name') : t('Manager Full Name');
+      updateDocsForRole(role);
+    });
+
     document.getElementById('partner-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('pr-btn');
-      btn.textContent = 'Submitting...'; btn.disabled = true;
+      btn.textContent = t('Submitting...'); btn.disabled = true;
 
+      const role = document.getElementById('pr-role').value;
       const fd = new FormData();
-      fd.append('role', document.getElementById('pr-role').value);
+      fd.append('role', role);
       fd.append('name', document.getElementById('pr-name').value);
       fd.append('email', document.getElementById('pr-email').value);
       fd.append('password', document.getElementById('pr-pass').value);
 
-      // Append all 4 documents
-      const docTypes = ['doc_commercial_register', 'doc_tax_number', 'doc_articles_of_association', 'doc_practice_license'];
-      for (const dt of docTypes) {
-        const card = document.getElementById('card-' + dt);
+      // Append only visible documents based on role
+      const visibleCards = document.querySelectorAll('.pr-doc-card[data-roles]');
+      visibleCards.forEach(card => {
+        const roles = card.getAttribute('data-roles').split(',');
+        if (!roles.includes(role)) return;
         const fileInput = card.querySelector('input[type="file"]');
-        if (fileInput.files.length > 0) {
-          fd.append(dt, fileInput.files[0]);
+        const docType = card.id.replace('card-', '');
+        if (fileInput && fileInput.files.length > 0) {
+          fd.append(docType, fileInput.files[0]);
         }
-      }
+      });
 
       try {
         const res = await fetch('/api/register/partner', {
@@ -251,10 +277,6 @@
       }
 
       btn.textContent = t('Submit Application'); btn.disabled = false;
-    });
-
-    document.getElementById('pr-role').addEventListener('change', (e) => {
-      document.getElementById('lbl-name').textContent = e.target.value === 'Sponsor' ? t('Company Name / Entity Name') : t('Manager Full Name');
     });
   </script>
 </body>

@@ -7,27 +7,28 @@
   <link rel="stylesheet" href="/css/style.css" />
   <script src="/js/i18n.js"></script>
   <style>
+    .doc-status-wrapper {
+      margin-bottom: 12px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.02);
+    }
+    .doc-status-wrapper.doc-approved {
+      border-color: rgba(16,185,129,.3);
+    }
+    .doc-status-wrapper.doc-rejected {
+      border-color: rgba(239,68,68,.3);
+    }
+    .doc-status-wrapper.doc-pending {
+      border-color: rgba(245,158,11,.3);
+    }
     .doc-status-card {
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 12px 14px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.02);
-    }
-    .doc-status-card.doc-approved {
-      border-color: rgba(16,185,129,.3);
-      background: rgba(16,185,129,.04);
-    }
-    .doc-status-card.doc-rejected {
-      border-color: rgba(239,68,68,.3);
-      background: rgba(239,68,68,.04);
-    }
-    .doc-status-card.doc-pending {
-      border-color: rgba(245,158,11,.3);
-      background: rgba(245,158,11,.04);
+      background: transparent;
     }
     .doc-status-info {
       display: flex;
@@ -46,19 +47,50 @@
     .badge-approved { background: rgba(16,185,129,.15); color: #10b981; }
     .badge-rejected-doc { background: rgba(239,68,68,.15); color: #ef4444; }
     .badge-pending-doc { background: rgba(245,158,11,.15); color: #f59e0b; }
+    
+    .doc-rejected-actions {
+      padding: 12px 16px;
+      background: rgba(239,68,68,.03);
+      border-top: 1px dashed rgba(239,68,68,.2);
+    }
     .doc-reject-reason {
-      font-size: 0.75rem;
+      font-size: 0.85rem;
       color: #ef4444;
-      margin-top: 4px;
-      padding-left: 32px;
+      background: rgba(239, 68, 68, 0.08);
+      border-left: 3px solid #ef4444;
+      padding: 10px 12px;
+      border-radius: 4px;
+      line-height: 1.5;
+      margin-bottom: 12px;
     }
-    .doc-reupload {
-      margin-top: 6px;
-      padding-left: 32px;
+    
+    .custom-file-upload {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px;
+      background: rgba(110,64,242,.05);
+      border: 1px dashed rgba(110,64,242,.4);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 100%;
     }
-    .doc-reupload input[type="file"] {
-      font-size: 0.8rem;
-      color: var(--text-muted);
+    .custom-file-upload:hover {
+      background: rgba(110,64,242,.1);
+      border-color: rgba(110,64,242,.6);
+    }
+    .custom-file-upload input[type="file"] {
+      display: none;
+    }
+    .upload-icon {
+      font-size: 1.1rem;
+    }
+    .upload-text {
+      font-size: 0.85rem;
+      color: #a78bfa;
+      font-weight: 500;
     }
   </style>
 </head>
@@ -67,30 +99,30 @@
     <div class="auth-bg-glow"></div>
     <div class="auth-card" style="text-align: center; max-width: 520px;">
       <div style="font-size: 3rem; margin-bottom: 16px;" id="main-icon">⏳</div>
-      <h2 style="margin: 0 0 16px 0; color: #fff;" id="main-heading">Application Under Review</h2>
+      <h2 style="margin: 0 0 16px 0; color: #fff;" id="main-heading"><script>document.write(t('Application Under Review'))</script></h2>
       <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 24px;" id="main-desc">
-        Your partner application has been received successfully. Our administration team is currently verifying the documents you uploaded.
+        <script>document.write(t('Your partner application has been received successfully. Our administration team is currently verifying the documents you uploaded.'))</script>
       </p>
       
       <div style="padding: 16px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 8px; margin-bottom: 24px;" id="status-box">
-        <h4 style="color: #f59e0b; margin: 0 0 4px 0; font-size: 0.85rem; text-transform: uppercase;">Current Status</h4>
-        <div style="font-size: 1.1rem; font-weight: 700; color: #fff;" id="status-display">PENDING</div>
+        <h4 style="color: #f59e0b; margin: 0 0 4px 0; font-size: 0.85rem; text-transform: uppercase;"><script>document.write(t('Current Status'))</script></h4>
+        <div style="font-size: 1.1rem; font-weight: 700; color: #fff;" id="status-display"><script>document.write(t('PENDING'))</script></div>
         <p style="color: #f59e0b; font-size: 0.8rem; margin: 8px 0 0 0;" id="notes-display"></p>
       </div>
 
       <!-- ── Document Status List ── -->
       <div id="docs-status-section" style="display:none; text-align:left; margin-bottom: 24px;">
-        <h4 style="color:#fff; font-size:0.9rem; margin-bottom:12px;">📄 Document Status</h4>
+        <h4 style="color:#fff; font-size:0.9rem; margin-bottom:12px;">📄 <script>document.write(t('Document Status'))</script></h4>
         <div id="docs-list"></div>
 
         <div id="resubmit-section" style="display:none; margin-top:16px;">
           <button onclick="resubmitDocuments()" id="btn-resubmit" class="btn btn-primary" style="width:100%; justify-content:center; padding:12px;">
-            📤 Resubmit Documents
+            📤 <script>document.write(t('Resubmit Documents'))</script>
           </button>
         </div>
       </div>
 
-      <button onclick="logout()" class="btn btn-ghost" style="width: 100%;">Sign Out</button>
+      <button onclick="logout()" class="btn btn-ghost" style="width: 100%;"><script>document.write(t('Sign Out'))</script></button>
     </div>
   </div>
 
@@ -114,26 +146,26 @@
         }
         else if (u.verification_status === 'rejected') {
           document.getElementById('main-icon').textContent = '🚫';
-          document.getElementById('main-heading').textContent = 'Application Rejected';
-          document.getElementById('main-desc').textContent = 'Unfortunately, your partner application has been rejected.';
+          document.getElementById('main-heading').textContent = t('Application Rejected');
+          document.getElementById('main-desc').textContent = t('Unfortunately, your partner application has been rejected.');
           const sd = document.getElementById('status-display');
-          sd.textContent = 'REJECTED';
+          sd.textContent = t('REJECTED');
           sd.style.color = '#ef4444';
           const box = document.getElementById('status-box');
           box.style.background = 'rgba(239, 68, 68, 0.1)';
           box.style.borderColor = 'rgba(239, 68, 68, 0.4)';
           box.querySelector('h4').style.color = '#ef4444';
           if (u.verification_notes) {
-            document.getElementById('notes-display').textContent = 'Reason: ' + u.verification_notes;
+            document.getElementById('notes-display').textContent = t('Reason: ') + u.verification_notes;
             document.getElementById('notes-display').style.color = '#ef4444';
           }
         }
         else if (u.verification_status === 'changes_requested') {
           document.getElementById('main-icon').textContent = '⚠️';
-          document.getElementById('main-heading').textContent = 'Action Required';
-          document.getElementById('main-desc').textContent = 'Some of your documents need to be revised. Please re-upload the rejected documents below.';
+          document.getElementById('main-heading').textContent = t('Action Required');
+          document.getElementById('main-desc').textContent = t('Some of your documents need to be revised. Please re-upload the rejected documents below.');
           const sd = document.getElementById('status-display');
-          sd.textContent = 'CHANGES REQUESTED';
+          sd.textContent = t('CHANGES REQUESTED');
           sd.style.color = '#f59e0b';
 
           // Show document status
@@ -152,7 +184,12 @@
       const list = document.getElementById('docs-list');
       let hasRejected = false;
 
-      list.innerHTML = DOC_TYPES.map(doc => {
+      // Filter docs based on role
+      const applicableDocs = u.role === 'Sponsor' 
+        ? DOC_TYPES.filter(d => ['doc_commercial_register', 'doc_tax_number'].includes(d.key))
+        : DOC_TYPES;
+
+      list.innerHTML = applicableDocs.map(doc => {
         const status = u[doc.key + '_status'] || 'pending';
         const note = u[doc.key + '_note'] || '';
         const isRejected = status === 'rejected';
@@ -163,15 +200,25 @@
         const statusIcon = status === 'approved' ? '✅' : status === 'rejected' ? '❌' : '⏳';
 
         return `
-          <div class="doc-status-card ${cardClass}">
-            <div class="doc-status-info">
-              <span class="doc-status-icon">${doc.icon}</span>
-              <span class="doc-status-label">${doc.label}</span>
+          <div class="doc-status-wrapper ${cardClass}">
+            <div class="doc-status-card">
+              <div class="doc-status-info">
+                <span class="doc-status-icon">${doc.icon}</span>
+                <span class="doc-status-label">${t(doc.label)}</span>
+              </div>
+              <span class="doc-status-badge ${badgeClass}">${statusIcon} ${t(status)}</span>
             </div>
-            <span class="doc-status-badge ${badgeClass}">${statusIcon} ${status}</span>
+            ${isRejected ? `
+              <div class="doc-rejected-actions">
+                ${note ? `<div class="doc-reject-reason"><strong>💬 ${t('Reason:')}</strong> ${note}</div>` : ''}
+                <label class="custom-file-upload">
+                  <input type="file" id="reupload-${doc.key}" accept=".pdf,.jpg,.jpeg,.png" onchange="updateFileName(this, '${doc.key}')" />
+                  <span class="upload-icon">📁</span>
+                  <span class="upload-text" id="fname-${doc.key}">${t('Click to select new file...')}</span>
+                </label>
+              </div>
+            ` : ''}
           </div>
-          ${isRejected && note ? `<div class="doc-reject-reason">💬 "${note}"</div>` : ''}
-          ${isRejected ? `<div class="doc-reupload"><input type="file" id="reupload-${doc.key}" accept=".pdf,.jpg,.jpeg,.png" /></div>` : ''}
         `;
       }).join('');
 
@@ -180,14 +227,31 @@
       }
     }
 
+    function updateFileName(input, docKey) {
+      const textSpan = document.getElementById('fname-' + docKey);
+      if (input.files && input.files.length > 0) {
+        textSpan.textContent = input.files[0].name;
+        textSpan.style.color = '#fff';
+      } else {
+        textSpan.textContent = t('Click to select new file...');
+        textSpan.style.color = '#a78bfa';
+      }
+    }
+
     async function resubmitDocuments() {
       const btn = document.getElementById('btn-resubmit');
-      btn.textContent = 'Submitting...'; btn.disabled = true;
+      btn.textContent = t('Submitting...'); btn.disabled = true;
 
       const formData = new FormData();
       let hasFiles = false;
+      const uStr = localStorage.getItem('user');
+      const user = uStr ? JSON.parse(uStr) : {};
 
-      for (const doc of DOC_TYPES) {
+      const applicableDocs = user.role === 'Sponsor' 
+        ? DOC_TYPES.filter(d => ['doc_commercial_register', 'doc_tax_number'].includes(d.key))
+        : DOC_TYPES;
+
+      for (const doc of applicableDocs) {
         const input = document.getElementById('reupload-' + doc.key);
         if (input && input.files.length > 0) {
           formData.append(doc.key, input.files[0]);
@@ -196,20 +260,20 @@
       }
 
       if (!hasFiles) {
-        showToast('Please select at least one document to re-upload.', 'error');
-        btn.textContent = '📤 Resubmit Documents'; btn.disabled = false;
+        showToast(t('Please select at least one document to re-upload.'), 'error');
+        btn.textContent = t('📤 Resubmit Documents'); btn.disabled = false;
         return;
       }
 
       const res = await api.postForm('/verifications/reupload', formData);
 
       if (res.ok) {
-        showToast('Documents submitted successfully!', 'success');
+        showToast(t('Documents submitted successfully!'), 'success');
         localStorage.setItem('user', JSON.stringify(res.data.user));
         setTimeout(() => window.location.reload(), 1000);
       } else {
-        showToast(res.data?.message || 'Error re-uploading documents.', 'error');
-        btn.textContent = '📤 Resubmit Documents'; btn.disabled = false;
+        showToast(res.data?.message || t('Error re-uploading documents.'), 'error');
+        btn.textContent = t('📤 Resubmit Documents'); btn.disabled = false;
       }
     }
 

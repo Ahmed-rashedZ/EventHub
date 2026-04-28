@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\VerificationController;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/login');
@@ -23,6 +24,9 @@ Route::middleware('web.auth')->group(function () {
     Route::put('/profile/security', [ProfileController::class, 'updateSecurity'])->name('profile.update.security');
     Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('profile.show');
     Route::view('/user-profile', 'user-profile');
+
+    // View own verification document inline (session auth)
+    Route::get('/my-document/{type}', [VerificationController::class, 'viewMyDocument'])->name('my.document.view');
 
     // Admin Routes
     Route::middleware('web.auth:Admin')->prefix('admin')->group(function () {

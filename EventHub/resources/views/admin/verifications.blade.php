@@ -62,9 +62,15 @@
       font-size: 0.75rem;
       border-radius: 6px;
     }
-    .doc-btn-approve { background: rgba(16,185,129,.15); color: #10b981; border: 1px solid rgba(16,185,129,.3); }
+    .doc-btn-approve { 
+      background: rgba(16,185,129,.15); color: #10b981; border: 1px solid rgba(16,185,129,.3);
+      padding: 6px 14px; font-size: 0.8rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; line-height: 1.2;
+    }
     .doc-btn-approve:hover, .doc-btn-approve.active { background: #10b981; color: #fff; }
-    .doc-btn-reject { background: rgba(239,68,68,.1); color: #ef4444; border: 1px solid rgba(239,68,68,.3); }
+    .doc-btn-reject { 
+      background: rgba(239,68,68,.1); color: #ef4444; border: 1px solid rgba(239,68,68,.3);
+      padding: 6px 14px; font-size: 0.8rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; line-height: 1.2;
+    }
     .doc-btn-reject:hover, .doc-btn-reject.active { background: #ef4444; color: #fff; }
     .doc-btn-download { background: rgba(110,64,242,.1); color: #a78bfa; border: 1px solid rgba(110,64,242,.2); }
     .doc-btn-download:hover { background: var(--primary); color: #fff; }
@@ -100,21 +106,35 @@
     /* ── Direct Reject Area ── */
     .direct-reject-area {
       display: none;
-      padding: 16px 20px;
-      border-top: 1px solid var(--border);
-      background: rgba(239, 68, 68, 0.03);
+      margin-top: 20px;
+      padding: 18px;
+      background: rgba(239, 68, 68, 0.04);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 12px;
+      animation: slideDown 0.3s ease forwards;
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     .direct-reject-area textarea {
       width: 100%;
-      background: rgba(239,68,68,.05);
-      border: 1px solid rgba(239,68,68,.25);
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(239,68,68,.3);
       border-radius: 8px;
       color: #fff;
-      padding: 10px 12px;
-      font-size: 0.85rem;
+      padding: 12px;
+      font-size: 0.9rem;
       resize: vertical;
-      min-height: 60px;
-      margin-bottom: 10px;
+      min-height: 80px;
+      margin-bottom: 16px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .direct-reject-area textarea:focus {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
     }
     .direct-reject-area textarea::placeholder { color: rgba(239,68,68,.4); }
   </style>
@@ -139,7 +159,7 @@
 
   <main class="main-content">
     <div class="topbar">
-      <div><h1 class="page-title">Verification Requests</h1><p class="page-subtitle">Review and approve partner applications</p></div>
+      <div><h1 class="page-title"><script>document.write(t('Verification Requests'))</script></h1><p class="page-subtitle"><script>document.write(t('Review and approve partner applications'))</script></p></div>
     </div>
 
     <div id="vf-list">
@@ -152,7 +172,7 @@
 <div class="modal-overlay" id="doc-modal">
   <div class="modal" style="max-width: 640px;">
     <div class="modal-header">
-      <h3 class="modal-title" id="doc-title">Document Review</h3>
+      <h3 class="modal-title" id="doc-title"><script>document.write(t('Document Review'))</script></h3>
       <button class="modal-close" onclick="closeDocModal()">✕</button>
     </div>
 
@@ -162,19 +182,21 @@
 
     <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center;">
       <div style="display:flex; gap: 8px;">
-        <button class="btn btn-primary" id="btn-submit-review" onclick="submitReview()">📤 Submit Review</button>
-        <button class="btn btn-danger" id="btn-direct-reject" onclick="toggleDirectReject()">🚫 Reject Entirely</button>
+        <button class="btn btn-primary" id="btn-submit-review" onclick="submitReview()">📤 <script>document.write(t('Submit Review'))</script></button>
+        <button class="btn btn-danger" id="btn-direct-reject" onclick="toggleDirectReject()"><script>document.write(t('🚫 Reject Entirely'))</script></button>
       </div>
-      <button class="btn btn-ghost" onclick="closeDocModal()">Close</button>
+      <button class="btn btn-ghost" onclick="closeDocModal()"><script>document.write(t('Close'))</script></button>
     </div>
 
     <!-- Direct Reject Area -->
     <div class="direct-reject-area" id="direct-reject-area">
-      <label class="form-label" style="color: #ef4444; font-size: 0.85rem;">🚫 Rejection Reason</label>
-      <textarea id="direct-reject-reason" placeholder="Enter the reason for rejecting this entire application..."></textarea>
-      <div style="display:flex; gap: 8px;">
-        <button class="btn btn-danger" style="flex:1;" onclick="confirmDirectReject()">Confirm Rejection</button>
-        <button class="btn btn-ghost" style="flex:1;" onclick="toggleDirectReject()">Cancel</button>
+      <label class="form-label" style="color: #ef4444; font-size: 0.85rem; font-weight: 700; display:flex; align-items:center; gap:6px; margin-bottom: 12px;">
+        <span style="font-size:1.1rem">🚫</span> <script>document.write(t('Rejection Reason'))</script>
+      </label>
+      <textarea id="direct-reject-reason"></textarea>
+      <div style="display:flex; gap: 8px; justify-content: flex-end;">
+        <button class="btn btn-ghost" onclick="toggleDirectReject()"><script>document.write(t('Cancel'))</script></button>
+        <button class="btn" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; border: none; font-weight: 600; box-shadow: 0 4px 12px rgba(239,68,68,0.2);" onclick="confirmDirectReject()"><script>document.write(t('Confirm Rejection'))</script></button>
       </div>
     </div>
   </div>
@@ -185,6 +207,9 @@
 <script src="/js/notifications.js"></script>
 <script src="/js/auth.js"></script>
 <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('direct-reject-reason').placeholder = t('Reason for rejecting this entire application...');
+  });
   let currentReq = null;
   const DOC_TYPES = [
     { key: 'doc_commercial_register',     icon: '📋', label: 'Commercial Register',     labelAr: 'السجل التجاري' },
@@ -213,7 +238,7 @@
       container.innerHTML = `
         <div class="empty-state" style="padding: 60px;">
           <div class="empty-icon">🎉</div>
-          <p>No pending verification requests.</p>
+          <p>${t('No pending verification requests.')}</p>
         </div>
       `;
       return;
@@ -222,20 +247,29 @@
     container.innerHTML = data.map(req => {
       const icon = req.role === 'Sponsor' ? '💼' : '🎭';
       const isResubmit = req.verification_status === 'changes_requested';
+      const isDocUpdate = req.verification_status === 'verified';
+      let badge = '';
+      if (isDocUpdate) {
+        badge = `<span style="font-size: 0.7rem; background:#3b82f6; color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px;">📄 ${t('Document Update')}</span>`;
+      } else if (isResubmit) {
+        badge = `<span style="font-size: 0.7rem; background:#0ea5e9; color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px;">${t('🔄 Resubmitted')}</span>`;
+      } else {
+        badge = `<span style="font-size: 0.7rem; background:#10b981; color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px;">${t('✨ New Request')}</span>`;
+      }
       return `
         <div class="vf-card">
           <div class="vf-info">
             <div class="vf-icon">${icon}</div>
             <div>
-              <div class="vf-name">${req.name} ${isResubmit ? '<span style="font-size: 0.7rem; background:#0ea5e9; color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px;">🔄 Resubmitted</span>' : '<span style="font-size: 0.7rem; background:#10b981; color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px;">✨ New Request</span>'}</div>
+              <div class="vf-name">${req.name} ${badge}</div>
               <div class="vf-email">${req.email}</div>
-              <div class="vf-role">${req.role}</div>
+              <div class="vf-role">${t(req.role)}</div>
             </div>
           </div>
           <div>
             <div class="vf-date">${fmtDateShort(req.created_at)}</div>
             <div class="vf-actions">
-              <button class="btn btn-ghost btn-sm" onclick='openDocModal(${JSON.stringify(req)})'>Review Application</button>
+              <button class="btn btn-ghost btn-sm" onclick='openDocModal(${JSON.stringify(req)})'>${isDocUpdate ? t('Review Update') : t('Review Application')}</button>
             </div>
           </div>
         </div>
@@ -246,12 +280,27 @@
   function openDocModal(req) {
     currentReq = req;
     docDecisions = {};
-    document.getElementById('doc-title').textContent = `Review: ${req.name}`;
+    const isDocUpdate = req.verification_status === 'verified';
+    document.getElementById('doc-title').textContent = (isDocUpdate ? t('Review Document Update') : t('Review Application')) + `: ${req.name}`;
     document.getElementById('direct-reject-area').style.display = 'none';
     document.getElementById('direct-reject-reason').value = '';
 
+    // Hide direct reject button for document updates (user is already verified)
+    document.getElementById('btn-direct-reject').style.display = isDocUpdate ? 'none' : 'inline-flex';
+
     const container = document.getElementById('doc-cards-container');
-    container.innerHTML = DOC_TYPES.map(doc => {
+    
+    // Filter docs based on role
+    let applicableDocs = req.role === 'Sponsor' 
+      ? DOC_TYPES.filter(d => ['doc_commercial_register', 'doc_tax_number'].includes(d.key))
+      : DOC_TYPES;
+
+    // For document updates, only show docs that have pending_update status
+    if (isDocUpdate) {
+      applicableDocs = applicableDocs.filter(d => req[d.key + '_status'] === 'pending_update');
+    }
+
+    container.innerHTML = applicableDocs.map(doc => {
       const hasFile = !!req[doc.key];
       const currentStatus = req[doc.key + '_status'] || 'pending';
       const currentNote = req[doc.key + '_note'] || '';
@@ -261,30 +310,35 @@
         docDecisions[doc.key] = { status: 'approved' };
       }
 
-      const statusBadgeClass = currentStatus === 'approved' ? 'doc-prev-approved' : currentStatus === 'rejected' ? 'doc-prev-rejected' : 'doc-prev-pending';
+      const statusBadgeClass = currentStatus === 'approved' ? 'doc-prev-approved' 
+        : currentStatus === 'rejected' ? 'doc-prev-rejected' 
+        : currentStatus === 'pending_update' ? 'doc-prev-pending'
+        : 'doc-prev-pending';
+
+      const statusLabel = currentStatus === 'pending_update' ? t('Pending Review') : t(currentStatus);
 
       return `
         <div class="doc-review-card" id="review-card-${doc.key}">
           <div class="doc-review-header">
             <div class="doc-review-title">
               <span class="doc-icon">${doc.icon}</span>
-              <span>${doc.label}</span>
-              <span class="doc-prev-status ${statusBadgeClass}">${currentStatus}</span>
+              <span>${t(doc.label)}</span>
+              <span class="doc-prev-status ${statusBadgeClass}">${statusLabel}</span>
             </div>
             <div class="doc-review-actions">
-              ${hasFile ? `<button class="btn doc-btn-download" onclick="downloadDoc('${req.id}', '${doc.key}')">⬇️ Download</button>` : '<span style="color:var(--text-muted); font-size:0.75rem;">No file</span>'}
+              ${hasFile ? `<button class="btn doc-btn-download" onclick="downloadDoc('${req.id}', '${doc.key}')">${t('⬇️ Download')}</button>` : `<span style="color:var(--text-muted); font-size:0.75rem;">${t('No file')}</span>`}
             </div>
           </div>
           
-          ${currentNote && currentStatus === 'rejected' ? `<div style="font-size:0.75rem; color:#ef4444; background:rgba(239,68,68,.06); padding:6px 10px; border-radius:6px; margin-bottom:8px;">Previous note: ${currentNote}</div>` : ''}
+          ${currentNote && currentStatus === 'rejected' ? `<div style="font-size:0.75rem; color:#ef4444; background:rgba(239,68,68,.06); padding:6px 10px; border-radius:6px; margin-bottom:8px;">${t('Previous note: ')}${currentNote}</div>` : ''}
 
           <div style="display:flex; gap:6px; margin-top:4px;">
-            <button class="btn doc-btn-approve" id="btn-approve-${doc.key}" onclick="setDocDecision('${doc.key}', 'approved')">✅ Accept</button>
-            <button class="btn doc-btn-reject" id="btn-reject-${doc.key}" onclick="setDocDecision('${doc.key}', 'rejected')">❌ Reject</button>
+            <button class="btn doc-btn-approve" id="btn-approve-${doc.key}" onclick="setDocDecision('${doc.key}', 'approved')">${t('✅ Accept')}</button>
+            <button class="btn doc-btn-reject" id="btn-reject-${doc.key}" onclick="setDocDecision('${doc.key}', 'rejected')">${t('❌ Reject')}</button>
           </div>
           
           <div class="doc-reject-note" id="note-area-${doc.key}">
-            <textarea id="note-${doc.key}" placeholder="Reason for rejecting this document...">${currentNote}</textarea>
+            <textarea id="note-${doc.key}" placeholder="${t('Reason for rejecting this document...')}">${currentNote}</textarea>
           </div>
         </div>
       `;
@@ -319,17 +373,27 @@
 
   async function submitReview() {
     if (!currentReq) return;
+    const isDocUpdate = currentReq.verification_status === 'verified';
 
-    // Validate: all docs must have a decision
-    for (const doc of DOC_TYPES) {
+    // Get applicable docs
+    let applicableDocs = currentReq.role === 'Sponsor' 
+      ? DOC_TYPES.filter(d => ['doc_commercial_register', 'doc_tax_number'].includes(d.key))
+      : DOC_TYPES;
+
+    // For document updates, only validate pending_update docs
+    if (isDocUpdate) {
+      applicableDocs = applicableDocs.filter(d => currentReq[d.key + '_status'] === 'pending_update');
+    }
+
+    for (const doc of applicableDocs) {
       if (!docDecisions[doc.key]) {
-        showToast(`Please review "${doc.label}" before submitting.`, 'error');
+        showToast(t('Please review "') + t(doc.label) + t('" before submitting.'), 'error');
         return;
       }
       if (docDecisions[doc.key].status === 'rejected') {
         const note = document.getElementById('note-' + doc.key).value.trim();
         if (!note) {
-          showToast(`Please provide a rejection reason for "${doc.label}".`, 'error');
+          showToast(t('Please provide a rejection reason for "') + t(doc.label) + '".', 'error');
           return;
         }
         docDecisions[doc.key].note = note;
@@ -342,14 +406,14 @@
     const res = await api.put(`/verifications/${currentReq.id}/review`, { documents: docDecisions });
 
     if (res.ok) {
-      showToast(res.data.message || 'Review submitted!', 'success');
+      showToast(res.data.message || t('Review submitted!'), 'success');
       closeDocModal();
       loadRequests();
     } else {
-      showToast(res.data?.message || 'Error submitting review', 'error');
+      showToast(res.data?.message || t('Error submitting review'), 'error');
     }
 
-    btn.textContent = '📤 Submit Review'; btn.disabled = false;
+    btn.textContent = t('📤 Submit Review'); btn.disabled = false;
   }
 
   function toggleDirectReject() {
@@ -361,19 +425,19 @@
     if (!currentReq) return;
     const notes = document.getElementById('direct-reject-reason').value.trim();
     if (!notes) {
-      showToast('Please provide a rejection reason.', 'error');
+      showToast(t('Please provide a rejection reason.'), 'error');
       return;
     }
 
-    if (!confirm('Are you sure you want to reject this entire application?')) return;
+    if (!confirm(t('Are you sure you want to reject this entire application?'))) return;
 
     const res = await api.put(`/verifications/${currentReq.id}/reject`, { notes });
     if (res.ok) {
-      showToast('Application rejected.', 'info');
+      showToast(t('Application rejected.'), 'info');
       closeDocModal();
       loadRequests();
     } else {
-      showToast('Error rejecting application.', 'error');
+      showToast(t('Error rejecting application.'), 'error');
     }
   }
 
@@ -385,7 +449,7 @@
   }
 
   async function downloadDoc(userId, docType) {
-    showToast('Downloading document...', 'info');
+    showToast(t('Downloading document...'), 'info');
     try {
       const res = await fetch(`/api/verifications/${userId}/document/${docType}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
@@ -400,9 +464,9 @@
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(urlObj);
-      showToast('Download complete', 'success');
+      showToast(t('Download complete'), 'success');
     } catch(e) {
-      showToast('Error downloading file', 'error');
+      showToast(t('Error downloading file'), 'error');
     }
   }
 </script>

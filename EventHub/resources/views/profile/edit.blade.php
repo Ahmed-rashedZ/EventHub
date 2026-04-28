@@ -212,6 +212,29 @@
                     </form>
                 </div>
 
+                @if(in_array($user->role, ['Event Manager', 'Sponsor']))
+                <div class="profile-card" style="margin-top: 2rem;">
+                    <h3 style="margin-top: 0; margin-bottom: 0.5rem;"><script>document.write(t('Verification Documents'))</script></h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                        <script>document.write(t('View and update your verification documents. Your account remains active while updates are reviewed.'))</script>
+                    </p>
+                    
+                    <div id="docs-loading" style="text-align: center; padding: 20px;">
+                        <div class="spinner" style="margin: auto;"></div>
+                    </div>
+
+                    <form id="verification-docs-form" style="display: none;">
+                        <div id="docs-grid" style="display: grid; grid-template-columns: 1fr; gap: 1rem;"></div>
+                        <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end;">
+                            <button type="button" class="btn btn-primary" id="btn-submit-docs" onclick="submitVerificationDocs()" style="display: none;">
+                                <script>document.write(t('Submit Updated Documents'))</script>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                @endif
+
+
 
             </div>
         </main>
@@ -355,6 +378,134 @@
         if (!hasInitializedLinks) {
             addSocialRow('', '');
         }
+
+        // Verification Docs Script
+        const DOC_ICONS = {
+            'doc_commercial_register': '📋',
+            'doc_tax_number': '🔢',
+            'doc_articles_of_association': '📝',
+            'doc_practice_license': '🏢',
+        };
+
+        async function loadMyDocuments() {
+            try {
+                const res = await apiFetch('/verifications/my-documents');
+                const docsLoading = document.getElementById('docs-loading');
+                const docsForm = document.getElementById('verification-docs-form');
+                const docsGrid = document.getElementById('docs-grid');
+
+                if (!res || !res.ok || !res.data || !res.data.documents) {
+                    if (docsLoading) docsLoading.innerHTML = '<p style="color:var(--text-muted);">' + t('Could not load documents.') + '</p>';
+                    return;
+                }
+
+                docsGrid.innerHTML = res.data.documents.map(doc => {
+                    const icon = DOC_ICONS[doc.key] || '📄';
+                    const statusMap = {
+                        'approved': { color: '#10b981', bg: 'rgba(16,185,129,0.1)', icon: '✅', label: t('Approved') },
+                        'rejected': { color: '#ef4444', bg: 'rgba(239,68,68,0.1)', icon: '❌', label: t('Rejected') },
+                        'pending_update': { color: '#3b82f6', bg: 'rgba(59,130,246,0.1)', icon: '🔄', label: t('Pending Review') },
+                        'pending': { color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', icon: '⏳', label: t('Pending') },
+                    };
+                    const s = statusMap[doc.status] || statusMap['pending'];
+                    const userId = {{ $user->id }};
+
+                    let noteHtml = '';
+                    if (doc.status === 'rejected' && doc.note) {
+                        noteHtml = `<p style="margin: 0.5rem 0 0; font-size: 0.8rem; color: #ef4444; background: rgba(239,68,68,0.05); padding: 6px 10px; border-radius: 6px;">💬 ${doc.note}</p>`;
+                    }
+
+                    return `
+                        <div style="padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius); display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; transition: border-color 0.2s;"
+                             onmouseover="this.style.borderColor='rgba(110,64,242,0.3)'" onmouseout="this.style.borderColor='var(--border)'">
+                            <div style="flex: 1; min-width: 200px;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                    <span style="font-size: 1.2rem;">${icon}</span>
+                                    <h4 style="margin: 0; font-size: 0.95rem;">${t(doc.label)}</h4>
+                                </div>
+                                <span style="font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; font-weight: 600; background: ${s.bg}; color: ${s.color};">
+                                    ${s.icon} ${s.label}
+                                </span>
+                                ${noteHtml}
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                ${doc.has_file ? `<button class="btn btn-ghost btn-sm" onclick="viewDocument(${userId}, '${doc.key}')">📄 ${t('View')}</button>` : ''}
+                                <label class="btn btn-secondary btn-sm" style="cursor: pointer; margin:0;">
+                                    📎 ${t('Upload New')}
+                                    <input type="file" name="${doc.key}" style="display: none;" accept=".pdf,.png,.jpg,.jpeg" onchange="updateDocFileName(this, '${doc.key}')">
+                                </label>
+                            </div>
+                            <div id="filename-${doc.key}" style="flex-basis: 100%; font-size: 0.8rem; color: var(--primary); display:none; margin-top: 0.5rem;"></div>
+                        </div>
+                    `;
+                }).join('');
+
+                if (docsLoading) docsLoading.style.display = 'none';
+                docsForm.style.display = 'block';
+            } catch (err) {
+                console.error('Error loading documents:', err);
+                const docsLoading = document.getElementById('docs-loading');
+                if (docsLoading) docsLoading.innerHTML = '<p style="color:var(--danger);">' + t('Error loading documents.') + '</p>';
+            }
+        }
+
+        function viewDocument(userId, docKey) {
+            // Open the document via the session-auth web route (no popup blocker issues)
+            window.open('/my-document/' + docKey, '_blank');
+        }
+
+        function updateDocFileName(input, docKey) {
+            const displayEl = document.getElementById('filename-' + docKey);
+            if (input.files && input.files[0]) {
+                displayEl.textContent = '📎 ' + t('Selected:') + ' ' + input.files[0].name;
+                displayEl.style.display = 'block';
+                document.getElementById('btn-submit-docs').style.display = 'inline-flex';
+            } else {
+                displayEl.style.display = 'none';
+            }
+        }
+
+        async function submitVerificationDocs() {
+            const form = document.getElementById('verification-docs-form');
+            const formData = new FormData(form);
+            const btn = document.getElementById('btn-submit-docs');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<span class="spinner" style="width:16px;height:16px;border-width:2px;border-color:#fff;border-top-color:transparent;"></span> ${t('Submitting...')}`;
+            btn.disabled = true;
+
+            const token = localStorage.getItem('token');
+            try {
+                // Use postForm to avoid Content-Type: application/json being set (breaks multipart)
+                const res = await fetch('/api/verifications/reupload', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json',
+                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                    }
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    showToast(data.message || t('Documents submitted for review.'), 'success');
+                    btn.style.display = 'none';
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                    setTimeout(() => loadMyDocuments(), 800);
+                } else {
+                    throw new Error(data.message || t('Error updating documents'));
+                }
+            } catch (err) {
+                showToast(err.message || t('Error updating documents'), 'error');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // Load documents on page load for partners
+        @if(in_array($user->role, ['Event Manager', 'Sponsor']))
+            loadMyDocuments();
+        @endif
     </script>
 </body>
 </html>
+

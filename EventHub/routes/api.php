@@ -91,4 +91,5 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // ── Resubmit (For Partners) ──
     Route::post('/verifications/reupload', [VerificationController::class, 'reuploadDocument']);
+    Route::get('/verifications/my-documents', [VerificationController::class, 'myDocuments']);
 });
