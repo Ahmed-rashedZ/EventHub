@@ -70,6 +70,32 @@
           <input id="v-capacity" type="number" class="form-control" placeholder="500" min="1" required/>
         </div>
       </div>
+
+      <!-- Period Settings -->
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:16px;margin-bottom:16px">
+        <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.35);margin-bottom:12px">⏰ Period Settings</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Morning Start</label>
+            <input id="v-morning-start" type="time" class="form-control" value="09:00" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Morning End</label>
+            <input id="v-morning-end" type="time" class="form-control" value="13:00" required/>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Evening Start</label>
+            <input id="v-evening-start" type="time" class="form-control" value="15:00" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Evening End</label>
+            <input id="v-evening-end" type="time" class="form-control" value="19:00" required/>
+          </div>
+        </div>
+      </div>
+
       <div class="form-group">
         <label class="form-label">Status</label>
         <select id="v-status" class="form-control">
@@ -115,9 +141,13 @@
     editingId = v ? v.id : null;
     document.getElementById('modal-title').textContent = v ? 'Edit Venue' : 'Add Venue';
     document.getElementById('v-name').value     = v ? v.name : '';
-    document.getElementById('v-location').value = v ? v.location : '';
+    document.getElementById('v-location').value = v ? (v.location || '') : '';
     document.getElementById('v-capacity').value = v ? v.capacity : '';
     document.getElementById('v-status').value   = v ? v.status : 'available';
+    document.getElementById('v-morning-start').value = v ? v.morning_start : '09:00';
+    document.getElementById('v-morning-end').value   = v ? v.morning_end : '13:00';
+    document.getElementById('v-evening-start').value = v ? v.evening_start : '15:00';
+    document.getElementById('v-evening-end').value   = v ? v.evening_end : '19:00';
     document.getElementById('venue-modal').classList.add('open');
   }
 
@@ -127,7 +157,16 @@
 
   document.getElementById('venue-form').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const body = { name: document.getElementById('v-name').value, location: document.getElementById('v-location').value, capacity: +document.getElementById('v-capacity').value, status: document.getElementById('v-status').value };
+    const body = { 
+      name: document.getElementById('v-name').value, 
+      location: document.getElementById('v-location').value, 
+      capacity: +document.getElementById('v-capacity').value, 
+      status: document.getElementById('v-status').value,
+      morning_start: document.getElementById('v-morning-start').value,
+      morning_end: document.getElementById('v-morning-end').value,
+      evening_start: document.getElementById('v-evening-start').value,
+      evening_end: document.getElementById('v-evening-end').value
+    };
     const res = editingId ? await api.put(`/venues/${editingId}`, body) : await api.post('/venues', body);
     if (res.ok) { showToast(editingId ? 'Venue updated!' : 'Venue added!', 'success'); closeModal(); loadVenues(); }
     else showToast(res.data?.message || 'Error', 'error');

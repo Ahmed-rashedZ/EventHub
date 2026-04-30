@@ -107,150 +107,135 @@
         <button class="modal-close" onclick="closeModal()">✕</button>
       </div>
       <form id="event-form">
-        <!-- Section 1: Basic Information -->
-        <div class="form-section">
-          <div class="form-section-title"><span>📝</span> Basic Information</div>
-          <div class="form-group">
-            <label class="form-label">Event Title</label>
-            <input id="e-title" type="text" class="form-control" placeholder="e.g. Tech Summit 2026" required />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Description</label>
-            <textarea id="e-desc" class="form-control" placeholder="Briefly describe your event…" required rows="3"></textarea>
-          </div>
+        <div class="form-group">
+          <label class="form-label">Event Title</label>
+          <input id="e-title" type="text" class="form-control" placeholder="Tech Summit 2026" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea id="e-desc" class="form-control" placeholder="Describe your event…" required rows="3"></textarea>
+        </div>
+        <div class="form-grid">
           <div class="form-group">
             <label class="form-label">Event Type</label>
             <select id="e-type" class="form-control" required>
-              <option value="مؤتمر"><script>document.write(t('Conference'))</script></option>
-              <option value="ندوة"><script>document.write(t('Seminar'))</script></option>
-              <option value="ورشة عمل"><script>document.write(t('Workshop'))</script></option>
-              <option value="دورة تدريبية"><script>document.write(t('Training Course'))</script></option>
-              <option value="ترفيه"><script>document.write(t('Entertainment'))</script></option>
-              <option value="ملتقى علمي"><script>document.write(t('Scientific Forum'))</script></option>
-              <option value="رياضة"><script>document.write(t('Sports'))</script></option>
-              <option value="تقنية"><script>document.write(t('Technology'))</script></option>
-              <option value="اجتماعية"><script>document.write(t('Social'))</script></option>
+              <option value="مؤتمر"
+                title="Business Conference&#10;Tech Conference&#10;Medical Conference&#10;Academic Conference&#10;Startup Conference">
+                <script>document.write(t('Conference'))</script>
+              </option>
+              <option value="ندوة"
+                title="Educational Seminar&#10;Scientific Seminar&#10;Cultural Seminar&#10;Financial Seminar&#10;Management Seminar">
+                <script>document.write(t('Seminar'))</script>
+              </option>
+              <option value="ورشة عمل"
+                title="Programming Workshop&#10;Design Workshop&#10;Writing Workshop&#10;Art Workshop&#10;Strategy Workshop">
+                <script>document.write(t('Workshop'))</script>
+              </option>
+              <option value="دورة تدريبية"
+                title="Language Course&#10;Leadership Course&#10;Marketing Course&#10;HR Course&#10;IT Course">
+                <script>document.write(t('Training Course'))</script>
+              </option>
+              <option value="ترفيه"
+                title="Music Concerts&#10;Festivals&#10;Stand-up Comedy&#10;Magic Shows&#10;Gaming Events">
+                <script>document.write(t('Entertainment'))</script>
+              </option>
+              <option value="ملتقى علمي"
+                title="Research Forum&#10;Physics Forum&#10;Medical Forum&#10;Engineering Forum&#10;AI Forum">
+                <script>document.write(t('Scientific Forum'))</script>
+              </option>
+              <option value="رياضة"
+                title="Football Tournaments&#10;Marathons&#10;E-Sports&#10;Yoga Classes&#10;Martial Arts">
+                <script>document.write(t('Sports'))</script>
+              </option>
+              <option value="تقنية"
+                title="Hackathons&#10;Tech Expos&#10;Cloud Computing&#10;Cybersecurity&#10;Developer Meetups">
+                <script>document.write(t('Technology'))</script>
+              </option>
+              <option value="اجتماعية"
+                title="Networking Events&#10;Charity Events&#10;Community Gatherings&#10;Alumni Meetings&#10;Gala Dinners">
+                <script>document.write(t('Social'))</script>
+              </option>
             </select>
           </div>
-
-          <div class="form-group" style="margin-top: 20px;">
-            <label class="form-label" style="margin-bottom: 12px; display: block;">Location Type</label>
-            <div class="location-cards">
-              <label class="loc-card loc-internal">
+          <div class="form-group">
+            <label class="form-label">Location Type</label>
+            <div class="period-cards">
+              <label class="period-card">
                 <input type="radio" name="location_type" value="internal" onchange="toggleLocationFields()" checked>
-                <div class="loc-card-content">
-                  <div class="loc-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
-                      <path d="M9 22v-4h6v4"></path>
-                      <path d="M8 6h.01"></path>
-                      <path d="M16 6h.01"></path>
-                      <path d="M12 6h.01"></path>
-                      <path d="M12 10h.01"></path>
-                      <path d="M12 14h.01"></path>
-                      <path d="M16 10h.01"></path>
-                      <path d="M16 14h.01"></path>
-                      <path d="M8 10h.01"></path>
-                      <path d="M8 14h.01"></path>
-                    </svg>
-                  </div>
-                  <div class="loc-details">
-                    <div class="loc-title">داخل معرض طرابلس</div>
-                    <div class="loc-desc">قاعة مجهزة ومسجلة مسبقاً داخل أرض المعرض.</div>
-                  </div>
-                  <div class="loc-radio"><div class="loc-radio-inner"></div></div>
+                <div class="period-card-content" style="justify-content: center;">
+                  <span class="period-title" style="margin: 0;">داخل معرض طرابلس (Internal Hall)</span>
                 </div>
               </label>
-              
-              <label class="loc-card loc-external">
+              <label class="period-card">
                 <input type="radio" name="location_type" value="external" onchange="toggleLocationFields()">
-                <div class="loc-card-content">
-                  <div class="loc-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                      <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
-                  </div>
-                  <div class="loc-details">
-                    <div class="loc-title">قاعة خارجية</div>
-                    <div class="loc-desc">قاعة فندق أو مكان مستقل من اختيارك.</div>
-                  </div>
-                  <div class="loc-radio"><div class="loc-radio-inner"></div></div>
+                <div class="period-card-content" style="justify-content: center;">
+                  <span class="period-title" style="margin: 0;">قاعة خارجية (External Hall)</span>
                 </div>
               </label>
             </div>
           </div>
         </div>
 
-        <!-- Section 2: Date & Location -->
-        <div class="form-section">
-          <div class="form-section-title"><span>📅</span> Date & Location Details</div>
-          
-          <div id="internal-fields">
-            <div class="form-group">
-              <label class="form-label">Select Hall</label>
-              <select id="e-venue" class="form-control" onchange="updatePeriodTimes()" required>
-                <option value="">Loading halls…</option>
-              </select>
-            </div>
-            <div class="form-grid">
-              <div class="form-group">
-                <label class="form-label">Booking Date</label>
-                <input id="e-booking-date" type="date" class="form-control" required />
-              </div>
-              <div class="form-group">
-                <label class="form-label">Period</label>
-                <select id="e-period" class="form-control" onchange="updatePeriodTimes()" required>
-                  <option value="morning">Morning Period ☀</option>
-                  <option value="evening">Evening Period 🌙</option>
-                  <option value="full_day">Full Day 🗓️</option>
-                </select>
-                <small id="selected-period-time" style="color:var(--text-muted);font-size:12px;margin-top:6px;display:block">—</small>
-              </div>
-            </div>
+        <div id="internal-fields">
+          <div class="form-group">
+            <label class="form-label">Select Hall</label>
+            <select id="e-venue" class="form-control" onchange="updatePeriodTimes()" required>
+              <option value="">Loading halls…</option>
+            </select>
           </div>
-
-          <div id="external-fields" style="display: none;">
-            <div class="form-grid">
-              <div class="form-group">
-                <label class="form-label">External Hall Name</label>
-                <input id="e-ext-name" type="text" class="form-control" placeholder="e.g., Corinthia Hotel Hall" />
-              </div>
-              <div class="form-group">
-                <label class="form-label">Google Maps Link</label>
-                <input id="e-ext-location" type="url" class="form-control" placeholder="https://maps.google.com/..." />
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Proof of Booking (PDF/Image)</label>
-              <input id="e-booking-proof" type="file" accept=".pdf,image/*" class="form-control" style="padding: 7px 10px;" />
-              <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block">Required. Upload official confirmation of the external booking.</small>
-            </div>
-            <div class="form-grid">
-              <div class="form-group">
-                <label class="form-label">Start Date & Time</label>
-                <input id="e-start" type="datetime-local" class="form-control" />
-              </div>
-              <div class="form-group">
-                <label class="form-label">End Date & Time</label>
-                <input id="e-end" type="datetime-local" class="form-control" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Section 3: Additional Settings -->
-        <div class="form-section" style="margin-bottom: 0;">
-          <div class="form-section-title"><span>⚙️</span> Additional Settings</div>
           <div class="form-grid">
             <div class="form-group">
-              <label class="form-label">Capacity</label>
-              <input id="e-capacity" type="number" class="form-control" placeholder="200" min="1" required />
+              <label class="form-label">Booking Date</label>
+              <input id="e-booking-date" type="date" class="form-control" required />
             </div>
             <div class="form-group">
-              <label class="form-label">Event Banner Image</label>
-              <input id="e-image" type="file" accept="image/*" class="form-control" style="padding: 7px 10px;" />
+              <label class="form-label">Period</label>
+              <select id="e-period" class="form-control" onchange="updatePeriodTimes()" required>
+                <option value="morning">Morning Period ☀</option>
+                <option value="evening">Evening Period 🌙</option>
+                <option value="full_day">Full Day 🗓️</option>
+              </select>
+              <small id="selected-period-time" style="color:var(--text-muted);font-size:12px;margin-top:6px;display:block">—</small>
             </div>
+          </div>
+        </div>
+
+        <div id="external-fields" style="display: none;">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">External Hall Name</label>
+              <input id="e-ext-name" type="text" class="form-control" placeholder="e.g., Corinthia Hotel Hall" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Google Maps Link</label>
+              <input id="e-ext-location" type="url" class="form-control" placeholder="https://maps.google.com/..." />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Proof of Booking (PDF/Image)</label>
+            <input id="e-booking-proof" type="file" accept=".pdf,image/*" class="form-control" style="padding: 7px 10px;" />
+            <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block">Required. Upload official confirmation of the external booking.</small>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Start Date & Time</label>
+              <input id="e-start" type="datetime-local" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">End Date & Time</label>
+              <input id="e-end" type="datetime-local" class="form-control" />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Capacity</label>
+            <input id="e-capacity" type="number" class="form-control" placeholder="200" min="1" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Event Banner Image</label>
+            <input id="e-image" type="file" accept="image/*" class="form-control" style="padding: 7px 10px;" />
           </div>
         </div>
         <div class="modal-footer"
@@ -698,123 +683,6 @@
   </div>
 
   <style>
-    /* ── Form Sections ───────────────────────────── */
-    .form-section {
-      background: rgba(255,255,255,0.015);
-      border: 1px solid rgba(255,255,255,0.04);
-      border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 24px;
-    }
-    .form-section-title {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--primary);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    /* ── Location Cards ───────────────────────────── */
-    .location-cards {
-      display: flex;
-      gap: 12px;
-    }
-    .loc-card {
-      flex: 1;
-      cursor: pointer;
-    }
-    .loc-card input {
-      display: none;
-    }
-    .loc-card-content {
-      display: flex;
-      align-items: center;
-      padding: 12px 14px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.015);
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      height: 100%;
-    }
-    .loc-icon {
-      font-size: 22px;
-      margin-right: 14px;
-      background: rgba(255,255,255,0.05);
-      padding: 8px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-    }
-    .loc-details {
-      flex: 1;
-    }
-    .loc-title {
-      font-weight: 700;
-      color: #fff;
-      font-size: 0.9rem;
-      margin-bottom: 2px;
-    }
-    .loc-desc {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      line-height: 1.3;
-    }
-    .loc-radio {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-left: 12px;
-    }
-    .loc-radio-inner {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: transparent;
-      transition: all 0.2s;
-    }
-    .loc-card:hover .loc-card-content {
-      background: rgba(255,255,255,0.04);
-      border-color: rgba(255,255,255,0.15);
-    }
-    
-    /* Internal Theme */
-    .loc-internal .loc-icon {
-      background: color-mix(in srgb, var(--primary) 15%, transparent);
-      text-shadow: 0 0 10px rgba(110,64,242,0.4);
-    }
-    .loc-internal input:checked + .loc-card-content {
-      border-color: var(--primary);
-      background: color-mix(in srgb, var(--primary) 6%, transparent);
-      box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 10%, transparent);
-    }
-    .loc-internal input:checked + .loc-card-content .loc-radio { border-color: var(--primary); }
-    .loc-internal input:checked + .loc-card-content .loc-radio-inner { background: var(--primary); }
-
-    /* External Theme */
-    .loc-external .loc-icon {
-      background: color-mix(in srgb, #22d3ee 15%, transparent);
-      text-shadow: 0 0 10px rgba(34,211,238,0.4);
-    }
-    .loc-external input:checked + .loc-card-content {
-      border-color: #22d3ee;
-      background: color-mix(in srgb, #22d3ee 6%, transparent);
-      box-shadow: 0 4px 12px color-mix(in srgb, #22d3ee 10%, transparent);
-    }
-    .loc-external input:checked + .loc-card-content .loc-radio { border-color: #22d3ee; }
-    .loc-external input:checked + .loc-card-content .loc-radio-inner { background: #22d3ee; }
-    
-    /* ── Period Cards ───────────────────────────── */
-    
     /* ── Period Cards ───────────────────────────── */
     .period-cards {
       display: flex;

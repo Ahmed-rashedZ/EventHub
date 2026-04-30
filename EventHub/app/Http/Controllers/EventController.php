@@ -83,38 +83,101 @@ class EventController extends Controller
         }
 
         $request->validate([
-            'title'       => 'required|string|max:255',
-            'description' => 'required|string',
-            'event_type'  => 'required|string|in:مؤتمر,ندوة,ورشة عمل,دورة تدريبية,ترفيه,ملتقى علمي,رياضة,تقنية,اجتماعية',
-            'venue_id'    => 'required|exists:venues,id',
-            'start_time'  => 'required|date|after:now',
-            'end_time'    => 'required|date|after:start_time',
-            'capacity'    => 'required|integer|min:1',
-            'image'       => 'nullable|image|max:2048',
+            'title'         => 'required|string|max:255',
+            'description'   => 'required|string',
+            'event_type'    => 'required|string|in:مؤتمر,ندوة,ورشة عمل,دورة تدريبية,ترفيه,ملتقى علمي,رياضة,تقنية,اجتماعية,معرض',
+            'location_type' => 'required|in:internal,external',
+            'capacity'      => 'required|integer|min:1',
+            'image'         => 'nullable|image|max:2048',
         ]);
 
-        $venue = \App\Models\Venue::find($request->venue_id);
-        if ($venue && $request->capacity > $venue->capacity) {
-            return response()->json([
-                'message' => "Capacity cannot exceed the venue's total capacity of {$venue->capacity}.",
-                'errors' => ['capacity' => ["Maximum allowed capacity is {$venue->capacity}."]]
-            ], 422);
-        }
+        if ($request->location_type === 'internal') {
+            $request->validate([
+                'venue_id'     => 'required|exists:venues,id',
+                'booking_date' => 'required|date|after_or_equal:today',
+                'period'       => 'required|in:morning,evening,full_day',
+            ]);
 
-        // Venue overlap conflict check
-        $overlapping = Event::where('venue_id', $request->venue_id)
-            ->whereIn('status', ['pending', 'approved'])
-            ->where(function ($query) use ($request) {
-                // Formula: existing start < new end AND existing end > new start
-                $query->where('start_time', '<', $request->end_time)
-                      ->where('end_time', '>', $request->start_time);
-            })->exists();
+            $venue = \App\Models\Venue::find($request->venue_id);
+            if ($venue && $request->capacity > $venue->capacity) {
+                return response()->json([
+                    'message' => "Capacity cannot exceed the venue's total capacity of {$venue->capacity}.",
+                    'errors' => ['capacity' => ["Maximum allowed capacity is {$venue->capacity}."]]
+                ], 422);
+            }
 
-        if ($overlapping) {
-            return response()->json([
-                'message' => 'The selected venue is already booked or requested for another event during this time period.',
-                'errors' => ['venue_id' => ['Venue is unavailable during this time period.']]
-            ], 422);
+            if ($request->period === 'morning') {
+                $start_time = \Carbon\Carbon::parse("{$request->booking_date} {$venue->morning_start}");
+                $end_time   = \Carbon\Carbon::parse("{$request->booking_date} {$venue->morning_end}");
+            } elseif ($request->period === 'evening') {
+                $start_time = \Carbon\Carbon::parse("{$request->booking_date} {$venue->evening_start}");
+                $end_time   = \Carbon\Carbon::parse("{$request->booking_date} {$venue->evening_end}");
+            } else {
+                $start_time = \Carbon\Carbon::parse("{$request->booking_date} {$venue->morning_start}");
+                $end_time   = \Carbon\Carbon::parse("{$request->booking_date} {$venue->evening_end}");
+            }
+
+            // Venue overlap conflict check
+            $overlapping = Event::where('venue_id', $request->venue_id)
+                ->whereIn('status', ['pending', 'approved'])
+                ->where('start_time', '<', $end_time)
+                ->where('end_time', '>', $start_time)
+                ->exists();
+
+            if ($overlapping) {
+                return response()->json([
+                    'message' => 'The selected venue is already booked or requested for another event during this time period.',
+                    'errors' => ['venue_id' => ['Venue is unavailable during this time period.']]
+                ], 422);
+            }
+
+            $eventData = [
+                'venue_id'     => $request->venue_id,
+                'booking_date' => $request->booking_date,
+                'period'       => $request->period,
+                'start_time'   => $start_time,
+                'end_time'     => $end_time,
+                'external_venue_name' => null,
+                'external_venue_location' => null,
+                'booking_proof_path' => null,
+            ];
+
+        } else {
+            // External Venue
+            $request->validate([
+                'external_venue_name'     => 'required|string|max:255',
+                'external_venue_location' => 'nullable|url|max:500',
+                'booking_proof'           => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+                'start_time'              => 'required|date|after:now',
+                'end_time'                => 'required|date|after:start_time',
+            ]);
+
+            // External venue overlap conflict check
+            $overlapping = Event::where('external_venue_name', $request->external_venue_name)
+                ->whereIn('status', ['pending', 'approved'])
+                ->where('start_time', '<', $request->end_time)
+                ->where('end_time', '>', $request->start_time)
+                ->exists();
+
+            if ($overlapping) {
+                return response()->json([
+                    'message' => 'This external hall is already booked or requested for another event during this time period.',
+                    'errors' => ['external_venue_name' => ['External hall is unavailable during this time period.']]
+                ], 422);
+            }
+
+            $proofPath = $request->file('booking_proof')->store('proofs', 'public');
+
+            $eventData = [
+                'venue_id'     => null,
+                'booking_date' => null,
+                'period'       => null,
+                'external_venue_name'     => $request->external_venue_name,
+                'external_venue_location' => $request->external_venue_location,
+                'booking_proof_path'      => $proofPath,
+                'start_time'   => $request->start_time,
+                'end_time'     => $request->end_time,
+            ];
         }
 
         $imagePath = null;
@@ -122,18 +185,17 @@ class EventController extends Controller
             $imagePath = $request->file('image')->store('events', 'public');
         }
 
-        $event = Event::create([
+        $eventData = array_merge($eventData, [
             'title'       => $request->title,
             'description' => $request->description,
             'event_type'  => $request->event_type,
-            'venue_id'    => $request->venue_id,
-            'start_time'  => $request->start_time,
-            'end_time'    => $request->end_time,
             'capacity'    => $request->capacity,
             'status'      => 'pending',
             'created_by'  => $request->user()->id,
             'image'       => $imagePath,
         ]);
+
+        $event = Event::create($eventData);
 
         // ── Notify all Admins about new pending event ──
         $admins = User::where('role', 'Admin')->get();

@@ -22,9 +22,13 @@ class VenueController extends Controller
         $this->requireRole($request, 'Admin');
 
         $request->validate([
-            'name'     => 'required|string|max:255',
-            'location' => 'required|url|max:500',
-            'capacity' => 'required|integer|min:1',
+            'name'          => 'required|string|max:255',
+            'location'      => 'required|url|max:500',
+            'capacity'      => 'required|integer|min:1',
+            'morning_start' => 'required|date_format:H:i',
+            'morning_end'   => 'required|date_format:H:i|after:morning_start',
+            'evening_start' => 'required|date_format:H:i|after:morning_end',
+            'evening_end'   => 'required|date_format:H:i|after:evening_start',
         ]);
 
         // Unique name check
@@ -32,7 +36,7 @@ class VenueController extends Controller
             return response()->json(['message' => 'Venue name already exists'], 422);
         }
 
-        $venue = Venue::create($request->only('name', 'location', 'capacity', 'status'));
+        $venue = Venue::create($request->only('name', 'location', 'capacity', 'status', 'morning_start', 'morning_end', 'evening_start', 'evening_end'));
         return response()->json($venue, 201);
     }
 
@@ -40,8 +44,15 @@ class VenueController extends Controller
     {
         $this->requireRole($request, 'Admin');
 
+        $request->validate([
+            'morning_start' => 'sometimes|date_format:H:i',
+            'morning_end'   => 'sometimes|date_format:H:i|after:morning_start',
+            'evening_start' => 'sometimes|date_format:H:i|after:morning_end',
+            'evening_end'   => 'sometimes|date_format:H:i|after:evening_start',
+        ]);
+
         $venue = Venue::findOrFail($id);
-        $venue->update($request->only('name', 'location', 'capacity', 'status'));
+        $venue->update($request->only('name', 'location', 'capacity', 'status', 'morning_start', 'morning_end', 'evening_start', 'evening_end'));
         return response()->json($venue);
     }
 

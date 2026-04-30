@@ -165,7 +165,7 @@
       <tr>
         <td style="color:var(--text-muted)">${i + 1}</td>
         <td><div style="font-weight:600">${ev.title}</div></td>
-        <td style="color:var(--text-muted)">${ev.venue?.name || '—'}</td>
+        <td style="color:var(--text-muted)">${ev.venue_id ? (ev.venue?.name || '—') : (ev.external_venue_name ? ev.external_venue_name + ' (External)' : '—')}</td>
         <td style="color:var(--text-muted)">${ev.creator?.name || '—'}</td>
         <td style="color:var(--text-muted);white-space:nowrap">${fmtDateShort(ev.start_time)}</td>
         <td style="color:var(--text-muted)">${ev.capacity}</td>
@@ -298,19 +298,24 @@
           <div class="ed-info-grid">
             <div class="ed-info-card ed-info-accent2">
               <div class="ed-info-icon">🏛️</div>
-              <div><div class="ed-info-label">Venue</div><div class="ed-info-value">${ev.venue?.name || '—'}</div></div>
+              <div><div class="ed-info-label">Venue</div><div class="ed-info-value">${ev.venue_id ? (ev.venue?.name || '—') : (ev.external_venue_name || '—')}</div></div>
             </div>
             <div class="ed-info-card ed-info-accent2">
               <div class="ed-info-icon">📍</div>
-              <div><div class="ed-info-label">Location</div><div class="ed-info-value">${ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` : '—'}</div></div>
+              <div><div class="ed-info-label">Location</div><div class="ed-info-value">
+                ${ev.venue_id && ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` 
+                : (!ev.venue_id && ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` : '—')}
+              </div></div>
             </div>
+            ${!ev.venue_id && ev.booking_proof_path ? `
+            <div class="ed-info-card ed-info-accent2" style="grid-column: 1 / -1; background:rgba(34,211,238,0.05); border-color:rgba(34,211,238,0.2);">
+              <div class="ed-info-icon">📎</div>
+              <div><div class="ed-info-label" style="color:#22d3ee">Booking Proof</div><div class="ed-info-value"><a href="/storage/${ev.booking_proof_path}" target="_blank" style="color:#22d3ee;text-decoration:underline;">View Document ↗</a></div></div>
+            </div>
+            ` : ''}
             <div class="ed-info-card ed-info-accent">
               <div class="ed-info-icon">🕐</div>
               <div><div class="ed-info-label">Start</div><div class="ed-info-value">${fmtDate(ev.start_time)}</div></div>
-            </div>
-            <div class="ed-info-card ed-info-accent">
-              <div class="ed-info-icon">🕔</div>
-              <div><div class="ed-info-label">End</div><div class="ed-info-value">${fmtDate(ev.end_time)}</div></div>
             </div>
             <div class="ed-info-card ed-info-accent">
               <div class="ed-info-icon">🕔</div>

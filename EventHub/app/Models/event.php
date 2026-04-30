@@ -13,16 +13,20 @@ class Event extends Model
         'title',
         'description',
         'event_type',
-        'location',
         'venue_id',
-        'created_by',
+        'external_venue_name',
+        'external_venue_location',
+        'booking_proof_path',
+        'period',
+        'booking_date',
         'start_time',
         'end_time',
         'capacity',
-        'status',
-        'is_sponsorship_open',
-        'rejection_reason',
         'image',
+        'status',
+        'rejection_reason',
+        'is_sponsorship_open',
+        'created_by',
     ];
 
     protected $appends = [
@@ -35,6 +39,11 @@ class Event extends Model
         'end_time' => 'datetime',
         'is_sponsorship_open' => 'boolean',
     ];
+
+    protected function serializeDate(\DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
+    }
 
     public function venue()
     {
