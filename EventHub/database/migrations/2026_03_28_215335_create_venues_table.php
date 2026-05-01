@@ -10,16 +10,23 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up()
-{
-    Schema::create('venues', function (Blueprint $table) {
-        $table->id();
-        $table->string('name');
-        $table->string('location');
-        $table->integer('capacity');
-        $table->enum('status', ['available', 'maintenance'])->default('available');
-        $table->timestamps();
-    });
-}
+    {
+        Schema::create('venues', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('location');
+            $table->integer('capacity');
+
+            // ── Operating Periods ────────────────────────────────────────
+            $table->string('morning_start', 5)->default('09:00');
+            $table->string('morning_end', 5)->default('13:00');
+            $table->string('evening_start', 5)->default('15:00');
+            $table->string('evening_end', 5)->default('19:00');
+
+            $table->enum('status', ['available', 'maintenance'])->default('available');
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.

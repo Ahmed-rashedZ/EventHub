@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Event-sponsor pivot — sponsor_id references users.id directly.
+     * Any user with role "Sponsor" can be linked to an event.
      */
     public function up(): void
     {
@@ -18,30 +19,27 @@ return new class extends Migration
                   ->constrained('events')
                   ->onDelete('cascade');
 
+            // References users.id — the sponsor IS a user
             $table->foreignId('sponsor_id')
-                  ->constrained('sponsors')
+                  ->constrained('users')
                   ->onDelete('cascade');
 
-            // Sponsor tier — drives ticket branding logic:
+            // Tier drives ticket branding (nullable for unranked sponsors):
             //   diamond → logo alongside event logo
-            //   gold    → "Sponsored by"
+            //   gold    → "Sponsored by" + logo
             //   silver  → "Supported by"
             //   bronze  → "Special thanks to"
-            $table->enum('tier', ['diamond', 'gold', 'silver', 'bronze']);
+            //   null    → unranked (accepted but not yet classified)
+            $table->string('tier', 10)->nullable();
 
             $table->decimal('contribution_amount', 10, 2)->nullable();
 
             $table->timestamps();
 
-            // A sponsor can only appear once per event (but can have different tiers
-            // across different events)
+            // One sponsor per event (different tiers across different events is fine)
             $table->unique(['event_id', 'sponsor_id']);
-        });
 
-        // Composite index for efficient per-event tier lookups
-        // (unique constraint above already creates an index, but we add
-        //  an explicit one on sponsor_id alone for reverse lookups)
-        Schema::table('event_sponsor', function (Blueprint $table) {
+            // Index for reverse lookups: all events a sponsor is in
             $table->index('sponsor_id');
         });
     }

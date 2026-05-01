@@ -60,6 +60,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/venues/{id}',    [VenueController::class, 'update']);
     Route::delete('/venues/{id}', [VenueController::class, 'destroy']);
 
+    // ── Venue Maintenance (Admin) ──
+    Route::get('/venues/{id}/maintenance',              [VenueController::class, 'getMaintenancePeriods']);
+    Route::post('/venues/{id}/maintenance',             [VenueController::class, 'addMaintenancePeriod']);
+    Route::delete('/venues/{id}/maintenance/{periodId}', [VenueController::class, 'deleteMaintenancePeriod']);
+
     // ── Tickets ──
     Route::post('/tickets',     [TicketController::class, 'store']);
     Route::get('/my-tickets',   [TicketController::class, 'myTickets']);

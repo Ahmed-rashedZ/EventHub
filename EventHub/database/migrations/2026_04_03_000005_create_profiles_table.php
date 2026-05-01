@@ -29,22 +29,14 @@ return new class extends Migration
             // ── Basic Info ──────────────────────────────────────────────────
             $table->string('logo')->nullable();           // file path or URL
             $table->text('bio')->nullable();              // "About me / About us"
-            $table->string('phone')->nullable();
-            $table->string('contact_email')->nullable();
-            $table->string('website')->nullable();
 
             // ── Company / Sponsor Info ───────────────────────────────────────
             $table->string('company_name')->nullable();
             $table->text('company_description')->nullable();
 
-            // ── Social Media ────────────────────────────────────────────────
-            $table->string('facebook')->nullable();
-            $table->string('instagram')->nullable();
-            $table->string('linkedin')->nullable();
-
             // ── Admin Workflow ───────────────────────────────────────────────
-            // Pre-built for future admin approval of sponsor profiles
             $table->boolean('is_approved')->default(false);
+            $table->boolean('is_available')->default(true);
 
             $table->timestamps();
 

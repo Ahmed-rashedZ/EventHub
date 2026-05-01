@@ -15,9 +15,54 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('contact_email')->nullable();
+            $table->string('avatar')->nullable();
+            $table->string('image')->nullable();
+            $table->string('phone')->nullable();
+            $table->text('bio')->nullable();
+            $table->json('social_links')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+
+            // ── Role & Assignment ────────────────────────────────────────
+            $table->enum('role', [
+                'Admin',
+                'Event Manager',
+                'Sponsor',
+                'User',
+                'Assistant'
+            ])->default('User');
+
+            $table->unsignedBigInteger('event_id')->nullable();
+
+            // ── Account Status ───────────────────────────────────────────
+            $table->boolean('is_active')->default(true);
+
+            // ── Verification ─────────────────────────────────────────────
+            $table->enum('verification_status', [
+                'verified', 'pending', 'rejected', 'changes_requested'
+            ])->default('verified');
+            $table->text('verification_notes')->nullable();
+
+            // ── Document file paths ──────────────────────────────────────
+            $table->string('doc_commercial_register')->nullable();
+            $table->string('doc_tax_number')->nullable();
+            $table->string('doc_articles_of_association')->nullable();
+            $table->string('doc_practice_license')->nullable();
+
+            // ── Per-document status: pending / approved / rejected ───────
+            $table->string('doc_commercial_register_status')->default('pending');
+            $table->string('doc_tax_number_status')->default('pending');
+            $table->string('doc_articles_of_association_status')->default('pending');
+            $table->string('doc_practice_license_status')->default('pending');
+
+            // ── Per-document rejection notes ─────────────────────────────
+            $table->text('doc_commercial_register_note')->nullable();
+            $table->text('doc_tax_number_note')->nullable();
+            $table->text('doc_articles_of_association_note')->nullable();
+            $table->text('doc_practice_license_note')->nullable();
+
             $table->timestamps();
         });
 

@@ -64,9 +64,10 @@ window.initFlatpickr = function(selector, options = {}) {
 
             // 3. Inject Legend (Footer)
             const footerHtml = `
-                <div class="fp-custom-footer" style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #2d3342; display: flex; justify-content: flex-start; gap: 16px; font-size: 0.85rem; color: #828a99; flex-direction: row-reverse;">
+                <div class="fp-custom-footer" style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #2d3342; display: flex; justify-content: flex-start; gap: 16px; font-size: 0.85rem; color: #828a99; flex-direction: row-reverse; flex-wrap: wrap;">
                     <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; background: #1a1d27; border: 1px solid #2d3342; border-radius: 3px;"></span> ${isAr ? 'متاح' : 'Available'}</div>
                     <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; background: #ef4444; border-radius: 3px;"></span> ${isAr ? 'محجوز' : 'Booked'}</div>
+                    <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; background: repeating-linear-gradient(45deg, rgba(245,158,11,0.6), rgba(245,158,11,0.6) 2px, rgba(239,68,68,0.6) 2px, rgba(239,68,68,0.6) 4px); border: 1px solid #f59e0b; border-radius: 3px;"></span> ${isAr ? 'صيانة' : 'Maintenance'}</div>
                     <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; border: 2px solid #8b5cf6; border-radius: 3px;"></span> ${isAr ? 'اليوم' : 'Today'}</div>
                     <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; background: transparent; border: 1px solid #2d3342; opacity: 0.3; border-radius: 3px;"></span> ${isAr ? 'ماضي' : 'Past'}</div>
                 </div>

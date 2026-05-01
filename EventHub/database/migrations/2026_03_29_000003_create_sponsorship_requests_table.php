@@ -11,7 +11,18 @@ return new class extends Migration
         Schema::create('sponsorship_requests', function (Blueprint $table) {
             $table->id();
             $table->foreignId('event_id')->constrained()->onDelete('cascade');
-            $table->foreignId('sponsor_id')->constrained('users')->onDelete('cascade');
+
+            // sponsor_id is nullable — uses nullOnDelete
+            $table->unsignedBigInteger('sponsor_id')->nullable();
+            $table->foreign('sponsor_id')->references('id')->on('users')->nullOnDelete();
+
+            $table->foreignId('event_manager_id')
+                  ->nullable()
+                  ->constrained('users')
+                  ->onDelete('cascade');
+
+            $table->enum('initiator', ['sponsor', 'event_manager'])->default('sponsor');
+
             $table->text('message')->nullable();
             $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
             $table->timestamps();

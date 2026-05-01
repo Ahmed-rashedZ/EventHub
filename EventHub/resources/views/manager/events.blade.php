@@ -186,7 +186,7 @@
               <div class="form-group">
                 <label class="form-label">Booking Date</label>
                 <input id="e-booking-date" type="text" class="form-control" placeholder="YYYY-MM-DD" required />
-                <div style="display: flex; gap: 16px; margin-top: 10px; font-size: 13px; color: var(--text-muted, #9ca3af);">
+                <div style="display: flex; gap: 16px; margin-top: 10px; font-size: 13px; color: var(--text-muted, #9ca3af); flex-wrap: wrap;">
                   <div style="display: flex; align-items: center; gap: 6px;">
                     <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: rgba(239, 68, 68, 0.5); border: 1px solid #ef4444; box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);"></span>
                     <span><script>document.write(t('Fully Booked'))</script></span>
@@ -194,6 +194,10 @@
                   <div style="display: flex; align-items: center; gap: 6px;">
                     <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: rgba(234, 179, 8, 0.5); border: 1px solid #eab308; box-shadow: 0 0 8px rgba(234, 179, 8, 0.4);"></span>
                     <span><script>document.write(t('Partially Booked'))</script></span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: repeating-linear-gradient(45deg, rgba(245,158,11,0.6), rgba(245,158,11,0.6) 2px, rgba(239,68,68,0.6) 2px, rgba(239,68,68,0.6) 4px); border: 1px solid #f59e0b;"></span>
+                    <span>🔧 <script>document.write(t('Maintenance'))</script></span>
                   </div>
                 </div>
               </div>
@@ -284,7 +288,11 @@
                     
                     const bookings = window.currentVenueBookings.filter(b => b.booking_date === dateStrLocal);
                     if (bookings.length > 0) {
-                        const periods = bookings.map(b => b.period);
+                        // Maintenance dates are always fully blocked
+                        const hasMaint = bookings.some(b => b.type === 'maintenance');
+                        if (hasMaint) return true;
+                        
+                        const periods = bookings.filter(b => b.type !== 'maintenance').map(b => b.period);
                         return periods.includes('full_day') || (periods.includes('morning') && periods.includes('evening'));
                     }
                     return false;
@@ -302,7 +310,7 @@
                 }
             },
             onDayCreate: function(dObj, dStr, fp, dayElem) {
-                dayElem.classList.remove('date-fully-booked', 'date-partially-booked');
+                dayElem.classList.remove('date-fully-booked', 'date-partially-booked', 'date-maintenance');
                 if (!window.currentVenueBookings || !window.currentVenueBookings.length) return;
                 
                 const y = dayElem.dateObj.getFullYear();
@@ -312,7 +320,14 @@
                 
                 const bookings = window.currentVenueBookings.filter(b => b.booking_date === dateStrLocal);
                 if (bookings.length > 0) {
-                    const periods = bookings.map(b => b.period);
+                    // Check maintenance first
+                    const hasMaint = bookings.some(b => b.type === 'maintenance');
+                    if (hasMaint) {
+                        dayElem.classList.add('date-maintenance');
+                        return;
+                    }
+                    
+                    const periods = bookings.filter(b => b.type !== 'maintenance').map(b => b.period);
                     if (periods.includes('full_day') || (periods.includes('morning') && periods.includes('evening'))) {
                         dayElem.classList.add('date-fully-booked');
                     } else {
@@ -332,7 +347,9 @@
 
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('flatpickr-day') && e.target.classList.contains('flatpickr-disabled')) {
-                if (e.target.classList.contains('date-fully-booked')) {
+                if (e.target.classList.contains('date-maintenance')) {
+                    showToast(document.documentElement.lang === 'ar' ? '🔧 هذا التاريخ محجوز للصيانة، يرجى اختيار تاريخ آخر.' : '🔧 This date is reserved for maintenance, please choose another.', 'error');
+                } else if (e.target.classList.contains('date-fully-booked')) {
                     showToast(document.documentElement.lang === 'ar' ? 'هذا التاريخ محجوز بالكامل، يرجى اختيار تاريخ آخر.' : 'This date is fully booked, please choose another.', 'error');
                 }
             }
@@ -1016,6 +1033,29 @@
       background: #f59e0b !important;
       border-color: #f59e0b !important;
       color: #fff !important;
+    }
+
+    /* Maintenance styling — diagonal stripes pattern */
+    .flatpickr-day.date-maintenance {
+      background: repeating-linear-gradient(
+        45deg,
+        rgba(245, 158, 11, 0.35),
+        rgba(245, 158, 11, 0.35) 3px,
+        rgba(239, 68, 68, 0.45) 3px,
+        rgba(239, 68, 68, 0.45) 6px
+      ) !important;
+      border: 2px solid #f59e0b !important;
+      color: #fff !important;
+      cursor: not-allowed !important;
+      position: relative !important;
+    }
+    .flatpickr-day.date-maintenance::after {
+      content: '🔧';
+      position: absolute;
+      bottom: -2px;
+      right: 1px;
+      font-size: 9px;
+      line-height: 1;
     }
     
     .flatpickr-calendar.arrowTop:before, .flatpickr-calendar.arrowTop:after {

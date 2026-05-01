@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('email')->index();
             $table->string('code'); // stores bcrypt hash of the 6-digit code
             $table->unsignedTinyInteger('attempts')->default(0);
+            $table->string('reset_token', 64)->nullable();
             $table->timestamp('created_at')->nullable();
         });
     }

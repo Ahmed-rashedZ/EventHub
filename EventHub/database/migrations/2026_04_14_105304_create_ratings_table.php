@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('event_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->unsignedTinyInteger('rating')->comment('1 to 5');
+            $table->text('review_text')->nullable();
             $table->timestamps();
 
             // Enforce one rating per user per event
