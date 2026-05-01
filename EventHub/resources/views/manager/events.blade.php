@@ -11,10 +11,8 @@
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://npmcdn.com/flatpickr/dist/l10n/ar.js"></script>
   <script src="/js/i18n.js"></script>
-  <style>
-    .flatpickr-calendar { direction: {{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}; }
-    .flatpickr-current-month { display: flex !important; justify-content: center !important; }
-  </style>
+  <script src="/js/flatpickr-custom.js"></script>
+
 </head>
 
 <body>
@@ -264,7 +262,7 @@
   <script>
     let allEvents = [];
     let globalVenues = [];
-    let currentVenueBookings = [];
+    window.currentVenueBookings = [];
     let fpInstance = null;
 
     const user = requireRole('Event Manager');
@@ -274,18 +272,17 @@
         loadEvents(); 
         loadVenues(); 
 
-        fpInstance = flatpickr("#e-booking-date", {
-            dateFormat: "Y-m-d",
-            locale: document.documentElement.lang === 'ar' ? 'ar' : 'en',
+        fpInstance = initFlatpickr("#e-booking-date", {
+            showStats: true,
             disable: [
                 function(date) {
-                    if (!currentVenueBookings.length) return false;
+                    if (!window.currentVenueBookings || !window.currentVenueBookings.length) return false;
                     const y = date.getFullYear();
                     const m = String(date.getMonth() + 1).padStart(2, '0');
                     const d = String(date.getDate()).padStart(2, '0');
                     const dateStrLocal = `${y}-${m}-${d}`;
                     
-                    const bookings = currentVenueBookings.filter(b => b.booking_date === dateStrLocal);
+                    const bookings = window.currentVenueBookings.filter(b => b.booking_date === dateStrLocal);
                     if (bookings.length > 0) {
                         const periods = bookings.map(b => b.period);
                         return periods.includes('full_day') || (periods.includes('morning') && periods.includes('evening'));
@@ -296,16 +293,24 @@
             onChange: function() {
                 checkAvailability();
             },
+            onOpenBefore: function(selectedDates, dateStr, fp) {
+                const venueSelect = document.getElementById('e-venue');
+                const locationType = document.getElementById('e-location-type').value;
+                if (locationType === 'internal' && !venueSelect.value) {
+                    setTimeout(() => fp.close(), 0);
+                    showToast(document.documentElement.lang === 'ar' ? 'يرجى اختيار القاعة أولاً.' : 'Please select a venue first.', 'warning');
+                }
+            },
             onDayCreate: function(dObj, dStr, fp, dayElem) {
                 dayElem.classList.remove('date-fully-booked', 'date-partially-booked');
-                if (!currentVenueBookings.length) return;
+                if (!window.currentVenueBookings || !window.currentVenueBookings.length) return;
                 
                 const y = dayElem.dateObj.getFullYear();
                 const m = String(dayElem.dateObj.getMonth() + 1).padStart(2, '0');
                 const d = String(dayElem.dateObj.getDate()).padStart(2, '0');
                 const dateStrLocal = `${y}-${m}-${d}`;
                 
-                const bookings = currentVenueBookings.filter(b => b.booking_date === dateStrLocal);
+                const bookings = window.currentVenueBookings.filter(b => b.booking_date === dateStrLocal);
                 if (bookings.length > 0) {
                     const periods = bookings.map(b => b.period);
                     if (periods.includes('full_day') || (periods.includes('morning') && periods.includes('evening'))) {
@@ -640,7 +645,7 @@
       
       if (!venueId) {
         timeLabel.textContent = document.documentElement.lang === 'ar' ? 'اختر قاعة أولاً لرؤية الوقت' : 'Select a venue first to see the time';
-        currentVenueBookings = [];
+        window.currentVenueBookings = [];
         window.lastFetchedVenueId = null;
         if (fpInstance) fpInstance.redraw();
         checkAvailability();
@@ -672,11 +677,14 @@
          window.lastFetchedVenueId = venueId;
          const res = await api.get(`/venues/${venueId}/bookings`);
          if (res.ok) {
-            currentVenueBookings = res.data;
+            window.currentVenueBookings = res.data;
          } else {
-            currentVenueBookings = [];
+            window.currentVenueBookings = [];
          }
-         if (fpInstance) fpInstance.redraw();
+         if (fpInstance) {
+             fpInstance.redraw();
+             if (fpInstance.updateCustomStats) fpInstance.updateCustomStats();
+         }
       }
       checkAvailability();
     }
@@ -692,7 +700,7 @@
          periodOpts[i].text = periodOpts[i].text.replace(' (محجوز)', '').replace(' (Booked)', '');
       }
 
-      const bookedPeriods = currentVenueBookings.filter(b => b.booking_date === date).map(b => b.period);
+      const bookedPeriods = (window.currentVenueBookings || []).filter(b => b.booking_date === date).map(b => b.period);
       
       for(let i=0; i<periodOpts.length; i++) {
          const p = periodOpts[i].value;
@@ -808,99 +816,214 @@
   </div>
 
   <style>
-    /* Flatpickr Modern Overrides */
+    /* Flatpickr Exact Dashboard Widget Design - Centered Modal Style */
     .flatpickr-calendar {
-      background: #171821 !important; /* System surface match */
-      border: 1px solid rgba(255, 255, 255, 0.08) !important;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6) !important;
+      background: #131620 !important;
+      border: 1px solid #2d3342 !important;
+      box-shadow: 0 0 0 100vmax rgba(0,0,0,0.6), 0 16px 40px rgba(0, 0, 0, 0.7) !important; /* Overlay effect + shadow */
       border-radius: 16px !important;
-      padding: 10px !important;
+      padding: 24px !important;
       font-family: 'Inter', system-ui, sans-serif !important;
+      width: 480px !important;
     }
-    .flatpickr-day {
-      border-radius: 10px !important;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
-      color: #e2e8f0 !important;
-      border: 1px solid transparent !important;
+    
+    .flatpickr-calendar.open {
+      position: fixed !important;
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      right: auto !important;
+      bottom: auto !important;
+      z-index: 999999 !important;
+      margin: 0 !important;
     }
-    .flatpickr-day:hover, .flatpickr-day:focus {
-      background: rgba(255, 255, 255, 0.08) !important;
-      border-color: rgba(255, 255, 255, 0.15) !important;
-      transform: scale(1.08);
-      z-index: 2;
-    }
-    .flatpickr-day.selected, .flatpickr-day.selected:hover {
-      background: #6e40f2 !important;
-      border-color: #6e40f2 !important;
-      box-shadow: 0 4px 15px rgba(110, 64, 242, 0.4) !important;
-      color: #ffffff !important;
-      font-weight: 600 !important;
-      transform: scale(1.05);
-    }
-    .flatpickr-month {
-      margin-bottom: 15px !important;
-      height: 38px !important;
-    }
-    .flatpickr-current-month {
+    
+    .flatpickr-months {
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
-      gap: 12px !important;
+      margin-bottom: 24px !important;
+      position: relative !important;
+      height: 40px !important;
+    }
+    
+    .flatpickr-current-month {
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 6px !important;
+      font-size: 1.15rem !important;
+      font-weight: 700 !important;
+      color: #fff !important;
       padding: 0 !important;
       height: 100% !important;
     }
+    
     .flatpickr-current-month .flatpickr-monthDropdown-months {
       appearance: none !important;
       -webkit-appearance: none !important;
       background: transparent !important;
       border: none !important;
-      color: #fff !important;
-      font-size: 16px !important;
-      font-weight: 600 !important;
+      color: #e2e8f0 !important;
+      font-weight: 700 !important;
+      font-size: 1.15rem !important;
+      cursor: pointer !important;
       padding: 0 !important;
       margin: 0 !important;
-      cursor: pointer !important;
-      width: auto !important;
     }
+    
     .flatpickr-current-month .flatpickr-monthDropdown-months:hover {
       background: transparent !important;
     }
+    
     .flatpickr-current-month .numInputWrapper {
-      width: 6ch !important;
+      width: 5ch !important;
       background: transparent !important;
     }
+    
     .flatpickr-current-month .numInputWrapper input.cur-year {
-      font-size: 16px !important;
-      font-weight: 600 !important;
-      color: #fff !important;
+      font-weight: 700 !important;
+      color: #e2e8f0 !important;
+      font-size: 1.15rem !important;
       padding: 0 !important;
       margin: 0 !important;
     }
-    .flatpickr-calendar.arrowTop:before, .flatpickr-calendar.arrowTop:after {
-      display: none !important; /* Hide the arrow triangle for a cleaner look */
+    
+    .flatpickr-months .flatpickr-prev-month,
+    .flatpickr-months .flatpickr-next-month {
+      position: absolute !important;
+      top: 50% !important;
+      transform: translateY(-50%) !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 38px !important;
+      height: 38px !important;
+      border: 1px solid #2d3342 !important;
+      border-radius: 8px !important;
+      padding: 0 !important;
+      fill: #828a99 !important;
+      color: #828a99 !important;
+      transition: all 0.2s !important;
+      background: transparent !important;
     }
-    html[lang="ar"] .flatpickr-calendar {
-      direction: rtl;
+    .flatpickr-months .flatpickr-prev-month svg,
+    .flatpickr-months .flatpickr-next-month svg {
+      width: 14px !important;
+      height: 14px !important;
     }
     
-    /* Flatpickr Custom Highlights */
-    .date-fully-booked {
-      background-color: rgba(239, 68, 68, 0.15) !important;
-      border-color: rgba(239, 68, 68, 0.5) !important;
-      color: #f87171 !important;
-      font-weight: 600;
+    html[lang="ar"] .flatpickr-months .flatpickr-prev-month { right: 0 !important; left: auto !important; }
+    html[lang="ar"] .flatpickr-months .flatpickr-next-month { left: 0 !important; right: auto !important; }
+    
+    .flatpickr-months .flatpickr-prev-month:hover,
+    .flatpickr-months .flatpickr-next-month:hover {
+      background: #1a1d27 !important;
+      border-color: #3b4255 !important;
+      fill: #fff !important;
+      color: #fff !important;
     }
-    .date-partially-booked {
-      background-color: rgba(234, 179, 8, 0.15) !important;
-      border-color: rgba(234, 179, 8, 0.5) !important;
-      color: #facc15 !important;
-      font-weight: 600;
+    
+    .flatpickr-innerContainer, .flatpickr-rContainer, .dayContainer, .flatpickr-days {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 100% !important;
     }
-    .date-fully-booked:hover {
-      background-color: rgba(239, 68, 68, 0.25) !important;
+    
+    .flatpickr-weekdays {
+      display: grid !important;
+      grid-template-columns: repeat(7, 1fr) !important;
+      margin-bottom: 12px !important;
+      width: 100% !important;
+      height: auto !important;
     }
-    .date-partially-booked:hover {
-      background-color: rgba(234, 179, 8, 0.25) !important;
+    
+    .flatpickr-weekdaycontainer {
+      display: contents !important;
+    }
+    
+    span.flatpickr-weekday {
+      color: #828a99 !important;
+      font-size: 0.8rem !important;
+      font-weight: 500 !important;
+      text-align: center !important;
+      text-transform: uppercase;
+    }
+    
+    .dayContainer {
+      display: grid !important;
+      grid-template-columns: repeat(7, 1fr) !important;
+      gap: 8px !important;
+      justify-items: center !important;
+    }
+    
+    .flatpickr-day {
+      width: 100% !important;
+      max-width: 100% !important;
+      height: 46px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      background: #1a1d27 !important;
+      border: 1px solid #2d3342 !important;
+      border-radius: 8px !important;
+      color: #e2e8f0 !important;
+      font-size: 0.95rem !important;
+      font-weight: 600 !important;
+      transition: all 0.2s !important;
+      position: relative !important;
+      margin: 0 !important;
+      line-height: 1 !important;
+    }
+    
+    .flatpickr-day:hover, .flatpickr-day:focus {
+      background: #232736 !important;
+      border-color: #3b4255 !important;
+      z-index: 2;
+    }
+    
+    /* Today matching Legend (Purple outline) */
+    .flatpickr-day.today {
+      border: 2px solid #8b5cf6 !important;
+      background: transparent !important;
+    }
+    
+    /* Selected */
+    .flatpickr-day.selected, .flatpickr-day.selected:hover {
+      background: #8b5cf6 !important;
+      border-color: #8b5cf6 !important;
+      color: #fff !important;
+      z-index: 5;
+    }
+    
+    /* Past/Next Month matching Legend (Opacity 0.3) */
+    .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay {
+      opacity: 0.2 !important;
+      background: transparent !important;
+      border-color: #2d3342 !important;
+      cursor: default !important;
+    }
+    
+    /* Booked styling to match Legend (Red background) */
+    .flatpickr-day.date-fully-booked {
+      background: #ef4444 !important;
+      border-color: #ef4444 !important;
+      color: #fff !important;
+    }
+    
+    .flatpickr-day.date-partially-booked {
+      background: #f59e0b !important;
+      border-color: #f59e0b !important;
+      color: #fff !important;
+    }
+    
+    .flatpickr-calendar.arrowTop:before, .flatpickr-calendar.arrowTop:after {
+      display: none !important;
+    }
+    
+    html[lang="ar"] .flatpickr-calendar {
+      direction: rtl;
     }
 
     /* ── Form Sections ───────────────────────────── */
