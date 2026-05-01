@@ -61,6 +61,38 @@ class VenueController extends Controller
         return response()->json(['message' => 'Venue deletion is disabled to preserve archive records'], 403);
     }
 
+    public function bookings($id)
+    {
+        $events = \App\Models\Event::where('venue_id', $id)
+            ->whereIn('status', ['approved', 'pending'])
+            ->select('booking_date', 'period', 'start_time', 'end_time')
+            ->get();
+            
+        $bookings = collect();
+
+        foreach ($events as $event) {
+            if ($event->booking_date && $event->period) {
+                $bookings->push([
+                    'booking_date' => \Carbon\Carbon::parse($event->booking_date)->format('Y-m-d'),
+                    'period' => $event->period
+                ]);
+            } elseif ($event->start_time && $event->end_time) {
+                // Old system compatibility
+                $start = \Carbon\Carbon::parse($event->start_time)->startOfDay();
+                $end = \Carbon\Carbon::parse($event->end_time)->startOfDay();
+                
+                for ($date = $start; $date->lte($end); $date->addDay()) {
+                    $bookings->push([
+                        'booking_date' => $date->format('Y-m-d'),
+                        'period' => 'full_day'
+                    ]);
+                }
+            }
+        }
+        
+        return response()->json($bookings);
+    }
+
     private function requireRole(Request $request, string $role)
     {
         if ($request->user()->role !== $role) {

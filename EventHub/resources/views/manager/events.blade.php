@@ -6,7 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Events – EventHub Manager</title>
   <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://npmcdn.com/flatpickr/dist/l10n/ar.js"></script>
   <script src="/js/i18n.js"></script>
+  <style>
+    .flatpickr-calendar { direction: {{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}; }
+    .flatpickr-current-month { display: flex !important; justify-content: center !important; }
+  </style>
 </head>
 
 <body>
@@ -133,70 +141,63 @@
             </select>
           </div>
 
-          <div class="form-group" style="margin-top: 20px;">
-            <label class="form-label" style="margin-bottom: 12px; display: block;">Location Type</label>
-            <div class="location-cards">
-              <label class="loc-card loc-internal">
-                <input type="radio" name="location_type" value="internal" onchange="toggleLocationFields()" checked>
-                <div class="loc-card-content">
-                  <div class="loc-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
-                      <path d="M9 22v-4h6v4"></path>
-                      <path d="M8 6h.01"></path>
-                      <path d="M16 6h.01"></path>
-                      <path d="M12 6h.01"></path>
-                      <path d="M12 10h.01"></path>
-                      <path d="M12 14h.01"></path>
-                      <path d="M16 10h.01"></path>
-                      <path d="M16 14h.01"></path>
-                      <path d="M8 10h.01"></path>
-                      <path d="M8 14h.01"></path>
-                    </svg>
-                  </div>
-                  <div class="loc-details">
-                    <div class="loc-title">داخل معرض طرابلس</div>
-                    <div class="loc-desc">قاعة مجهزة ومسجلة مسبقاً داخل أرض المعرض.</div>
-                  </div>
-                  <div class="loc-radio"><div class="loc-radio-inner"></div></div>
-                </div>
-              </label>
-              
-              <label class="loc-card loc-external">
-                <input type="radio" name="location_type" value="external" onchange="toggleLocationFields()">
-                <div class="loc-card-content">
-                  <div class="loc-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                      <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
-                  </div>
-                  <div class="loc-details">
-                    <div class="loc-title">قاعة خارجية</div>
-                    <div class="loc-desc">قاعة فندق أو مكان مستقل من اختيارك.</div>
-                  </div>
-                  <div class="loc-radio"><div class="loc-radio-inner"></div></div>
-                </div>
-              </label>
-            </div>
-          </div>
+          <!-- Location Type moved to Section 2 -->
         </div>
 
         <!-- Section 2: Date & Location -->
         <div class="form-section">
           <div class="form-section-title"><span>📅</span> Date & Location Details</div>
           
-          <div id="internal-fields">
-            <div class="form-group">
-              <label class="form-label">Select Hall</label>
-              <select id="e-venue" class="form-control" onchange="updatePeriodTimes()" required>
-                <option value="">Loading halls…</option>
-              </select>
+          <input type="hidden" id="e-location-type" name="location_type" value="internal" />
+
+          <!-- Modern Venue Selector -->
+          <div class="form-group" style="margin-bottom: 24px;">
+            <label class="form-label">Event Venue</label>
+            
+            <!-- Internal Mode -->
+            <div id="venue-internal-wrap" style="display: flex; gap: 12px; align-items: center;">
+              <div style="flex: 1; position: relative;">
+                <select id="e-venue" class="form-control" onchange="updatePeriodTimes()" required style="padding-left: 42px; cursor: pointer; background-color: rgba(255,255,255,0.02);">
+                  <option value="">Select a hall inside the exhibition...</option>
+                </select>
+                <div style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; opacity: 0.7;">
+                  🏢
+                </div>
+              </div>
+              <button type="button" class="btn" style="background: rgba(34,211,238,0.1); border: 1px solid rgba(34,211,238,0.25); color: #22d3ee; white-space: nowrap; height: 42px; padding: 0 20px; transition: all 0.2s;" onclick="setLocationMode('external')" onmouseover="this.style.background='rgba(34,211,238,0.15)'" onmouseout="this.style.background='rgba(34,211,238,0.1)'">
+                ➕ External Hall
+              </button>
             </div>
+
+            <!-- External Mode -->
+            <div id="venue-external-wrap" style="display: none; gap: 12px; align-items: center;">
+              <div style="flex: 1; position: relative;">
+                <input id="e-ext-name" type="text" class="form-control" placeholder="External Hall Name (e.g., Corinthia Hotel)" style="padding-left: 42px; background-color: rgba(255,255,255,0.02);" />
+                <div style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; opacity: 0.7;">
+                  🌍
+                </div>
+              </div>
+              <button type="button" class="btn" style="background: rgba(110,64,242,0.1); border: 1px solid rgba(110,64,242,0.25); color: #a78bfa; white-space: nowrap; height: 42px; padding: 0 20px; transition: all 0.2s;" onclick="setLocationMode('internal')" onmouseover="this.style.background='rgba(110,64,242,0.15)'" onmouseout="this.style.background='rgba(110,64,242,0.1)'">
+                🏢 Inside Exhibition
+              </button>
+            </div>
+          </div>
+
+          <div id="internal-fields">
             <div class="form-grid">
               <div class="form-group">
                 <label class="form-label">Booking Date</label>
-                <input id="e-booking-date" type="date" class="form-control" required />
+                <input id="e-booking-date" type="text" class="form-control" placeholder="YYYY-MM-DD" required />
+                <div style="display: flex; gap: 16px; margin-top: 10px; font-size: 13px; color: var(--text-muted, #9ca3af);">
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: rgba(239, 68, 68, 0.5); border: 1px solid #ef4444; box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);"></span>
+                    <span><script>document.write(t('Fully Booked'))</script></span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: rgba(234, 179, 8, 0.5); border: 1px solid #eab308; box-shadow: 0 0 8px rgba(234, 179, 8, 0.4);"></span>
+                    <span><script>document.write(t('Partially Booked'))</script></span>
+                  </div>
+                </div>
               </div>
               <div class="form-group">
                 <label class="form-label">Period</label>
@@ -211,15 +212,9 @@
           </div>
 
           <div id="external-fields" style="display: none;">
-            <div class="form-grid">
-              <div class="form-group">
-                <label class="form-label">External Hall Name</label>
-                <input id="e-ext-name" type="text" class="form-control" placeholder="e.g., Corinthia Hotel Hall" />
-              </div>
-              <div class="form-group">
-                <label class="form-label">Google Maps Link</label>
-                <input id="e-ext-location" type="url" class="form-control" placeholder="https://maps.google.com/..." />
-              </div>
+            <div class="form-group">
+              <label class="form-label">Google Maps Link</label>
+              <input id="e-ext-location" type="url" class="form-control" placeholder="https://maps.google.com/..." />
             </div>
             <div class="form-group">
               <label class="form-label">Proof of Booking (PDF/Image)</label>
@@ -269,9 +264,75 @@
   <script>
     let allEvents = [];
     let globalVenues = [];
+    let currentVenueBookings = [];
+    let fpInstance = null;
 
     const user = requireRole('Event Manager');
-    if (user) { populateSidebar(user); setActiveNav(); loadEvents(); loadVenues(); }
+    if (user) { 
+        populateSidebar(user); 
+        setActiveNav(); 
+        loadEvents(); 
+        loadVenues(); 
+
+        fpInstance = flatpickr("#e-booking-date", {
+            dateFormat: "Y-m-d",
+            locale: document.documentElement.lang === 'ar' ? 'ar' : 'en',
+            disable: [
+                function(date) {
+                    if (!currentVenueBookings.length) return false;
+                    const y = date.getFullYear();
+                    const m = String(date.getMonth() + 1).padStart(2, '0');
+                    const d = String(date.getDate()).padStart(2, '0');
+                    const dateStrLocal = `${y}-${m}-${d}`;
+                    
+                    const bookings = currentVenueBookings.filter(b => b.booking_date === dateStrLocal);
+                    if (bookings.length > 0) {
+                        const periods = bookings.map(b => b.period);
+                        return periods.includes('full_day') || (periods.includes('morning') && periods.includes('evening'));
+                    }
+                    return false;
+                }
+            ],
+            onChange: function() {
+                checkAvailability();
+            },
+            onDayCreate: function(dObj, dStr, fp, dayElem) {
+                dayElem.classList.remove('date-fully-booked', 'date-partially-booked');
+                if (!currentVenueBookings.length) return;
+                
+                const y = dayElem.dateObj.getFullYear();
+                const m = String(dayElem.dateObj.getMonth() + 1).padStart(2, '0');
+                const d = String(dayElem.dateObj.getDate()).padStart(2, '0');
+                const dateStrLocal = `${y}-${m}-${d}`;
+                
+                const bookings = currentVenueBookings.filter(b => b.booking_date === dateStrLocal);
+                if (bookings.length > 0) {
+                    const periods = bookings.map(b => b.period);
+                    if (periods.includes('full_day') || (periods.includes('morning') && periods.includes('evening'))) {
+                        dayElem.classList.add('date-fully-booked');
+                    } else {
+                        dayElem.classList.add('date-partially-booked');
+                    }
+                }
+            }
+        });
+
+        document.getElementById('e-period').addEventListener('change', function(e) {
+            const selectedOption = this.options[this.selectedIndex];
+            if (selectedOption && selectedOption.getAttribute('data-booked') === 'true') {
+                showToast(document.documentElement.lang === 'ar' ? 'هذه الفترة محجوزة مسبقاً، يرجى اختيار فترة أخرى.' : 'This period is already booked, please choose another.', 'error');
+                this.value = ''; 
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('flatpickr-day') && e.target.classList.contains('flatpickr-disabled')) {
+                if (e.target.classList.contains('date-fully-booked')) {
+                    showToast(document.documentElement.lang === 'ar' ? 'هذا التاريخ محجوز بالكامل، يرجى اختيار تاريخ آخر.' : 'This date is fully booked, please choose another.', 'error');
+                }
+            }
+        }, true);
+    }
 
     async function loadEvents() {
       const res = await api.get('/events/list/my');
@@ -569,16 +630,20 @@
       const sel = document.getElementById('e-venue');
       if (!res.ok) { sel.innerHTML = '<option value="">No venues available</option>'; return; }
       globalVenues = res.data;
-      sel.innerHTML = '<option value="">Select a Hall</option>' + res.data.map(v => `<option value="${v.id}">${v.name} (${v.location})</option>`).join('');
+      sel.innerHTML = '<option value="">Select a hall inside the exhibition...</option>' + res.data.map(v => `<option value="${v.id}">${v.name} (${v.location})</option>`).join('');
     }
 
-    function updatePeriodTimes() {
+    async function updatePeriodTimes() {
       const venueId = document.getElementById('e-venue').value;
       const periodSelect = document.getElementById('e-period').value;
       const timeLabel = document.getElementById('selected-period-time');
       
       if (!venueId) {
-        timeLabel.textContent = 'Select a venue first to see the time';
+        timeLabel.textContent = document.documentElement.lang === 'ar' ? 'اختر قاعة أولاً لرؤية الوقت' : 'Select a venue first to see the time';
+        currentVenueBookings = [];
+        window.lastFetchedVenueId = null;
+        if (fpInstance) fpInstance.redraw();
+        checkAvailability();
         return;
       }
       
@@ -602,21 +667,64 @@
           timeLabel.textContent = `Time: ${formatTime(v.morning_start)} - ${formatTime(v.evening_end)}`;
         }
       }
+
+      if (window.lastFetchedVenueId !== venueId) {
+         window.lastFetchedVenueId = venueId;
+         const res = await api.get(`/venues/${venueId}/bookings`);
+         if (res.ok) {
+            currentVenueBookings = res.data;
+         } else {
+            currentVenueBookings = [];
+         }
+         if (fpInstance) fpInstance.redraw();
+      }
+      checkAvailability();
+    }
+
+    function checkAvailability() {
+      const date = document.getElementById('e-booking-date').value;
+      const periodOpts = document.getElementById('e-period').options;
+      
+      if (!date) return;
+
+      for(let i=0; i<periodOpts.length; i++) {
+         periodOpts[i].removeAttribute('data-booked');
+         periodOpts[i].text = periodOpts[i].text.replace(' (محجوز)', '').replace(' (Booked)', '');
+      }
+
+      const bookedPeriods = currentVenueBookings.filter(b => b.booking_date === date).map(b => b.period);
+      
+      for(let i=0; i<periodOpts.length; i++) {
+         const p = periodOpts[i].value;
+         if (bookedPeriods.includes(p) || (bookedPeriods.includes('full_day')) || (p === 'full_day' && bookedPeriods.length > 0)) {
+             periodOpts[i].setAttribute('data-booked', 'true');
+             periodOpts[i].text += ` (${document.documentElement.lang === 'ar' ? 'محجوز' : 'Booked'})`;
+         }
+      }
+      
+      const currentSel = document.getElementById('e-period');
+      if (currentSel.options[currentSel.selectedIndex]?.getAttribute('data-booked') === 'true') {
+         currentSel.value = '';
+      }
     }
 
     function openModal() { document.getElementById('event-modal').classList.add('open'); }
     function closeModal() {
       document.getElementById('event-modal').classList.remove('open');
       document.getElementById('event-form').reset();
-      toggleLocationFields();
+      setLocationMode('internal');
     }
 
-    function toggleLocationFields() {
-      const type = document.querySelector('input[name="location_type"]:checked').value;
+    function setLocationMode(mode) {
+      document.getElementById('e-location-type').value = mode;
+      const internalWrap = document.getElementById('venue-internal-wrap');
+      const externalWrap = document.getElementById('venue-external-wrap');
       const internalFields = document.getElementById('internal-fields');
       const externalFields = document.getElementById('external-fields');
 
-      if (type === 'internal') {
+      if (mode === 'internal') {
+        internalWrap.style.display = 'flex';
+        externalWrap.style.display = 'none';
         internalFields.style.display = 'block';
         externalFields.style.display = 'none';
         
@@ -630,6 +738,8 @@
         document.getElementById('e-start').required = false;
         document.getElementById('e-end').required = false;
       } else {
+        internalWrap.style.display = 'none';
+        externalWrap.style.display = 'flex';
         internalFields.style.display = 'none';
         externalFields.style.display = 'block';
         
@@ -653,7 +763,7 @@
 
       const eventType = document.getElementById('e-type').value;
       formData.append('event_type', eventType);
-      const locationType = document.querySelector('input[name="location_type"]:checked').value;
+      const locationType = document.getElementById('e-location-type').value;
       formData.append('location_type', locationType);
 
       if (locationType === 'internal') {
@@ -698,6 +808,101 @@
   </div>
 
   <style>
+    /* Flatpickr Modern Overrides */
+    .flatpickr-calendar {
+      background: #171821 !important; /* System surface match */
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6) !important;
+      border-radius: 16px !important;
+      padding: 10px !important;
+      font-family: 'Inter', system-ui, sans-serif !important;
+    }
+    .flatpickr-day {
+      border-radius: 10px !important;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      color: #e2e8f0 !important;
+      border: 1px solid transparent !important;
+    }
+    .flatpickr-day:hover, .flatpickr-day:focus {
+      background: rgba(255, 255, 255, 0.08) !important;
+      border-color: rgba(255, 255, 255, 0.15) !important;
+      transform: scale(1.08);
+      z-index: 2;
+    }
+    .flatpickr-day.selected, .flatpickr-day.selected:hover {
+      background: #6e40f2 !important;
+      border-color: #6e40f2 !important;
+      box-shadow: 0 4px 15px rgba(110, 64, 242, 0.4) !important;
+      color: #ffffff !important;
+      font-weight: 600 !important;
+      transform: scale(1.05);
+    }
+    .flatpickr-month {
+      margin-bottom: 15px !important;
+      height: 38px !important;
+    }
+    .flatpickr-current-month {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 12px !important;
+      padding: 0 !important;
+      height: 100% !important;
+    }
+    .flatpickr-current-month .flatpickr-monthDropdown-months {
+      appearance: none !important;
+      -webkit-appearance: none !important;
+      background: transparent !important;
+      border: none !important;
+      color: #fff !important;
+      font-size: 16px !important;
+      font-weight: 600 !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      cursor: pointer !important;
+      width: auto !important;
+    }
+    .flatpickr-current-month .flatpickr-monthDropdown-months:hover {
+      background: transparent !important;
+    }
+    .flatpickr-current-month .numInputWrapper {
+      width: 6ch !important;
+      background: transparent !important;
+    }
+    .flatpickr-current-month .numInputWrapper input.cur-year {
+      font-size: 16px !important;
+      font-weight: 600 !important;
+      color: #fff !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    .flatpickr-calendar.arrowTop:before, .flatpickr-calendar.arrowTop:after {
+      display: none !important; /* Hide the arrow triangle for a cleaner look */
+    }
+    html[lang="ar"] .flatpickr-calendar {
+      direction: rtl;
+    }
+    
+    /* Flatpickr Custom Highlights */
+    .date-fully-booked {
+      background-color: rgba(239, 68, 68, 0.15) !important;
+      border-color: rgba(239, 68, 68, 0.5) !important;
+      color: #f87171 !important;
+      font-weight: 600;
+    }
+    .date-partially-booked {
+      background-color: rgba(234, 179, 8, 0.15) !important;
+      border-color: rgba(234, 179, 8, 0.5) !important;
+      color: #facc15 !important;
+      font-weight: 600;
+    }
+    .date-fully-booked:hover {
+      background-color: rgba(239, 68, 68, 0.25) !important;
+    }
+    .date-partially-booked:hover {
+      background-color: rgba(234, 179, 8, 0.25) !important;
+    }
+
     /* ── Form Sections ───────────────────────────── */
     .form-section {
       background: rgba(255,255,255,0.015);

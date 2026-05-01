@@ -26,6 +26,7 @@ Route::get('/events/{id}/reviews', [EventController::class, 'reviews']);
 
 // Public venue list
 Route::get('/venues', [VenueController::class, 'index']);
+Route::get('/venues/{id}/bookings', [VenueController::class, 'bookings']);
 
 // ─── Authenticated routes ──────────────────────────────────────────────────────
 Route::middleware('auth:sanctum')->group(function () {
