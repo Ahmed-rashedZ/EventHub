@@ -9,6 +9,152 @@
   <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="/js/i18n.js"></script>
+  <style>
+    /* Admin Maintenance Flatpickr Styles */
+    .maint-flatpickr {
+      background: #0f1219 !important;
+      border: 1px solid rgba(139, 92, 246, 0.12) !important;
+      border-radius: 14px !important;
+      padding: 18px !important;
+      font-family: 'Inter', system-ui, sans-serif !important;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.6) !important;
+    }
+
+    /* Month navigation - transparent background */
+    .maint-flatpickr .flatpickr-months {
+      margin-bottom: 12px !important;
+      background: transparent !important;
+      border: none !important;
+    }
+    .maint-flatpickr .flatpickr-months .flatpickr-month {
+      background: transparent !important;
+      border: none !important;
+      overflow: visible !important;
+    }
+    .maint-flatpickr .flatpickr-current-month {
+      color: #f1f5f9 !important;
+      font-weight: 700 !important;
+      font-size: 1rem !important;
+      background: transparent !important;
+    }
+    .maint-flatpickr .flatpickr-current-month .flatpickr-monthDropdown-months {
+      background: transparent !important;
+      color: #f1f5f9 !important;
+      font-weight: 700 !important;
+      font-size: 1rem !important;
+      border: none !important;
+    }
+    .maint-flatpickr .flatpickr-current-month .numInputWrapper {
+      background: transparent !important;
+    }
+    .maint-flatpickr .flatpickr-current-month .numInputWrapper span {
+      display: none !important;
+    }
+    .maint-flatpickr .flatpickr-current-month .numInputWrapper input.cur-year {
+      color: #f1f5f9 !important;
+      font-weight: 700 !important;
+      font-size: 1rem !important;
+      background: transparent !important;
+    }
+
+    /* Arrow buttons */
+    .maint-flatpickr .flatpickr-months .flatpickr-prev-month,
+    .maint-flatpickr .flatpickr-months .flatpickr-next-month {
+      fill: #64748b !important;
+      color: #64748b !important;
+      background: transparent !important;
+      border: none !important;
+      border-radius: 8px !important;
+      transition: all 0.2s ease !important;
+    }
+    .maint-flatpickr .flatpickr-months .flatpickr-prev-month:hover,
+    .maint-flatpickr .flatpickr-months .flatpickr-next-month:hover {
+      fill: #c4b5fd !important;
+      color: #c4b5fd !important;
+      background: rgba(139, 92, 246, 0.1) !important;
+    }
+
+    /* Weekday labels */
+    .maint-flatpickr .flatpickr-weekdays {
+      background: transparent !important;
+      border: none !important;
+    }
+    .maint-flatpickr span.flatpickr-weekday {
+      color: #64748b !important;
+      font-weight: 600 !important;
+      font-size: 0.7rem !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.04em !important;
+      background: transparent !important;
+    }
+
+    /* Day cells */
+    .maint-flatpickr .flatpickr-day {
+      color: #cbd5e1 !important;
+      border-radius: 8px !important;
+      border: 1px solid rgba(255,255,255,0.05) !important;
+      background: rgba(255,255,255,0.02) !important;
+      transition: all 0.15s ease !important;
+    }
+    .maint-flatpickr .flatpickr-day:hover {
+      background: rgba(139, 92, 246, 0.08) !important;
+      border-color: rgba(139, 92, 246, 0.2) !important;
+      color: #f1f5f9 !important;
+    }
+    .maint-flatpickr .flatpickr-day.today {
+      border: 2px solid #8b5cf6 !important;
+      background: rgba(139, 92, 246, 0.05) !important;
+      color: #c4b5fd !important;
+    }
+    .maint-flatpickr .flatpickr-day.selected {
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed) !important;
+      border-color: #8b5cf6 !important;
+      color: #fff !important;
+      box-shadow: 0 3px 12px rgba(139, 92, 246, 0.35) !important;
+    }
+    .maint-flatpickr .flatpickr-day.flatpickr-disabled {
+      color: rgba(255,255,255,0.12) !important;
+    }
+
+    /* Booked event days */
+    .maint-flatpickr .flatpickr-day.admin-booked {
+      background: rgba(239, 68, 68, 0.18) !important;
+      border-color: rgba(239, 68, 68, 0.5) !important;
+      color: #fca5a5 !important;
+      cursor: not-allowed !important;
+    }
+    .maint-flatpickr .flatpickr-day.admin-booked:hover {
+      background: rgba(239, 68, 68, 0.25) !important;
+    }
+
+    /* Existing maintenance days */
+    .maint-flatpickr .flatpickr-day.admin-maint-existing {
+      background: 
+        repeating-linear-gradient(
+          -45deg,
+          transparent,
+          transparent 3px,
+          rgba(245, 158, 11, 0.12) 3px,
+          rgba(245, 158, 11, 0.12) 6px
+        ),
+        rgba(245, 158, 11, 0.06) !important;
+      border: 1.5px solid rgba(245, 158, 11, 0.45) !important;
+      color: #fbbf24 !important;
+      cursor: not-allowed !important;
+    }
+
+    .maint-flatpickr .flatpickr-day.prevMonthDay,
+    .maint-flatpickr .flatpickr-day.nextMonthDay {
+      opacity: 0.15 !important;
+      background: transparent !important;
+      border-color: transparent !important;
+    }
+
+    .maint-flatpickr .flatpickr-calendar.arrowTop:before,
+    .maint-flatpickr .flatpickr-calendar.arrowTop:after {
+      display: none !important;
+    }
+  </style>
 </head>
 <body>
 <div class="app-layout">
@@ -128,11 +274,25 @@
       <div class="form-grid">
         <div class="form-group">
           <label class="form-label">Start Date</label>
-          <input id="m-start" type="date" class="form-control" required/>
+          <input id="m-start" type="text" class="form-control" placeholder="Select start date..." readonly required/>
         </div>
         <div class="form-group">
           <label class="form-label">End Date</label>
-          <input id="m-end" type="date" class="form-control" required/>
+          <input id="m-end" type="text" class="form-control" placeholder="Select end date..." readonly required/>
+        </div>
+      </div>
+      <div style="display: flex; gap: 14px; margin: 10px 0 14px; font-size: 12px; color: rgba(255,255,255,0.45); flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 5px;">
+          <span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#ef4444;"></span>
+          Booked (Event)
+        </div>
+        <div style="display: flex; align-items: center; gap: 5px;">
+          <span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:repeating-linear-gradient(45deg,rgba(245,158,11,0.6),rgba(245,158,11,0.6) 2px,rgba(239,68,68,0.6) 2px,rgba(239,68,68,0.6) 4px);border:1px solid #f59e0b;"></span>
+          Maintenance
+        </div>
+        <div style="display: flex; align-items: center; gap: 5px;">
+          <span style="display:inline-block;width:10px;height:10px;border-radius:3px;border:2px solid #8b5cf6;"></span>
+          Today
         </div>
       </div>
       <div class="form-group">
@@ -161,19 +321,76 @@
 <script>
   let editingId = null;
   let currentMaintenanceVenueId = null;
+  let adminVenueBookings = [];
+  let fpStartInstance = null;
+  let fpEndInstance = null;
   const user = requireRole('Admin');
   if (user) { populateSidebar(user); setActiveNav(); loadVenues(); }
 
-  // Set minimum date for maintenance inputs
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById('m-start').min = today;
-  document.getElementById('m-end').min = today;
-  document.getElementById('m-start').addEventListener('change', function() {
-    document.getElementById('m-end').min = this.value;
-    if (document.getElementById('m-end').value < this.value) {
-      document.getElementById('m-end').value = this.value;
-    }
-  });
+  // Initialize flatpickr for maintenance date pickers
+  const todayStr = new Date().toISOString().split('T')[0];
+
+  function initMaintFlatpickrs() {
+    // Destroy existing instances
+    if (fpStartInstance) { fpStartInstance.destroy(); fpStartInstance = null; }
+    if (fpEndInstance) { fpEndInstance.destroy(); fpEndInstance = null; }
+
+    const disableFn = function(date) {
+      if (!adminVenueBookings || !adminVenueBookings.length) return false;
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      const ds = `${y}-${m}-${d}`;
+      return adminVenueBookings.some(b => b.booking_date === ds);
+    };
+
+    const dayCreateFn = function(dObj, dStr, fp, dayElem) {
+      dayElem.classList.remove('admin-booked', 'admin-maint-existing');
+      if (!adminVenueBookings || !adminVenueBookings.length) return;
+      const y = dayElem.dateObj.getFullYear();
+      const m = String(dayElem.dateObj.getMonth() + 1).padStart(2, '0');
+      const d = String(dayElem.dateObj.getDate()).padStart(2, '0');
+      const ds = `${y}-${m}-${d}`;
+      const bookings = adminVenueBookings.filter(b => b.booking_date === ds);
+      if (bookings.length > 0) {
+        const hasMaint = bookings.some(b => b.type === 'maintenance');
+        if (hasMaint) {
+          dayElem.classList.add('admin-maint-existing');
+        } else {
+          dayElem.classList.add('admin-booked');
+        }
+      }
+    };
+
+    fpStartInstance = flatpickr('#m-start', {
+      dateFormat: 'Y-m-d',
+      minDate: 'today',
+      disable: [disableFn],
+      onDayCreate: dayCreateFn,
+      appendTo: document.querySelector('#maintenance-modal .modal'),
+      onChange: function(selectedDates) {
+        if (selectedDates.length > 0 && fpEndInstance) {
+          fpEndInstance.set('minDate', selectedDates[0]);
+          const endVal = fpEndInstance.selectedDates[0];
+          if (endVal && endVal < selectedDates[0]) {
+            fpEndInstance.clear();
+          }
+        }
+      }
+    });
+
+    fpEndInstance = flatpickr('#m-end', {
+      dateFormat: 'Y-m-d',
+      minDate: 'today',
+      disable: [disableFn],
+      onDayCreate: dayCreateFn,
+      appendTo: document.querySelector('#maintenance-modal .modal'),
+    });
+
+    // Add custom class to calendars
+    if (fpStartInstance.calendarContainer) fpStartInstance.calendarContainer.classList.add('maint-flatpickr');
+    if (fpEndInstance.calendarContainer) fpEndInstance.calendarContainer.classList.add('maint-flatpickr');
+  }
 
   async function loadVenues() {
     const res = await api.get('/venues');
@@ -251,19 +468,32 @@
 
   // ── Maintenance Modal ─────────────────────────────────────────────────
 
-  function openMaintenanceModal(venueId, venueName) {
+  async function openMaintenanceModal(venueId, venueName) {
     currentMaintenanceVenueId = venueId;
     document.getElementById('maint-venue-name').textContent = venueName;
-    document.getElementById('m-start').value = '';
-    document.getElementById('m-end').value = '';
     document.getElementById('m-reason').value = '';
     document.getElementById('maintenance-modal').classList.add('open');
+
+    // Remove any old conflict alert
+    const oldAlert = document.getElementById('conflict-alert');
+    if (oldAlert) oldAlert.remove();
+
+    // Load bookings for this venue to disable booked dates
+    const bookRes = await api.get(`/venues/${venueId}/bookings`);
+    adminVenueBookings = bookRes.ok ? bookRes.data : [];
+
+    // Init flatpickr with the loaded bookings data
+    initMaintFlatpickrs();
+
     loadMaintenancePeriods();
   }
 
   function closeMaintenanceModal() {
     document.getElementById('maintenance-modal').classList.remove('open');
     currentMaintenanceVenueId = null;
+    adminVenueBookings = [];
+    if (fpStartInstance) { fpStartInstance.destroy(); fpStartInstance = null; }
+    if (fpEndInstance) { fpEndInstance.destroy(); fpEndInstance = null; }
   }
 
   async function loadMaintenancePeriods() {
@@ -292,6 +522,11 @@
       const end = new Date(p.end_date);
       const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
 
+      // Format dates nicely
+      const fmtOptions = { year: 'numeric', month: 'short', day: 'numeric' };
+      const startFmt = start.toLocaleDateString('en-US', fmtOptions);
+      const endFmt = end.toLocaleDateString('en-US', fmtOptions);
+
       return `
         <div style="display:flex;align-items:center;gap:12px;padding:14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;margin-bottom:8px;${isActive ? 'border-left:3px solid #f59e0b;' : ''}${isPast ? 'opacity:0.5;' : ''}">
           <div style="flex:1">
@@ -300,7 +535,7 @@
               <span style="color:var(--text-muted);font-size:11px">${days} day${days > 1 ? 's' : ''}</span>
             </div>
             <div style="font-weight:600;font-size:0.9rem;color:#fff;margin-bottom:4px">
-              📅 ${p.start_date} → ${p.end_date}
+              📅 ${startFmt} → ${endFmt}
             </div>
             ${p.reason ? `<div style="color:var(--text-muted);font-size:0.8rem">💬 ${p.reason}</div>` : ''}
           </div>
@@ -326,14 +561,64 @@
     });
 
     if (res.ok) {
-      showToast('Maintenance period scheduled! Affected managers have been notified.', 'success');
-      document.getElementById('m-start').value = '';
-      document.getElementById('m-end').value = '';
+      showToast('Maintenance period scheduled!', 'success');
       document.getElementById('m-reason').value = '';
       loadMaintenancePeriods();
-      loadVenues(); // Refresh table badges
+      loadVenues();
+      // Refresh bookings and calendar
+      const bookRes = await api.get(`/venues/${currentMaintenanceVenueId}/bookings`);
+      adminVenueBookings = bookRes.ok ? bookRes.data : [];
+      initMaintFlatpickrs();
     } else {
-      showToast(res.data?.message || 'Error scheduling maintenance', 'error');
+      // Show detailed conflict error
+      const data = res.data || {};
+      if (data.conflicting_events && data.conflicting_events.length > 0) {
+        const conflictList = document.getElementById('maintenance-list');
+        const evNames = data.conflicting_events.map(n => `<span style="font-weight:600;color:#fff">${n}</span>`).join('، ');
+        const dates = (data.conflicting_dates || []).join('، ');
+        
+        // Show inline conflict alert above the list
+        const alertHtml = `
+          <div id="conflict-alert" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:16px;margin-bottom:12px;animation:fadeIn 0.3s ease">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+              <span style="font-size:1.3rem">⛔</span>
+              <span style="font-weight:700;color:#ef4444;font-size:0.9rem">Cannot Schedule Maintenance</span>
+            </div>
+            <p style="color:rgba(255,255,255,0.8);font-size:0.82rem;margin:0 0 8px;line-height:1.6">
+              The following events are already booked in this date range:
+            </p>
+            <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px">
+              ${data.conflicting_events.map(name => `
+                <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(239,68,68,0.06);border-radius:8px;border:1px solid rgba(239,68,68,0.15)">
+                  <span style="font-size:0.85rem">📅</span>
+                  <span style="font-weight:600;color:#fff;font-size:0.82rem">${name}</span>
+                </div>
+              `).join('')}
+            </div>
+            <p style="color:rgba(255,255,255,0.5);font-size:0.75rem;margin:0;font-style:italic">
+              💡 Please choose dates that don't conflict with existing bookings.
+            </p>
+          </div>
+        `;
+
+        // Remove any existing conflict alert first
+        const existingAlert = document.getElementById('conflict-alert');
+        if (existingAlert) existingAlert.remove();
+        
+        conflictList.insertAdjacentHTML('beforebegin', alertHtml);
+        
+        // Auto-remove after 8 seconds
+        setTimeout(() => {
+          const alert = document.getElementById('conflict-alert');
+          if (alert) {
+            alert.style.transition = 'opacity 0.3s ease';
+            alert.style.opacity = '0';
+            setTimeout(() => alert.remove(), 300);
+          }
+        }, 8000);
+      } else {
+        showToast(data.message || 'Error scheduling maintenance', 'error');
+      }
     }
   }
 
@@ -345,6 +630,10 @@
       showToast('Maintenance period removed', 'success');
       loadMaintenancePeriods();
       loadVenues();
+      // Refresh bookings and calendar
+      const bookRes = await api.get(`/venues/${currentMaintenanceVenueId}/bookings`);
+      adminVenueBookings = bookRes.ok ? bookRes.data : [];
+      initMaintFlatpickrs();
     } else {
       showToast(res.data?.message || 'Error', 'error');
     }

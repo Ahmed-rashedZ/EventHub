@@ -106,14 +106,19 @@ class VenueController extends Controller
             }
         }
 
-        // Add maintenance dates
-        $maintenanceDates = $venue->getMaintenanceDates();
-        foreach ($maintenanceDates as $mDate) {
-            $bookings->push([
-                'booking_date' => $mDate,
-                'period'       => 'full_day',
-                'type'         => 'maintenance',
-            ]);
+        // Add maintenance dates with reason
+        $maintenancePeriods = $venue->maintenancePeriods()->orderBy('start_date')->get();
+        foreach ($maintenancePeriods as $period) {
+            $start = Carbon::parse($period->start_date);
+            $end   = Carbon::parse($period->end_date);
+            for ($d = $start->copy(); $d->lte($end); $d->addDay()) {
+                $bookings->push([
+                    'booking_date' => $d->format('Y-m-d'),
+                    'period'       => 'full_day',
+                    'type'         => 'maintenance',
+                    'reason'       => $period->reason,
+                ]);
+            }
         }
         
         return response()->json($bookings);
@@ -148,14 +153,45 @@ class VenueController extends Controller
 
         $venue = Venue::findOrFail($id);
 
+        // ── Check for conflicting events (approved/pending) ──
+        $conflictingEvents = Event::where('venue_id', $venue->id)
+            ->whereIn('status', ['approved', 'pending'])
+            ->where(function ($query) use ($request) {
+                $query->where(function ($q) use ($request) {
+                    $q->whereNotNull('booking_date')
+                      ->where('booking_date', '>=', $request->start_date)
+                      ->where('booking_date', '<=', $request->end_date);
+                })
+                ->orWhere(function ($q) use ($request) {
+                    $q->whereNull('booking_date')
+                      ->whereNotNull('start_time')
+                      ->where('start_time', '<=', Carbon::parse($request->end_date)->endOfDay())
+                      ->where('end_time', '>=', Carbon::parse($request->start_date)->startOfDay());
+                });
+            })
+            ->get();
+
+        if ($conflictingEvents->isNotEmpty()) {
+            $conflictDates = $conflictingEvents->map(function ($e) {
+                return $e->booking_date
+                    ? Carbon::parse($e->booking_date)->format('M d, Y')
+                    : Carbon::parse($e->start_time)->format('M d, Y');
+            })->unique()->values()->toArray();
+
+            $eventTitles = $conflictingEvents->pluck('title')->unique()->values()->toArray();
+
+            return response()->json([
+                'message' => 'Cannot schedule maintenance — there are existing event bookings in this date range.',
+                'conflicting_dates'  => $conflictDates,
+                'conflicting_events' => $eventTitles,
+            ], 422);
+        }
+
         $period = $venue->maintenancePeriods()->create([
             'start_date' => $request->start_date,
             'end_date'   => $request->end_date,
             'reason'     => $request->reason,
         ]);
-
-        // ── Notify affected event managers ──
-        $this->notifyConflictingManagers($venue, $period);
 
         return response()->json($period, 201);
     }

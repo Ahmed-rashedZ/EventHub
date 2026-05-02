@@ -186,20 +186,6 @@
               <div class="form-group">
                 <label class="form-label">Booking Date</label>
                 <input id="e-booking-date" type="text" class="form-control" placeholder="YYYY-MM-DD" required />
-                <div style="display: flex; gap: 16px; margin-top: 10px; font-size: 13px; color: var(--text-muted, #9ca3af); flex-wrap: wrap;">
-                  <div style="display: flex; align-items: center; gap: 6px;">
-                    <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: rgba(239, 68, 68, 0.5); border: 1px solid #ef4444; box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);"></span>
-                    <span><script>document.write(t('Fully Booked'))</script></span>
-                  </div>
-                  <div style="display: flex; align-items: center; gap: 6px;">
-                    <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: rgba(234, 179, 8, 0.5); border: 1px solid #eab308; box-shadow: 0 0 8px rgba(234, 179, 8, 0.4);"></span>
-                    <span><script>document.write(t('Partially Booked'))</script></span>
-                  </div>
-                  <div style="display: flex; align-items: center; gap: 6px;">
-                    <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: repeating-linear-gradient(45deg, rgba(245,158,11,0.6), rgba(245,158,11,0.6) 2px, rgba(239,68,68,0.6) 2px, rgba(239,68,68,0.6) 4px); border: 1px solid #f59e0b;"></span>
-                    <span>🔧 <script>document.write(t('Maintenance'))</script></span>
-                  </div>
-                </div>
               </div>
               <div class="form-group">
                 <label class="form-label">Period</label>
@@ -311,6 +297,11 @@
             },
             onDayCreate: function(dObj, dStr, fp, dayElem) {
                 dayElem.classList.remove('date-fully-booked', 'date-partially-booked', 'date-maintenance');
+                // Clean up any previous tooltip
+                const oldTip = dayElem.querySelector('.maint-tooltip');
+                if (oldTip) oldTip.remove();
+                dayElem.removeAttribute('data-maint-reason');
+
                 if (!window.currentVenueBookings || !window.currentVenueBookings.length) return;
                 
                 const y = dayElem.dateObj.getFullYear();
@@ -321,9 +312,18 @@
                 const bookings = window.currentVenueBookings.filter(b => b.booking_date === dateStrLocal);
                 if (bookings.length > 0) {
                     // Check maintenance first
-                    const hasMaint = bookings.some(b => b.type === 'maintenance');
-                    if (hasMaint) {
+                    const maintBooking = bookings.find(b => b.type === 'maintenance');
+                    if (maintBooking) {
                         dayElem.classList.add('date-maintenance');
+                        const reason = maintBooking.reason || null;
+                        if (reason) {
+                            dayElem.setAttribute('data-maint-reason', reason);
+                            // Add tooltip element
+                            const tooltip = document.createElement('div');
+                            tooltip.className = 'maint-tooltip';
+                            tooltip.textContent = `🔧 ${reason}`;
+                            dayElem.appendChild(tooltip);
+                        }
                         return;
                     }
                     
@@ -348,7 +348,14 @@
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('flatpickr-day') && e.target.classList.contains('flatpickr-disabled')) {
                 if (e.target.classList.contains('date-maintenance')) {
-                    showToast(document.documentElement.lang === 'ar' ? '🔧 هذا التاريخ محجوز للصيانة، يرجى اختيار تاريخ آخر.' : '🔧 This date is reserved for maintenance, please choose another.', 'error');
+                    const reason = e.target.getAttribute('data-maint-reason');
+                    const isAr = document.documentElement.lang === 'ar';
+                    let msg = isAr ? '🔧 هذا التاريخ محجوز للصيانة' : '🔧 This date is reserved for maintenance';
+                    if (reason) {
+                        msg += isAr ? ` (السبب: ${reason})` : ` (Reason: ${reason})`;
+                    }
+                    msg += isAr ? '، يرجى اختيار تاريخ آخر.' : ', please choose another date.';
+                    showToast(msg, 'error');
                 } else if (e.target.classList.contains('date-fully-booked')) {
                     showToast(document.documentElement.lang === 'ar' ? 'هذا التاريخ محجوز بالكامل، يرجى اختيار تاريخ آخر.' : 'This date is fully booked, please choose another.', 'error');
                 }
@@ -833,15 +840,21 @@
   </div>
 
   <style>
-    /* Flatpickr Exact Dashboard Widget Design - Centered Modal Style */
+    /* ═══════════════════════════════════════════════════════════════════════
+       Flatpickr Premium Calendar — Event Manager Booking View
+       ═══════════════════════════════════════════════════════════════════════ */
+    
     .flatpickr-calendar {
-      background: #131620 !important;
-      border: 1px solid #2d3342 !important;
-      box-shadow: 0 0 0 100vmax rgba(0,0,0,0.6), 0 16px 40px rgba(0, 0, 0, 0.7) !important; /* Overlay effect + shadow */
-      border-radius: 16px !important;
-      padding: 24px !important;
-      font-family: 'Inter', system-ui, sans-serif !important;
-      width: 480px !important;
+      background: #0f1219 !important;
+      border: 1px solid rgba(139, 92, 246, 0.15) !important;
+      box-shadow: 
+        0 0 0 100vmax rgba(0,0,0,0.65),
+        0 24px 60px rgba(0, 0, 0, 0.8),
+        0 0 40px rgba(139, 92, 246, 0.06) !important;
+      border-radius: 20px !important;
+      padding: 28px !important;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+      width: 500px !important;
     }
     
     .flatpickr-calendar.open {
@@ -853,15 +866,32 @@
       bottom: auto !important;
       z-index: 999999 !important;
       margin: 0 !important;
+      animation: calendarFadeIn 0.25s ease-out !important;
     }
     
+    @keyframes calendarFadeIn {
+      from { opacity: 0; transform: translate(-50%, -48%) scale(0.97); }
+      to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    }
+    
+    /* ── Month Navigation ── */
     .flatpickr-months {
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
-      margin-bottom: 24px !important;
+      margin-bottom: 16px !important;
       position: relative !important;
       height: 40px !important;
+      background: transparent !important;
+      border: none !important;
+      padding: 0 !important;
+    }
+
+    .flatpickr-months .flatpickr-month {
+      background: transparent !important;
+      border: none !important;
+      height: 40px !important;
+      overflow: visible !important;
     }
     
     .flatpickr-current-month {
@@ -872,9 +902,11 @@
       gap: 6px !important;
       font-size: 1.15rem !important;
       font-weight: 700 !important;
-      color: #fff !important;
+      color: #f1f5f9 !important;
       padding: 0 !important;
       height: 100% !important;
+      letter-spacing: -0.01em !important;
+      background: transparent !important;
     }
     
     .flatpickr-current-month .flatpickr-monthDropdown-months {
@@ -882,11 +914,11 @@
       -webkit-appearance: none !important;
       background: transparent !important;
       border: none !important;
-      color: #e2e8f0 !important;
+      color: #f1f5f9 !important;
       font-weight: 700 !important;
       font-size: 1.15rem !important;
       cursor: pointer !important;
-      padding: 0 !important;
+      padding: 0 2px !important;
       margin: 0 !important;
     }
     
@@ -898,13 +930,18 @@
       width: 5ch !important;
       background: transparent !important;
     }
+
+    .flatpickr-current-month .numInputWrapper span {
+      display: none !important;
+    }
     
     .flatpickr-current-month .numInputWrapper input.cur-year {
       font-weight: 700 !important;
-      color: #e2e8f0 !important;
+      color: #f1f5f9 !important;
       font-size: 1.15rem !important;
       padding: 0 !important;
       margin: 0 !important;
+      background: transparent !important;
     }
     
     .flatpickr-months .flatpickr-prev-month,
@@ -915,20 +952,20 @@
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
-      width: 38px !important;
-      height: 38px !important;
-      border: 1px solid #2d3342 !important;
+      width: 34px !important;
+      height: 34px !important;
+      border: none !important;
       border-radius: 8px !important;
       padding: 0 !important;
-      fill: #828a99 !important;
-      color: #828a99 !important;
-      transition: all 0.2s !important;
+      fill: #64748b !important;
+      color: #64748b !important;
+      transition: all 0.2s ease !important;
       background: transparent !important;
     }
     .flatpickr-months .flatpickr-prev-month svg,
     .flatpickr-months .flatpickr-next-month svg {
-      width: 14px !important;
-      height: 14px !important;
+      width: 16px !important;
+      height: 16px !important;
     }
     
     html[lang="ar"] .flatpickr-months .flatpickr-prev-month { right: 0 !important; left: auto !important; }
@@ -936,12 +973,12 @@
     
     .flatpickr-months .flatpickr-prev-month:hover,
     .flatpickr-months .flatpickr-next-month:hover {
-      background: #1a1d27 !important;
-      border-color: #3b4255 !important;
-      fill: #fff !important;
-      color: #fff !important;
+      background: rgba(139, 92, 246, 0.1) !important;
+      fill: #c4b5fd !important;
+      color: #c4b5fd !important;
     }
     
+    /* ── Grid Layout ── */
     .flatpickr-innerContainer, .flatpickr-rContainer, .dayContainer, .flatpickr-days {
       width: 100% !important;
       max-width: 100% !important;
@@ -951,113 +988,196 @@
     .flatpickr-weekdays {
       display: grid !important;
       grid-template-columns: repeat(7, 1fr) !important;
-      margin-bottom: 12px !important;
+      margin-bottom: 8px !important;
       width: 100% !important;
       height: auto !important;
+      padding-bottom: 8px !important;
+      border-bottom: none !important;
+      background: transparent !important;
     }
     
     .flatpickr-weekdaycontainer {
       display: contents !important;
+      background: transparent !important;
     }
     
     span.flatpickr-weekday {
-      color: #828a99 !important;
-      font-size: 0.8rem !important;
-      font-weight: 500 !important;
+      color: #64748b !important;
+      font-size: 0.72rem !important;
+      font-weight: 600 !important;
       text-align: center !important;
-      text-transform: uppercase;
+      text-transform: uppercase !important;
+      letter-spacing: 0.05em !important;
+      background: transparent !important;
     }
     
     .dayContainer {
       display: grid !important;
       grid-template-columns: repeat(7, 1fr) !important;
-      gap: 8px !important;
+      gap: 6px !important;
       justify-items: center !important;
     }
     
+    /* ── Day Cells ── */
     .flatpickr-day {
       width: 100% !important;
       max-width: 100% !important;
-      height: 46px !important;
+      height: 44px !important;
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
-      background: #1a1d27 !important;
-      border: 1px solid #2d3342 !important;
-      border-radius: 8px !important;
-      color: #e2e8f0 !important;
-      font-size: 0.95rem !important;
+      background: rgba(255,255,255,0.025) !important;
+      border: 1px solid rgba(255,255,255,0.06) !important;
+      border-radius: 10px !important;
+      color: #cbd5e1 !important;
+      font-size: 0.9rem !important;
       font-weight: 600 !important;
-      transition: all 0.2s !important;
+      transition: all 0.15s ease !important;
       position: relative !important;
       margin: 0 !important;
       line-height: 1 !important;
+      cursor: pointer !important;
     }
     
     .flatpickr-day:hover, .flatpickr-day:focus {
-      background: #232736 !important;
-      border-color: #3b4255 !important;
-      z-index: 2;
+      background: rgba(139, 92, 246, 0.08) !important;
+      border-color: rgba(139, 92, 246, 0.25) !important;
+      color: #f1f5f9 !important;
+      z-index: 2 !important;
+      transform: scale(1.04);
     }
     
-    /* Today matching Legend (Purple outline) */
+    /* Today — purple accent */
     .flatpickr-day.today {
       border: 2px solid #8b5cf6 !important;
-      background: transparent !important;
+      background: rgba(139, 92, 246, 0.06) !important;
+      color: #c4b5fd !important;
     }
     
-    /* Selected */
+    /* Selected — solid purple gradient */
     .flatpickr-day.selected, .flatpickr-day.selected:hover {
-      background: #8b5cf6 !important;
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed) !important;
       border-color: #8b5cf6 !important;
       color: #fff !important;
-      z-index: 5;
+      z-index: 5 !important;
+      box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4) !important;
+      transform: scale(1.04);
     }
     
-    /* Past/Next Month matching Legend (Opacity 0.3) */
+    /* Past / Other month */
     .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay {
-      opacity: 0.2 !important;
+      opacity: 0.15 !important;
       background: transparent !important;
-      border-color: #2d3342 !important;
+      border-color: transparent !important;
       cursor: default !important;
     }
-    
-    /* Booked styling to match Legend (Red background) */
-    .flatpickr-day.date-fully-booked {
-      background: #ef4444 !important;
-      border-color: #ef4444 !important;
-      color: #fff !important;
+    .flatpickr-day.prevMonthDay:hover, .flatpickr-day.nextMonthDay:hover {
+      transform: none !important;
     }
     
+    /* ── Booking States ── */
+    
+    /* Fully Booked — red tint */
+    .flatpickr-day.date-fully-booked {
+      background: rgba(239, 68, 68, 0.18) !important;
+      border-color: rgba(239, 68, 68, 0.5) !important;
+      color: #fca5a5 !important;
+      cursor: not-allowed !important;
+    }
+    .flatpickr-day.date-fully-booked:hover {
+      background: rgba(239, 68, 68, 0.25) !important;
+      transform: none !important;
+    }
+    
+    /* Partially Booked — amber tint */
     .flatpickr-day.date-partially-booked {
-      background: #f59e0b !important;
-      border-color: #f59e0b !important;
-      color: #fff !important;
+      background: rgba(245, 158, 11, 0.15) !important;
+      border-color: rgba(245, 158, 11, 0.45) !important;
+      color: #fbbf24 !important;
+    }
+    .flatpickr-day.date-partially-booked:hover {
+      background: rgba(245, 158, 11, 0.22) !important;
     }
 
-    /* Maintenance styling — diagonal stripes pattern */
+    /* ── Maintenance ── */
     .flatpickr-day.date-maintenance {
-      background: repeating-linear-gradient(
-        45deg,
-        rgba(245, 158, 11, 0.35),
-        rgba(245, 158, 11, 0.35) 3px,
-        rgba(239, 68, 68, 0.45) 3px,
-        rgba(239, 68, 68, 0.45) 6px
-      ) !important;
-      border: 2px solid #f59e0b !important;
-      color: #fff !important;
+      background: 
+        repeating-linear-gradient(
+          -45deg,
+          transparent,
+          transparent 3px,
+          rgba(245, 158, 11, 0.12) 3px,
+          rgba(245, 158, 11, 0.12) 6px
+        ),
+        rgba(245, 158, 11, 0.06) !important;
+      border: 1.5px solid rgba(245, 158, 11, 0.45) !important;
+      color: #fbbf24 !important;
       cursor: not-allowed !important;
       position: relative !important;
+    }
+    .flatpickr-day.date-maintenance:hover {
+      background: 
+        repeating-linear-gradient(
+          -45deg,
+          transparent,
+          transparent 3px,
+          rgba(245, 158, 11, 0.18) 3px,
+          rgba(245, 158, 11, 0.18) 6px
+        ),
+        rgba(245, 158, 11, 0.1) !important;
+      transform: none !important;
     }
     .flatpickr-day.date-maintenance::after {
       content: '🔧';
       position: absolute;
-      bottom: -2px;
-      right: 1px;
-      font-size: 9px;
+      bottom: 1px;
+      right: 3px;
+      font-size: 10px;
       line-height: 1;
+      opacity: 0.75;
+    }
+
+    /* ── Maintenance Reason Tooltip ── */
+    .flatpickr-day .maint-tooltip {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1a1e2e;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #fbbf24;
+      white-space: nowrap;
+      z-index: 99999;
+      pointer-events: none;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      max-width: 220px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      animation: tooltipFadeIn 0.15s ease-out;
+    }
+    @keyframes tooltipFadeIn {
+      from { opacity: 0; transform: translateX(-50%) translateY(4px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+    .flatpickr-day .maint-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: rgba(245, 158, 11, 0.35);
+    }
+    .flatpickr-day:hover .maint-tooltip {
+      display: block;
     }
     
+    /* ── Misc ── */
     .flatpickr-calendar.arrowTop:before, .flatpickr-calendar.arrowTop:after {
       display: none !important;
     }
