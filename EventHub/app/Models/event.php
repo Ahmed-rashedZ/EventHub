@@ -17,6 +17,7 @@ class Event extends Model
         'external_venue_name',
         'external_venue_location',
         'booking_proof_path',
+        'ministry_document_path',
         'period',
         'booking_date',
         'start_time',
@@ -25,8 +26,14 @@ class Event extends Model
         'image',
         'status',
         'rejection_reason',
+        'review_message',
+        'review_fields',
+        'review_status',
         'is_sponsorship_open',
         'created_by',
+        'external_schedule',
+        'internal_schedule',
+        'agenda',
     ];
 
     protected $appends = [
@@ -38,6 +45,10 @@ class Event extends Model
         'start_time' => 'datetime',
         'end_time' => 'datetime',
         'is_sponsorship_open' => 'boolean',
+        'review_fields' => 'array',
+        'external_schedule' => 'array',
+        'internal_schedule' => 'array',
+        'agenda' => 'array',
     ];
 
     protected function serializeDate(\DateTimeInterface $date)

@@ -328,20 +328,57 @@
           <div class="ed-info-grid">
             <div class="ed-info-card ed-info-accent2">
               <div class="ed-info-icon">🏛️</div>
-              <div><div class="ed-info-label">Venue</div><div class="ed-info-value">${ev.venue?.name || '—'}</div></div>
+              <div><div class="ed-info-label">Venue</div><div class="ed-info-value">${ev.venue?.name || ev.external_venue_name || '—'}</div></div>
             </div>
             <div class="ed-info-card ed-info-accent2">
               <div class="ed-info-icon">📍</div>
-              <div><div class="ed-info-label">Location</div><div class="ed-info-value">${ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` : '—'}</div></div>
+              <div><div class="ed-info-label">Location</div><div class="ed-info-value">
+                ${ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` 
+                : (ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` : '—')}
+              </div></div>
             </div>
-            <div class="ed-info-card ed-info-accent">
-              <div class="ed-info-icon">🕐</div>
-              <div><div class="ed-info-label">Start</div><div class="ed-info-value">${fmtDate(ev.start_time)}</div></div>
-            </div>
-            <div class="ed-info-card ed-info-accent">
-              <div class="ed-info-icon">🕔</div>
-              <div><div class="ed-info-label">End</div><div class="ed-info-value">${fmtDate(ev.end_time)}</div></div>
-            </div>
+            ${(() => {
+              const schedule = ev.external_schedule && ev.external_schedule.length > 0 ? ev.external_schedule : 
+                               (ev.internal_schedule && ev.internal_schedule.length > 0 ? ev.internal_schedule : null);
+              if (schedule) {
+                return `
+                  <div style="grid-column: 1 / -1;">
+                    <div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">📅 Event Schedule (${schedule.length} day${schedule.length > 1 ? 's' : ''})</div>
+                    <div style="display:flex;flex-direction:column;gap:6px;">
+                      ${schedule.map(slot => {
+                        const d = new Date(slot.date + 'T00:00:00');
+                        const dn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+                        const mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                        return \`<div style="display:flex;align-items:center;gap:10px;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15);border-radius:10px;padding:10px 14px;">
+                          <div style="min-width:42px;text-align:center;background:rgba(139,92,246,0.12);border-radius:8px;padding:5px 4px;">
+                            <div style="font-size:0.55rem;font-weight:700;color:#a78bfa;text-transform:uppercase;">\${dn[d.getDay()]}</div>
+                            <div style="font-size:1.1rem;font-weight:800;color:#fff;line-height:1;">\${d.getDate()}</div>
+                            <div style="font-size:0.5rem;color:#94a3b8;">\${mn[d.getMonth()]}</div>
+                          </div>
+                          <div style="flex:1;display:flex;align-items:center;gap:8px;">
+                            \${slot.period ? \`<span style="background:rgba(16,185,129,0.1);color:#10b981;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;text-transform:capitalize;">\${slot.period.replace('_', ' ')}</span>\` : ''}
+                            <span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;">\${slot.start_time}</span>
+                            <span style="color:#64748b;font-size:0.8rem;">→</span>
+                            <span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;">\${slot.end_time}</span>
+                          </div>
+                        </div>\`;
+                      }).join('')}
+                    </div>
+                  </div>
+                `;
+              } else {
+                return `
+                  <div class="ed-info-card ed-info-accent">
+                    <div class="ed-info-icon">🕐</div>
+                    <div><div class="ed-info-label">Start</div><div class="ed-info-value">\${fmtDate(ev.start_time)}</div></div>
+                  </div>
+                  <div class="ed-info-card ed-info-accent">
+                    <div class="ed-info-icon">🕔</div>
+                    <div><div class="ed-info-label">End</div><div class="ed-info-value">\${fmtDate(ev.end_time)}</div></div>
+                  </div>
+                `;
+              }
+            })()}
             <div class="ed-info-card ed-info-warning">
               <div class="ed-info-icon">👥</div>
               <div><div class="ed-info-label">Capacity</div><div class="ed-info-value">${ev.capacity}</div></div>
@@ -355,6 +392,8 @@
           ${sponsorsHtml}
           ${reviewsHtml}
           
+          ${(() => { const ag=ev.agenda; if(!ag||typeof ag!=='object') return ''; const isArr=Array.isArray(ag); if(isArr&&!ag.length) return ''; if(!isArr&&!Object.keys(ag).length) return ''; let h='<div style="margin-top:16px;"><div style="font-size:0.72rem;font-weight:700;color:#22d3ee;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">📋 Event Agenda</div>'; const dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; const renderItem=a=>`<div style="display:flex;align-items:center;gap:10px;background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:10px;padding:8px 14px;margin-left:8px;"><div style="display:flex;align-items:center;gap:6px;min-width:110px;"><span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.start_time}</span><span style="color:#64748b;font-size:0.7rem;">→</span><span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.end_time}</span></div><div style="flex:1;font-size:0.85rem;color:#e2e8f0;font-weight:500;">${a.title}</div></div>`; if(!isArr){Object.keys(ag).sort().forEach(ds=>{const items=ag[ds];if(!items||!items.length)return;const d=new Date(ds+'T00:00:00');h+=`<div style="margin-bottom:10px;"><div style="font-size:0.68rem;font-weight:600;color:#a78bfa;margin-bottom:6px;padding:4px 10px;background:rgba(139,92,246,0.08);border-radius:6px;display:inline-block;">📅 ${dn[d.getDay()]} ${d.getDate()} ${mn[d.getMonth()]} ${d.getFullYear()}</div><div style="display:flex;flex-direction:column;gap:4px;">${items.map(renderItem).join('')}</div></div>`;});}else{h+=`<div style="display:flex;flex-direction:column;gap:4px;">${ag.map(renderItem).join('')}</div>`;} return h+'</div>'; })()}
+
           <div class="ed-footer" style="margin-top: 8px;">
             <span class="ed-footer-label">Event Manager</span>
             <span class="ed-footer-name cursor-pointer" onclick="navigateToProfile(${ev.creator?.id})" style="color:var(--accent2);">${ev.creator?.name || '—'}</span>

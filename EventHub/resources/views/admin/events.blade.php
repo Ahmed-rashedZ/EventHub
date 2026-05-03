@@ -161,21 +161,29 @@
     function renderEvents(events) {
       const tbody = document.getElementById('events-body');
       if (!events.length) { tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">📅</div><p>No events found</p></div></td></tr>'; return; }
-      tbody.innerHTML = events.map((ev, i) => `
-      <tr>
-        <td style="color:var(--text-muted)">${i + 1}</td>
-        <td><div style="font-weight:600">${ev.title}</div></td>
-        <td style="color:var(--text-muted)">${ev.venue_id ? (ev.venue?.name || '—') : (ev.external_venue_name ? ev.external_venue_name + ' (External)' : '—')}</td>
-        <td style="color:var(--text-muted)">${ev.creator?.name || '—'}</td>
-        <td style="color:var(--text-muted);white-space:nowrap">${fmtDateShort(ev.start_time)}</td>
-        <td style="color:var(--text-muted)">${ev.capacity}</td>
-        <td>${badge(ev.status)} ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''}</td>
-        <td style="display:flex;gap:6px;padding:14px 16px;flex-wrap:wrap">
-          <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${ev.id})" title="View Details">ℹ️ Details</button>
-          <button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='/admin/event-stats/${ev.id}'" title="View Statistics">📊 Stats</button>
-          ${ev.status === 'pending' ? `<button class="btn btn-success btn-sm" onclick="approve(${ev.id})">✓ Approve</button><button class="btn btn-danger btn-sm" onclick="reject(${ev.id})">✕ Reject</button>` : ''}
-        </td>
-      </tr>`).join('');
+      tbody.innerHTML = events.map((ev, i) => {
+        const reviewBadge = ev.review_status === 'needs_review' 
+          ? `<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(245,158,11,0.12);color:#f59e0b;padding:2px 8px;border-radius:8px;font-size:0.68rem;font-weight:600;border:1px solid rgba(245,158,11,0.25);margin-left:4px;">⏳ Awaiting Changes</span>`
+          : ev.review_status === 'reviewed'
+          ? `<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(59,130,246,0.12);color:#3b82f6;padding:2px 8px;border-radius:8px;font-size:0.68rem;font-weight:600;border:1px solid rgba(59,130,246,0.25);margin-left:4px;">🔄 Updated</span>`
+          : '';
+
+        return `
+        <tr>
+          <td style="color:var(--text-muted)">${i + 1}</td>
+          <td><div style="font-weight:600">${ev.title}</div></td>
+          <td style="color:var(--text-muted)">${ev.venue_id ? (ev.venue?.name || '—') : (ev.external_venue_name ? ev.external_venue_name + ' (External)' : '—')}</td>
+          <td style="color:var(--text-muted)">${ev.creator?.name || '—'}</td>
+          <td style="color:var(--text-muted);white-space:nowrap">${fmtDateShort(ev.start_time)}</td>
+          <td style="color:var(--text-muted)">${ev.capacity}</td>
+          <td>${badge(ev.status)} ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''} ${reviewBadge}</td>
+          <td style="display:flex;gap:6px;padding:14px 16px;flex-wrap:wrap">
+            <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${ev.id})" title="View Details">ℹ️ Details</button>
+            <button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='/admin/event-stats/${ev.id}'" title="View Statistics">📊 Stats</button>
+            ${ev.status === 'pending' ? `<button class="btn btn-sm" style="background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25)" onclick="openReviewModal(${ev.id})" title="Send Review">📝 Review</button><button class="btn btn-success btn-sm" onclick="approve(${ev.id})">✓ Approve</button><button class="btn btn-danger btn-sm" onclick="reject(${ev.id})">✕ Reject</button>` : ''}
+          </td>
+        </tr>`;
+      }).join('');
     }
 
     async function approve(id) {
@@ -298,13 +306,13 @@
           <div class="ed-info-grid">
             <div class="ed-info-card ed-info-accent2">
               <div class="ed-info-icon">🏛️</div>
-              <div><div class="ed-info-label">Venue</div><div class="ed-info-value">${ev.venue_id ? (ev.venue?.name || '—') : (ev.external_venue_name || '—')}</div></div>
+              <div><div class="ed-info-label">Venue</div><div class="ed-info-value">${ev.venue?.name || ev.external_venue_name || '—'}</div></div>
             </div>
             <div class="ed-info-card ed-info-accent2">
               <div class="ed-info-icon">📍</div>
               <div><div class="ed-info-label">Location</div><div class="ed-info-value">
-                ${ev.venue_id && ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` 
-                : (!ev.venue_id && ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` : '—')}
+                ${ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` 
+                : (ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` : '—')}
               </div></div>
             </div>
             ${!ev.venue_id && ev.booking_proof_path ? `
@@ -313,14 +321,59 @@
               <div><div class="ed-info-label" style="color:#22d3ee">Booking Proof</div><div class="ed-info-value"><a href="/storage/${ev.booking_proof_path}" target="_blank" style="color:#22d3ee;text-decoration:underline;">View Document ↗</a></div></div>
             </div>
             ` : ''}
-            <div class="ed-info-card ed-info-accent">
-              <div class="ed-info-icon">🕐</div>
-              <div><div class="ed-info-label">Start</div><div class="ed-info-value">${fmtDate(ev.start_time)}</div></div>
+            ${ev.ministry_document_path ? `
+            <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(139,92,246,0.05); border-color:rgba(139,92,246,0.2); border: 1px solid rgba(139,92,246,0.2);">
+              <div class="ed-info-icon">📄</div>
+              <div><div class="ed-info-label" style="color:#a78bfa">Ministry Approval Document</div><div class="ed-info-value"><a href="/storage/${ev.ministry_document_path}" target="_blank" style="color:#a78bfa;text-decoration:underline;">View Document ↗</a></div></div>
             </div>
-            <div class="ed-info-card ed-info-accent">
-              <div class="ed-info-icon">🕔</div>
-              <div><div class="ed-info-label">End</div><div class="ed-info-value">${fmtDate(ev.end_time)}</div></div>
+            ` : `
+            <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(239,68,68,0.05); border-color:rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.2);">
+              <div class="ed-info-icon">⚠️</div>
+              <div><div class="ed-info-label" style="color:#ef4444">Ministry Document</div><div class="ed-info-value" style="color:#ef4444;">Not uploaded</div></div>
             </div>
+            `}
+            ${(() => {
+              const schedule = ev.external_schedule && ev.external_schedule.length > 0 ? ev.external_schedule : 
+                               (ev.internal_schedule && ev.internal_schedule.length > 0 ? ev.internal_schedule : null);
+              if (schedule) {
+                return `
+                  <div style="grid-column: 1 / -1;">
+                    <div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">📅 Event Schedule (${schedule.length} day${schedule.length > 1 ? 's' : ''})</div>
+                    <div style="display:flex;flex-direction:column;gap:6px;">
+                      ${schedule.map(slot => {
+                        const d = new Date(slot.date + 'T00:00:00');
+                        const dn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+                        const mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                        return \`<div style="display:flex;align-items:center;gap:10px;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15);border-radius:10px;padding:10px 14px;">
+                          <div style="min-width:42px;text-align:center;background:rgba(139,92,246,0.12);border-radius:8px;padding:5px 4px;">
+                            <div style="font-size:0.55rem;font-weight:700;color:#a78bfa;text-transform:uppercase;">\${dn[d.getDay()]}</div>
+                            <div style="font-size:1.1rem;font-weight:800;color:#fff;line-height:1;">\${d.getDate()}</div>
+                            <div style="font-size:0.5rem;color:#94a3b8;">\${mn[d.getMonth()]}</div>
+                          </div>
+                          <div style="flex:1;display:flex;align-items:center;gap:8px;">
+                            \${slot.period ? \`<span style="background:rgba(16,185,129,0.1);color:#10b981;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;text-transform:capitalize;">\${slot.period.replace('_', ' ')}</span>\` : ''}
+                            <span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;">\${slot.start_time}</span>
+                            <span style="color:#64748b;font-size:0.8rem;">→</span>
+                            <span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;">\${slot.end_time}</span>
+                          </div>
+                        </div>\`;
+                      }).join('')}
+                    </div>
+                  </div>
+                `;
+              } else {
+                return `
+                  <div class="ed-info-card ed-info-accent">
+                    <div class="ed-info-icon">🕐</div>
+                    <div><div class="ed-info-label">Start</div><div class="ed-info-value">\${fmtDate(ev.start_time)}</div></div>
+                  </div>
+                  <div class="ed-info-card ed-info-accent">
+                    <div class="ed-info-icon">🕔</div>
+                    <div><div class="ed-info-label">End</div><div class="ed-info-value">\${fmtDate(ev.end_time)}</div></div>
+                  </div>
+                `;
+              }
+            })()}
             <div class="ed-info-card ed-info-warning">
               <div class="ed-info-icon">👥</div>
               <div><div class="ed-info-label">Capacity</div><div class="ed-info-value">${ev.capacity}</div></div>
@@ -332,6 +385,8 @@
           </div>
           
           ${sponsorsHtml}
+
+          ${(() => { const ag=ev.agenda; if(!ag||typeof ag!=='object') return ''; const isArr=Array.isArray(ag); if(isArr&&!ag.length) return ''; if(!isArr&&!Object.keys(ag).length) return ''; let h='<div style="margin-top:16px;"><div style="font-size:0.72rem;font-weight:700;color:#22d3ee;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">📋 Event Agenda</div>'; const dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; const renderItem=a=>`<div style="display:flex;align-items:center;gap:10px;background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:10px;padding:8px 14px;margin-left:8px;"><div style="display:flex;align-items:center;gap:6px;min-width:110px;"><span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.start_time}</span><span style="color:#64748b;font-size:0.7rem;">→</span><span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.end_time}</span></div><div style="flex:1;font-size:0.85rem;color:#e2e8f0;font-weight:500;">${a.title}</div></div>`; if(!isArr){Object.keys(ag).sort().forEach(ds=>{const items=ag[ds];if(!items||!items.length)return;const d=new Date(ds+'T00:00:00');h+=`<div style="margin-bottom:10px;"><div style="font-size:0.68rem;font-weight:600;color:#a78bfa;margin-bottom:6px;padding:4px 10px;background:rgba(139,92,246,0.08);border-radius:6px;display:inline-block;">📅 ${dn[d.getDay()]} ${d.getDate()} ${mn[d.getMonth()]} ${d.getFullYear()}</div><div style="display:flex;flex-direction:column;gap:4px;">${items.map(renderItem).join('')}</div></div>`;});}else{h+=`<div style="display:flex;flex-direction:column;gap:4px;">${ag.map(renderItem).join('')}</div>`;} return h+'</div>'; })()}
 
           <div class="ed-footer" style="margin-top: 8px;">
             <span class="ed-footer-label">Created by</span>
@@ -625,6 +680,98 @@
       </form>
     </div>
   </div>
+
+  <!-- Review Modal -->
+  <div class="modal-overlay" id="review-modal">
+    <div class="modal" style="max-width:480px">
+      <div class="modal-header">
+        <h3 class="modal-title">📝 Send Review</h3>
+        <button class="modal-close" onclick="closeReviewModal()">✕</button>
+      </div>
+      <form id="review-form" onsubmit="submitReview(event)">
+        <input type="hidden" id="review-event-id">
+        
+        <div class="form-group">
+          <label class="form-label" style="font-size:0.75rem;margin-bottom:10px;">Select fields that need changes</label>
+          <div id="review-fields-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:0.82rem;color:#e2e8f0;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+              <input type="checkbox" name="review_fields" value="title" style="width:15px;height:15px;cursor:pointer;"> 📝 Title
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:0.82rem;color:#e2e8f0;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+              <input type="checkbox" name="review_fields" value="description" style="width:15px;height:15px;cursor:pointer;"> 📄 Description
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:0.82rem;color:#e2e8f0;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+              <input type="checkbox" name="review_fields" value="event_type" style="width:15px;height:15px;cursor:pointer;"> 🏷️ Type
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:0.82rem;color:#e2e8f0;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+              <input type="checkbox" name="review_fields" value="capacity" style="width:15px;height:15px;cursor:pointer;"> 👥 Capacity
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:0.82rem;color:#e2e8f0;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+              <input type="checkbox" name="review_fields" value="image" style="width:15px;height:15px;cursor:pointer;"> 🖼️ Banner
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:0.82rem;color:#e2e8f0;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+              <input type="checkbox" name="review_fields" value="ministry_document" style="width:15px;height:15px;cursor:pointer;"> 📄 Ministry Doc
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:0.82rem;color:#e2e8f0;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+              <input type="checkbox" name="review_fields" value="booking_proof" style="width:15px;height:15px;cursor:pointer;"> 📎 Booking Proof
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top:16px;">
+          <label class="form-label" style="font-size:0.75rem;">Review Message</label>
+          <textarea id="review-message" class="form-control" rows="3"
+            placeholder="e.g. Please upload a clearer ministry document and increase the capacity..." required></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" onclick="closeReviewModal()">Cancel</button>
+          <button type="submit" class="btn" style="background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);">📝 Send Review</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function openReviewModal(eventId) {
+      document.getElementById('review-event-id').value = eventId;
+      document.getElementById('review-modal').classList.add('open');
+    }
+
+    function closeReviewModal() {
+      document.getElementById('review-modal').classList.remove('open');
+      document.getElementById('review-form').reset();
+    }
+
+    async function submitReview(e) {
+      e.preventDefault();
+      const eventId = document.getElementById('review-event-id').value;
+      const message = document.getElementById('review-message').value;
+      const checkboxes = document.querySelectorAll('input[name="review_fields"]:checked');
+      const fields = Array.from(checkboxes).map(cb => cb.value);
+
+      if (fields.length === 0) {
+        showToast('Please select at least one field to review', 'error');
+        return;
+      }
+
+      const res = await api.put(`/events/${eventId}/review`, {
+        review_message: message,
+        review_fields: fields
+      });
+
+      if (res.ok) {
+        showToast('Review sent to event manager!', 'success');
+        closeReviewModal();
+        loadEvents();
+      } else {
+        showToast(res.data?.message || 'Error sending review', 'error');
+      }
+    }
+
+    function navigateToProfile(userId) {
+      window.location.href = `/admin/users?highlight=${userId}`;
+    }
+  </script>
 </body>
 
 </html>

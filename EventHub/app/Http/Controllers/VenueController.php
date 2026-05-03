@@ -79,13 +79,21 @@ class VenueController extends Controller
         $venue = Venue::findOrFail($id);
         $events = Event::where('venue_id', $id)
             ->whereIn('status', ['approved', 'pending'])
-            ->select('booking_date', 'period', 'start_time', 'end_time')
+            ->select('booking_date', 'period', 'start_time', 'end_time', 'internal_schedule')
             ->get();
             
         $bookings = collect();
 
         foreach ($events as $event) {
-            if ($event->booking_date && $event->period) {
+            if ($event->internal_schedule && is_array($event->internal_schedule)) {
+                foreach ($event->internal_schedule as $slot) {
+                    $bookings->push([
+                        'booking_date' => Carbon::parse($slot['date'])->format('Y-m-d'),
+                        'period' => $slot['period'],
+                        'type'   => 'booking',
+                    ]);
+                }
+            } elseif ($event->booking_date && $event->period) {
                 $bookings->push([
                     'booking_date' => Carbon::parse($event->booking_date)->format('Y-m-d'),
                     'period' => $event->period,
