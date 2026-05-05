@@ -12,17 +12,9 @@ class EventController extends Controller
     // GET /api/events  – public approved events
     public function index(Request $request)
     {
-        $user = $request->user();
-        if ($user && $user->role === 'Sponsor') {
-            if (!$user->profile?->is_available) {
-                return response()->json(['message' => 'Your sponsorship availability is currently turned off. Go to your dashboard or profile to turn it back on to browse opportunities.'], 403);
-            }
-        }
-
         return response()->json(
             Event::with('venue', 'creator:id,name')
                 ->where('status', 'approved')
-                ->where('is_sponsorship_open', true)
                 ->orderBy('start_time')
                 ->get()
         );
@@ -34,14 +26,6 @@ class EventController extends Controller
         if ($request->user()->role !== 'Admin') {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
-
-        // Auto-reject events that have reached their start time without approval
-        Event::where('status', 'pending')
-            ->where('start_time', '<=', now())
-            ->update([
-                'status' => 'rejected',
-                'rejection_reason' => 'Auto-rejected: Event start time has reached/passed without admin approval.'
-            ]);
 
         return response()->json(
             Event::with('venue', 'creator:id,name')
@@ -57,15 +41,6 @@ class EventController extends Controller
         if ($request->user()->role !== 'Event Manager') {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
-
-        // Auto-reject events that have reached their start time without approval
-        Event::where('created_by', $request->user()->id)
-            ->where('status', 'pending')
-            ->where('start_time', '<=', now())
-            ->update([
-                'status' => 'rejected',
-                'rejection_reason' => 'Auto-rejected: Event start time has reached/passed without admin approval.'
-            ]);
 
         return response()->json(
             Event::with('venue')

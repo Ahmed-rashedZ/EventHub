@@ -122,11 +122,11 @@ function populateSidebar(user) {
 
     if (avEl && !avEl.querySelector('img')) {
         let imageUrl = '/images/default-avatar.png';
-        if (user.image && user.image.trim() !== '') {
+        if (typeof user.image === 'string' && user.image.trim() !== '') {
             imageUrl = (user.image.startsWith('http') || user.image.startsWith('/')) ? user.image : '/storage/' + user.image;
-        } else if (user.avatar && user.avatar.trim() !== '') {
+        } else if (typeof user.avatar === 'string' && user.avatar.trim() !== '') {
             imageUrl = (user.avatar.startsWith('http') || user.avatar.startsWith('/')) ? user.avatar : '/storage/' + user.avatar;
-        } else if (user.profile && user.profile.logo) {
+        } else if (user.profile && typeof user.profile.logo === 'string' && user.profile.logo.trim() !== '') {
             imageUrl = user.profile.logo.startsWith('http') ? user.profile.logo : (user.profile.logo.startsWith('/') ? user.profile.logo : '/' + user.profile.logo);
         }
         avEl.innerHTML = `<img src="${imageUrl}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" alt="Avatar"/>`;

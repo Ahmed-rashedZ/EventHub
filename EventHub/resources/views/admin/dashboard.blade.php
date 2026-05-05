@@ -135,6 +135,7 @@ const TYPE_COLORS = { 'مؤتمر':'#3b82f6', 'ندوة':'#8b5cf6', 'ورشة ع
 const ROLE_COLORS = { Admin:'#ef4444', 'Event Manager':'#8b5cf6', Sponsor:'#22d3ee', User:'#22c55e', Assistant:'#f59e0b', Attendee:'#3b82f6' };
 
 async function loadDashboard() {
+  try {
   const [sysRes, pendRes] = await Promise.all([api.get('/analytics/system'), api.get('/events/list/pending')]);
   if (!sysRes.ok) return;
   const d = sysRes.data;
@@ -200,6 +201,10 @@ async function loadDashboard() {
   const pEl = document.getElementById('pending-list');
   if (pendRes.ok && pendRes.data.length) {
     pEl.innerHTML = pendRes.data.slice(0,5).map(ev=>`<div class="an-pending-item"><div><div class="an-pending-title">${ev.title}</div><div class="an-pending-sub">${ev.venue?.name||'—'} · ${fmtDateShort(ev.start_time)}</div></div><div style="display:flex;gap:6px"><button class="btn btn-success btn-sm" onclick="approve(${ev.id})">✓</button><button class="btn btn-danger btn-sm" onclick="reject(${ev.id})">✕</button></div></div>`).join('');
+  }
+  } catch (err) {
+    console.error('Error loading dashboard:', err);
+    showToast('Failed to load dashboard data', 'error');
   }
 }
 

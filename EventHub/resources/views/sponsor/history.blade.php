@@ -327,42 +327,37 @@
               const schedule = ev.external_schedule && ev.external_schedule.length > 0 ? ev.external_schedule : 
                                (ev.internal_schedule && ev.internal_schedule.length > 0 ? ev.internal_schedule : null);
               if (schedule) {
-                return `
-                  <div style="grid-column: 1 / -1;">
-                    <div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">📅 Event Schedule (${schedule.length} day${schedule.length > 1 ? 's' : ''})</div>
-                    <div style="display:flex;flex-direction:column;gap:6px;">
-                      ${schedule.map(slot => {
-                        const d = new Date(slot.date + 'T00:00:00');
-                        const dn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-                        const mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-                        return \`<div style="display:flex;align-items:center;gap:10px;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15);border-radius:10px;padding:10px 14px;">
-                          <div style="min-width:42px;text-align:center;background:rgba(139,92,246,0.12);border-radius:8px;padding:5px 4px;">
-                            <div style="font-size:0.55rem;font-weight:700;color:#a78bfa;text-transform:uppercase;">\${dn[d.getDay()]}</div>
-                            <div style="font-size:1.1rem;font-weight:800;color:#fff;line-height:1;">\${d.getDate()}</div>
-                            <div style="font-size:0.5rem;color:#94a3b8;">\${mn[d.getMonth()]}</div>
-                          </div>
-                          <div style="flex:1;display:flex;align-items:center;gap:8px;">
-                            \${slot.period ? \`<span style="background:rgba(16,185,129,0.1);color:#10b981;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;text-transform:capitalize;">\${slot.period.replace('_', ' ')}</span>\` : ''}
-                            <span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;">\${slot.start_time}</span>
-                            <span style="color:#64748b;font-size:0.8rem;">→</span>
-                            <span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;">\${slot.end_time}</span>
-                          </div>
-                        </div>\`;
-                      }).join('')}
-                    </div>
-                  </div>
-                `;
+                const dn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+                const mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                let scheduleHtml = '<div style="grid-column: 1 / -1;">';
+                scheduleHtml += '<div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">📅 Event Schedule (' + schedule.length + ' day' + (schedule.length > 1 ? 's' : '') + ')</div>';
+                scheduleHtml += '<div style="display:flex;flex-direction:column;gap:6px;">';
+                schedule.forEach(function(slot) {
+                  const d = new Date(slot.date + 'T00:00:00');
+                  scheduleHtml += '<div style="display:flex;align-items:center;gap:10px;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15);border-radius:10px;padding:10px 14px;">';
+                  scheduleHtml += '<div style="min-width:42px;text-align:center;background:rgba(139,92,246,0.12);border-radius:8px;padding:5px 4px;">';
+                  scheduleHtml += '<div style="font-size:0.55rem;font-weight:700;color:#a78bfa;text-transform:uppercase;">' + dn[d.getDay()] + '</div>';
+                  scheduleHtml += '<div style="font-size:1.1rem;font-weight:800;color:#fff;line-height:1;">' + d.getDate() + '</div>';
+                  scheduleHtml += '<div style="font-size:0.5rem;color:#94a3b8;">' + mn[d.getMonth()] + '</div>';
+                  scheduleHtml += '</div>';
+                  scheduleHtml += '<div style="flex:1;display:flex;align-items:center;gap:8px;">';
+                  if (slot.period) {
+                    scheduleHtml += '<span style="background:rgba(16,185,129,0.1);color:#10b981;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;text-transform:capitalize;">' + slot.period.replace('_', ' ') + '</span>';
+                  }
+                  if (slot.start_time) {
+                    scheduleHtml += '<span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;">' + slot.start_time + '</span>';
+                    scheduleHtml += '<span style="color:#64748b;font-size:0.8rem;">→</span>';
+                  }
+                  if (slot.end_time) {
+                    scheduleHtml += '<span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;">' + slot.end_time + '</span>';
+                  }
+                  scheduleHtml += '</div></div>';
+                });
+                scheduleHtml += '</div></div>';
+                return scheduleHtml;
               } else {
-                return `
-                  <div class="ed-info-card ed-info-accent">
-                    <div class="ed-info-icon">🕐</div>
-                    <div><div class="ed-info-label">Start</div><div class="ed-info-value">\${fmtDate(ev.start_time)}</div></div>
-                  </div>
-                  <div class="ed-info-card ed-info-accent">
-                    <div class="ed-info-icon">🕔</div>
-                    <div><div class="ed-info-label">End</div><div class="ed-info-value">\${fmtDate(ev.end_time)}</div></div>
-                  </div>
-                `;
+                return '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon">🕐</div><div><div class="ed-info-label">Start</div><div class="ed-info-value">' + fmtDate(ev.start_time) + '</div></div></div>' +
+                       '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon">🕔</div><div><div class="ed-info-label">End</div><div class="ed-info-value">' + fmtDate(ev.end_time) + '</div></div></div>';
               }
             })()}
             <div class="ed-info-card ed-info-warning">
