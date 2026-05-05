@@ -22,14 +22,14 @@
     <h2 class="auth-heading">Welcome back</h2>
     <p class="auth-subheading">Sign in to your account to continue</p>
 
-    <form id="login-form">
+    <form id="login-form" autocomplete="off">
       <div class="form-group">
         <label class="form-label" for="email">Email Address</label>
-        <input id="email" type="email" class="form-control" placeholder="you@example.com" required/>
+        <input id="email" type="email" class="form-control" placeholder="you@example.com" required autocomplete="off"/>
       </div>
       <div class="form-group">
         <label class="form-label" for="password">Password</label>
-        <input id="password" type="password" class="form-control" placeholder="••••••••" required/>
+        <input id="password" type="password" class="form-control" placeholder="••••••••" required autocomplete="new-password"/>
       </div>
       <div style="text-align: right; margin: -8px 0 16px;">
         <a href="/forgot-password" style="font-size: 0.82rem; color: var(--accent); font-weight: 500; text-decoration: none; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
