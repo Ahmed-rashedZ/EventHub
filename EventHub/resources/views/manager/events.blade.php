@@ -272,6 +272,16 @@
           <div class="form-section" style="margin-bottom: 0;">
             <div class="form-section-title"><span>📋</span> Event Agenda <small style="font-weight:400;color:var(--text-muted);font-size:0.75rem;">(Optional)</small></div>
             <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:12px;">Define the schedule/program for your event. You can also add this later.</small>
+            
+            <div id="create-agenda-tabs-wrap" style="display:none; margin-bottom: 16px;">
+              <div id="create-agenda-tabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;"></div>
+              <div id="create-agenda-apply-all-wrap" style="display:none;margin-bottom:10px;">
+                <button type="button" class="btn btn-sm" style="background:rgba(139,92,246,0.1);color:#a78bfa;border:1px solid rgba(139,92,246,0.2);display:flex;align-items:center;gap:6px;width:100%;justify-content:center;" onclick="applyCreateAgendaToAll()">
+                  📋 Apply Current Day's Agenda to All Days
+                </button>
+              </div>
+            </div>
+
             <div id="agenda-items-create" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
             <button type="button" class="btn btn-ghost btn-sm" onclick="addAgendaItem('agenda-items-create')" style="display:flex;align-items:center;gap:6px;">
               <span style="font-size:1.1rem;">+</span> Add Agenda Item
@@ -785,14 +795,26 @@
                   const dayLabel = `${dn[d.getDay()]} ${d.getDate()} ${mn[d.getMonth()]} ${d.getFullYear()}`;
                   agendaHtml += `<div style="margin-bottom:10px;"><div style="font-size:0.68rem;font-weight:600;color:#a78bfa;margin-bottom:6px;padding:4px 10px;background:rgba(139,92,246,0.08);border-radius:6px;display:inline-block;">📅 ${dayLabel}</div><div style="display:flex;flex-direction:column;gap:4px;">`;
                   items.forEach(a => {
-                    agendaHtml += `<div style="display:flex;align-items:center;gap:10px;background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:10px;padding:8px 14px;margin-left:8px;"><div style="display:flex;align-items:center;gap:6px;min-width:110px;"><span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.start_time}</span><span style="color:#64748b;font-size:0.7rem;">→</span><span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.end_time}</span></div><div style="flex:1;font-size:0.85rem;color:#e2e8f0;font-weight:500;">${a.title}</div></div>`;
+                    agendaHtml += `<div style="display:flex;flex-direction:column;gap:4px;background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:10px;padding:8px 14px;margin-left:8px;">
+                      <div style="display:flex;align-items:center;gap:10px;">
+                        <div style="display:flex;align-items:center;gap:6px;min-width:110px;"><span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.start_time}</span><span style="color:#64748b;font-size:0.7rem;">→</span><span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.end_time}</span></div>
+                        <div style="flex:1;font-size:0.85rem;color:#e2e8f0;font-weight:500;">${a.title}</div>
+                      </div>
+                      ${a.description ? `<div style="font-size:0.75rem;color:#94a3b8;margin-left:126px;">${a.description}</div>` : ''}
+                    </div>`;
                   });
                   agendaHtml += `</div></div>`;
                 });
               } else if (Array.isArray(agenda)) {
                 agendaHtml += `<div style="display:flex;flex-direction:column;gap:4px;">`;
                 agenda.forEach(a => {
-                  agendaHtml += `<div style="display:flex;align-items:center;gap:10px;background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:10px;padding:8px 14px;"><div style="display:flex;align-items:center;gap:6px;min-width:110px;"><span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.start_time}</span><span style="color:#64748b;font-size:0.7rem;">→</span><span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.end_time}</span></div><div style="flex:1;font-size:0.85rem;color:#e2e8f0;font-weight:500;">${a.title}</div></div>`;
+                  agendaHtml += `<div style="display:flex;flex-direction:column;gap:4px;background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:10px;padding:8px 14px;">
+                    <div style="display:flex;align-items:center;gap:10px;">
+                      <div style="display:flex;align-items:center;gap:6px;min-width:110px;"><span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.start_time}</span><span style="color:#64748b;font-size:0.7rem;">→</span><span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.end_time}</span></div>
+                      <div style="flex:1;font-size:0.85rem;color:#e2e8f0;font-weight:500;">${a.title}</div>
+                    </div>
+                    ${a.description ? `<div style="font-size:0.75rem;color:#94a3b8;margin-left:126px;">${a.description}</div>` : ''}
+                  </div>`;
                 });
                 agendaHtml += `</div>`;
               }
@@ -1008,11 +1030,125 @@
         const title = item.querySelector('.agenda-title').value.trim();
         const startTime = item.querySelector('.agenda-start').value;
         const endTime = item.querySelector('.agenda-end').value;
+        const description = item.querySelector('.agenda-desc') ? item.querySelector('.agenda-desc').value.trim() : '';
         if (title && startTime && endTime) {
-          agenda.push({ title, start_time: startTime, end_time: endTime });
+          agenda.push({ title, start_time: startTime, end_time: endTime, description });
         }
       });
       return agenda;
+    }
+
+    // ── Create Event Agenda Tabs Logic ─────────────────────
+    let createAgendaPerDay = {};
+    let createAgendaDays = [];
+    let createAgendaSelectedDay = null;
+
+    function updateCreateAgendaDays() {
+        const locationType = document.getElementById('e-location-type').value;
+        let newDays = [];
+        if (locationType === 'internal') {
+            const schedule = buildInternalSchedule();
+            newDays = schedule.map(s => s.date).sort();
+        } else {
+            const schedule = buildExternalSchedule();
+            newDays = schedule.map(s => s.date).sort();
+        }
+        
+        if (createAgendaSelectedDay && document.getElementById('agenda-items-create')) {
+            createAgendaPerDay[createAgendaSelectedDay] = collectAgendaItems('agenda-items-create');
+        }
+        
+        createAgendaDays = newDays;
+        
+        for (let day in createAgendaPerDay) {
+            if (!createAgendaDays.includes(day)) {
+                delete createAgendaPerDay[day];
+            }
+        }
+        
+        if (createAgendaDays.length > 0) {
+            if (!createAgendaSelectedDay || !createAgendaDays.includes(createAgendaSelectedDay)) {
+                if (!createAgendaSelectedDay && document.getElementById('agenda-items-create') && document.getElementById('agenda-items-create').children.length > 0) {
+                    createAgendaPerDay[createAgendaDays[0]] = collectAgendaItems('agenda-items-create');
+                }
+                createAgendaSelectedDay = createAgendaDays[0];
+            }
+            document.getElementById('create-agenda-tabs-wrap').style.display = 'block';
+            renderCreateAgendaTabs();
+            
+            const container = document.getElementById('agenda-items-create');
+            if (container) {
+                container.innerHTML = '';
+                const items = createAgendaPerDay[createAgendaSelectedDay] || [];
+                items.forEach(item => addAgendaItem('agenda-items-create', item));
+            }
+        } else {
+            document.getElementById('create-agenda-tabs-wrap').style.display = 'none';
+            document.getElementById('agenda-items-create').innerHTML = '';
+            createAgendaSelectedDay = null;
+        }
+    }
+
+    function renderCreateAgendaTabs() {
+        const tabsEl = document.getElementById('create-agenda-tabs');
+        if (!tabsEl) return;
+        if (createAgendaDays.length <= 1) { 
+            tabsEl.innerHTML = ''; 
+            document.getElementById('create-agenda-apply-all-wrap').style.display = 'none';
+            return; 
+        }
+
+        const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+        tabsEl.innerHTML = createAgendaDays.map(dateStr => {
+            const d = new Date(dateStr + 'T00:00:00');
+            const dayName = dayNames[d.getDay()];
+            const dayNum = d.getDate();
+            const month = monthNames[d.getMonth()];
+            const isActive = dateStr === createAgendaSelectedDay;
+            const itemCount = (createAgendaPerDay[dateStr] || []).length;
+            return `<button type="button" onclick="selectCreateAgendaDay('${dateStr}')" style="
+              padding:8px 14px;border-radius:10px;cursor:pointer;transition:all 0.2s;border:1px solid ${isActive ? 'rgba(139,92,246,0.5)' : 'rgba(255,255,255,0.08)'};
+              background:${isActive ? 'rgba(139,92,246,0.15)' : 'rgba(255,255,255,0.03)'};color:${isActive ? '#c4b5fd' : '#94a3b8'};
+              display:flex;flex-direction:column;align-items:center;min-width:60px;font-family:inherit;
+            ">
+              <span style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;">${dayName}</span>
+              <span style="font-size:1.15rem;font-weight:800;color:${isActive ? '#fff' : '#cbd5e1'};line-height:1.2;">${dayNum}</span>
+              <span style="font-size:0.55rem;color:#64748b;">${month}</span>
+              ${itemCount > 0 ? `<span style="margin-top:3px;font-size:0.55rem;background:rgba(34,211,238,0.15);color:#22d3ee;padding:1px 6px;border-radius:4px;">${itemCount} items</span>` : ''}
+            </button>`;
+        }).join('');
+        
+        document.getElementById('create-agenda-apply-all-wrap').style.display = 'block';
+    }
+
+    function selectCreateAgendaDay(dateStr) {
+        if (createAgendaSelectedDay) {
+            createAgendaPerDay[createAgendaSelectedDay] = collectAgendaItems('agenda-items-create');
+        }
+        createAgendaSelectedDay = dateStr;
+        renderCreateAgendaTabs();
+        
+        const container = document.getElementById('agenda-items-create');
+        container.innerHTML = '';
+        const items = createAgendaPerDay[dateStr] || [];
+        items.forEach(item => addAgendaItem('agenda-items-create', item));
+    }
+
+    function applyCreateAgendaToAll() {
+        if (!createAgendaSelectedDay) return;
+        createAgendaPerDay[createAgendaSelectedDay] = collectAgendaItems('agenda-items-create');
+        const currentItems = createAgendaPerDay[createAgendaSelectedDay];
+        if (!currentItems || currentItems.length === 0) {
+            showToast('Add agenda items to the current day first.', 'error');
+            return;
+        }
+        createAgendaDays.forEach(d => {
+            createAgendaPerDay[d] = JSON.parse(JSON.stringify(currentItems));
+        });
+        renderCreateAgendaTabs();
+        showToast('Agenda applied to all ' + createAgendaDays.length + ' days!', 'success');
     }
 
 
@@ -1189,6 +1325,7 @@
           " title="Remove this day">✕</button>
         </div>`;
       }).join('');
+      updateCreateAgendaDays();
     }
 
     window.removeIntDay = function(dateStr) {
@@ -1341,6 +1478,7 @@
           " title="Remove this day">✕</button>
         </div>`;
       }).join('');
+      updateCreateAgendaDays();
     }
 
     function removeExtDay(dateStr) {
@@ -1375,29 +1513,35 @@
       const container = document.getElementById(containerId);
       const item = document.createElement('div');
       item.className = 'agenda-item';
-      item.style.cssText = 'display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(139,92,246,0.15);border-radius:12px;padding:12px 14px;';
+      item.style.cssText = 'display:flex;flex-direction:column;gap:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(139,92,246,0.15);border-radius:12px;padding:12px 14px;';
       item.innerHTML = `
-        <div style="flex:1;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-          <div style="min-width:80px;">
-            <label style="font-size:0.6rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:2px;">From</label>
-            <input type="time" class="agenda-start form-control" value="${data?.start_time || ''}" required style="padding:5px 8px;font-size:0.82rem;" />
+        <div style="display:flex;align-items:flex-start;gap:8px;">
+          <div style="flex:1;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <div style="min-width:80px;">
+              <label style="font-size:0.6rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:2px;">From</label>
+              <input type="time" class="agenda-start form-control" value="${data?.start_time || ''}" required style="padding:5px 8px;font-size:0.82rem;" />
+            </div>
+            <span style="color:#64748b;margin-top:12px;">→</span>
+            <div style="min-width:80px;">
+              <label style="font-size:0.6rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:2px;">To</label>
+              <input type="time" class="agenda-end form-control" value="${data?.end_time || ''}" required style="padding:5px 8px;font-size:0.82rem;" />
+            </div>
+            <div style="flex:1;min-width:120px;">
+              <label style="font-size:0.6rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:2px;">Activity</label>
+              <input type="text" class="agenda-title form-control" value="${data?.title || ''}" placeholder="e.g. Opening Ceremony" style="padding:5px 8px;font-size:0.82rem;" />
+            </div>
           </div>
-          <span style="color:#64748b;margin-top:12px;">→</span>
-          <div style="min-width:80px;">
-            <label style="font-size:0.6rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:2px;">To</label>
-            <input type="time" class="agenda-end form-control" value="${data?.end_time || ''}" required style="padding:5px 8px;font-size:0.82rem;" />
-          </div>
-          <div style="flex:1;min-width:120px;">
-            <label style="font-size:0.6rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:2px;">Activity</label>
-            <input type="text" class="agenda-title form-control" value="${data?.title || ''}" placeholder="e.g. Opening Ceremony" style="padding:5px 8px;font-size:0.82rem;" />
-          </div>
+          <button type="button" onclick="this.closest('.agenda-item').remove()" style="
+            background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);
+            color:#ef4444;width:28px;height:28px;border-radius:7px;cursor:pointer;
+            display:flex;align-items:center;justify-content:center;font-size:0.85rem;
+            flex-shrink:0;margin-top:14px;
+          " title="Remove">✕</button>
         </div>
-        <button type="button" onclick="this.closest('.agenda-item').remove()" style="
-          background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);
-          color:#ef4444;width:28px;height:28px;border-radius:7px;cursor:pointer;
-          display:flex;align-items:center;justify-content:center;font-size:0.85rem;
-          flex-shrink:0;margin-top:10px;
-        " title="Remove">✕</button>
+        <div style="width:100%;">
+          <label style="font-size:0.6rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:2px;">Description (Optional)</label>
+          <input type="text" class="agenda-desc form-control" value="${data?.description || ''}" placeholder="Brief details about this activity..." style="padding:5px 8px;font-size:0.82rem;" />
+        </div>
       `;
       container.appendChild(item);
     }
@@ -1526,6 +1670,12 @@
       // Reset agenda
       const agendaCreate = document.getElementById('agenda-items-create');
       if (agendaCreate) agendaCreate.innerHTML = '';
+      
+      createAgendaPerDay = {};
+      createAgendaDays = [];
+      createAgendaSelectedDay = null;
+      const agendaTabsWrap = document.getElementById('create-agenda-tabs-wrap');
+      if (agendaTabsWrap) agendaTabsWrap.style.display = 'none';
     }
 
     function nextStep() {
@@ -1826,36 +1976,41 @@
       }
 
       // Agenda (optional) - wrap in per-day format
-      const agendaItems = collectAgendaItems('agenda-items-create');
-      if (agendaItems && agendaItems.length > 0) {
-        let isValid = true;
-        
-        if (locationType === 'external') {
-           let startBound = '00:00', endBound = '23:59';
-           const schedule = buildExternalSchedule();
-           if (schedule.length > 0) {
-             startBound = schedule[0].start_time;
-             endBound = schedule[0].end_time;
-           }
-           for (const item of agendaItems) {
-              if (item.start_time < startBound || item.end_time > endBound) {
-                 showToast(`Agenda items must be between event start (${startBound}) and end (${endBound})`, 'error');
-                 return; // Stop form submission
-              }
-           }
-        }
-        // For internal, validation per day is complex on client side as each day can have a different period.
-        // We will assign it to all days and can refine later.
+      if (createAgendaSelectedDay) {
+          createAgendaPerDay[createAgendaSelectedDay] = collectAgendaItems('agenda-items-create');
+      }
 
-        const agendaObj = {};
-        if (locationType === 'external') {
-          const schedule = buildExternalSchedule();
-          schedule.forEach(s => { agendaObj[s.date] = JSON.parse(JSON.stringify(agendaItems)); });
-        } else {
-          const schedule = buildInternalSchedule();
-          schedule.forEach(s => { agendaObj[s.date] = JSON.parse(JSON.stringify(agendaItems)); });
-        }
-        formData.append('agenda', JSON.stringify(agendaObj));
+      let agendaObj = {};
+      let hasAgenda = false;
+      for (const day in createAgendaPerDay) {
+          if (createAgendaPerDay[day] && createAgendaPerDay[day].length > 0) {
+              agendaObj[day] = createAgendaPerDay[day];
+              hasAgenda = true;
+          }
+      }
+
+      if (hasAgenda) {
+          if (locationType === 'external') {
+             const schedule = buildExternalSchedule();
+             for (const day of Object.keys(agendaObj)) {
+                const s = schedule.find(x => x.date === day);
+                if (s) {
+                   for (const item of agendaObj[day]) {
+                      if (item.start_time < s.start_time || item.end_time > s.end_time) {
+                         showToast('Agenda items on ' + day + ' must be between ' + s.start_time + ' and ' + s.end_time, 'error');
+                         return; // Stop form submission
+                      }
+                   }
+                }
+             }
+          }
+          formData.append('agenda', JSON.stringify(agendaObj));
+      } else {
+          const unassignedItems = collectAgendaItems('agenda-items-create');
+          if (unassignedItems.length > 0) {
+              showToast('Please select event days to save the agenda.', 'error');
+              return;
+          }
       }
 
       const res = await api.postForm('/events', formData);
