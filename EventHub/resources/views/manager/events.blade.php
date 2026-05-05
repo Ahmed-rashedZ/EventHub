@@ -1182,14 +1182,15 @@
       if (intCalendarInstance) return;
 
       const wrap = document.getElementById('e-int-calendar-wrap');
-      wrap.innerHTML = ''; // clear
+      wrap.innerHTML = '<input id="e-int-calendar-input" type="text" style="display:none;" />';
 
-      intCalendarInstance = flatpickr(wrap, {
+      intCalendarInstance = initFlatpickr("#e-int-calendar-input", {
         mode: 'multiple',
         dateFormat: 'Y-m-d',
         minDate: 'today',
         inline: true,
         animate: true,
+        showStats: true,
         appendTo: wrap,
         disable: [
             function(date) {
@@ -1369,9 +1370,9 @@
       if (extCalendarInstance) return;
 
       const wrap = document.getElementById('e-ext-calendar-wrap');
-      wrap.innerHTML = ''; // clear
+      wrap.innerHTML = '<input id="e-ext-calendar-input" type="text" style="display:none;" />';
 
-      extCalendarInstance = flatpickr(wrap, {
+      extCalendarInstance = initFlatpickr("#e-ext-calendar-input", {
         mode: 'multiple',
         dateFormat: 'Y-m-d',
         minDate: 'today',
@@ -1607,7 +1608,10 @@
              if (fpInstance.updateCustomStats) fpInstance.updateCustomStats();
          }
          // Also refresh the internal multi-day calendar
-         if (intCalendarInstance) intCalendarInstance.redraw();
+         if (intCalendarInstance) {
+             intCalendarInstance.redraw();
+             if (intCalendarInstance.updateCustomStats) intCalendarInstance.updateCustomStats();
+         }
       }
       checkAvailability();
     }
