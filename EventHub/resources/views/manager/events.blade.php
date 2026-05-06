@@ -378,7 +378,7 @@
                 const locationType = document.getElementById('e-location-type').value;
                 if (locationType === 'internal' && !venueSelect.value) {
                     setTimeout(() => fp.close(), 0);
-                    showToast(document.documentElement.lang === 'ar' ? 'يرجى اختيار القاعة أولاً.' : 'Please select a venue first.', 'warning');
+                    showToast(document.documentElement.lang === 'ar' ? 'يرجى اختيار القاعة أولاً.' : 'Please select a venue first.', 'info');
                 }
             },
             onDayCreate: function(dObj, dStr, fp, dayElem) {
@@ -447,6 +447,8 @@
                     showToast(msg, 'error');
                 } else if (e.target.classList.contains('date-fully-booked')) {
                     showToast(document.documentElement.lang === 'ar' ? 'هذا التاريخ محجوز بالكامل، يرجى اختيار تاريخ آخر.' : 'This date is fully booked, please choose another.', 'error');
+                } else {
+                    showToast(document.documentElement.lang === 'ar' ? 'لا يمكنك حجز هذا التاريخ. يجب أن يكون الحجز بعد 30 يوماً من اليوم على الأقل.' : 'You cannot book this date. Bookings must be made at least 30 days in advance.', 'info');
                 }
             }
         }, true);
@@ -1154,7 +1156,7 @@
       intCalendarInstance = initFlatpickr("#e-int-calendar-input", {
         mode: 'multiple',
         dateFormat: 'Y-m-d',
-        minDate: 'today',
+        minDate: new Date().fp_incr(30),
         inline: true,
         animate: true,
         showStats: true,
@@ -1342,7 +1344,7 @@
       extCalendarInstance = initFlatpickr("#e-ext-calendar-input", {
         mode: 'multiple',
         dateFormat: 'Y-m-d',
-        minDate: 'today',
+        minDate: new Date().fp_incr(30),
         inline: true,
         animate: true,
         appendTo: wrap,
@@ -1646,6 +1648,7 @@
 
     function openModal() { 
       currentWizardStep = 1;
+      setLocationMode('internal');
       updateWizardUI();
       document.getElementById('event-modal').classList.add('open');
     }

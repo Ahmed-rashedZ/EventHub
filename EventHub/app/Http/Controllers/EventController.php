@@ -173,6 +173,13 @@ class EventController extends Controller
                 }
             }
 
+            if ($overallStart < now()->addDays(30)->startOfDay()) {
+                return response()->json([
+                    'message' => 'Events must be booked at least 30 days in advance.',
+                    'errors' => ['internal_schedule' => ['Cannot book earlier than 30 days from today.']]
+                ], 422);
+            }
+
             $eventData = [
                 'venue_id'     => $request->venue_id,
                 'booking_date' => null, // Legacy field
@@ -226,8 +233,8 @@ class EventController extends Controller
                 }
             }
 
-            if ($overallStart <= now()) {
-                return response()->json(['message' => 'Schedule must be in the future.', 'errors' => ['external_schedule' => ['Cannot book in the past.']]], 422);
+            if ($overallStart < now()->addDays(30)->startOfDay()) {
+                return response()->json(['message' => 'Events must be booked at least 30 days in advance.', 'errors' => ['external_schedule' => ['Cannot book earlier than 30 days from today.']]], 422);
             }
 
             // External venue overlap conflict check (Detailed)
