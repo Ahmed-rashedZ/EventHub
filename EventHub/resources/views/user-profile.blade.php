@@ -676,12 +676,12 @@
             ${ev.ministry_document_path ? `
             <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(139,92,246,0.05); border-color:rgba(139,92,246,0.2); border: 1px solid rgba(139,92,246,0.2);">
               <div class="ed-info-icon">📄</div>
-              <div><div class="ed-info-label" style="color:#a78bfa">Ministry Approval Document</div><div class="ed-info-value"><a href="/storage/${ev.ministry_document_path}" target="_blank" style="color:#a78bfa;text-decoration:underline;">View Document ↗</a></div></div>
+              <div><div class="ed-info-label" style="color:#a78bfa">Competent Authority Approval</div><div class="ed-info-value"><a href="/storage/${ev.ministry_document_path}" target="_blank" style="color:#a78bfa;text-decoration:underline;">View Document ↗</a></div></div>
             </div>
             ` : `
             <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(239,68,68,0.05); border-color:rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.2);">
               <div class="ed-info-icon">⚠️</div>
-              <div><div class="ed-info-label" style="color:#ef4444">Ministry Document</div><div class="ed-info-value" style="color:#ef4444;">Not uploaded</div></div>
+              <div><div class="ed-info-label" style="color:#ef4444">Competent Authority Approval</div><div class="ed-info-value" style="color:#ef4444;">Not uploaded</div></div>
             </div>
             `}
             ${(() => {
