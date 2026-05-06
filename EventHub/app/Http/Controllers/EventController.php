@@ -14,6 +14,7 @@ class EventController extends Controller
     {
         return response()->json(
             Event::with('venue', 'creator:id,name')
+                ->withAvg('ratings', 'rating')
                 ->where('status', 'approved')
                 ->orderBy('start_time')
                 ->get()
@@ -29,6 +30,7 @@ class EventController extends Controller
 
         return response()->json(
             Event::with('venue', 'creator:id,name')
+                ->withAvg('ratings', 'rating')
                 ->where('status', 'pending')
                 ->orderBy('created_at', 'desc')
                 ->get()
@@ -44,6 +46,7 @@ class EventController extends Controller
 
         return response()->json(
             Event::with('venue')
+                ->withAvg('ratings', 'rating')
                 ->where('created_by', $request->user()->id)
                 ->orderBy('created_at', 'desc')
                 ->get()
@@ -407,7 +410,9 @@ class EventController extends Controller
     // GET /api/events/{id}  – single event details
     public function show($id)
     {
-        $event = Event::with('venue', 'creator:id,name', 'sponsors.profile')->findOrFail($id);
+        $event = Event::with('venue', 'creator:id,name', 'sponsors.profile')
+            ->withAvg('ratings', 'rating')
+            ->findOrFail($id);
         return response()->json($event);
     }
 
@@ -420,6 +425,7 @@ class EventController extends Controller
 
         return response()->json(
             Event::with('venue', 'creator:id,name')
+                ->withAvg('ratings', 'rating')
                 ->orderBy('created_at', 'desc')
                 ->get()
         );
@@ -527,10 +533,7 @@ class EventController extends Controller
     // GET /api/events/{id}/reviews  – Get reviews for an event
     public function reviews($id)
     {
-        $event = Event::findOrFail($id);
-        $reviews = $event->ratings()->with('user:id,name,image,avatar')->whereNotNull('review_text')->orderBy('updated_at', 'desc')->get();
-        // Fallback or mix: maybe we want all ratings, but specifically reviews with text are more useful to display
-        // We'll return all ratings so we can show stars, but if they have text it acts as a full review
+        $event = Event::withAvg('ratings', 'rating')->findOrFail($id);
         $allRatings = $event->ratings()->with('user:id,name,image,avatar')->orderBy('updated_at', 'desc')->get();
         
         return response()->json([

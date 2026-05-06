@@ -80,7 +80,13 @@ class Event extends Model
 
     public function getAverageRatingAttribute()
     {
-        // Compute the average rating on the fly
+        // Use preloaded aggregate when available (zero queries)
+        if (array_key_exists('ratings_avg_rating', $this->attributes)) {
+            $avg = $this->attributes['ratings_avg_rating'];
+            return $avg ? round((float) $avg, 1) : 0;
+        }
+
+        // Fallback: compute on the fly (only for single-event usage)
         $avg = $this->ratings()->avg('rating');
         return $avg ? round($avg, 1) : 0;
     }

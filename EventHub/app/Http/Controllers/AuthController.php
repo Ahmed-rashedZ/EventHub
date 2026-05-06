@@ -268,7 +268,9 @@ public function getPublicProfile($id)
     $user = User::with(['profile.contacts'])->findOrFail($id);
     
     if ($user->role === 'Event Manager') {
-        $avg = \App\Models\Event::where('created_by', $user->id)->get()->avg('average_rating');
+        $avg = \App\Models\Rating::whereHas('event', function ($q) use ($user) {
+            $q->where('created_by', $user->id);
+        })->avg('rating');
         $user->manager_average_rating = $avg ? round($avg, 1) : 0;
     }
     
@@ -284,6 +286,7 @@ public function getPortfolio(Request $request, $id)
     if ($user->role === 'Event Manager') {
         $query = \App\Models\Event::where('created_by', $user->id)
                         ->with('venue')
+                        ->withAvg('ratings', 'rating')
                         ->orderBy('start_time', 'desc');
 
         $authUser = $request->user();
@@ -297,7 +300,7 @@ public function getPortfolio(Request $request, $id)
             'events' => $events
         ]);
     } elseif ($user->role === 'Sponsor') {
-        $query = $user->sponsoredEvents()->with('venue')->orderBy('start_time', 'desc');
+        $query = $user->sponsoredEvents()->with('venue')->withAvg('ratings', 'rating')->orderBy('start_time', 'desc');
         
         $authUser = $request->user();
         if (!$authUser || ($authUser->role !== 'Admin' && $authUser->id !== $user->id)) {

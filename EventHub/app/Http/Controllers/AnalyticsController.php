@@ -20,11 +20,13 @@ class AnalyticsController extends Controller
 
         $totalTickets = Ticket::count();
         $usedTickets  = Ticket::where('status', 'used')->count();
-        $allEvents    = Event::withCount('tickets')->get();
+        $allEvents    = Event::withCount('tickets')->withAvg('ratings', 'rating')->get();
 
         $eventsByStatus = $allEvents->groupBy('status')->map->count();
         $eventsByType   = $allEvents->groupBy(fn($e) => $e->event_type ?: 'مؤتمر')->map->count();
-        $usersByRole    = User::all()->groupBy('role')->map->count();
+        $usersByRole    = User::select('role', DB::raw('count(*) as total'))
+            ->groupBy('role')
+            ->pluck('total', 'role');
 
         $monthlyRegs = Ticket::selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month, count(*) as total")
             ->where('created_at', '>=', now()->subMonths(6))
@@ -67,7 +69,10 @@ class AnalyticsController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        $events   = Event::withCount('tickets')->where('created_by', $user->id)->get();
+        $events   = Event::withCount('tickets')
+            ->withAvg('ratings', 'rating')
+            ->where('created_by', $user->id)
+            ->get();
         $eventIds = $events->pluck('id');
 
         $totalTickets  = Ticket::whereIn('event_id', $eventIds)->count();
@@ -94,12 +99,11 @@ class AnalyticsController extends Controller
                 'attendance_rate' => $tc > 0 ? round(($ac / $tc) * 100, 1) : 0,
                 'fill_rate' => $ev->capacity > 0 ? round(($tc / $ev->capacity) * 100, 1) : 0,
                 'start_time' => $ev->start_time, 'image' => $ev->image,
-                'average_rating' => $ev->average_rating,
+                'average_rating' => $ev->ratings_avg_rating ? round($ev->ratings_avg_rating, 1) : 0,
             ];
         })->values();
 
-        $managerAvg = clone $events;
-        $managerAvg = $managerAvg->avg('average_rating');
+        $managerAvg = $events->avg('ratings_avg_rating');
 
         return response()->json([
             'manager_average_rating' => $managerAvg ? round($managerAvg, 1) : 0,
@@ -124,7 +128,7 @@ class AnalyticsController extends Controller
         if (!in_array($user->role, ['Admin', 'Event Manager', 'Sponsor'])) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
-        $event = Event::with('venue')->findOrFail($id);
+        $event = Event::with('venue')->withAvg('ratings', 'rating')->findOrFail($id);
         if ($user->role === 'Event Manager' && $event->created_by !== $user->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
