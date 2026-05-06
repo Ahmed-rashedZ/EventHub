@@ -27,6 +27,10 @@ class SponsorshipController extends Controller
 
         $event = Event::find($request->event_id);
         
+        if ($event->status !== 'approved') {
+            return response()->json(['message' => 'Sponsorships can only be created for approved events'], 400);
+        }
+        
         // 1. EVENT MANAGER INITIATED
         if ($user->role === 'Event Manager') {
             if ($event->created_by !== $user->id) {

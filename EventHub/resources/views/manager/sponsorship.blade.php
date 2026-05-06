@@ -196,7 +196,7 @@
         <td style="color:var(--text-muted)">
             ${r.message ? `<button class="btn btn-ghost btn-sm" onclick="showMsg('${r.message.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n')}')" style="font-size:12px; padding: 4px 8px;">💬 Read Message</button>` : '—'}
         </td>
-        <td style="color:var(--accent2); font-weight:500; cursor:pointer;" onclick="${r.sponsor_id ? `navigateToProfile(${r.sponsor_id})` : ''}">
+        <td style="color:var(--accent2); font-weight:500; cursor:pointer;" onclick="${(r.sponsor_id || r.sponsor?.id) ? `navigateToProfile(${r.sponsor_id || r.sponsor.id})` : ''}">
             <span class="i18n-skip">${r.sponsor?.name || 'Open'}</span>
         </td>
         <td>

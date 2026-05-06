@@ -560,7 +560,7 @@
             <td>${badge(ev.status)} ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''}</td>
             <td style="display:flex;gap:6px;flex-wrap:wrap">
               <button class="btn btn-ghost btn-sm" onclick="showMgrEventDetails(${ev.id})">ℹ️ Details</button>
-              ${(me && me.role !== 'Sponsor') ? `<button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='/admin/event-stats/${ev.id}'">📊 Stats</button>` : ''}
+              ${(me && me.role !== 'Sponsor') ? `<button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='${me.role === 'Admin' ? '/admin' : '/manager'}/event-stats/${ev.id}'">📊 Stats</button>` : ''}
             </td>
           </tr>`;
       }).join('');
@@ -667,23 +667,25 @@
                 : (ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` : '—')}
               </div></div>
             </div>
-            ${!ev.venue_id && ev.booking_proof_path ? `
-            <div class="ed-info-card ed-info-accent2" style="grid-column: 1 / -1; background:rgba(34,211,238,0.05); border-color:rgba(34,211,238,0.2);">
-              <div class="ed-info-icon">📎</div>
-              <div><div class="ed-info-label" style="color:#22d3ee">Booking Proof</div><div class="ed-info-value"><a href="/storage/${ev.booking_proof_path}" target="_blank" style="color:#22d3ee;text-decoration:underline;">View Document ↗</a></div></div>
-            </div>
+            ${(me && me.role !== 'Sponsor') ? `
+              ${!ev.venue_id && ev.booking_proof_path ? `
+              <div class="ed-info-card ed-info-accent2" style="grid-column: 1 / -1; background:rgba(34,211,238,0.05); border-color:rgba(34,211,238,0.2);">
+                <div class="ed-info-icon">📎</div>
+                <div><div class="ed-info-label" style="color:#22d3ee">Booking Proof</div><div class="ed-info-value"><a href="/storage/${ev.booking_proof_path}" target="_blank" style="color:#22d3ee;text-decoration:underline;">View Document ↗</a></div></div>
+              </div>
+              ` : ''}
+              ${ev.ministry_document_path ? `
+              <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(139,92,246,0.05); border-color:rgba(139,92,246,0.2); border: 1px solid rgba(139,92,246,0.2);">
+                <div class="ed-info-icon">📄</div>
+                <div><div class="ed-info-label" style="color:#a78bfa">Competent Authority Approval</div><div class="ed-info-value"><a href="/storage/${ev.ministry_document_path}" target="_blank" style="color:#a78bfa;text-decoration:underline;">View Document ↗</a></div></div>
+              </div>
+              ` : `
+              <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(239,68,68,0.05); border-color:rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.2);">
+                <div class="ed-info-icon">⚠️</div>
+                <div><div class="ed-info-label" style="color:#ef4444">Competent Authority Approval</div><div class="ed-info-value" style="color:#ef4444;">Not uploaded</div></div>
+              </div>
+              `}
             ` : ''}
-            ${ev.ministry_document_path ? `
-            <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(139,92,246,0.05); border-color:rgba(139,92,246,0.2); border: 1px solid rgba(139,92,246,0.2);">
-              <div class="ed-info-icon">📄</div>
-              <div><div class="ed-info-label" style="color:#a78bfa">Competent Authority Approval</div><div class="ed-info-value"><a href="/storage/${ev.ministry_document_path}" target="_blank" style="color:#a78bfa;text-decoration:underline;">View Document ↗</a></div></div>
-            </div>
-            ` : `
-            <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(239,68,68,0.05); border-color:rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.2);">
-              <div class="ed-info-icon">⚠️</div>
-              <div><div class="ed-info-label" style="color:#ef4444">Competent Authority Approval</div><div class="ed-info-value" style="color:#ef4444;">Not uploaded</div></div>
-            </div>
-            `}
             ${(() => {
               const schedule = ev.external_schedule && ev.external_schedule.length > 0 ? ev.external_schedule : 
                                (ev.internal_schedule && ev.internal_schedule.length > 0 ? ev.internal_schedule : null);

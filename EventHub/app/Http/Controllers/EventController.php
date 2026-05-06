@@ -452,6 +452,10 @@ class EventController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
         
+        if ($event->status !== 'approved') {
+            return response()->json(['message' => 'Cannot open sponsorship for an event that is not approved.'], 400);
+        }
+        
         $event->is_sponsorship_open = !$event->is_sponsorship_open;
         $event->save();
         

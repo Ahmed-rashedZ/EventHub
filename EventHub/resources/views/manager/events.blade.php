@@ -544,9 +544,10 @@
           <td style="color:var(--text-muted)">${ev.capacity}</td>
           <td>
              <div style="display:flex; align-items:center;">
-               <input type="checkbox" id="spon-tog-${ev.id}" ${ev.is_sponsorship_open ? 'checked' : ''} onchange="toggleSponsorship(${ev.id}, this.checked)" style="width:16px; height:16px; margin-right:5px; cursor:pointer;"/>
-               <label for="spon-tog-${ev.id}" style="font-size:12px; cursor:pointer;">Open</label>
+               <input type="checkbox" id="spon-tog-${ev.id}" ${ev.is_sponsorship_open ? 'checked' : ''} onchange="toggleSponsorship(${ev.id}, this.checked)" style="width:16px; height:16px; margin-right:5px; ${ev.status !== 'approved' ? 'cursor:not-allowed;' : 'cursor:pointer;'}" ${ev.status !== 'approved' ? 'disabled title="Event must be approved first"' : ''}/>
+               <label for="spon-tog-${ev.id}" style="font-size:12px; ${ev.status !== 'approved' ? 'color:var(--text-muted); cursor:not-allowed;' : 'cursor:pointer;'}" ${ev.status !== 'approved' ? 'title="Event must be approved first"' : ''}>Open</label>
              </div>
+             ${ev.status !== 'approved' ? '<div style="font-size:10px;color:#ef4444;margin-top:4px;">Needs Approval</div>' : ''}
           </td>
           <td>${badge(ev.status)} ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''} ${reviewBadge}</td>
           <td style="display:flex;gap:6px;padding:14px 16px;flex-wrap:wrap">
