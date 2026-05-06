@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -49,11 +49,12 @@
 .an-ev-bar-fill{height:100%;border-radius:6px;transition:width .6s ease}
 .an-ev-footer{display:flex;justify-content:space-between;align-items:center;font-size:.72rem;color:var(--text-muted);margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.05)}
 </style>
+<link rel="icon" href="/images/logo.jpg" type="image/jpeg">
 </head>
 <body>
 <div class="app-layout">
   <aside class="sidebar">
-    <div class="sidebar-logo"><div class="logo-icon">🎯</div><span>EventHub</span></div>
+    <div class="sidebar-logo" style="display:flex; justify-content:center; align-items:center; padding: 8px 0;"><img src="/images/logo.jpg" alt="EventHub Logo" style="width: 85px; height: 85px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
     <nav class="sidebar-nav">
       <span class="nav-section-label">Overview</span>
       <a class="nav-item active" href="/manager/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
@@ -184,3 +185,9 @@ async function loadAnalytics() {
 </script>
 </body>
 </html>
+
+
+
+
+
+

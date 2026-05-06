@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -93,6 +93,7 @@
       font-weight: 500;
     }
   </style>
+<link rel="icon" href="/images/logo.jpg" type="image/jpeg">
 </head>
 <body>
   <div class="auth-page">
@@ -289,3 +290,4 @@
   </script>
 </body>
 </html>
+

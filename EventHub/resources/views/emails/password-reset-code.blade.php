@@ -1,8 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="/images/logo.jpg" type="image/jpeg">
 </head>
 <body style="margin:0;padding:0;background:#0f1117;font-family:Arial,sans-serif;">
     <table width="100%" cellpadding="0" cellspacing="0" style="background:#0f1117;padding:40px 20px;">
@@ -12,7 +13,7 @@
                     <!-- Header -->
                     <tr>
                         <td style="background:linear-gradient(135deg,#6e40f2,#4f8cff);padding:28px;text-align:center;">
-                            <div style="font-size:32px;margin-bottom:8px;">🎯</div>
+                            <img src="{{ url('/images/logo.jpg') }}" alt="EventHub Logo" style="width: 56px; height: 56px; object-fit: contain; border-radius: 8px; background: white; padding: 4px; margin-bottom: 8px;">
                             <h1 style="margin:0;color:#fff;font-size:22px;font-weight:800;">EventHub</h1>
                         </td>
                     </tr>
@@ -54,3 +55,6 @@
     </table>
 </body>
 </html>
+
+
+

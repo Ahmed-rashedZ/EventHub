@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -59,11 +59,12 @@
 .att-refresh-btn{display:inline-flex;align-items:center;gap:6px;background:rgba(110,64,242,.12);border:1px solid rgba(110,64,242,.3);color:var(--accent);padding:6px 16px;border-radius:10px;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s}
 .att-refresh-btn:hover{background:rgba(110,64,242,.2)}
 </style>
+<link rel="icon" href="/images/logo.jpg" type="image/jpeg">
 </head>
 <body>
 <div class="app-layout">
   <aside class="sidebar">
-    <div class="sidebar-logo"><div class="logo-icon">🎯</div><span>EventHub</span></div>
+    <div class="sidebar-logo" style="display:flex; justify-content:center; align-items:center; padding: 8px 0;"><img src="/images/logo.jpg" alt="EventHub Logo" style="width: 85px; height: 85px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
     <nav class="sidebar-nav">
       <span class="nav-section-label">Overview</span>
       <a class="nav-item" href="/manager/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
@@ -283,3 +284,9 @@
 </script>
 </body>
 </html>
+
+
+
+
+
+

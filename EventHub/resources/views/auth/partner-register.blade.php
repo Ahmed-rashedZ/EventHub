@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -79,6 +79,7 @@
       margin-top: 4px;
     }
   </style>
+<link rel="icon" href="/images/logo.jpg" type="image/jpeg">
 </head>
 
 <body>
@@ -88,7 +89,7 @@
 
     <div class="auth-card" style="max-width: 560px;">
       <div class="auth-logo">
-        <div class="logo-icon">🎯</div>
+        <div style="display:flex; justify-content:center; align-items:center; width: 100%;"><img src="/images/logo.jpg" alt="EventHub Logo" style="width: 85px; height: 85px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
         <h1>EventHub Partner</h1>
       </div>
 
@@ -282,3 +283,8 @@
 </body>
 
 </html>
+
+
+
+
+

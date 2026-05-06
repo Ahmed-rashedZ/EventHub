@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -7,6 +7,7 @@
   <meta name="description" content="Sign in to EventHub Smart Event Management Platform"/>
   <link rel="stylesheet" href="/css/style.css"/>
   <script src="/js/i18n.js"></script>
+<link rel="icon" href="/images/logo.jpg" type="image/jpeg">
 </head>
 <body>
 <div class="auth-page">
@@ -14,10 +15,7 @@
   <div class="auth-bg-glow auth-bg-glow-2"></div>
 
   <div class="auth-card">
-    <div class="auth-logo">
-      <div class="logo-icon">🎯</div>
-      <h1>EventHub</h1>
-    </div>
+    <div class="auth-logo" style="display:flex; justify-content:center; align-items:center; margin-bottom: 20px;"><img src="/images/logo.jpg" alt="EventHub Logo" style="width: 95px; height: 95px; object-fit: contain; border-radius: 50%; box-shadow: 0 8px 24px rgba(0,0,0,0.1);"></div>
 
     <h2 class="auth-heading">Welcome back</h2>
     <p class="auth-subheading">Sign in to your account to continue</p>
@@ -103,3 +101,8 @@
 </script>
 </body>
 </html>
+
+
+
+
+

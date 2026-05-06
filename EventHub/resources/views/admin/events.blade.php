@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -7,13 +7,14 @@
   <title>Events – EventHub Admin</title>
   <link rel="stylesheet" href="/css/style.css" />
   <script src="/js/i18n.js"></script>
+<link rel="icon" href="/images/logo.jpg" type="image/jpeg">
 </head>
 
 <body>
   <div class="app-layout">
     <aside class="sidebar">
       <div class="sidebar-logo">
-        <div class="logo-icon">🎯</div><span>EventHub</span>
+        <div style="display:flex; justify-content:center; align-items:center; width: 100%;"><img src="/images/logo.jpg" alt="EventHub Logo" style="width: 85px; height: 85px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
       </div>
       <nav class="sidebar-nav">
         <span class="nav-section-label">Overview</span>
@@ -794,3 +795,8 @@
 </body>
 
 </html>
+
+
+
+
+

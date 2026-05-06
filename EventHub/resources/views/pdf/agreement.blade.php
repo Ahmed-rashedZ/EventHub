@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -13,6 +13,7 @@
         .signature-box { display: table-cell; width: 50%; }
         .line { border-bottom: 1px solid #333; width: 80%; margin-top: 40px; margin-bottom: 10px; }
     </style>
+<link rel="icon" href="/images/logo.jpg" type="image/jpeg">
 </head>
 <body>
 
@@ -53,3 +54,4 @@
 
 </body>
 </html>
+
