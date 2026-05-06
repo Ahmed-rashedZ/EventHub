@@ -162,7 +162,7 @@
             </div>
             <div class="form-group">
               <label class="form-label">Event Banner Image</label>
-              <input id="e-image" type="file" accept="image/*" class="form-control" style="padding: 7px 10px;" />
+              <input id="e-image" type="file" accept="image/*" class="form-control" style="padding: 7px 10px;" required />
               <div id="banner-preview" style="display:none; margin-top:10px; border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,0.06);">
                 <img id="banner-preview-img" src="" style="width:100%; height:140px; object-fit:cover; display:block;" />
               </div>
@@ -258,30 +258,29 @@
           <div class="form-section" style="margin-bottom: 0;">
             <div class="form-section-title"><span>⚙️</span> Additional Settings</div>
             <div class="form-group">
+              <label class="form-label">Event Objective</label>
+              <textarea id="e-objective" class="form-control" placeholder="What is the main goal of this event?" rows="2" required></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Target Audience</label>
+              <input id="e-audience" type="text" class="form-control" placeholder="e.g. Students, Professionals, General Public" required />
+            </div>
+            <div class="form-group">
               <label class="form-label">Capacity</label>
               <input id="e-capacity" type="number" class="form-control" placeholder="200" min="1" required />
             </div>
             <div class="form-group">
               <label class="form-label">📄 Ministry Approval Document</label>
-              <input id="e-ministry-doc" type="file" accept=".pdf,image/*" class="form-control" style="padding: 7px 10px;" />
+              <input id="e-ministry-doc" type="file" accept=".pdf,image/*" class="form-control" style="padding: 7px 10px;" required />
               <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block">Required. Upload the official ministry approval for this event.</small>
             </div>
           </div>
 
           <!-- Agenda Section -->
           <div class="form-section" style="margin-bottom: 0;">
-            <div class="form-section-title"><span>📋</span> Event Agenda <small style="font-weight:400;color:var(--text-muted);font-size:0.75rem;">(Optional)</small></div>
-            <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:12px;">Define the schedule/program for your event. You can also add this later.</small>
+            <div class="form-section-title"><span>📋</span> Event Agenda <small style="font-weight:400;color:var(--danger);font-size:0.75rem;">(Required)</small></div>
+            <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:12px;">Define the schedule/program for your event. You must add at least one agenda item.</small>
             
-            <div id="create-agenda-tabs-wrap" style="display:none; margin-bottom: 16px;">
-              <div id="create-agenda-tabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;"></div>
-              <div id="create-agenda-apply-all-wrap" style="display:none;margin-bottom:10px;">
-                <button type="button" class="btn btn-sm" style="background:rgba(139,92,246,0.1);color:#a78bfa;border:1px solid rgba(139,92,246,0.2);display:flex;align-items:center;gap:6px;width:100%;justify-content:center;" onclick="applyCreateAgendaToAll()">
-                  📋 Apply Current Day's Agenda to All Days
-                </button>
-              </div>
-            </div>
-
             <div id="agenda-items-create" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
             <button type="button" class="btn btn-ghost btn-sm" onclick="addAgendaItem('agenda-items-create')" style="display:flex;align-items:center;gap:6px;">
               <span style="font-size:1.1rem;">+</span> Add Agenda Item
@@ -722,6 +721,18 @@
             <div><div class="ed-info-label" style="color:#ef4444">Ministry Document</div><div class="ed-info-value" style="color:#ef4444;">Not uploaded</div></div>
           </div>
           `}
+          ${ev.event_objective ? `
+          <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+            <div class="ed-info-icon">🎯</div>
+            <div><div class="ed-info-label">Event Objective</div><div class="ed-info-value" style="font-size:0.9rem;">${ev.event_objective}</div></div>
+          </div>
+          ` : ''}
+          ${ev.target_audience ? `
+          <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+            <div class="ed-info-icon">👥</div>
+            <div><div class="ed-info-label">Target Audience</div><div class="ed-info-value" style="font-size:0.9rem;">${ev.target_audience}</div></div>
+          </div>
+          ` : ''}
           ${(function() {
             const schedule = ev.external_schedule && ev.external_schedule.length > 0 ? ev.external_schedule : 
                              (ev.internal_schedule && ev.internal_schedule.length > 0 ? ev.internal_schedule : null);
@@ -826,7 +837,7 @@
           <!-- Agenda Management Button (Manager only) -->
           <div style="margin-top:12px;display:flex;justify-content:center;">
             <button class="btn btn-sm" style="background:rgba(34,211,238,0.1);color:#22d3ee;border:1px solid rgba(34,211,238,0.2);display:flex;align-items:center;gap:6px;" onclick="openAgendaEditor(${ev.id})">
-              📋 ${(ev.agenda && typeof ev.agenda === 'object' && (Array.isArray(ev.agenda) ? ev.agenda.length > 0 : Object.keys(ev.agenda).length > 0)) ? 'Edit' : 'Add'} Agenda
+              📋 Edit Agenda
             </button>
           </div>
 
@@ -850,8 +861,6 @@
     let agendaEditingEventId = null;
     let agendaEventData = null;
     let agendaDays = [];
-    let agendaSelectedDay = null;
-    let agendaPerDay = {}; // { "2026-05-04": [{title, start_time, end_time}], ... }
 
     async function openAgendaEditor(eventId) {
       agendaEditingEventId = eventId;
@@ -864,100 +873,35 @@
       
       agendaEventData = res.data;
       
-      // Determine days
-      agendaDays = [];
-      if (agendaEventData.external_schedule && agendaEventData.external_schedule.length > 0) {
-        agendaDays = agendaEventData.external_schedule.map(s => s.date).sort();
-      } else if (agendaEventData.internal_schedule && agendaEventData.internal_schedule.length > 0) {
-        agendaDays = agendaEventData.internal_schedule.map(s => s.date).sort();
-      } else if (agendaEventData.booking_date) {
-        agendaDays = [agendaEventData.booking_date.split('T')[0]];
-      } else if (agendaEventData.start_time) {
-        agendaDays = [agendaEventData.start_time.split('T')[0]];
+      const schedule = agendaEventData.external_schedule?.length > 0 ? agendaEventData.external_schedule : agendaEventData.internal_schedule;
+      if (schedule && Array.isArray(schedule)) {
+          agendaDays = schedule.map(s => s.date).sort();
+      } else {
+          agendaDays = agendaEventData.agenda ? Object.keys(agendaEventData.agenda) : [];
       }
 
       // Load existing agenda
-      agendaPerDay = {};
       const existing = agendaEventData.agenda;
       if (existing && typeof existing === 'object' && !Array.isArray(existing)) {
-        // New per-day format
-        agendaPerDay = JSON.parse(JSON.stringify(existing));
+        Object.keys(existing).forEach(day => {
+          const items = existing[day];
+          if (Array.isArray(items)) {
+            items.forEach(item => {
+              item.date = day;
+              addAgendaItem('agenda-items-editor', item);
+            });
+          }
+        });
       } else if (Array.isArray(existing) && existing.length > 0) {
-        // Legacy flat format — assign to first day
         if (agendaDays.length > 0) {
-          agendaPerDay[agendaDays[0]] = JSON.parse(JSON.stringify(existing));
+          existing.forEach(item => {
+            item.date = agendaDays[0];
+            addAgendaItem('agenda-items-editor', item);
+          });
         }
       }
 
-      // Ensure all days have an entry
-      agendaDays.forEach(d => { if (!agendaPerDay[d]) agendaPerDay[d] = []; });
-
-      renderAgendaDayTabs();
-      if (agendaDays.length > 0) selectAgendaDay(agendaDays[0]);
-
-      // Show "Apply to All" only if multi-day
-      document.getElementById('agenda-apply-all-wrap').style.display = agendaDays.length > 1 ? 'block' : 'none';
-
       document.getElementById('agenda-editor-modal').classList.add('open');
-    }
-
-    function renderAgendaDayTabs() {
-      const tabsEl = document.getElementById('agenda-day-tabs');
-      if (agendaDays.length <= 1) { tabsEl.innerHTML = ''; return; }
-
-      const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-      const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-      tabsEl.innerHTML = agendaDays.map(dateStr => {
-        const d = new Date(dateStr + 'T00:00:00');
-        const dayName = dayNames[d.getDay()];
-        const dayNum = d.getDate();
-        const month = monthNames[d.getMonth()];
-        const isActive = dateStr === agendaSelectedDay;
-        const itemCount = (agendaPerDay[dateStr] || []).length;
-        return `<button type="button" onclick="selectAgendaDay('${dateStr}')" style="
-          padding:8px 14px;border-radius:10px;cursor:pointer;transition:all 0.2s;border:1px solid ${isActive ? 'rgba(139,92,246,0.5)' : 'rgba(255,255,255,0.08)'};
-          background:${isActive ? 'rgba(139,92,246,0.15)' : 'rgba(255,255,255,0.03)'};color:${isActive ? '#c4b5fd' : '#94a3b8'};
-          display:flex;flex-direction:column;align-items:center;min-width:60px;font-family:inherit;
-        ">
-          <span style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;">${dayName}</span>
-          <span style="font-size:1.15rem;font-weight:800;color:${isActive ? '#fff' : '#cbd5e1'};line-height:1.2;">${dayNum}</span>
-          <span style="font-size:0.55rem;color:#64748b;">${month}</span>
-          ${itemCount > 0 ? `<span style="margin-top:3px;font-size:0.55rem;background:rgba(34,211,238,0.15);color:#22d3ee;padding:1px 6px;border-radius:4px;">${itemCount} items</span>` : ''}
-        </button>`;
-      }).join('');
-    }
-
-    function selectAgendaDay(dateStr) {
-      // Save current day's items before switching
-      if (agendaSelectedDay) {
-        agendaPerDay[agendaSelectedDay] = collectAgendaItems('agenda-items-editor');
-      }
-
-      agendaSelectedDay = dateStr;
-      renderAgendaDayTabs(); // re-render tabs for active state
-
-      // Load items for selected day
-      const container = document.getElementById('agenda-items-editor');
-      container.innerHTML = '';
-      const items = agendaPerDay[dateStr] || [];
-      items.forEach(item => addAgendaItem('agenda-items-editor', item));
-    }
-
-    function applyAgendaToAllDays() {
-      if (!agendaSelectedDay) return;
-      // Save current
-      agendaPerDay[agendaSelectedDay] = collectAgendaItems('agenda-items-editor');
-      const currentItems = agendaPerDay[agendaSelectedDay];
-      if (!currentItems || currentItems.length === 0) {
-        showToast('Add agenda items to the current day first, then apply to all.', 'error');
-        return;
-      }
-      agendaDays.forEach(d => {
-        agendaPerDay[d] = JSON.parse(JSON.stringify(currentItems));
-      });
-      renderAgendaDayTabs();
-      showToast(`Agenda applied to all ${agendaDays.length} days!`, 'success');
     }
 
     function closeAgendaEditor() {
@@ -966,42 +910,59 @@
       agendaEditingEventId = null;
       agendaEventData = null;
       agendaDays = [];
-      agendaSelectedDay = null;
-      agendaPerDay = {};
     }
 
     async function saveAgenda() {
       if (!agendaEditingEventId) return;
       
-      // Save current day's items
-      if (agendaSelectedDay) {
-        agendaPerDay[agendaSelectedDay] = collectAgendaItems('agenda-items-editor');
-      }
-
-      // Clean empty days
       const cleanAgenda = {};
-      Object.keys(agendaPerDay).forEach(day => {
-        if (agendaPerDay[day] && agendaPerDay[day].length > 0) {
-          cleanAgenda[day] = agendaPerDay[day];
-        }
+      const items = document.querySelectorAll('#agenda-items-editor .agenda-item');
+      items.forEach(item => {
+          const date = item.querySelector('.agenda-date').value;
+          const title = item.querySelector('.agenda-title').value.trim();
+          const startTime = item.querySelector('.agenda-start').value;
+          const endTime = item.querySelector('.agenda-end').value;
+          const description = item.querySelector('.agenda-desc') ? item.querySelector('.agenda-desc').value.trim() : '';
+          
+          if (date && title && startTime && endTime) {
+              if (!cleanAgenda[date]) cleanAgenda[date] = [];
+              cleanAgenda[date].push({ title, start_time: startTime, end_time: endTime, description });
+          }
       });
 
-      // Validate bounds
+      // Validate bounds and logic
       let isValid = true;
       for (const day of Object.keys(cleanAgenda)) {
          let startBound = "00:00", endBound = "23:59";
-         if (agendaEventData.external_schedule && agendaEventData.external_schedule.length > 0) {
-            const s = agendaEventData.external_schedule.find(x => x.date === day);
-            if (s) { startBound = s.start_time; endBound = s.end_time; }
+         const extS = agendaEventData.external_schedule?.find(x => x.date === day);
+         const intS = agendaEventData.internal_schedule?.find(x => x.date === day);
+         
+         if (extS) { 
+             startBound = extS.start_time; endBound = extS.end_time; 
+         } else if (intS && intS.start_time) { 
+             startBound = intS.start_time; endBound = intS.end_time; 
          } else if (agendaEventData.start_time) {
-            startBound = agendaEventData.start_time.split('T')[1].substring(0,5);
-            endBound = agendaEventData.end_time.split('T')[1].substring(0,5);
+             startBound = agendaEventData.start_time.split('T')[1].substring(0,5);
+             endBound = agendaEventData.end_time.split('T')[1].substring(0,5);
          }
          
          const items = cleanAgenda[day] || [];
-         for (const item of items) {
+         items.sort((a, b) => a.start_time.localeCompare(b.start_time));
+         
+         for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            if (item.start_time >= item.end_time) {
+               showToast(`Invalid time in ${day}. Start time must be before end time.`, 'error');
+               isValid = false;
+               break;
+            }
             if (item.start_time < startBound || item.end_time > endBound) {
-               showToast(`Invalid time in ${day}. Agenda must be between ${startBound} and ${endBound}`, 'error');
+               showToast(`Invalid time in ${day}. Agenda must be strictly between ${startBound} and ${endBound}`, 'error');
+               isValid = false;
+               break;
+            }
+            if (i > 0 && item.start_time < items[i-1].end_time) {
+               showToast(`Overlapping agenda items in ${day} are not allowed.`, 'error');
                isValid = false;
                break;
             }
@@ -1023,132 +984,37 @@
       }
     }
 
-    function collectAgendaItems(containerId) {
-      const items = document.querySelectorAll(`#${containerId} .agenda-item`);
-      const agenda = [];
-      items.forEach(item => {
-        const title = item.querySelector('.agenda-title').value.trim();
-        const startTime = item.querySelector('.agenda-start').value;
-        const endTime = item.querySelector('.agenda-end').value;
-        const description = item.querySelector('.agenda-desc') ? item.querySelector('.agenda-desc').value.trim() : '';
-        if (title && startTime && endTime) {
-          agenda.push({ title, start_time: startTime, end_time: endTime, description });
-        }
-      });
-      return agenda;
-    }
-
-    // ── Create Event Agenda Tabs Logic ─────────────────────
-    let createAgendaPerDay = {};
+    // ── Create Event Agenda Days Logic ─────────────────────
     let createAgendaDays = [];
-    let createAgendaSelectedDay = null;
 
     function updateCreateAgendaDays() {
         const locationType = document.getElementById('e-location-type').value;
         let newDays = [];
         if (locationType === 'internal') {
-            const schedule = buildInternalSchedule();
-            newDays = schedule.map(s => s.date).sort();
+            newDays = [...intSelectedDates].sort();
         } else {
-            const schedule = buildExternalSchedule();
-            newDays = schedule.map(s => s.date).sort();
-        }
-        
-        if (createAgendaSelectedDay && document.getElementById('agenda-items-create')) {
-            createAgendaPerDay[createAgendaSelectedDay] = collectAgendaItems('agenda-items-create');
+            newDays = [...extSelectedDates].sort();
         }
         
         createAgendaDays = newDays;
-        
-        for (let day in createAgendaPerDay) {
-            if (!createAgendaDays.includes(day)) {
-                delete createAgendaPerDay[day];
+
+        // Update all existing agenda item dropdowns
+        const selects = document.querySelectorAll('#agenda-items-create .agenda-date');
+        selects.forEach(select => {
+            const currentVal = select.value;
+            let optionsHtml = '<option value="">' + (document.documentElement.lang === 'ar' ? 'اختر اليوم' : 'Select Day') + '</option>';
+            const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+            createAgendaDays.forEach(dStr => {
+                const d = new Date(dStr + 'T00:00:00');
+                const label = `${dayNames[d.getDay()]} ${d.getDate()}`;
+                const isSelected = (currentVal === dStr) ? 'selected' : '';
+                optionsHtml += `<option value="${dStr}" ${isSelected}>${label}</option>`;
+            });
+            select.innerHTML = optionsHtml;
+            if (currentVal && !createAgendaDays.includes(currentVal)) {
+                select.value = '';
             }
-        }
-        
-        if (createAgendaDays.length > 0) {
-            if (!createAgendaSelectedDay || !createAgendaDays.includes(createAgendaSelectedDay)) {
-                if (!createAgendaSelectedDay && document.getElementById('agenda-items-create') && document.getElementById('agenda-items-create').children.length > 0) {
-                    createAgendaPerDay[createAgendaDays[0]] = collectAgendaItems('agenda-items-create');
-                }
-                createAgendaSelectedDay = createAgendaDays[0];
-            }
-            document.getElementById('create-agenda-tabs-wrap').style.display = 'block';
-            renderCreateAgendaTabs();
-            
-            const container = document.getElementById('agenda-items-create');
-            if (container) {
-                container.innerHTML = '';
-                const items = createAgendaPerDay[createAgendaSelectedDay] || [];
-                items.forEach(item => addAgendaItem('agenda-items-create', item));
-            }
-        } else {
-            document.getElementById('create-agenda-tabs-wrap').style.display = 'none';
-            document.getElementById('agenda-items-create').innerHTML = '';
-            createAgendaSelectedDay = null;
-        }
-    }
-
-    function renderCreateAgendaTabs() {
-        const tabsEl = document.getElementById('create-agenda-tabs');
-        if (!tabsEl) return;
-        if (createAgendaDays.length <= 1) { 
-            tabsEl.innerHTML = ''; 
-            document.getElementById('create-agenda-apply-all-wrap').style.display = 'none';
-            return; 
-        }
-
-        const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-        const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-        tabsEl.innerHTML = createAgendaDays.map(dateStr => {
-            const d = new Date(dateStr + 'T00:00:00');
-            const dayName = dayNames[d.getDay()];
-            const dayNum = d.getDate();
-            const month = monthNames[d.getMonth()];
-            const isActive = dateStr === createAgendaSelectedDay;
-            const itemCount = (createAgendaPerDay[dateStr] || []).length;
-            return `<button type="button" onclick="selectCreateAgendaDay('${dateStr}')" style="
-              padding:8px 14px;border-radius:10px;cursor:pointer;transition:all 0.2s;border:1px solid ${isActive ? 'rgba(139,92,246,0.5)' : 'rgba(255,255,255,0.08)'};
-              background:${isActive ? 'rgba(139,92,246,0.15)' : 'rgba(255,255,255,0.03)'};color:${isActive ? '#c4b5fd' : '#94a3b8'};
-              display:flex;flex-direction:column;align-items:center;min-width:60px;font-family:inherit;
-            ">
-              <span style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;">${dayName}</span>
-              <span style="font-size:1.15rem;font-weight:800;color:${isActive ? '#fff' : '#cbd5e1'};line-height:1.2;">${dayNum}</span>
-              <span style="font-size:0.55rem;color:#64748b;">${month}</span>
-              ${itemCount > 0 ? `<span style="margin-top:3px;font-size:0.55rem;background:rgba(34,211,238,0.15);color:#22d3ee;padding:1px 6px;border-radius:4px;">${itemCount} items</span>` : ''}
-            </button>`;
-        }).join('');
-        
-        document.getElementById('create-agenda-apply-all-wrap').style.display = 'block';
-    }
-
-    function selectCreateAgendaDay(dateStr) {
-        if (createAgendaSelectedDay) {
-            createAgendaPerDay[createAgendaSelectedDay] = collectAgendaItems('agenda-items-create');
-        }
-        createAgendaSelectedDay = dateStr;
-        renderCreateAgendaTabs();
-        
-        const container = document.getElementById('agenda-items-create');
-        container.innerHTML = '';
-        const items = createAgendaPerDay[dateStr] || [];
-        items.forEach(item => addAgendaItem('agenda-items-create', item));
-    }
-
-    function applyCreateAgendaToAll() {
-        if (!createAgendaSelectedDay) return;
-        createAgendaPerDay[createAgendaSelectedDay] = collectAgendaItems('agenda-items-create');
-        const currentItems = createAgendaPerDay[createAgendaSelectedDay];
-        if (!currentItems || currentItems.length === 0) {
-            showToast('Add agenda items to the current day first.', 'error');
-            return;
-        }
-        createAgendaDays.forEach(d => {
-            createAgendaPerDay[d] = JSON.parse(JSON.stringify(currentItems));
         });
-        renderCreateAgendaTabs();
-        showToast('Agenda applied to all ' + createAgendaDays.length + ' days!', 'success');
     }
 
 
@@ -1515,9 +1381,29 @@
       const item = document.createElement('div');
       item.className = 'agenda-item';
       item.style.cssText = 'display:flex;flex-direction:column;gap:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(139,92,246,0.15);border-radius:12px;padding:12px 14px;';
+      
+      let days = [];
+      if (containerId === 'agenda-items-create') days = createAgendaDays;
+      else if (containerId === 'agenda-items-editor') days = agendaDays;
+
+      let optionsHtml = '<option value="">' + (document.documentElement.lang === 'ar' ? 'اختر اليوم' : 'Select Day') + '</option>';
+      const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      days.forEach(dStr => {
+          const d = new Date(dStr + 'T00:00:00');
+          const label = `${dayNames[d.getDay()]} ${d.getDate()}`;
+          const selected = (data && data.date === dStr) ? 'selected' : '';
+          optionsHtml += `<option value="${dStr}" ${selected}>${label}</option>`;
+      });
+
       item.innerHTML = `
         <div style="display:flex;align-items:flex-start;gap:8px;">
           <div style="flex:1;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <div style="min-width:110px;">
+              <label style="font-size:0.6rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:2px;">Day</label>
+              <select class="agenda-date form-control" required style="padding:5px 8px;font-size:0.82rem;">
+                ${optionsHtml}
+              </select>
+            </div>
             <div style="min-width:80px;">
               <label style="font-size:0.6rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:2px;">From</label>
               <input type="time" class="agenda-start form-control" value="${data?.start_time || ''}" required style="padding:5px 8px;font-size:0.82rem;" />
@@ -1529,7 +1415,7 @@
             </div>
             <div style="flex:1;min-width:120px;">
               <label style="font-size:0.6rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:2px;">Activity</label>
-              <input type="text" class="agenda-title form-control" value="${data?.title || ''}" placeholder="e.g. Opening Ceremony" style="padding:5px 8px;font-size:0.82rem;" />
+              <input type="text" class="agenda-title form-control" value="${data?.title || ''}" placeholder="e.g. Opening Ceremony" required style="padding:5px 8px;font-size:0.82rem;" />
             </div>
           </div>
           <button type="button" onclick="this.closest('.agenda-item').remove()" style="
@@ -1675,19 +1561,20 @@
       const agendaCreate = document.getElementById('agenda-items-create');
       if (agendaCreate) agendaCreate.innerHTML = '';
       
-      createAgendaPerDay = {};
       createAgendaDays = [];
-      createAgendaSelectedDay = null;
-      const agendaTabsWrap = document.getElementById('create-agenda-tabs-wrap');
-      if (agendaTabsWrap) agendaTabsWrap.style.display = 'none';
     }
 
     function nextStep() {
       // Validate step 1 fields
       const title = document.getElementById('e-title').value.trim();
       const desc = document.getElementById('e-desc').value.trim();
-      if (!title) { showToast('Please enter an event title', 'error'); document.getElementById('e-title').focus(); return; }
-      if (!desc) { showToast('Please enter a description', 'error'); document.getElementById('e-desc').focus(); return; }
+      const type = document.getElementById('e-type').value;
+      const image = document.getElementById('e-image').files[0];
+      
+      if (!title) { showToast(document.documentElement.lang === 'ar' ? 'الرجاء إدخال عنوان الحدث' : 'Please enter an event title', 'error'); document.getElementById('e-title').focus(); return; }
+      if (!desc) { showToast(document.documentElement.lang === 'ar' ? 'الرجاء إدخال الوصف' : 'Please enter a description', 'error'); document.getElementById('e-desc').focus(); return; }
+      if (!type) { showToast(document.documentElement.lang === 'ar' ? 'الرجاء اختيار نوع الحدث' : 'Please select an event type', 'error'); document.getElementById('e-type').focus(); return; }
+      if (!image) { showToast(document.documentElement.lang === 'ar' ? 'الرجاء رفع صورة غلاف للحدث' : 'Please upload an event banner image', 'error'); document.getElementById('e-image').focus(); return; }
       
       currentWizardStep = 2;
       updateWizardUI();
@@ -1783,6 +1670,8 @@
         description: '📄 Description', 
         event_type: '🏷️ Event Type',
         capacity: '👥 Capacity',
+        event_objective: '🎯 Event Objective',
+        target_audience: '🎯 Target Audience',
         image: '🖼️ Event Banner',
         ministry_document: '📄 Ministry Document',
         booking_proof: '📎 Booking Proof'
@@ -1815,6 +1704,14 @@
           case 'capacity':
             html += `<div class="form-group"><label class="form-label">${fieldLabels[f]}</label>
               <input id="edit-capacity" type="number" class="form-control" value="${ev.capacity || ''}" min="1" required /></div>`;
+            break;
+          case 'event_objective':
+            html += `<div class="form-group"><label class="form-label">${fieldLabels[f]}</label>
+              <textarea id="edit-objective" class="form-control" rows="2" required>${ev.event_objective || ''}</textarea></div>`;
+            break;
+          case 'target_audience':
+            html += `<div class="form-group"><label class="form-label">${fieldLabels[f]}</label>
+              <input id="edit-audience" type="text" class="form-control" value="${ev.target_audience || ''}" required /></div>`;
             break;
           case 'image':
             html += `<div class="form-group"><label class="form-label">${fieldLabels[f]}</label>
@@ -1860,6 +1757,12 @@
 
       const capEl = document.getElementById('edit-capacity');
       if (capEl) formData.append('capacity', capEl.value);
+
+      const objEl = document.getElementById('edit-objective');
+      if (objEl) formData.append('event_objective', objEl.value);
+
+      const audEl = document.getElementById('edit-audience');
+      if (audEl) formData.append('target_audience', audEl.value);
 
       const imgEl = document.getElementById('edit-image');
       if (imgEl && imgEl.files[0]) formData.append('image', imgEl.files[0]);
@@ -1943,8 +1846,12 @@
         formData.append('venue_id', document.getElementById('e-venue').value);
         
         const internalSchedule = buildInternalSchedule();
-        if (!internalSchedule || internalSchedule.length === 0) {
-          showToast('Please select at least one day and set a period.', 'error');
+        if (intSelectedDates.length === 0) {
+          showToast('Please select at least one day for the venue.', 'error');
+          return;
+        }
+        if (internalSchedule.length < intSelectedDates.length) {
+          showToast('Please select a period for all selected days.', 'error');
           return;
         }
         formData.append('internal_schedule', JSON.stringify(internalSchedule));
@@ -1954,8 +1861,12 @@
         
         // Build external_schedule JSON from time slots
         const schedule = buildExternalSchedule();
-        if (!schedule || schedule.length === 0) {
-          showToast('Please select at least one day and set times.', 'error');
+        if (extSelectedDates.length === 0) {
+          showToast('Please select at least one day for the external venue.', 'error');
+          return;
+        }
+        if (schedule.length < extSelectedDates.length) {
+          showToast('Please ensure start and end times are set for all external days.', 'error');
           return;
         }
         formData.append('external_schedule', JSON.stringify(schedule));
@@ -1967,6 +1878,8 @@
       }
 
       formData.append('capacity', document.getElementById('e-capacity').value);
+      formData.append('event_objective', document.getElementById('e-objective').value);
+      formData.append('target_audience', document.getElementById('e-audience').value);
 
       const imageFile = document.getElementById('e-image').files[0];
       if (imageFile) {
@@ -1979,43 +1892,92 @@
         formData.append('ministry_document', ministryFile);
       }
 
-      // Agenda (optional) - wrap in per-day format
-      if (createAgendaSelectedDay) {
-          createAgendaPerDay[createAgendaSelectedDay] = collectAgendaItems('agenda-items-create');
+      // Agenda (Required) - extract from flat list
+      if (createAgendaDays.length === 0) {
+          showToast(document.documentElement.lang === 'ar' ? 'يرجى تحديد يوم واحد على الأقل.' : 'Please select at least one day.', 'error');
+          return;
       }
 
       let agendaObj = {};
-      let hasAgenda = false;
-      for (const day in createAgendaPerDay) {
-          if (createAgendaPerDay[day] && createAgendaPerDay[day].length > 0) {
-              agendaObj[day] = createAgendaPerDay[day];
-              hasAgenda = true;
+      const items = document.querySelectorAll('#agenda-items-create .agenda-item');
+      items.forEach(item => {
+          const date = item.querySelector('.agenda-date').value;
+          const title = item.querySelector('.agenda-title').value.trim();
+          const startTime = item.querySelector('.agenda-start').value;
+          const endTime = item.querySelector('.agenda-end').value;
+          const description = item.querySelector('.agenda-desc').value.trim();
+          
+          if (date && title && startTime && endTime) {
+              if (!agendaObj[date]) agendaObj[date] = [];
+              agendaObj[date].push({ title, start_time: startTime, end_time: endTime, description });
+          }
+      });
+
+      let missingAgendaDay = false;
+      for (const day of createAgendaDays) {
+          if (!agendaObj[day] || agendaObj[day].length === 0) {
+              missingAgendaDay = true;
+              break;
           }
       }
 
-      if (hasAgenda) {
-          if (locationType === 'external') {
-             const schedule = buildExternalSchedule();
-             for (const day of Object.keys(agendaObj)) {
-                const s = schedule.find(x => x.date === day);
-                if (s) {
-                   for (const item of agendaObj[day]) {
-                      if (item.start_time < s.start_time || item.end_time > s.end_time) {
-                         showToast('Agenda items on ' + day + ' must be between ' + s.start_time + ' and ' + s.end_time, 'error');
-                         return; // Stop form submission
-                      }
-                   }
-                }
-             }
-          }
-          formData.append('agenda', JSON.stringify(agendaObj));
-      } else {
-          const unassignedItems = collectAgendaItems('agenda-items-create');
-          if (unassignedItems.length > 0) {
-              showToast('Please select event days to save the agenda.', 'error');
-              return;
-          }
+      if (missingAgendaDay) {
+          showToast(document.documentElement.lang === 'ar' ? 'الاجندة مطلوبة لكل يوم. يرجى اضافة عنصر واحد على الاقل لكل يوم.' : 'Agenda is required for each day. Please add at least one agenda item for every day.', 'error');
+          return;
       }
+
+      let isValidAgenda = true;
+      const getFormatTime = (t24) => { if (!t24) return '00:00'; return t24.substring(0, 5); };
+
+      for (const day of Object.keys(agendaObj)) {
+          let startBound = "00:00", endBound = "23:59";
+          
+          if (locationType === 'external') {
+              const schedule = buildExternalSchedule();
+              const s = schedule.find(x => x.date === day);
+              if (s) { startBound = s.start_time; endBound = s.end_time; }
+          } else {
+              const schedule = buildInternalSchedule();
+              const s = schedule.find(x => x.date === day);
+              const venueId = document.getElementById('e-venue').value;
+              const v = globalVenues.find(x => x.id == venueId);
+              if (s && v) {
+                  if (s.period === 'morning') {
+                      startBound = getFormatTime(v.morning_start); endBound = getFormatTime(v.morning_end);
+                  } else if (s.period === 'evening') {
+                      startBound = getFormatTime(v.evening_start); endBound = getFormatTime(v.evening_end);
+                  } else {
+                      startBound = getFormatTime(v.morning_start); endBound = getFormatTime(v.evening_end);
+                  }
+              }
+          }
+
+          const items = agendaObj[day] || [];
+          items.sort((a, b) => a.start_time.localeCompare(b.start_time));
+          
+          for (let i = 0; i < items.length; i++) {
+              const item = items[i];
+              if (item.start_time >= item.end_time) {
+                  showToast(`Invalid time in ${day}. Start time must be before end time.`, 'error');
+                  isValidAgenda = false;
+                  break;
+              }
+              if (item.start_time < startBound || item.end_time > endBound) {
+                  showToast(`Invalid time in ${day}. Agenda must be strictly between event hours (${startBound} and ${endBound}).`, 'error');
+                  isValidAgenda = false;
+                  break;
+              }
+              if (i > 0 && item.start_time < items[i-1].end_time) {
+                  showToast(`Overlapping agenda items in ${day} are not allowed.`, 'error');
+                  isValidAgenda = false;
+                  break;
+              }
+          }
+          if (!isValidAgenda) break;
+      }
+
+      if (!isValidAgenda) return;
+      formData.append('agenda', JSON.stringify(agendaObj));
 
       const res = await api.postForm('/events', formData);
 
@@ -2044,16 +2006,6 @@
         <button class="modal-close" onclick="closeAgendaEditor()">✕</button>
       </div>
       <div style="padding: 16px 0;">
-        <!-- Day Tabs -->
-        <div id="agenda-day-tabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;"></div>
-        
-        <!-- Apply to all days button -->
-        <div id="agenda-apply-all-wrap" style="display:none;margin-bottom:14px;">
-          <button type="button" class="btn btn-sm" style="background:rgba(139,92,246,0.1);color:#a78bfa;border:1px solid rgba(139,92,246,0.2);display:flex;align-items:center;gap:6px;width:100%;" onclick="applyAgendaToAllDays()">
-            📋 Apply Current Day's Agenda to All Days
-          </button>
-        </div>
-
         <!-- Agenda items for selected day -->
         <div id="agenda-items-editor" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;"></div>
         <button type="button" class="btn btn-ghost btn-sm" onclick="addAgendaItem('agenda-items-editor')" style="display:flex;align-items:center;gap:6px;margin-bottom:16px;">

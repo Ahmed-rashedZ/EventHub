@@ -12,36 +12,38 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('event_sponsor', function (Blueprint $table) {
-            $table->id();
+        if (!Schema::hasTable('event_sponsor')) {
+            Schema::create('event_sponsor', function (Blueprint $table) {
+                $table->id();
 
-            $table->foreignId('event_id')
-                  ->constrained('events')
-                  ->onDelete('cascade');
+                $table->foreignId('event_id')
+                      ->constrained('events')
+                      ->onDelete('cascade');
 
-            // References users.id — the sponsor IS a user
-            $table->foreignId('sponsor_id')
-                  ->constrained('users')
-                  ->onDelete('cascade');
+                // References users.id — the sponsor IS a user
+                $table->foreignId('sponsor_id')
+                      ->constrained('users')
+                      ->onDelete('cascade');
 
-            // Tier drives ticket branding (nullable for unranked sponsors):
-            //   diamond → logo alongside event logo
-            //   gold    → "Sponsored by" + logo
-            //   silver  → "Supported by"
-            //   bronze  → "Special thanks to"
-            //   null    → unranked (accepted but not yet classified)
-            $table->string('tier', 10)->nullable();
+                // Tier drives ticket branding (nullable for unranked sponsors):
+                //   diamond → logo alongside event logo
+                //   gold    → "Sponsored by" + logo
+                //   silver  → "Supported by"
+                //   bronze  → "Special thanks to"
+                //   null    → unranked (accepted but not yet classified)
+                $table->string('tier', 10)->nullable();
 
-            $table->decimal('contribution_amount', 10, 2)->nullable();
+                $table->decimal('contribution_amount', 10, 2)->nullable();
 
-            $table->timestamps();
+                $table->timestamps();
 
-            // One sponsor per event (different tiers across different events is fine)
-            $table->unique(['event_id', 'sponsor_id']);
+                // One sponsor per event (different tiers across different events is fine)
+                $table->unique(['event_id', 'sponsor_id']);
 
-            // Index for reverse lookups: all events a sponsor is in
-            $table->index('sponsor_id');
-        });
+                // Index for reverse lookups: all events a sponsor is in
+                $table->index('sponsor_id');
+            });
+        }
     }
 
     /**

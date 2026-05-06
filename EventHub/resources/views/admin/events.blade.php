@@ -338,6 +338,18 @@
               <div><div class="ed-info-label" style="color:#ef4444">Ministry Document</div><div class="ed-info-value" style="color:#ef4444;">Not uploaded</div></div>
             </div>
             `}
+            ${ev.event_objective ? `
+            <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+              <div class="ed-info-icon">🎯</div>
+              <div><div class="ed-info-label">Event Objective</div><div class="ed-info-value" style="font-size:0.9rem;">${ev.event_objective}</div></div>
+            </div>
+            ` : ''}
+            ${ev.target_audience ? `
+            <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+              <div class="ed-info-icon">👥</div>
+              <div><div class="ed-info-label">Target Audience</div><div class="ed-info-value" style="font-size:0.9rem;">${ev.target_audience}</div></div>
+            </div>
+            ` : ''}
             ${(() => {
               const schedule = ev.external_schedule && ev.external_schedule.length > 0 ? ev.external_schedule : 
                                (ev.internal_schedule && ev.internal_schedule.length > 0 ? ev.internal_schedule : null);
@@ -715,6 +727,12 @@
             </label>
             <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:0.82rem;color:#e2e8f0;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
               <input type="checkbox" name="review_fields" value="booking_proof" style="width:15px;height:15px;cursor:pointer;"> 📎 Booking Proof
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:0.82rem;color:#e2e8f0;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+              <input type="checkbox" name="review_fields" value="event_objective" style="width:15px;height:15px;cursor:pointer;"> 🎯 Event Objective
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:0.82rem;color:#e2e8f0;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+              <input type="checkbox" name="review_fields" value="target_audience" style="width:15px;height:15px;cursor:pointer;"> 👥 Target Audience
             </label>
           </div>
         </div>

@@ -34,6 +34,8 @@ class Event extends Model
         'external_schedule',
         'internal_schedule',
         'agenda',
+        'event_objective',
+        'target_audience',
     ];
 
     protected $appends = [

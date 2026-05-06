@@ -63,8 +63,11 @@ class EventController extends Controller
             'event_type'         => 'required|string|in:مؤتمر,ندوة,ورشة عمل,دورة تدريبية,ترفيه,ملتقى علمي,رياضة,تقنية,اجتماعية,معرض',
             'location_type'      => 'required|in:internal,external',
             'capacity'           => 'required|integer|min:1',
-            'image'              => 'nullable|image|max:2048',
+            'image'              => 'required|image|max:2048',
             'ministry_document'  => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'agenda'             => 'required|json',
+            'event_objective'    => 'required|string',
+            'target_audience'    => 'required|string',
         ]);
 
         if ($request->location_type === 'internal') {
@@ -289,15 +292,42 @@ class EventController extends Controller
         $ministryPath = $request->file('ministry_document')->store('ministry_docs', 'public');
         $eventData['ministry_document_path'] = $ministryPath;
 
+        $agendaJson = null;
+        if ($request->has('agenda') && $request->agenda) {
+            $agendaData = json_decode($request->agenda, true);
+            if (is_array($agendaData)) {
+                foreach ($agendaData as $day => $items) {
+                    if (is_array($items)) {
+                        usort($items, function($a, $b) {
+                            return strcmp($a['start_time'], $b['start_time']);
+                        });
+                        $prevEnd = null;
+                        foreach ($items as $item) {
+                            if ($item['start_time'] >= $item['end_time']) {
+                                return response()->json(['message' => "Invalid time in agenda for $day. Start time must be before end time."], 422);
+                            }
+                            if ($prevEnd !== null && $item['start_time'] < $prevEnd) {
+                                return response()->json(['message' => "Overlapping agenda items are not allowed on $day."], 422);
+                            }
+                            $prevEnd = $item['end_time'];
+                        }
+                    }
+                }
+            }
+            $agendaJson = $agendaData;
+        }
+
         $eventData = array_merge($eventData, [
-            'title'       => $request->title,
-            'description' => $request->description,
-            'event_type'  => $request->event_type,
-            'capacity'    => $request->capacity,
-            'status'      => 'pending',
-            'created_by'  => $request->user()->id,
-            'image'       => $imagePath,
-            'agenda'      => $request->agenda ? json_decode($request->agenda, true) : null,
+            'title'           => $request->title,
+            'description'     => $request->description,
+            'event_type'      => $request->event_type,
+            'capacity'        => $request->capacity,
+            'event_objective' => $request->event_objective,
+            'target_audience' => $request->target_audience,
+            'status'          => 'pending',
+            'created_by'      => $request->user()->id,
+            'image'           => $imagePath,
+            'agenda'          => $agendaJson,
         ]);
 
         $event = Event::create($eventData);
@@ -416,6 +446,34 @@ class EventController extends Controller
     }
 
     // POST /api/events/{id}/rate  – User rates an event
+
+
+    private function validateAgenda($agenda)
+    {
+        if (is_array($agenda)) {
+            foreach ($agenda as $day => $items) {
+                if (is_array($items)) {
+                    usort($items, function($a, $b) {
+                        if (!isset($a['start_time'], $b['start_time'])) return 0;
+                        return strcmp($a['start_time'], $b['start_time']);
+                    });
+                    $prevEnd = null;
+                    foreach ($items as $item) {
+                        if (!isset($item['start_time'], $item['end_time'])) continue;
+                        if ($item['start_time'] >= $item['end_time']) {
+                            return response()->json(['message' => "Invalid time in agenda for $day. Start time must be before end time."], 422);
+                        }
+                        if ($prevEnd !== null && $item['start_time'] < $prevEnd) {
+                            return response()->json(['message' => "Overlapping agenda items are not allowed on $day."], 422);
+                        }
+                        $prevEnd = $item['end_time'];
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     public function rate($id, Request $request)
     {
         $request->validate([
@@ -491,7 +549,7 @@ class EventController extends Controller
         $request->validate([
             'review_message' => 'required|string|max:1000',
             'review_fields'  => 'required|array|min:1',
-            'review_fields.*' => 'string|in:title,description,event_type,capacity,image,ministry_document,booking_proof,venue,dates',
+            'review_fields.*' => 'string|in:title,description,event_type,capacity,image,ministry_document,booking_proof,venue,dates,agenda',
         ]);
 
         $event = Event::findOrFail($id);
@@ -559,6 +617,12 @@ class EventController extends Controller
         if (in_array('capacity', $allowedFields) && $request->has('capacity')) {
             $updateData['capacity'] = (int) $request->capacity;
         }
+        if (in_array('event_objective', $allowedFields) && $request->has('event_objective')) {
+            $updateData['event_objective'] = $request->event_objective;
+        }
+        if (in_array('target_audience', $allowedFields) && $request->has('target_audience')) {
+            $updateData['target_audience'] = $request->target_audience;
+        }
         if (in_array('image', $allowedFields) && $request->hasFile('image')) {
             $updateData['image'] = $request->file('image')->store('events', 'public');
         }
@@ -567,6 +631,9 @@ class EventController extends Controller
         }
         if (in_array('booking_proof', $allowedFields) && $request->hasFile('booking_proof')) {
             $updateData['booking_proof_path'] = $request->file('booking_proof')->store('proofs', 'public');
+        }
+        if (in_array('agenda', $allowedFields) && $request->has('agenda')) {
+            $updateData['agenda'] = $request->agenda ? json_decode($request->agenda, true) : null;
         }
 
         if (empty($updateData)) {
@@ -644,12 +711,39 @@ class EventController extends Controller
 
         $agenda = $request->agenda;
 
+        $validation = $this->validateAgenda($agenda);
+        if ($validation) return $validation;
+
         // Normalize: if it's a flat array (legacy), wrap it
         if (is_array($agenda) && !empty($agenda) && isset($agenda[0])) {
             // Legacy flat format — keep as-is for backward compat
         }
 
-        $event->update(['agenda' => $agenda]);
+        $wasApproved = $event->status === 'approved';
+        $updateData = ['agenda' => $agenda];
+        
+        if ($wasApproved) {
+            $updateData['status'] = 'pending';
+            $updateData['review_status'] = 'none';
+            $updateData['review_message'] = null;
+        }
+
+        $event->update($updateData);
+
+        if ($wasApproved) {
+            // Notify Admins
+            $admins = User::where('role', 'Admin')->get();
+            foreach ($admins as $admin) {
+                $admin->notify(new SystemNotification(
+                    'Event Agenda Updated 🔄',
+                    "Event \"{$event->title}\" agenda was updated by {$request->user()->name} and needs re-approval.",
+                    'event',
+                    '📋',
+                    '/admin/events',
+                    $event->id
+                ));
+            }
+        }
 
         return response()->json(['message' => 'Agenda updated successfully', 'event' => $event->fresh()->load('venue')]);
     }
