@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -37,8 +37,10 @@
         <select id="filter-status" class="form-control" style="width:160px" onchange="applyFilter()">
           <option value="pending">Open Requests</option>
           <option value="">All Statuses</option>
+          <option value="negotiating">Negotiating</option>
           <option value="accepted">Accepted</option>
           <option value="rejected">Rejected</option>
+          <option value="cancelled">Cancelled</option>
         </select>
       </div>
     </div>
@@ -92,10 +94,24 @@
   </div>
 </div>
 
+<!-- Agreement Negotiation Modal -->
+<div class="modal-overlay" id="agreement-modal">
+  <div class="modal" style="max-width:520px; width:95%; padding:0; border-top:3px solid #22d3ee; max-height:85vh; display:flex; flex-direction:column; border-radius:16px;">
+    <div style="padding:16px 20px 0; display:flex; justify-content:space-between; align-items:center;">
+      <div><h3 class="modal-title" style="margin:0;font-size:1rem;">Contract Negotiation</h3><p style="font-size:0.7rem;color:var(--text-muted);margin:2px 0 0">Negotiate terms with the other party</p></div>
+      <button class="modal-close" onclick="closeAgreementModal()">✕</button>
+    </div>
+    <div id="agreement-content" style="padding:12px 20px 20px; overflow-y:auto; flex:1;">
+      <div class="spinner" style="margin:40px auto"></div>
+    </div>
+  </div>
+</div>
+
 <div id="toast-container"></div>
 <script src="/js/api.js"></script>
 <script src="/js/notifications.js"></script>
 <script src="/js/auth.js"></script>
+<script src="/js/agreement-v2.js?v={{ time() }}"></script>
 <script>
   let allRequests = [];
   const user = requireRole('Sponsor');
@@ -159,8 +175,15 @@
         } else {
           actionHtml = `<span style="font-size:11px; color:var(--text-muted); font-style:italic">Awaiting Manager</span>`;
         }
+      } else if (r.status === 'negotiating') {
+        actionHtml = `
+          <button class="btn btn-sm" onclick="openAgreementModal(${r.id})" style="padding:4px 12px; font-size:11px; background:rgba(34,211,238,0.12); color:#22d3ee; border:1px solid rgba(34,211,238,0.25); font-weight:600;">📋 ${t('Contract Negotiation')}</button>
+          <button class="btn btn-sm" onclick="openCancelModal(${r.id})" style="padding:4px 12px; font-size:11px; background:rgba(239,68,68,0.1); color:#ef4444; border:1px solid rgba(239,68,68,0.2); font-weight:600;">🚫 ${t('Cancel')}</button>
+        `;
       } else if (r.status === 'accepted') {
-        actionHtml = `<a href="/storage/agreements/agreement_${r.id}.pdf" target="_blank" class="btn btn-sm" style="background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.15)" title="${t('Agreement')}">📄 ${t('Agreement')}</a>`;
+        actionHtml = `
+          <button class="btn btn-sm" onclick="openAgreementModal(${r.id})" style="padding:4px 12px; font-size:11px; background:rgba(16,185,129,0.12); color:#10b981; border:1px solid rgba(16,185,129,0.25); font-weight:600;">📄 ${t('Final Agreement')}</button>
+        `;
       }
 
       return `
@@ -180,7 +203,7 @@
         <td>${badge(r.status)}</td>
         <td style="display:flex;gap:6px;padding:14px 16px;flex-wrap:wrap;align-items:center">
           <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${e.id})" title="View Details">ℹ️ Details</button>
-          ${r.message ? `<button class="btn btn-ghost btn-sm" onclick="viewMessage(${r.id})" title="View Message">💬 Msg</button>` : ''}
+          ${(r.negotiation?.final_notes || r.message) ? `<button class="btn btn-ghost btn-sm" onclick="viewMessage(${r.id})" title="View Message">💬 Msg</button>` : ''}
           ${actionHtml}
         </td>
       </tr>`;
@@ -191,7 +214,7 @@
     const req = allRequests.find(r => r.id === requestId);
     if (!req) return;
     const modal = document.getElementById('message-modal');
-    document.getElementById('message-text').innerText = req.message || 'No message provided.';
+    document.getElementById('message-text').innerText = req.negotiation?.final_notes || req.message || 'No message provided.';
     document.getElementById('message-sender').innerText = req.initiator === 'event_manager' ? 'From Event Manager' : 'From You';
     modal.classList.add('open');
   }

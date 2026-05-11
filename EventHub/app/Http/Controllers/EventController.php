@@ -420,6 +420,19 @@ class EventController extends Controller
         $event = Event::with('venue', 'creator:id,name', 'sponsors.profile')
             ->withAvg('ratings', 'rating')
             ->findOrFail($id);
+            
+        // Append sponsorship_request_id to sponsors for contract downloading
+        if ($event->relationLoaded('sponsors')) {
+            $event->sponsors->map(function ($sponsor) use ($event) {
+                $req = \App\Models\SponsorshipRequest::where('event_id', $event->id)
+                    ->where('sponsor_id', $sponsor->id)
+                    ->where('status', 'accepted')
+                    ->first();
+                $sponsor->sponsorship_request_id = $req ? $req->id : null;
+                return $sponsor;
+            });
+        }
+            
         return response()->json($event);
     }
 

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -279,7 +279,10 @@
                       </div>
                       <div style="flex:1">
                           <div style="font-size:0.85rem; font-weight:600; color:#fff;">${sp.name}</div>
-                          <div style="margin-top: 2px;">${getTierBadge(sp.pivot?.tier)}</div>
+                          <div style="margin-top: 2px;">
+                              ${getTierBadge(sp.pivot?.tier)}
+                              ${sp.sponsorship_request_id ? `<button style="background:rgba(34,211,238,0.1);color:#22d3ee;border:1px solid rgba(34,211,238,0.25);border-radius:6px;padding:2px 6px;font-size:0.65rem;margin-left:6px;cursor:pointer;" onclick="event.stopPropagation(); downloadAdminContract(${sp.sponsorship_request_id})">📄 Contract</button>` : ''}
+                          </div>
                       </div>
                    </div>
                 `).join('')}
@@ -790,6 +793,40 @@
 
     function navigateToProfile(userId) {
       window.location.href = `/admin/users?highlight=${userId}`;
+    }
+
+    async function downloadAdminContract(sponsorshipId) {
+      const token = localStorage.getItem('token');
+      showToast('Downloading contract...', 'info');
+      try {
+        const res = await fetch(`/api/agreements/${sponsorshipId}/download-final`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) {
+          showToast('Download failed. Contract might not be finalized.', 'error');
+          return;
+        }
+        let filename = `agreement_${sponsorshipId}_final.pdf`;
+        const disposition = res.headers.get('content-disposition');
+        if (disposition && disposition.indexOf('filename=') !== -1) {
+            const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+            const matches = filenameRegex.exec(disposition);
+            if (matches != null && matches[1]) { 
+                filename = matches[1].replace(/['"]/g, '');
+            }
+        }
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('Download complete ✅', 'success');
+      } catch (err) {
+        showToast('Error downloading contract', 'error');
+        console.error(err);
+      }
     }
   </script>
 </body>

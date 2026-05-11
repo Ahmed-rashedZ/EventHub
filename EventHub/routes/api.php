@@ -7,6 +7,7 @@ use App\Http\Controllers\VenueController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\CheckinController;
 use App\Http\Controllers\SponsorshipController;
+use App\Http\Controllers\AgreementController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\VerificationController;
@@ -82,6 +83,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/sponsorship',        [SponsorshipController::class, 'index']);
     Route::put('/sponsorship/{id}',   [SponsorshipController::class, 'update']);
     Route::patch('/sponsorship/{id}/tier', [SponsorshipController::class, 'updateTier']);
+
+    // ── Agreements ──
+    Route::post('/agreements/{id}/generate',       [AgreementController::class, 'generate']);
+    Route::get('/agreements/{id}',                 [AgreementController::class, 'show']);
+    Route::get('/agreements/{id}/download/{version?}', [AgreementController::class, 'download']);
+    Route::get('/agreements/{id}/download-final',  [AgreementController::class, 'downloadFinal']);
+    Route::post('/agreements/{id}/upload',         [AgreementController::class, 'upload']);
+    Route::put('/agreements/{id}/respond',         [AgreementController::class, 'respond']);
+    Route::put('/agreements/{id}/cancel',          [AgreementController::class, 'cancel']);
 
     // ── Notifications ──
     Route::get('/notifications',              [NotificationController::class, 'index']);

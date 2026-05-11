@@ -22,4 +22,9 @@ class SponsorshipRequest extends Model
     {
         return $this->belongsTo(User::class, 'event_manager_id');
     }
+
+    public function negotiation()
+    {
+        return $this->hasOne(AgreementNegotiation::class);
+    }
 }

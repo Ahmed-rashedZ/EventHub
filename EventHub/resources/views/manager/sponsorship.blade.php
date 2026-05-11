@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -159,10 +159,24 @@
   </div>
 </div>
 
+<!-- Agreement Negotiation Modal -->
+<div class="modal-overlay" id="agreement-modal">
+  <div class="modal" style="max-width:520px; width:95%; padding:0; border-top:3px solid #22d3ee; max-height:85vh; display:flex; flex-direction:column; border-radius:16px;">
+    <div style="padding:16px 20px 0; display:flex; justify-content:space-between; align-items:center;">
+      <div><h3 class="modal-title" style="margin:0;font-size:1rem;">Contract Negotiation</h3><p style="font-size:0.7rem;color:var(--text-muted);margin:2px 0 0">Negotiate terms with the other party</p></div>
+      <button class="modal-close" onclick="closeAgreementModal()">✕</button>
+    </div>
+    <div id="agreement-content" style="padding:12px 20px 20px; overflow-y:auto; flex:1;">
+      <div class="spinner" style="margin:40px auto"></div>
+    </div>
+  </div>
+</div>
+
 <div id="toast-container"></div>
 <script src="/js/api.js"></script>
 <script src="/js/notifications.js"></script>
 <script src="/js/auth.js"></script>
+<script src="/js/agreement-v2.js?v={{ time() }}"></script>
 <script>
   const user = requireRole('Event Manager');
   if (user) { populateSidebar(user); setActiveNav(); loadRequests(); loadMyEvents(); }
@@ -195,22 +209,27 @@
         <td style="color:var(--text-muted)">${i+1}</td>
         <td><div style="font-weight:600">${r.event?.title || '—'}</div></td>
         <td style="color:var(--text-muted)">
-            ${r.message ? `<button class="btn btn-ghost btn-sm" onclick="showMsg('${r.message.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n')}')" style="font-size:12px; padding: 4px 8px;">💬 Read Message</button>` : '—'}
+            ${(r.negotiation?.final_notes || r.message) ? `<button class="btn btn-ghost btn-sm" onclick="showMsg('${(r.negotiation?.final_notes || r.message).replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n')}')" style="font-size:12px; padding: 4px 8px;">💬 Read Message</button>` : '—'}
         </td>
         <td style="color:var(--accent2); font-weight:500; cursor:pointer;" onclick="${(r.sponsor_id || r.sponsor?.id) ? `navigateToProfile(${r.sponsor_id || r.sponsor.id})` : ''}">
             <span class="i18n-skip">${r.sponsor?.name || 'Open'}</span>
         </td>
         <td>
           ${badge(r.status)}
-          ${r.status === 'accepted' ? `<a href="/storage/agreements/agreement_${r.id}.pdf" target="_blank" style="margin-left:8px;font-size:12px;text-decoration:none;color:#fff;background:rgba(255,255,255,0.08);padding:4px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.15);display:inline-flex;align-items:center;gap:4px">📄 ${t('Agreement')}</a>` : ''}
           ${r.status === 'pending' && r.initiator === 'event_manager' ? `<div style="font-size: 11px; margin-top: 4px; color: var(--text-muted);">Awaiting Sponsor</div>` : ''}
         </td>
         <td>
-          <div style="display: flex; gap: 8px;">
+          <div style="display: flex; gap: 8px; flex-wrap:wrap;">
           ${r.status === 'pending' && r.initiator === 'sponsor' ? `
               <button class="btn btn-success" style="padding: 4px 12px; font-size: 12px; font-weight: 600;" onclick="respond(${r.id}, 'accepted')">✅ Accept</button>
               <button class="btn btn-danger" style="padding: 4px 12px; font-size: 12px; font-weight: 600;" onclick="respond(${r.id}, 'rejected')">❌ Reject</button>
-          ` : (r.status === 'accepted' ? (canEdit ? `<button class="btn btn-ghost btn-sm" onclick="editRank(${r.id})" style="padding: 4px 12px; font-size: 11px;">✏️ Edit Tier</button>` : `<span style="font-size:11px; color:var(--text-muted)">Locked (Started)</span>`) : `<span style="font-size:12px; color:var(--text-muted)">No Action</span>`)}
+          ` : r.status === 'negotiating' ? `
+              <button class="btn btn-sm" onclick="openAgreementModal(${r.id})" style="padding:4px 12px; font-size:11px; background:rgba(34,211,238,0.12); color:#22d3ee; border:1px solid rgba(34,211,238,0.25); font-weight:600;">📋 ${t('Contract Negotiation')}</button>
+              <button class="btn btn-sm" onclick="openCancelModal(${r.id})" style="padding:4px 12px; font-size:11px; background:rgba(239,68,68,0.1); color:#ef4444; border:1px solid rgba(239,68,68,0.2); font-weight:600;">🚫 ${t('Cancel')}</button>
+          ` : r.status === 'accepted' ? `
+              ${canEdit ? `<button class="btn btn-ghost btn-sm" onclick="editRank(${r.id})" style="padding: 4px 12px; font-size: 11px;">✏️ Edit Tier</button>` : `<span style="font-size:11px; color:var(--text-muted)">Locked (Started)</span>`}
+              <button class="btn btn-sm" onclick="openAgreementModal(${r.id})" style="padding:4px 12px; font-size:11px; background:rgba(16,185,129,0.12); color:#10b981; border:1px solid rgba(16,185,129,0.25); font-weight:600;">📄 ${t('Final Agreement')}</button>
+          ` : `<span style="font-size:12px; color:var(--text-muted)">No Action</span>`}
           </div>
         </td>
         <td>
@@ -281,12 +300,7 @@
   }
 
   function respond(id, status) {
-    if (status === 'accepted') {
-        document.getElementById('accept-req-id').value = id;
-        document.getElementById('accept-modal').classList.add('open');
-    } else {
-        processResponse(id, status);
-    }
+    processResponse(id, status);
   }
 
   async function processResponse(id, status, tier = null) {
@@ -297,7 +311,7 @@
     
     const res = await api.put(`/sponsorship/${id}`, payload);
     if (res.ok) { 
-        showToast(status === 'accepted' ? 'Sponsorship accepted! 🎉' : 'Request rejected.', status === 'accepted' ? 'success' : 'info'); 
+        showToast(status === 'accepted' ? 'Preliminary acceptance successful! Contract negotiation started. 📝' : 'Request rejected.', status === 'accepted' ? 'success' : 'info'); 
         loadRequests(); 
     }
     else showToast(res.data?.message || 'Error', 'error');

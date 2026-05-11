@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\SponsorshipRequest;
+use App\Models\AgreementNegotiation;
+use App\Models\AgreementVersion;
 use App\Models\Event;
 use App\Models\User;
+use App\Services\AgreementWordService;
 use Illuminate\Http\Request;
 use App\Notifications\SystemNotification;
 
@@ -125,12 +128,12 @@ class SponsorshipController extends Controller
             ->update(['status' => 'rejected']);
 
         if ($user->role === 'Sponsor') {
-            $requests = SponsorshipRequest::with(['event.venue', 'manager'])
+            $requests = SponsorshipRequest::with(['event.venue', 'manager', 'negotiation'])
                 ->where('sponsor_id', $user->id)
                 ->latest()
                 ->get();
         } elseif ($user->role === 'Event Manager') {
-            $requests = SponsorshipRequest::with(['event.sponsors', 'sponsor'])
+            $requests = SponsorshipRequest::with(['event.sponsors', 'sponsor', 'negotiation'])
                 ->where('event_manager_id', $user->id)
                 ->get()
                 ->sortBy(function($req) {
@@ -139,7 +142,7 @@ class SponsorshipController extends Controller
                 })
                 ->values();
         } elseif ($user->role === 'Admin') {
-            $requests = SponsorshipRequest::with(['event', 'sponsor', 'manager'])->latest()->get();
+            $requests = SponsorshipRequest::with(['event', 'sponsor', 'manager', 'negotiation'])->latest()->get();
         } else {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
@@ -173,48 +176,34 @@ class SponsorshipController extends Controller
         }
 
         // Update status
-        $sreq->status = $request->status;
-        if ($sreq->status === 'accepted') {
-            if ($user->role === 'Sponsor') {
-                // Sponsor accepting a manager-initiated request → unranked (manager decides tier later)
-                $tier = null;
-            } else {
-                // Manager accepting a sponsor-initiated request → optional tier
-                $tier = $request->tier ?: null; // null means unranked
-                
-                // Validate unique tier per event (only for non-null tiers)
-                if ($tier !== null) {
-                    $existingRank = \App\Models\EventSponsor::where('event_id', $sreq->event_id)
-                        ->where('tier', $tier)
-                        ->where('sponsor_id', '!=', $sreq->sponsor_id)
-                        ->exists();
-                        
-                    if ($existingRank) {
-                        return response()->json(['message' => 'This rank ('.ucfirst($tier).') is already assigned to another sponsor for this event. Please select a different rank.'], 400);
-                    }
-                }
-            }
+        if ($request->status === 'accepted') {
+            // Preliminary acceptance → set to 'negotiating' (not official yet)
+            // The status becomes 'accepted' only after final contract agreement
+            $sreq->status = 'negotiating';
 
-            // Attach sponsor to event
-            \App\Models\EventSponsor::updateOrCreate([
-                'event_id' => $sreq->event_id,
-                'sponsor_id' => $sreq->sponsor_id,
-            ], [
-                'tier' => $tier,
-                'contribution_amount' => $request->contribution_amount ?? 0
-            ]);
-
-            // Generate Agreement PDF
+            // ── Auto-generate Agreement Negotiation & Word Document ──
             $sreq->load(['event.venue', 'manager', 'sponsor']);
-            $pdfData = [
-                'event' => $sreq->event,
-                'sponsor' => $sreq->sponsor,
-                'manager' => $sreq->manager,
-                'date' => now()->format('Y-m-d')
-            ];
-            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.agreement', $pdfData);
-            $filename = 'agreements/agreement_' . $sreq->id . '.pdf';
-            \Illuminate\Support\Facades\Storage::disk('public')->put($filename, $pdf->output());
+            $existingNeg = AgreementNegotiation::where('sponsorship_request_id', $sreq->id)->first();
+            if (!$existingNeg) {
+                $wordPath = AgreementWordService::generate($sreq);
+
+                $negotiation = AgreementNegotiation::create([
+                    'sponsorship_request_id' => $sreq->id,
+                    'status'                 => 'draft',
+                    'last_submitted_by'      => $user->id,
+                ]);
+
+                AgreementVersion::create([
+                    'negotiation_id' => $negotiation->id,
+                    'version_number' => 1,
+                    'file_path'      => $wordPath,
+                    'uploaded_by'    => $user->id,
+                    'action'         => 'uploaded',
+                    'message'        => 'تم توليد العقد الأولي تلقائياً',
+                ]);
+            }
+        } else {
+            $sreq->status = $request->status;
         }
         
         $sreq->save();

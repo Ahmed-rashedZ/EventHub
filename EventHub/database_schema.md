@@ -237,7 +237,47 @@
 ---
 
 ### ملاحظات إضافية لنماذج الذكاء الاصطناعي:
+
+---
+
+## 14. جدول تفاوض العقود (`agreement_negotiations`)
+**النموذج (Model):** `AgreementNegotiation`
+
+يدير عملية التفاوض على عقود الرعاية بين المنظم والراعي.
+- **الحقول الأساسية:**
+  - `id`: المعرف الأساسي.
+  - `sponsorship_request_id`: معرف طلب الرعاية المرتبط (بميزة الحذف التلقائي).
+  - `status`: حالة التفاوض (`draft`, `pending_review`, `revision_requested`, `accepted`, `rejected`).
+  - `last_submitted_by`: معرف آخر مستخدم رفع نسخة أو أجرى تعديل (اختياري).
+  - `final_notes`: ملاحظات نهائية (اختياري).
+- **العلاقات (Relationships):**
+  - `sponsorshipRequest()`: ينتمي إلى طلب رعاية `belongsTo(SponsorshipRequest::class)`.
+  - `versions()`: يمتلك عدة نسخ `hasMany(AgreementVersion::class)`.
+  - `latestVersion()`: آخر نسخة `hasOne(AgreementVersion::class)->latestOfMany()`.
+  - `lastSubmitter()`: آخر مستخدم قدم `belongsTo(User::class, 'last_submitted_by')`.
+
+---
+
+## 15. جدول نسخ العقود (`agreement_versions`)
+**النموذج (Model):** `AgreementVersion`
+
+يحفظ كل نسخة من العقد مع سجل الإجراءات.
+- **الحقول الأساسية:**
+  - `id`: المعرف الأساسي.
+  - `negotiation_id`: معرف التفاوض المرتبط (بميزة الحذف التلقائي).
+  - `version_number`: رقم النسخة.
+  - `file_path`: مسار ملف الوورد أو PDF.
+  - `uploaded_by`: معرف المستخدم الذي رفع الملف.
+  - `action`: نوع الإجراء (`uploaded`, `accepted`, `rejected`, `revision_requested`).
+  - `message`: رسالة توضيحية (اختياري).
+- **العلاقات (Relationships):**
+  - `negotiation()`: ينتمي إلى تفاوض `belongsTo(AgreementNegotiation::class)`.
+  - `uploader()`: ينتمي إلى المستخدم `belongsTo(User::class, 'uploaded_by')`.
+
+---
+
 - كافة العلاقات مبنية باستخدام إطار عمل `Laravel Eloquent ORM`.
 - تم استخدام حقول من نوع `JSON` مثل (`social_links`, `external_schedule`, `internal_schedule`, `agenda`, `review_fields`) لإعطاء مرونة في تخزين البيانات المهيكلة.
 - الجداول تعتمد على مفاتيح أجنبية (Foreign Keys) بخاصية `Cascade On Delete` في أغلب العلاقات لضمان نظافة قواعد البيانات.
 - يتم الاعتماد على جدول `users` بصورة مركزية لكافة أنواع الحسابات، ويتم التمييز بينها بحقل `role`، بينما يحصل كل مستخدم على تفاصيل أوسع عبر جدول `profiles` التابع له.
+
