@@ -7,11 +7,56 @@
 if (typeof t !== 'function') { window.t = k => k; }
 
 function getUser() {
-    try { return JSON.parse(localStorage.getItem('user')); } catch { return null; }
+    try { return JSON.parse(sessionStorage.getItem('user')); } catch { return null; }
 }
 
 function getToken() {
-    return localStorage.getItem('token');
+    return sessionStorage.getItem('token');
+}
+
+/**
+ * Extract auth_token value from cookie string.
+ */
+function _getTokenFromCookie() {
+    const entry = document.cookie.split('; ').find(r => r.startsWith('auth_token='));
+    return entry ? entry.split('=')[1] : null;
+}
+
+/**
+ * If sessionStorage is empty but a valid cookie exists,
+ * restore the session via API and reload the page (runs ONCE).
+ * Returns true if a restore was triggered (caller should stop init).
+ */
+function _tryRestoreSession() {
+    if (getUser() && getToken()) return false; // already have session
+
+    const cookieToken = _getTokenFromCookie();
+    if (!cookieToken) return false; // no cookie either → genuine logout
+
+    // Cookie present but sessionStorage empty → restore silently
+    fetch('/api/profile', {
+        headers: {
+            'Authorization': `Bearer ${cookieToken}`,
+            'Accept': 'application/json'
+        }
+    }).then(r => {
+        if (r.ok) return r.json();
+        throw new Error('invalid');
+    }).then(data => {
+        if (data && data.user) {
+            sessionStorage.setItem('token', cookieToken);
+            sessionStorage.setItem('user', JSON.stringify(data.user));
+            window.location.reload(); // one-time reload with session restored
+        } else {
+            throw new Error('no user');
+        }
+    }).catch(() => {
+        // Cookie invalid — clear everything and go to login
+        document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+        window.location.href = '/login';
+    });
+
+    return true; // restore in progress, caller must stop
 }
 
 /**
@@ -25,12 +70,15 @@ function availabilityFromDatabase(value) {
 
 /**
  * Require auth + specific role(s). Redirects if not met.
+ * If sessionStorage is empty but cookie is valid, restores session silently.
  */
 function requireRole(...roles) {
     const user  = getUser();
     const token = getToken();
 
     if (!user || !token) {
+        // Try restoring from cookie before giving up
+        if (_tryRestoreSession()) return null; // restore in progress
         window.location.href = '/login';
         return null;
     }
@@ -56,9 +104,9 @@ function requireRole(...roles) {
  */
 function logout() {
     api.post('/logout').finally(() => {
-        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('user');
         document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
-        localStorage.removeItem('user');
         window.location.href = '/login';
     });
 }
@@ -167,6 +215,7 @@ function navigateToProfile(id) {
 function requireAuth() {
     const user = getUser();
     if (!user) {
+        if (_tryRestoreSession()) return null; // restore in progress
         window.location.href = '/login';
         return null;
     }

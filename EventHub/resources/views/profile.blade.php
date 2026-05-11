@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -122,7 +122,7 @@
 <script src="/js/auth.js?v=2"></script>
 <script>
   // Sponsors: load /profile first so is_available matches the database (no UI default).
-  let u = JSON.parse(localStorage.getItem('user'));
+  let u = JSON.parse(sessionStorage.getItem('user'));
   if (!u) { window.location.href = '/login'; }
 
   (async function initProfilePage() {
@@ -132,7 +132,7 @@
       const pres = await api.get('/profile');
       if (pres.ok && pres.data?.user) {
         u = pres.data.user;
-        localStorage.setItem('user', JSON.stringify(u));
+        sessionStorage.setItem('user', JSON.stringify(u));
       } else {
         showToast('Could not load your profile from the server.', 'error');
       }
@@ -339,7 +339,7 @@
     
     if (res.ok) {
       showToast('Profile updated!', 'success');
-      localStorage.setItem('user', JSON.stringify(res.data.user)); // update cache
+      sessionStorage.setItem('user', JSON.stringify(res.data.user)); // update cache
       u = res.data.user;
 
       // Update local view

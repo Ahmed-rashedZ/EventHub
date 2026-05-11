@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -711,13 +711,13 @@
           ${!ev.venue_id && ev.booking_proof_path ? `
           <div class="ed-info-card ed-info-accent2" style="grid-column: 1 / -1; background:rgba(34,211,238,0.05); border-color:rgba(34,211,238,0.2);">
             <div class="ed-info-icon">📎</div>
-            <div><div class="ed-info-label" style="color:#22d3ee">Booking Proof</div><div class="ed-info-value"><a href="/storage/${ev.booking_proof_path}" target="_blank" style="color:#22d3ee;text-decoration:underline;">View Document ↗</a></div></div>
+            <div><div class="ed-info-label" style="color:#22d3ee">Booking Proof</div><div class="ed-info-value"><button onclick="downloadEventDoc(${ev.id}, 'booking_proof')" style="color:#22d3ee;text-decoration:underline;background:none;border:none;padding:0;font:inherit;cursor:pointer;">View Document ↗</button></div></div>
           </div>
           ` : ''}
           ${ev.ministry_document_path ? `
           <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(139,92,246,0.05); border-color:rgba(139,92,246,0.2); border: 1px solid rgba(139,92,246,0.2);">
             <div class="ed-info-icon">📄</div>
-            <div><div class="ed-info-label" style="color:#a78bfa">Competent Authority Approval</div><div class="ed-info-value"><a href="/storage/${ev.ministry_document_path}" target="_blank" style="color:#a78bfa;text-decoration:underline;">View Document ↗</a></div></div>
+            <div><div class="ed-info-label" style="color:#a78bfa">Competent Authority Approval</div><div class="ed-info-value"><button onclick="downloadEventDoc(${ev.id}, 'ministry_document')" style="color:#a78bfa;text-decoration:underline;background:none;border:none;padding:0;font:inherit;cursor:pointer;">View Document ↗</button></div></div>
           </div>
           ` : `
           <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(239,68,68,0.05); border-color:rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.2);">
@@ -1838,12 +1838,12 @@
           case 'ministry_document':
             html += `<div class="form-group"><label class="form-label">${fieldLabels[f]}</label>
               <input id="edit-ministry" type="file" accept=".pdf,image/*" class="form-control" style="padding:7px 10px;" />
-              ${ev.ministry_document_path ? `<small style="color:var(--text-muted);font-size:11px;margin-top:4px;display:block;">Current: <a href="/storage/${ev.ministry_document_path}" target="_blank" style="color:#8b5cf6;">View ↗</a></small>` : ''}</div>`;
+              ${ev.ministry_document_path ? `<small style="color:var(--text-muted);font-size:11px;margin-top:4px;display:block;">Current: <button onclick="downloadEventDoc(${ev.id}, 'ministry_document')" style="color:#8b5cf6;background:none;border:none;padding:0;font:inherit;cursor:pointer;text-decoration:underline;">View ↗</button></small>` : ''}</div>`;
             break;
           case 'booking_proof':
             html += `<div class="form-group"><label class="form-label">${fieldLabels[f]}</label>
               <input id="edit-proof" type="file" accept=".pdf,image/*" class="form-control" style="padding:7px 10px;" />
-              ${ev.booking_proof_path ? `<small style="color:var(--text-muted);font-size:11px;margin-top:4px;display:block;">Current: <a href="/storage/${ev.booking_proof_path}" target="_blank" style="color:#8b5cf6;">View ↗</a></small>` : ''}</div>`;
+              ${ev.booking_proof_path ? `<small style="color:var(--text-muted);font-size:11px;margin-top:4px;display:block;">Current: <button onclick="downloadEventDoc(${ev.id}, 'booking_proof')" style="color:#8b5cf6;background:none;border:none;padding:0;font:inherit;cursor:pointer;text-decoration:underline;">View ↗</button></small>` : ''}</div>`;
             break;
         }
       });
@@ -2106,6 +2106,41 @@
         showToast(msg, 'error');
       }
     });
+
+    async function downloadEventDoc(eventId, type) {
+      const token = sessionStorage.getItem('token');
+      showToast('Downloading document...', 'info');
+      try {
+        const res = await fetch(`/api/events/${eventId}/download-document/${type}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) {
+          showToast('Download failed.', 'error');
+          return;
+        }
+        
+        let filename = `${type}_${eventId}.pdf`;
+        const disposition = res.headers.get('content-disposition');
+        if (disposition && disposition.indexOf('filename=') !== -1) {
+            const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+            const matches = filenameRegex.exec(disposition);
+            if (matches != null && matches[1]) { 
+                filename = matches[1].replace(/['"]/g, '');
+            }
+        }
+        
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('Download complete ✅', 'success');
+      } catch (err) {
+        showToast('Error downloading document', 'error');
+      }
+    }
   </script>
 
   <!-- Event Details Modal -->

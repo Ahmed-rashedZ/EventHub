@@ -774,4 +774,32 @@ class EventController extends Controller
 
         return response()->json(['message' => 'Agenda updated successfully', 'event' => $event->fresh()->load('venue')]);
     }
+
+    public function downloadDocument($id, $type, Request $request)
+    {
+        $event = Event::findOrFail($id);
+        $user = $request->user();
+
+        // Security check: Only Admin, or the Manager who created the event, or a Sponsor of this event can download
+        $isCreator = $event->created_by === $user->id;
+        $isAdmin = $user->role === 'Admin';
+        $isSponsor = $event->sponsors()->where('sponsor_id', $user->id)->exists();
+
+        if (!$isAdmin && !$isCreator && !$isSponsor) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $path = null;
+        if ($type === 'ministry_document') {
+            $path = $event->ministry_document_path;
+        } elseif ($type === 'booking_proof') {
+            $path = $event->booking_proof_path;
+        }
+
+        if (!$path || !\Illuminate\Support\Facades\Storage::disk('public')->exists($path)) {
+            return response()->json(['message' => 'Document not found'], 404);
+        }
+
+        return \Illuminate\Support\Facades\Storage::disk('public')->download($path);
+    }
 }

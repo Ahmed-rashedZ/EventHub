@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -453,7 +453,7 @@
     showToast(t('Downloading document...'), 'info');
     try {
       const res = await fetch(`/api/verifications/${userId}/document/${docType}`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        headers: { 'Authorization': `Bearer ${sessionStorage.getItem('token')}` }
       });
       if (!res.ok) throw new Error('File not found');
       const blob = await res.blob();
@@ -473,9 +473,3 @@
 </script>
 </body>
 </html>
-
-
-
-
-
-

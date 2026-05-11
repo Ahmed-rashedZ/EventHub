@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -474,7 +474,7 @@
             btn.innerHTML = `<span class="spinner" style="width:16px;height:16px;border-width:2px;border-color:#fff;border-top-color:transparent;"></span> ${t('Submitting...')}`;
             btn.disabled = true;
 
-            const token = localStorage.getItem('token');
+            const token = sessionStorage.getItem('token');
             try {
                 // Use postForm to avoid Content-Type: application/json being set (breaks multipart)
                 const res = await fetch('/api/verifications/reupload', {

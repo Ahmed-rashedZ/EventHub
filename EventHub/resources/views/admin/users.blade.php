@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -322,7 +322,7 @@
     showToast(t('Downloading document...'), 'info');
     try {
       const res = await fetch(`/api/verifications/${id}/document/${docKey}`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        headers: { 'Authorization': `Bearer ${sessionStorage.getItem('token')}` }
       });
       if (!res.ok) { showToast(t('Error downloading file'), 'error'); return; }
       const blob = await res.blob();

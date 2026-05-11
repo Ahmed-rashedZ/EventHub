@@ -59,6 +59,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/events/{id}/update-pending', [EventController::class, 'updatePending']);
     Route::delete('/events/{id}',             [EventController::class, 'destroy']);
     Route::put('/events/{id}/agenda',         [EventController::class, 'updateAgenda']);
+    Route::get('/events/{id}/download-document/{type}', [EventController::class, 'downloadDocument']);
 
     // ── Venues (Admin) ──
     Route::post('/venues',        [VenueController::class, 'store']);

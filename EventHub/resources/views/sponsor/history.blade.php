@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -190,9 +190,30 @@
             <td style="display:flex;gap:6px;padding:14px 16px;flex-wrap:wrap;align-items:center">
                 <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${e.id})">ℹ️ Details</button>
                 <button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='/sponsor/event-stats/${e.id}'" title="View Statistics">📊 Stats</button>
-                <a href="/storage/agreements/agreement_${req.id}.pdf" target="_blank" class="btn btn-sm" style="background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.15)" title="${t('Agreement')}">📄 ${t('Agreement')}</a>
+                <button class="btn btn-sm" style="background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.15)" onclick="downloadContract(${req.id})" title="${t('Agreement')}">📄 ${t('Agreement')}</button>
             </td>
         </tr>`;
+  }
+
+  async function downloadContract(id) {
+    const token = sessionStorage.getItem('token');
+    showToast('Downloading agreement...', 'info');
+    try {
+      const res = await fetch(`/api/agreements/${id}/download-final`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error();
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `agreement_${id}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch(e) {
+      showToast('Error downloading agreement', 'error');
+    }
   }
 
   const typeIcons = { 'مؤتمر': '🎙️', 'ندوة': '📖', 'ورشة عمل': '🔧', 'دورة تدريبية': '🎓', 'ترفيه': '🎭', 'ملتقى علمي': '🔬', 'رياضة': '⚽', 'تقنية': '💻', 'اجتماعية': '🤝' };

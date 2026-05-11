@@ -66,7 +66,7 @@ function renderAgreementContent(data, sponsorshipId) {
   const neg = data.negotiation;
   const versions = neg.versions || [];
   const sreq = data.sponsorship_request;
-  const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+  const currentUser = JSON.parse(sessionStorage.getItem('user') || '{}');
   const isMySubmission = neg.last_submitted_by === currentUser.id;
   const canRespond = neg.status === 'pending_review' && !isMySubmission;
   const canUpload = neg.status !== 'accepted' && neg.status !== 'rejected';
@@ -136,15 +136,15 @@ function renderAgreementContent(data, sponsorshipId) {
     </div>`;
   }
 
-  // ── Response section — compact ──
-  if (canUpload) {
+  // ── Response section — only show to the party who DID NOT submit the last version ──
+  if (canUpload && !isMySubmission) {
     html += `
     <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:14px;margin-bottom:12px;">
       <div style="font-size:0.68rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">⚡ ${t('Respond to Contract')}</div>
       <textarea id="respond-msg-${sponsorshipId}" placeholder="${t('Add feedback or comments...')}" style="width:100%;min-height:40px;padding:8px 10px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);color:#fff;font-size:0.75rem;resize:vertical;margin-bottom:8px;"></textarea>
       <div style="display:flex;gap:6px;flex-wrap:wrap;">
-        ${!isMySubmission ? `<button onclick="respondAgreement(${sponsorshipId}, 'accepted')" style="flex:1;padding:6px;font-size:0.72rem;font-weight:600;border-radius:6px;cursor:pointer;background:rgba(16,185,129,0.1);color:#10b981;border:1px solid rgba(16,185,129,0.25);">✅ ${t('Accept Contract')}</button>` : ''}
-        ${!isMySubmission ? `<button onclick="respondAgreement(${sponsorshipId}, 'revision_requested')" style="flex:1;padding:6px;font-size:0.72rem;font-weight:600;border-radius:6px;cursor:pointer;background:rgba(249,115,22,0.08);color:#f97316;border:1px solid rgba(249,115,22,0.2);">🔄 ${t('Request Revision')}</button>` : ''}
+        <button onclick="respondAgreement(${sponsorshipId}, 'accepted')" style="flex:1;padding:6px;font-size:0.72rem;font-weight:600;border-radius:6px;cursor:pointer;background:rgba(16,185,129,0.1);color:#10b981;border:1px solid rgba(16,185,129,0.25);">✅ ${t('Accept Contract')}</button>
+        <button onclick="respondAgreement(${sponsorshipId}, 'revision_requested')" style="flex:1;padding:6px;font-size:0.72rem;font-weight:600;border-radius:6px;cursor:pointer;background:rgba(249,115,22,0.08);color:#f97316;border:1px solid rgba(249,115,22,0.2);">🔄 ${t('Request Revision')}</button>
         <button onclick="respondAgreement(${sponsorshipId}, 'rejected')" style="flex:1;padding:6px;font-size:0.72rem;font-weight:600;border-radius:6px;cursor:pointer;background:rgba(239,68,68,0.08);color:#ef4444;border:1px solid rgba(239,68,68,0.2);">❌ ${t('Reject Contract')}</button>
       </div>
     </div>`;
@@ -174,7 +174,7 @@ async function generateAgreement(sponsorshipId) {
 }
 
 async function downloadAgreement(sponsorshipId) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`/api/agreements/${sponsorshipId}/download`, {
     headers: { 'Authorization': `Bearer ${token}` }
   });
@@ -201,7 +201,7 @@ async function downloadAgreement(sponsorshipId) {
 }
 
 async function downloadFinalPdf(sponsorshipId) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`/api/agreements/${sponsorshipId}/download-final`, {
     headers: { 'Authorization': `Bearer ${token}` }
   });
@@ -236,7 +236,7 @@ async function uploadAgreement(sponsorshipId) {
   formData.append('file', fileInput.files[0]);
   if (msgInput.value.trim()) formData.append('message', msgInput.value.trim());
 
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`/api/agreements/${sponsorshipId}/upload`, {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' },

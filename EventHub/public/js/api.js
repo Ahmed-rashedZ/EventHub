@@ -12,7 +12,7 @@ const API_BASE = '/api';
  * @returns {Promise<{ok:boolean, status:number, data:any}>}
  */
 async function apiFetch(endpoint, options = {}) {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
 
     const headers = {
         'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ const api = {
     
     // For handling multipart/form-data File Uploads (Using POST method in fetch, and optionally faking PUT)
     postForm: async (url, formData) => {
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
         try {
             const res = await fetch(API_BASE + url, {
                 method: 'POST', 

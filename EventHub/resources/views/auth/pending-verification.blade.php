@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -137,7 +137,7 @@
       { key: 'doc_practice_license',        icon: '🏢', label: 'Practice License',         labelAr: 'إذن المزاولة' },
     ];
 
-    const uStr = localStorage.getItem('user');
+    const uStr = sessionStorage.getItem('user');
     if (!uStr) window.location.href = '/login';
     else {
       try {
@@ -245,7 +245,7 @@
 
       const formData = new FormData();
       let hasFiles = false;
-      const uStr = localStorage.getItem('user');
+      const uStr = sessionStorage.getItem('user');
       const user = uStr ? JSON.parse(uStr) : {};
 
       const applicableDocs = user.role === 'Sponsor' 
@@ -270,7 +270,7 @@
 
       if (res.ok) {
         showToast(t('Documents submitted successfully!'), 'success');
-        localStorage.setItem('user', JSON.stringify(res.data.user));
+        sessionStorage.setItem('user', JSON.stringify(res.data.user));
         setTimeout(() => window.location.reload(), 1000);
       } else {
         showToast(res.data?.message || t('Error re-uploading documents.'), 'error');
@@ -280,8 +280,10 @@
 
     async function logout() {
       try {
-        await fetch('/api/logout', { method: 'POST', headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token'), 'Accept': 'application/json' } });
+        await fetch('/api/logout', { method: 'POST', headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token'), 'Accept': 'application/json' } });
       } catch(e) {}
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('user');
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';

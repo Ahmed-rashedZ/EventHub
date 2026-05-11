@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -150,7 +150,7 @@
       showToast('Could not load your visibility settings.', 'error');
       return;
     }
-    localStorage.setItem('user', JSON.stringify(res.data.user));
+    sessionStorage.setItem('user', JSON.stringify(res.data.user));
     const fromDb = availabilityFromDatabase(res.data.user.profile.is_available);
     if (fromDb === null) {
       showToast('Could not read visibility from the server.', 'error');
@@ -212,7 +212,7 @@
             return;
           }
           if (res.data.user) {
-            localStorage.setItem('user', JSON.stringify(res.data.user));
+            sessionStorage.setItem('user', JSON.stringify(res.data.user));
           }
           syncToggleUI(dbStatus);
           showToast(dbStatus ? 'You are now visible.' : 'You are now hidden.', dbStatus ? 'success' : 'info');
@@ -230,7 +230,7 @@
     const tbody = document.getElementById('my-body');
     if (!res.ok) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--danger)">Failed to load</td></tr>'; return; }
     const all = res.data;
-    const mine = all.filter(r => r.sponsor_id === JSON.parse(localStorage.getItem('user')).id);
+    const mine = all.filter(r => r.sponsor_id === JSON.parse(sessionStorage.getItem('user')).id);
     const open = all.filter(r => r.status === 'pending' && (!r.sponsor_id || r.sponsor_id === 0));
 
     document.getElementById('stat-accepted').textContent = mine.filter(r => r.status === 'accepted').length;
@@ -252,9 +252,30 @@
         <td style="color:var(--text-muted)">${fmtDateShort(r.event?.start_time)}</td>
         <td>
           ${badge(r.status)}
-          ${r.status === 'accepted' ? `<a href="/storage/agreements/agreement_${r.id}.pdf" target="_blank" style="margin-left:8px;font-size:12px;text-decoration:none;color:#fff;background:rgba(255,255,255,0.08);padding:4px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.15);display:inline-flex;align-items:center;gap:4px">📄 ${t('Agreement')}</a>` : ''}
+          ${r.status === 'accepted' ? `<button onclick="downloadContract(${r.id})" style="margin-left:8px;font-size:12px;text-decoration:none;color:#fff;background:rgba(255,255,255,0.08);padding:4px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.15);display:inline-flex;align-items:center;gap:4px;cursor:pointer;">📄 ${t('Agreement')}</button>` : ''}
         </td>
       </tr>`).join('');
+  }
+
+  async function downloadContract(id) {
+    const token = sessionStorage.getItem('token');
+    showToast('Downloading agreement...', 'info');
+    try {
+      const res = await fetch(`/api/agreements/${id}/download-final`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error();
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `agreement_${id}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch(e) {
+      showToast('Error downloading agreement', 'error');
+    }
   }
 </script>
 </body>

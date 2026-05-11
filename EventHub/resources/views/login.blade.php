@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -47,8 +47,12 @@
 <script src="/js/api.js"></script>
 <script>
   (function(){
-    const user = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
+    // Clear any old localStorage auth data (migration from old system)
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+
+    const user = sessionStorage.getItem('user');
+    const token = sessionStorage.getItem('token');
     const hasCookie = document.cookie.split('; ').some(row => row.startsWith('auth_token='));
     
     if (user && token && hasCookie) {
@@ -59,8 +63,8 @@
         redirectByRole(u.role);
       }
     } else {
-      localStorage.removeItem('user');
-      localStorage.removeItem('token');
+      sessionStorage.removeItem('user');
+      sessionStorage.removeItem('token');
       document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
     }
   })();
@@ -81,9 +85,9 @@
     });
 
     if (res.ok) {
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
-      document.cookie = "auth_token=" + res.data.token + "; path=/; max-age=86400;";
+      sessionStorage.setItem('token', res.data.token);
+      sessionStorage.setItem('user', JSON.stringify(res.data.user));
+      document.cookie = "auth_token=" + res.data.token + "; path=/; SameSite=Lax;";
       showToast(translateText('Welcome back, ' + res.data.user.name + '!'), 'success');
       
       setTimeout(() => {
