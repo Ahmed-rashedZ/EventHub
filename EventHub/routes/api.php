@@ -121,3 +121,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/verifications/reupload', [VerificationController::class, 'reuploadDocument']);
     Route::get('/verifications/my-documents', [VerificationController::class, 'myDocuments']);
 });
+
+// ── Storage Proxy for CORS (Flutter Web Fix) ──
+Route::get('/storage-proxy/{path}', function ($path) {
+    $fullPath = storage_path('app/public/' . $path);
+    if (!file_exists($fullPath) || is_dir($fullPath)) abort(404);
+    return response()->file($fullPath, [
+        'Access-Control-Allow-Origin' => '*',
+        'Access-Control-Allow-Methods' => 'GET, OPTIONS',
+        'Access-Control-Allow-Headers' => '*',
+    ]);
+})->where('path', '.*');
