@@ -15,6 +15,7 @@ class EventController extends Controller
     {
         return response()->json(
             Event::with('venue', 'creator:id,name', 'sponsors.profile')
+                ->withCount('tickets')
                 ->withAvg('ratings', 'rating')
                 ->where('status', 'approved')
                 ->where('is_tickets_open', true)
@@ -48,6 +49,7 @@ class EventController extends Controller
 
         return response()->json(
             Event::with('venue', 'sponsors.profile')
+                ->withCount('tickets')
                 ->withAvg('ratings', 'rating')
                 ->where('created_by', $request->user()->id)
                 ->orderBy('created_at', 'desc')
@@ -420,6 +422,7 @@ class EventController extends Controller
     public function show($id)
     {
         $event = Event::with('venue', 'creator:id,name', 'sponsors.profile')
+            ->withCount('tickets')
             ->withAvg('ratings', 'rating')
             ->findOrFail($id);
             
