@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -168,7 +168,7 @@ async function loadAnalytics() {
     const evRating = Number(ev.average_rating || 0).toFixed(1);
     return `<div class="an-ev-card">
       <div class="an-ev-header">
-        <div class="an-ev-title">${ev.title}</div>
+        <div class="an-ev-title" style="${ev.status === 'cancelled' ? 'text-decoration:line-through; color:var(--danger)' : ''}">${ev.title}</div>
         <span class="an-ev-type" style="background:${tc}18;color:${tc}">${ti} ${ev.event_type}</span>
       </div>
       <div style="font-size: 0.85rem; color: #eab308; margin-bottom: 12px; font-weight: 600;">⭐ ${evRating} / 5.0</div>

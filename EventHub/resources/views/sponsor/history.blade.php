@@ -177,7 +177,10 @@
       return `
         <tr>
             <td style="color:var(--text-muted)">${index + 1}</td>
-            <td><div style="font-weight:600">${e.title}</div></td>
+            <td>
+                <div style="font-weight:600; ${e.status === 'cancelled' ? 'text-decoration:line-through; color:var(--danger)' : ''}">${e.title}</div>
+                ${e.status === 'cancelled' ? `<span class="badge badge-cancelled" style="font-size:9px; padding:1px 6px; margin-top:4px;">${t('cancelled')}</span>` : ''}
+            </td>
             <td style="color:var(--text-muted)">
                 <div style="font-size:13px; color:var(--accent2); cursor:pointer; display:inline-block;" onclick="navigateToProfile(${e.creator?.id || req.manager?.id})">
                     👤 ${e.creator?.name || req.manager?.name || '—'}
@@ -329,6 +332,20 @@
               ${timeBadge(ev.time_status)}
             </div>
           </div>
+
+          ${ev.status === 'cancelled' ? `
+            <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 12px; padding: 14px; margin-bottom: 20px;">
+              <span style="display: block; font-size: 0.72rem; font-weight: 700; color: #ef4444; text-transform: uppercase; margin-bottom: 4px;">🚫 Event Cancelled</span>
+              <p style="margin: 0; color: #e2e8f0; font-size: 0.9rem; line-height: 1.5;">${ev.cancellation_reason || 'This event has been cancelled by the manager.'}</p>
+            </div>
+          ` : ''}
+
+          ${ev.status === 'cancellation_requested' ? `
+            <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 12px; padding: 14px; margin-bottom: 20px;">
+              <span style="display: block; font-size: 0.72rem; font-weight: 700; color: #f59e0b; text-transform: uppercase; margin-bottom: 4px;">⌛ Cancellation Pending</span>
+              <p style="margin: 0; color: #e2e8f0; font-size: 0.9rem; line-height: 1.5;">The manager has requested to cancel this event. Awaiting administrator approval.</p>
+            </div>
+          ` : ''}
           <div class="ed-section">
             <div class="ed-section-label">About this Event</div>
             <p class="ed-description">${ev.description || 'No description provided.'}</p>

@@ -846,10 +846,50 @@
           </div>
 
           <!-- Footer -->
-          <div class="ed-footer" style="margin-top: 8px;">
-          <span class="ed-footer-label">Created by</span>
-          <span class="ed-footer-name">${ev.creator?.name || ev.manager?.name || '—'}</span>
-        </div>
+          <div class="ed-footer" style="margin-top: 16px; padding-bottom: 12px; display: flex; flex-direction: column; gap: 12px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+            
+            <!-- Management Controls -->
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; width: 100%; margin-top: 12px;">
+              ${ev.status === 'approved' ? `
+                <button class="btn btn-sm ${ev.is_tickets_open ? 'btn-danger' : 'btn-success'}" 
+                        style="flex: 1; min-width: 140px; justify-content: center;" 
+                        onclick="toggleTicketSales(${ev.id})">
+                  ${ev.is_tickets_open ? '🛑 Close Ticket Sales' : '🎟️ Open Ticket Sales'}
+                </button>
+                <button class="btn btn-sm btn-danger" 
+                        style="flex: 1; min-width: 140px; justify-content: center; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3);" 
+                        onclick="openCancellationModal(${ev.id})">
+                  ❌ Request Cancellation
+                </button>
+              ` : ''}
+
+              ${ev.status === 'cancellation_requested' ? `
+                <div style="width: 100%; padding: 12px; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 10px;">
+                  <div style="font-size: 0.75rem; font-weight: 700; color: #f59e0b; text-transform: uppercase; margin-bottom: 4px;">⌛ Cancellation Pending</div>
+                  <div style="font-size: 0.85rem; color: #e2e8f0;">Your request is being reviewed by the administrator.</div>
+                  ${ev.cancellation_reason ? `<div style="font-size: 0.8rem; color: #94a3b8; margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(245, 158, 11, 0.1);"><strong>Reason:</strong> ${ev.cancellation_reason}</div>` : ''}
+                </div>
+              ` : ''}
+
+              ${ev.status === 'approved' && ev.cancellation_rejection_reason ? `
+                <div style="width: 100%; padding: 12px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 10px;">
+                  <div style="font-size: 0.75rem; font-weight: 700; color: #ef4444; text-transform: uppercase; margin-bottom: 4px;">🚫 Cancellation Rejected</div>
+                  <div style="font-size: 0.85rem; color: #e2e8f0;">The admin rejected your cancellation request.</div>
+                  <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(239, 68, 68, 0.1);"><strong>Admin Note:</strong> ${ev.cancellation_rejection_reason}</div>
+                </div>
+              ` : ''}
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="ed-footer-label">Created by</span>
+                <span class="ed-footer-name">${ev.creator?.name || ev.manager?.name || '—'}</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                 <span style="font-size: 0.7rem; color: var(--text-muted);">ID: #${ev.id}</span>
+              </div>
+            </div>
+          </div>
 
       </div>
     `;
@@ -1039,6 +1079,70 @@
       } else {
         showToast(res.data?.message || 'Error saving agenda', 'error');
       }
+    }
+
+    // ── Cancellation Management ─────────────────────
+    let cancellationEventId = null;
+
+    function openCancellationModal(eventId) {
+        cancellationEventId = eventId;
+        document.getElementById('cancellation-reason').value = '';
+        document.getElementById('cancellation-modal').classList.add('open');
+    }
+
+    function closeCancellationModal() {
+        document.getElementById('cancellation-modal').classList.remove('open');
+        cancellationEventId = null;
+    }
+
+    async function submitCancellationRequest() {
+        const reason = document.getElementById('cancellation-reason').value.trim();
+        if (!reason) {
+            showToast(document.documentElement.lang === 'ar' ? 'يرجى إدخال سبب الإلغاء' : 'Please enter a cancellation reason', 'error');
+            return;
+        }
+
+        const btn = document.getElementById('confirm-cancellation-btn');
+        btn.disabled = true;
+        btn.textContent = document.documentElement.lang === 'ar' ? 'جاري الإرسال...' : 'Submitting...';
+
+        try {
+            const res = await api.post(`/events/${cancellationEventId}/request-cancellation`, { cancellation_reason: reason });
+            if (res.ok) {
+                showToast(document.documentElement.lang === 'ar' ? 'تم إرسال طلب الإلغاء بنجاح' : 'Cancellation request submitted successfully', 'success');
+                closeCancellationModal();
+                closeEventDetailsModal();
+                loadEvents();
+            } else {
+                showToast(res.data?.message || 'Error', 'error');
+            }
+        } catch (err) {
+            console.error('Error submitting cancellation:', err);
+            showToast('Error', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = document.documentElement.lang === 'ar' ? 'إرسال الطلب' : 'Submit Request';
+        }
+    }
+
+    async function toggleTicketSales(eventId) {
+        try {
+            const res = await api.patch(`/events/${eventId}/toggle-tickets`);
+            if (res.ok) {
+                showToast(res.data.is_tickets_open ? 
+                    (document.documentElement.lang === 'ar' ? 'تم فتح بيع التذاكر' : 'Ticket sales are now OPEN') : 
+                    (document.documentElement.lang === 'ar' ? 'تم إغلاق بيع التذاكر' : 'Ticket sales are now CLOSED'), 
+                    'success'
+                );
+                // Refresh details to update button state
+                showEventDetails(eventId);
+            } else {
+                showToast(res.data?.message || 'Error', 'error');
+            }
+        } catch (err) {
+            console.error('Error toggling tickets:', err);
+            showToast('Error', 'error');
+        }
     }
 
     // ── Create Event Agenda Days Logic ─────────────────────
@@ -2172,6 +2276,31 @@
           <button class="btn btn-ghost" onclick="closeAgendaEditor()">Cancel</button>
           <button class="btn btn-primary" onclick="saveAgenda()" style="display:flex;align-items:center;gap:6px;">💾 Save Agenda</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cancellation Reason Modal -->
+  <div class="modal-overlay" id="cancellation-modal">
+    <div class="modal" style="max-width:450px;">
+      <div class="modal-header">
+        <h3 class="modal-title">⚠️ Request Event Cancellation</h3>
+        <button class="modal-close" onclick="closeCancellationModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:16px;">
+          Please provide a reason for cancelling this event. This request will be sent to the administrator for approval.
+          <br><br>
+          <strong style="color:var(--danger)">Note:</strong> Ticket sales will be suspended immediately upon submitting this request.
+        </p>
+        <div class="form-group">
+          <label class="form-label">Cancellation Reason</label>
+          <textarea id="cancellation-reason" class="form-control" rows="4" placeholder="e.g. Unforeseen circumstances, medical emergency..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeCancellationModal()">Cancel</button>
+        <button class="btn btn-danger" id="confirm-cancellation-btn" onclick="submitCancellationRequest()">Submit Request</button>
       </div>
     </div>
   </div>

@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Notifications\SystemNotification;
+use Carbon\Carbon;
 
 class EventController extends Controller
 {
@@ -16,6 +17,7 @@ class EventController extends Controller
             Event::with('venue', 'creator:id,name')
                 ->withAvg('ratings', 'rating')
                 ->where('status', 'approved')
+                ->where('is_tickets_open', true) // Only show if tickets are open
                 ->orderBy('start_time')
                 ->get()
         );
@@ -801,5 +803,175 @@ class EventController extends Controller
         }
 
         return \Illuminate\Support\Facades\Storage::disk('public')->download($path);
+    }
+
+    // POST /api/events/{id}/cancel-request  – Manager requests cancellation
+    public function requestCancellation($id, Request $request)
+    {
+        if ($request->user()->role !== 'Event Manager') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $request->validate([
+            'cancellation_reason' => 'required|string|max:2000',
+        ]);
+
+        $event = Event::findOrFail($id);
+
+        if ($event->created_by !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        if ($event->status !== 'approved') {
+            return response()->json(['message' => 'Only approved events can be cancelled.'], 400);
+        }
+
+        // Restriction: Cannot cancel if less than 30 days away
+        $eventDate = Carbon::parse($event->start_time);
+        if ($eventDate->isPast()) {
+             return response()->json(['message' => 'Cannot cancel an event that has already started.'], 400);
+        }
+        
+        if ($eventDate->diffInDays(now()) < 30) {
+            return response()->json(['message' => 'Cannot request cancellation for events starting in less than 30 days.'], 400);
+        }
+
+        $event->update([
+            'status' => 'cancellation_requested',
+            'cancellation_reason' => $request->cancellation_reason,
+            'is_tickets_open' => false, // Suspend ticket sales immediately
+            'is_sponsorship_open' => false, // Suspend sponsorship too
+        ]);
+
+        // Notify Admins
+        $admins = User::where('role', 'Admin')->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new SystemNotification(
+                'Cancellation Requested ⚠️',
+                "Manager {$request->user()->name} requested to cancel \"{$event->title}\".",
+                'event',
+                '⚠️',
+                '/admin/events',
+                $event->id
+            ));
+        }
+
+        return response()->json(['message' => 'Cancellation request submitted', 'event' => $event]);
+    }
+
+    // PUT /api/events/{id}/cancel-approve  – Admin approves cancellation
+    public function approveCancellation($id, Request $request)
+    {
+        if ($request->user()->role !== 'Admin') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $event = Event::findOrFail($id);
+
+        if ($event->status !== 'cancellation_requested') {
+            return response()->json(['message' => 'Event is not in cancellation request state.'], 400);
+        }
+
+        $event->update([
+            'status' => 'cancelled',
+        ]);
+
+        // Notify Manager
+        $manager = User::find($event->created_by);
+        if ($manager) {
+            $manager->notify(new SystemNotification(
+                'Cancellation Approved 🚫',
+                "Your cancellation request for \"{$event->title}\" has been approved.",
+                'event',
+                '🚫',
+                '/manager/events',
+                $event->id
+            ));
+        }
+
+        // Notify and update Sponsors
+        $sponsorshipRequests = \App\Models\SponsorshipRequest::where('event_id', $event->id)
+            ->whereIn('status', ['accepted', 'negotiating', 'pending'])
+            ->get();
+
+        foreach ($sponsorshipRequests as $sreq) {
+            $sreq->update(['status' => 'cancelled']);
+            
+            $sponsor = User::find($sreq->sponsor_id);
+            if ($sponsor) {
+                $sponsor->notify(new SystemNotification(
+                    'Event Cancelled 🚫',
+                    "The event \"{$event->title}\" which you were sponsoring has been cancelled.",
+                    'event',
+                    '🚫',
+                    '/sponsor/requests',
+                    $event->id
+                ));
+            }
+        }
+
+        return response()->json(['message' => 'Event cancelled successfully', 'event' => $event]);
+    }
+
+    // PUT /api/events/{id}/cancel-reject  – Admin rejects cancellation
+    public function rejectCancellation($id, Request $request)
+    {
+        if ($request->user()->role !== 'Admin') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $request->validate([
+            'rejection_reason' => 'required|string|max:2000',
+        ]);
+
+        $event = Event::findOrFail($id);
+
+        if ($event->status !== 'cancellation_requested') {
+            return response()->json(['message' => 'Event is not in cancellation request state.'], 400);
+        }
+
+        $event->update([
+            'status' => 'approved', // Return to approved
+            'cancellation_rejection_reason' => $request->rejection_reason,
+            // is_tickets_open stays false!
+        ]);
+
+        // Notify Manager
+        $manager = User::find($event->created_by);
+        if ($manager) {
+            $manager->notify(new SystemNotification(
+                'Cancellation Rejected ⚠️',
+                "Your cancellation request for \"{$event->title}\" was rejected: {$request->rejection_reason}",
+                'event',
+                '⚠️',
+                '/manager/events',
+                $event->id
+            ));
+        }
+
+        return response()->json(['message' => 'Cancellation request rejected', 'event' => $event]);
+    }
+
+    // PATCH /api/events/{id}/toggle-tickets
+    public function toggleTickets($id, Request $request)
+    {
+        if ($request->user()->role !== 'Event Manager') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $event = Event::findOrFail($id);
+
+        if ($event->created_by !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        if (!in_array($event->status, ['approved', 'cancellation_requested'])) {
+            return response()->json(['message' => 'Cannot toggle tickets for this event status.'], 400);
+        }
+
+        $event->is_tickets_open = !$event->is_tickets_open;
+        $event->save();
+
+        return response()->json($event);
     }
 }

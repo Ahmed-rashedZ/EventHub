@@ -119,7 +119,8 @@ function badge(status) {
         pending: 'badge-pending', approved: 'badge-approved', rejected: 'badge-rejected',
         accepted: 'badge-accepted', used: 'badge-used', unused: 'badge-unused',
         available: 'badge-approved', maintenance: 'badge-rejected',
-        negotiating: 'badge-negotiating', cancelled: 'badge-cancelled'
+        negotiating: 'badge-negotiating', cancelled: 'badge-cancelled',
+        cancellation_requested: 'badge-pending-cancellation'
     }[status] || 'badge-pending';
     return `<span class="badge ${cls}">${t(status)}</span>`;
 }

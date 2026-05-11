@@ -139,7 +139,12 @@
     let filtered = allRequests;
     
     if (statusF) {
-      filtered = filtered.filter(r => r.status === statusF);
+      filtered = filtered.filter(r => {
+        let effectiveStatus = r.status;
+        if (r.event?.status === 'cancelled') effectiveStatus = 'cancelled';
+        else if (r.event?.status === 'cancellation_requested' && r.status === 'accepted') effectiveStatus = 'cancellation_requested';
+        return effectiveStatus === statusF;
+      });
     }
     
     if (typeF) {
@@ -161,6 +166,12 @@
     }
     tbody.innerHTML = requests.map((r, i) => {
       const e = r.event || {};
+      
+      // Override status if event is cancelled
+      let effectiveStatus = r.status;
+      if (e.status === 'cancelled') effectiveStatus = 'cancelled';
+      else if (e.status === 'cancellation_requested' && r.status === 'accepted') effectiveStatus = 'cancellation_requested';
+
       const initiatorBadge = r.initiator === 'event_manager'
         ? '<span style="font-size:10px; padding:2px 6px; border-radius:10px; background:rgba(59,130,246,0.1); color:#3b82f6; border:1px solid rgba(59,130,246,0.2); margin-left:4px;">📥 Received</span>'
         : '<span style="font-size:10px; padding:2px 6px; border-radius:10px; background:rgba(139,92,246,0.1); color:#8b5cf6; border:1px solid rgba(139,92,246,0.2); margin-left:4px;">📤 Sent</span>';
@@ -200,7 +211,7 @@
         </td>
         <td style="color:var(--text-muted)">${e.venue?.name || '—'}</td>
         <td style="color:var(--text-muted);white-space:nowrap">${fmtDateShort(e.start_time)}</td>
-        <td>${badge(r.status)}</td>
+        <td>${badge(effectiveStatus)}</td>
         <td style="display:flex;gap:6px;padding:14px 16px;flex-wrap:wrap;align-items:center">
           <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${e.id})" title="View Details">ℹ️ Details</button>
           ${(r.negotiation?.final_notes || r.message) ? `<button class="btn btn-ghost btn-sm" onclick="viewMessage(${r.id})" title="View Message">💬 Msg</button>` : ''}
@@ -345,6 +356,20 @@
               ${timeBadge(ev.time_status)}
             </div>
           </div>
+
+          ${ev.status === 'cancelled' ? `
+            <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 12px; padding: 14px; margin-bottom: 20px;">
+              <span style="display: block; font-size: 0.72rem; font-weight: 700; color: #ef4444; text-transform: uppercase; margin-bottom: 4px;">🚫 Event Cancelled</span>
+              <p style="margin: 0; color: #e2e8f0; font-size: 0.9rem; line-height: 1.5;">${ev.cancellation_reason || 'This event has been cancelled by the manager.'}</p>
+            </div>
+          ` : ''}
+
+          ${ev.status === 'cancellation_requested' ? `
+            <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 12px; padding: 14px; margin-bottom: 20px;">
+              <span style="display: block; font-size: 0.72rem; font-weight: 700; color: #f59e0b; text-transform: uppercase; margin-bottom: 4px;">⌛ Cancellation Pending</span>
+              <p style="margin: 0; color: #e2e8f0; font-size: 0.9rem; line-height: 1.5;">The manager has requested to cancel this event. Awaiting administrator approval.</p>
+            </div>
+          ` : ''}
           <div class="ed-section">
             <div class="ed-section-label">About this Event</div>
             <p class="ed-description">${ev.description || 'No description provided.'}</p>

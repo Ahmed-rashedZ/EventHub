@@ -51,6 +51,8 @@
             <option value="pending">Pending</option>
             <option value="approved">Approved</option>
             <option value="rejected">Rejected</option>
+            <option value="cancellation_requested">Cancellation Requests</option>
+            <option value="cancelled">Cancelled</option>
           </select>
           <div style="position:relative;display:flex;align-items:center">
             <svg
@@ -178,7 +180,7 @@
         return `
         <tr>
           <td style="color:var(--text-muted)">${i + 1}</td>
-          <td><div style="font-weight:600">${ev.title}</div></td>
+          <td><div style="font-weight:600; ${ev.status === 'cancelled' ? 'text-decoration:line-through; color:var(--danger)' : ''}">${ev.title}</div></td>
           <td style="color:var(--text-muted)">${ev.venue_id ? (ev.venue?.name || '—') : (ev.external_venue_name ? ev.external_venue_name + ' (External)' : '—')}</td>
           <td style="color:var(--text-muted)">${ev.creator?.name || '—'}</td>
           <td style="color:var(--text-muted);white-space:nowrap">${fmtDateShort(ev.start_time)}</td>
@@ -188,6 +190,7 @@
             <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${ev.id})" title="View Details">ℹ️ Details</button>
             <button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='/admin/event-stats/${ev.id}'" title="View Statistics">📊 Stats</button>
             ${ev.status === 'pending' ? `<button class="btn btn-sm" style="background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25)" onclick="openReviewModal(${ev.id})" title="Send Review">📝 Review</button><button class="btn btn-success btn-sm" onclick="approve(${ev.id})">✓ Approve</button><button class="btn btn-danger btn-sm" onclick="reject(${ev.id})">✕ Reject</button>` : ''}
+            ${ev.status === 'cancellation_requested' ? `<button class="btn btn-danger btn-sm" onclick="approveCancellation(${ev.id})">✓ Approve Cancellation</button><button class="btn btn-ghost btn-sm" onclick="openCancellationRejectionModal(${ev.id})">✕ Reject Cancellation</button>` : ''}
           </td>
         </tr>`;
       }).join('');
@@ -301,12 +304,37 @@
               <span class="ed-type-pill" style="--tcolor:${tColor}">${tIcon} ${eType}</span>
             </div>
             <div class="ed-badges">
-              ${ev.status ? badge(ev.status) : ''}
+              ${badge(ev.status)}
               ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''}
             </div>
           </div>
 
+          ${ev.status === 'cancelled' ? `
+            <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 12px; padding: 14px; margin-bottom: 20px;">
+              <span style="display: block; font-size: 0.72rem; font-weight: 700; color: #ef4444; text-transform: uppercase; margin-bottom: 4px;">🚫 Event Cancelled</span>
+              <p style="margin: 0; color: #e2e8f0; font-size: 0.9rem; line-height: 1.5;">${ev.cancellation_reason || 'This event has been cancelled.'}</p>
+            </div>
+          ` : ''}
+
+          ${ev.status === 'cancellation_requested' ? `
+            <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 12px; padding: 14px; margin-bottom: 20px;">
+              <span style="display: block; font-size: 0.72rem; font-weight: 700; color: #f59e0b; text-transform: uppercase; margin-bottom: 4px;">⌛ Cancellation Pending</span>
+              <p style="margin: 0; color: #e2e8f0; font-size: 0.9rem; line-height: 1.5;">${ev.cancellation_reason || 'The manager has requested to cancel this event.'}</p>
+            </div>
+          ` : ''}
+
           ${rejectionSection}
+
+              <p style="margin: 0; color: #e2e8f0; font-size: 0.9rem; line-height: 1.5;">${ev.cancellation_reason}</p>
+            </div>
+          ` : ''}
+
+          ${ev.status === 'cancelled' && ev.cancellation_reason ? `
+            <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 10px; padding: 12px 14px; margin-bottom: 16px;">
+              <span style="display: block; font-size: 0.72rem; font-weight: 700; color: #ef4444; text-transform: uppercase; margin-bottom: 4px;">❌ Cancellation Reason</span>
+              <p style="margin: 0; color: #e2e8f0; font-size: 0.9rem; line-height: 1.5;">${ev.cancellation_reason}</p>
+            </div>
+          ` : ''}
 
           <div class="ed-section">
             <div class="ed-section-label">About this Event</div>
@@ -754,6 +782,28 @@
     </div>
   </div>
 
+  <!-- Cancellation Rejection Modal -->
+  <div class="modal-overlay" id="cancellation-rejection-modal">
+    <div class="modal" style="max-width:400px">
+      <div class="modal-header">
+        <h3 class="modal-title">Reason for Rejecting Cancellation</h3>
+        <button class="modal-close" onclick="closeCancellationRejectionModal()">✕</button>
+      </div>
+      <form id="cancellation-rejection-form" onsubmit="submitCancellationRejection(event)">
+        <input type="hidden" id="cancellation-reject-event-id">
+        <div class="form-group">
+          <label class="form-label" style="font-size:0.75rem;">Explain why you are rejecting this cancellation request</label>
+          <textarea id="cr-reason" class="form-control" rows="4"
+            placeholder="e.g. The event is already sold out and cannot be cancelled at this stage..." required></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" onclick="closeCancellationRejectionModal()">Cancel</button>
+          <button type="submit" class="btn btn-danger">Confirm Rejection</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script>
     function openReviewModal(eventId) {
       document.getElementById('review-event-id').value = eventId;
@@ -789,6 +839,48 @@
       } else {
         showToast(res.data?.message || 'Error sending review', 'error');
       }
+    }
+
+    // ── Cancellation Management ─────────────────────
+    async function approveCancellation(id) {
+        if (!confirm('Are you sure you want to APPROVE this cancellation request? This will permanently cancel the event.')) return;
+        const res = await api.put(`/events/${id}/approve-cancellation`);
+        if (res.ok) {
+            showToast('Event cancelled successfully.', 'success');
+            loadEvents();
+        } else {
+            showToast(res.data?.message || 'Error', 'error');
+        }
+    }
+
+    function openCancellationRejectionModal(id) {
+        document.getElementById('cancellation-reject-event-id').value = id;
+        document.getElementById('cr-reason').value = '';
+        document.getElementById('cancellation-rejection-modal').classList.add('open');
+    }
+
+    function closeCancellationRejectionModal() {
+        document.getElementById('cancellation-rejection-modal').classList.remove('open');
+    }
+
+    async function submitCancellationRejection(e) {
+        e.preventDefault();
+        const id = document.getElementById('cancellation-reject-event-id').value;
+        const reason = document.getElementById('cr-reason').value.trim();
+
+        if (!reason) {
+            showToast('Please enter a reason for rejection.', 'error');
+            return;
+        }
+
+        const res = await api.put(`/events/${id}/reject-cancellation`, { rejection_reason: reason });
+        if (res.ok) {
+            showToast('Cancellation request rejected. Event status restored to approved.', 'info');
+            closeCancellationRejectionModal();
+            loadEvents();
+        } else {
+            showToast(res.data?.message || 'Error', 'error');
+        }
     }
 
     function navigateToProfile(userId) {

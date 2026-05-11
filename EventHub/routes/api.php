@@ -60,6 +60,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/events/{id}',             [EventController::class, 'destroy']);
     Route::put('/events/{id}/agenda',         [EventController::class, 'updateAgenda']);
     Route::get('/events/{id}/download-document/{type}', [EventController::class, 'downloadDocument']);
+    Route::post('/events/{id}/request-cancellation', [EventController::class, 'requestCancellation']);
+    Route::put('/events/{id}/approve-cancellation',  [EventController::class, 'approveCancellation']);
+    Route::put('/events/{id}/reject-cancellation',   [EventController::class, 'rejectCancellation']);
+    Route::patch('/events/{id}/toggle-tickets', [EventController::class, 'toggleTickets']);
 
     // ── Venues (Admin) ──
     Route::post('/venues',        [VenueController::class, 'store']);

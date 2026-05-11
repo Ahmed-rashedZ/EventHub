@@ -239,7 +239,12 @@
     document.getElementById('stat-open').textContent     = open.length;
 
     if (!mine.length) { tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">💼</div><p>No sponsorships yet. <a href="/sponsor/requests">Browse open requests!</a></p></div></td></tr>'; return; }
-    tbody.innerHTML = mine.map(r => `
+    tbody.innerHTML = mine.map(r => {
+      let effectiveStatus = r.status;
+      if (r.event?.status === 'cancelled') effectiveStatus = 'cancelled';
+      else if (r.event?.status === 'cancellation_requested' && r.status === 'accepted') effectiveStatus = 'cancellation_requested';
+
+      return `
       <tr>
         <td><div style="font-weight:600">${r.event?.title || '—'}</div></td>
         <td>
@@ -251,10 +256,11 @@
         <td style="color:var(--text-muted)">${r.event?.venue?.name || '—'}</td>
         <td style="color:var(--text-muted)">${fmtDateShort(r.event?.start_time)}</td>
         <td>
-          ${badge(r.status)}
-          ${r.status === 'accepted' ? `<button onclick="downloadContract(${r.id})" style="margin-left:8px;font-size:12px;text-decoration:none;color:#fff;background:rgba(255,255,255,0.08);padding:4px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.15);display:inline-flex;align-items:center;gap:4px;cursor:pointer;">📄 ${t('Agreement')}</button>` : ''}
+          ${badge(effectiveStatus)}
+          ${r.status === 'accepted' && r.event?.status !== 'cancelled' ? `<button onclick="downloadContract(${r.id})" style="margin-left:8px;font-size:12px;text-decoration:none;color:#fff;background:rgba(255,255,255,0.08);padding:4px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.15);display:inline-flex;align-items:center;gap:4px;cursor:pointer;">📄 ${t('Agreement')}</button>` : ''}
         </td>
-      </tr>`).join('');
+      </tr>`;
+    }).join('');
   }
 
   async function downloadContract(id) {

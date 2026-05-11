@@ -26,6 +26,10 @@ class TicketController extends Controller
             return response()->json(['message' => 'Event is not available for booking'], 422);
         }
 
+        if (!$event->is_tickets_open) {
+            return response()->json(['message' => 'Ticket sales are currently suspended for this event.'], 422);
+        }
+
         // One ticket per user per event
         if (Ticket::where('event_id', $event->id)->where('user_id', $user->id)->exists()) {
             return response()->json(['message' => 'You already have a ticket for this event'], 422);
