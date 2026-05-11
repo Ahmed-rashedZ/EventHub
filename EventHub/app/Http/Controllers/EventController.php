@@ -14,10 +14,10 @@ class EventController extends Controller
     public function index(Request $request)
     {
         return response()->json(
-            Event::with('venue', 'creator:id,name')
+            Event::with('venue', 'creator:id,name', 'sponsors.profile')
                 ->withAvg('ratings', 'rating')
                 ->where('status', 'approved')
-                ->where('is_tickets_open', true) // Only show if tickets are open
+                ->where('is_tickets_open', true)
                 ->orderBy('start_time')
                 ->get()
         );
@@ -47,7 +47,7 @@ class EventController extends Controller
         }
 
         return response()->json(
-            Event::with('venue')
+            Event::with('venue', 'sponsors.profile')
                 ->withAvg('ratings', 'rating')
                 ->where('created_by', $request->user()->id)
                 ->orderBy('created_at', 'desc')
