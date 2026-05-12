@@ -183,7 +183,7 @@ public function updateProfile(Request $request)
     // Handle File Upload if exists
     if ($request->hasFile('logo')) {
         $path = $request->file('logo')->store('profiles', 'public');
-        $profilePayload['logo'] = "/storage/" . $path;
+        $profilePayload['logo'] = $path;
     }
 
     $profile = $user->profile()->updateOrCreate(
