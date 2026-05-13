@@ -22,10 +22,17 @@ class AssistantAnalyticsController extends Controller
                 $q->where('created_by', $authUser->id);
             })->firstOrFail();
 
-        $history = AttendanceLog::where('scanned_by', $id)
-            ->with(['ticket.user:id,name,avatar,image'])
-            ->orderBy('scanned_at', 'desc')
-            ->paginate(20);
+        $query = AttendanceLog::where('scanned_by', $id)
+            ->with(['ticket.user:id,name,avatar,image', 'ticket.event:id,title'])
+            ->orderBy('scanned_at', 'desc');
+
+        if ($request->has('event_id') && $request->event_id) {
+            $query->whereHas('ticket', function($q) use ($request) {
+                $q->where('event_id', $request->event_id);
+            });
+        }
+
+        $history = $query->paginate(50);
 
         return response()->json($history);
     }
@@ -46,7 +53,7 @@ class AssistantAnalyticsController extends Controller
         $scansByEvent = AttendanceLog::where('scanned_by', $id)
             ->join('tickets', 'attendance_logs.ticket_id', '=', 'tickets.id')
             ->join('events', 'tickets.event_id', '=', 'events.id')
-            ->select('events.title', DB::raw('count(*) as total'))
+            ->select('events.id', 'events.title', DB::raw('count(*) as total'))
             ->groupBy('events.id', 'events.title')
             ->get();
 

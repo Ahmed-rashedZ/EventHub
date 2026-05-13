@@ -152,7 +152,7 @@
         // Distribution
         const distDiv = document.getElementById('distribution-list');
         distDiv.innerHTML = d.scans_by_event.map(s => `
-          <div class="as-event-bar">
+          <div class="as-event-bar" id="ev-bar-${s.id}" onclick="filterByEvent(${s.id}, this)" style="cursor:pointer;" title="انقر لتصفية السجل">
             <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:.85rem;">
               <span style="font-weight:600; color:#fff;">${s.title}</span>
               <span style="color:var(--accent); font-weight:700;">${s.total}</span>
@@ -165,28 +165,65 @@
     }
 
     if (historyRes.ok) {
-      const history = historyRes.data.data;
-      const body = document.getElementById('history-body');
-      if (history.length > 0) {
-        body.innerHTML = history.map(h => `
-          <tr>
-            <td>
-              <div style="display:flex; align-items:center; gap:10px;">
-                <div class="avatar" style="width:28px; height:28px; font-size:.7rem;">${(h.ticket?.user?.name || '?').charAt(0)}</div>
-                <div style="font-weight:600; color:var(--accent2)">${h.ticket?.user?.name || 'Guest'}</div>
-              </div>
-            </td>
-            <td><span style="color:var(--text-muted); font-size:.8rem;">${h.ticket?.event?.title || 'Unknown'}</span></td>
-            <td><span style="color:var(--success); font-size:.75rem; font-weight:600;">Scanned</span></td>
-            <td style="color:var(--text-muted); font-size:.75rem;">${new Date(h.scanned_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</td>
-          </tr>
-        `).join('');
-      } else {
-        body.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:40px; color:var(--text-muted)">لا يوجد سجل عمليات مسح.</td></tr>';
-      }
+      renderHistory(historyRes.data.data);
     }
     
     lucide.createIcons();
+  }
+
+  let currentFilterEventId = null;
+
+  async function filterByEvent(eventId, elem) {
+    const isSame = currentFilterEventId === eventId;
+    
+    // UI Updates
+    document.querySelectorAll('.as-event-bar').forEach(el => {
+      el.style.borderColor = 'var(--border)';
+      el.style.background = 'rgba(255,255,255,0.03)';
+    });
+
+    if (isSame) {
+      currentFilterEventId = null; // Toggle off
+    } else {
+      currentFilterEventId = eventId;
+      elem.style.borderColor = 'var(--accent)';
+      elem.style.background = 'rgba(110,64,242,0.1)';
+    }
+
+    // Fetch filtered data
+    document.getElementById('history-body').innerHTML = '<tr><td colspan="4" style="text-align:center; padding:40px;"><div class="spinner" style="margin:auto;"></div></td></tr>';
+    
+    const url = currentFilterEventId 
+      ? `/assistants/${assistantId}/history?event_id=${currentFilterEventId}`
+      : `/assistants/${assistantId}/history`;
+      
+    const res = await api.get(url);
+    if (res.ok) {
+      renderHistory(res.data.data);
+    } else {
+      document.getElementById('history-body').innerHTML = '<tr><td colspan="4" style="text-align:center; padding:40px; color:var(--danger)">فشل تحميل السجل.</td></tr>';
+    }
+  }
+
+  function renderHistory(history) {
+    const body = document.getElementById('history-body');
+    if (history.length > 0) {
+      body.innerHTML = history.map(h => `
+        <tr>
+          <td>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div class="avatar" style="width:28px; height:28px; font-size:.7rem;">${(h.ticket?.user?.name || '?').charAt(0)}</div>
+              <div style="font-weight:600; color:var(--accent2)">${h.ticket?.user?.name || 'Guest'}</div>
+            </div>
+          </td>
+          <td><span style="color:var(--text-muted); font-size:.8rem;">${h.ticket?.event?.title || 'Unknown'}</span></td>
+          <td><span style="color:var(--success); font-size:.75rem; font-weight:600;">Scanned</span></td>
+          <td style="color:var(--text-muted); font-size:.75rem;">${fmtDate(h.scanned_at)}</td>
+        </tr>
+      `).join('');
+    } else {
+      body.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:40px; color:var(--text-muted)">لا يوجد سجل عمليات مسح.</td></tr>';
+    }
   }
 </script>
 </body>

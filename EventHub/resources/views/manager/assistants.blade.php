@@ -120,28 +120,44 @@
     const res = await api.get('/assistants');
     const listDiv = document.getElementById('assistants-list');
     if (res.ok && res.data.length > 0) {
-      listDiv.innerHTML = '<table style="width:100%; border-collapse: collapse;"><thead><tr><th style="text-align:left; padding:8px; border-bottom:1px solid var(--border);">Name</th><th style="text-align:left; padding:8px; border-bottom:1px solid var(--border);">Event</th><th style="text-align:left; padding:8px; border-bottom:1px solid var(--border);">Status</th><th style="text-align:right; padding:8px; border-bottom:1px solid var(--border);">Actions</th></tr></thead><tbody>' +
+      listDiv.innerHTML = '<div class="table-wrap"><table style="width:100%; border-collapse: collapse;">' +
+        '<thead><tr>' +
+        '<th style="text-align:left; padding:12px 14px; font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); border-bottom:1px solid var(--border);">Name</th>' +
+        '<th style="text-align:left; padding:12px 14px; font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); border-bottom:1px solid var(--border);">Event</th>' +
+        '<th style="text-align:left; padding:12px 14px; font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); border-bottom:1px solid var(--border);">Status</th>' +
+        '<th style="text-align:right; padding:12px 14px; font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); border-bottom:1px solid var(--border);">Actions</th>' +
+        '</tr></thead><tbody>' +
         res.data.map(a => `
-          <tr>
-            <td style="padding:8px; border-bottom:1px solid var(--border);">
-              <div style="font-weight:600;">${a.name}</div>
-              <div style="font-size:0.75rem; color:var(--text-muted)">${a.email}</div>
+          <tr style="transition: background 0.2s; cursor: default;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+            <td style="padding:14px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle;">
+              <div style="font-weight:600; color:#fff;">${a.name}</div>
+              <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">${a.email}</div>
             </td>
-            <td style="padding:8px; border-bottom:1px solid var(--border);">${a.event ? a.event.title : 'N/A'}</td>
-            <td style="padding:8px; border-bottom:1px solid var(--border);">
-              <span class="status-badge ${a.is_active ? 'status-active' : 'status-inactive'}">${a.is_active ? 'Active' : 'Suspended'}</span>
+            <td style="padding:14px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; color:var(--text-muted);">
+              ${a.event ? a.event.title : '—'}
             </td>
-            <td style="padding:8px; border-bottom:1px solid var(--border); text-align:right; display:flex; gap:8px; justify-content:flex-end;">
-              <a href="/manager/assistants/${a.id}/stats" class="btn btn-ghost btn-sm">Stats</a>
-              <button class="btn btn-ghost btn-sm" onclick="editAssistant(${JSON.stringify(a).replace(/"/g, '&quot;')})">Edit</button>
-              <button class="btn btn-sm ${a.is_active ? 'btn-danger' : 'btn-success'}" onclick="toggleStatus(${a.id})">
-                ${a.is_active ? 'Suspend' : 'Activate'}
-              </button>
+            <td style="padding:14px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle;">
+              <span style="display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:8px; font-size:0.75rem; font-weight:600; background:${a.is_active ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)'}; color:${a.is_active ? '#10b981' : '#ef4444'}; border:1px solid ${a.is_active ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'};">
+                 ${a.is_active ? 'Active' : 'Suspended'}
+              </span>
+            </td>
+            <td style="padding:14px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; text-align:right;">
+              <div style="display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap;">
+                <button class="btn btn-sm" style="background:rgba(34,211,238,.12); color:#22d3ee; border:1px solid rgba(34,211,238,.25); display:inline-flex; align-items:center; gap:4px;" onclick="window.location.href='/manager/assistants/${a.id}/stats'">
+                  📊 Stats
+                </button>
+                <button class="btn btn-sm" style="background:rgba(245,158,11,0.15); color:#f59e0b; border:1px solid rgba(245,158,11,0.3); display:inline-flex; align-items:center; gap:4px;" onclick="editAssistant(${JSON.stringify(a).replace(/"/g, '&quot;')})">
+                  ✏️ Edit
+                </button>
+                <button class="btn btn-sm" style="background:${a.is_active ? 'rgba(239,68,68,.12)' : 'rgba(16,185,129,.12)'}; color:${a.is_active ? '#ef4444' : '#10b981'}; border:1px solid ${a.is_active ? 'rgba(239,68,68,.25)' : 'rgba(16,185,129,.25)'}; display:inline-flex; align-items:center; gap:4px;" onclick="toggleStatus(${a.id})">
+                  ${a.is_active ? '🚫 Suspend' : '✅ Activate'}
+                </button>
+              </div>
             </td>
           </tr>`).join('') +
-        '</tbody></table>';
+        '</tbody></table></div>';
     } else {
-      listDiv.innerHTML = '<p style="color:var(--text-muted); font-size: 0.9rem;">No assistants created yet.</p>';
+      listDiv.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);"><div style="font-size:2rem; margin-bottom:12px;">👥</div><p>No assistants created yet.</p></div>';
     }
   }
 
