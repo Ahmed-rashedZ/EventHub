@@ -11,6 +11,7 @@ use App\Http\Controllers\AgreementController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\VerificationController;
+use App\Http\Controllers\AssistantAnalyticsController;
 
 // ─── Public routes ────────────────────────────────────────────────────────────
 Route::post('/register', [AuthController::class, 'register']);
@@ -40,6 +41,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/profile/availability', [AuthController::class, 'updateAvailability']);
     Route::post('/users', [AuthController::class, 'createUser']); // For Admins and Managers
     Route::get('/assistants', [AuthController::class, 'getAssistants']); // For Managers
+    Route::get('/assistants/{id}/history', [AssistantAnalyticsController::class, 'getHistory']);
+    Route::get('/assistants/{id}/stats', [AssistantAnalyticsController::class, 'getStats']);
+    Route::patch('/assistants/{id}/status', [AuthController::class, 'patchAssistantStatus']); // For Managers
+    Route::put('/assistants/{id}', [AuthController::class, 'updateAssistant']); // For Managers
     Route::delete('/assistants/{id}', [AuthController::class, 'deleteAssistant']); // For Managers
     Route::get('/sponsors/available', [AuthController::class, 'getAvailableSponsors']);
 

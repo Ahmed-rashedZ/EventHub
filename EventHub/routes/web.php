@@ -42,6 +42,7 @@ Route::middleware('web.auth')->group(function () {
     // Manager Routes
     Route::middleware(['web.auth:Event Manager', 'verified_partner'])->prefix('manager')->group(function () {
         Route::view('/assistants', 'manager.assistants');
+        Route::view('/assistants/{id}/stats', 'manager.assistant-stats');
         Route::view('/attendance', 'manager.attendance');
         Route::view('/dashboard', 'manager.dashboard');
         Route::view('/events', 'manager.events');

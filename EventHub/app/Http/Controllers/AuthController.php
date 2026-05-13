@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Carbon;
 use App\Notifications\SystemNotification;
+use App\Mail\AssistantAccountCreated;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -404,10 +406,24 @@ public function createUser(Request $request)
         ]);
     }
 
+    // ── Send Email to Assistant ──
+    if ($request->role === 'Assistant' && $event) {
+        try {
+            Mail::to($user->email)->send(new AssistantAccountCreated(
+                $user->name,
+                $user->email,
+                $request->password, // Send raw password before hash
+                $event->title
+            ));
+        } catch (\Exception $e) {
+            // Log error or ignore if mail fails to avoid blocking user creation
+        }
+    }
+
     return response()->json(['message' => 'User created successfully', 'user' => $user->load('profile')], 201);
 }
 
-public function getAssistants(Request $request)
+    public function getAssistants(Request $request)
 {
     $authUser = $request->user();
 
@@ -420,9 +436,72 @@ public function getAssistants(Request $request)
                           $query->where('created_by', $authUser->id);
                       })
                       ->with('event:id,title')
-                      ->get(['id', 'name', 'email', 'event_id']);
+                      ->get(['id', 'name', 'email', 'event_id', 'is_active', 'phone']);
 
     return response()->json($assistants);
+}
+
+public function patchAssistantStatus(Request $request, $id)
+{
+    $authUser = $request->user();
+    if ($authUser->role !== 'Event Manager') return response()->json(['message' => 'Unauthorized'], 403);
+
+    $assistant = User::where('id', $id)
+                     ->where('role', 'Assistant')
+                     ->whereHas('event', function ($query) use ($authUser) {
+                         $query->where('created_by', $authUser->id);
+                     })
+                     ->first();
+
+    if (!$assistant) return response()->json(['message' => 'Assistant not found'], 404);
+
+    $assistant->is_active = !$assistant->is_active;
+    $assistant->save();
+
+    if (!$assistant->is_active) {
+        $assistant->tokens()->delete();
+    }
+
+    return response()->json([
+        'message' => 'Assistant status updated',
+        'is_active' => $assistant->is_active
+    ]);
+}
+
+public function updateAssistant(Request $request, $id)
+{
+    $authUser = $request->user();
+    if ($authUser->role !== 'Event Manager') return response()->json(['message' => 'Unauthorized'], 403);
+
+    $request->validate([
+        'name' => 'sometimes|required|string|max:255',
+        'email' => 'sometimes|required|email|unique:users,email,' . $id,
+        'event_id' => 'sometimes|required|exists:events,id',
+        'password' => 'sometimes|required|string|min:8',
+    ]);
+
+    $assistant = User::where('id', $id)
+                     ->where('role', 'Assistant')
+                     ->whereHas('event', function ($query) use ($authUser) {
+                         $query->where('created_by', $authUser->id);
+                     })
+                     ->first();
+
+    if (!$assistant) return response()->json(['message' => 'Assistant not found'], 404);
+
+    if ($request->has('name')) $assistant->name = $request->name;
+    if ($request->has('email')) $assistant->email = $request->email;
+    if ($request->has('event_id')) {
+        // Verify new event is also owned by this manager
+        $event = Event::where('id', $request->event_id)->where('created_by', $authUser->id)->first();
+        if (!$event) return response()->json(['message' => 'Invalid event assignment'], 403);
+        $assistant->event_id = $request->event_id;
+    }
+    if ($request->has('password')) $assistant->password = Hash::make($request->password);
+
+    $assistant->save();
+
+    return response()->json(['message' => 'Assistant updated successfully', 'assistant' => $assistant]);
 }
 
 public function deleteAssistant(Request $request, $id)
