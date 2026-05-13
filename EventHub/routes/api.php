@@ -65,6 +65,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/events/{id}/reject-cancellation',   [EventController::class, 'rejectCancellation']);
     Route::patch('/events/{id}/toggle-tickets', [EventController::class, 'toggleTickets']);
     Route::put('/events/{id}/published-schedule', [EventController::class, 'updatePublishedSchedule']);
+    Route::patch('/events/{id}/capacity', [EventController::class, 'updateCapacity']);
 
     // ── Venues (Admin) ──
     Route::post('/venues',        [VenueController::class, 'store']);

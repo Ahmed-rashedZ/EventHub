@@ -851,8 +851,11 @@
           <div class="ed-info-card ed-info-warning">
             <div class="ed-info-icon">👥</div>
             <div>
-              <div class="ed-info-label">Capacity</div>
-              <div class="ed-info-value">${ev.capacity}</div>
+              <div class="ed-info-label" style="display:flex;align-items:center;gap:6px;">
+                Capacity 
+                ${ev.status === 'approved' ? `<button class="btn-icon-sm" onclick="expandCapacity(${ev.id}, ${ev.capacity}, ${ev.venue?.capacity || 99999})" title="Expand Capacity" style="padding:2px;background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.2);border-radius:4px;cursor:pointer;">✏️</button>` : ''}
+              </div>
+              <div class="ed-info-value" id="det-capacity-${ev.id}">${ev.capacity}</div>
             </div>
           </div>
           <div class="ed-info-card ed-info-warning">
@@ -3397,6 +3400,43 @@
         loadEvents();
       } else {
         showToast(res.data?.message || 'Error', 'error');
+      }
+    }
+    async function expandCapacity(eventId, currentCap, venueMax) {
+      const newCap = prompt(`Current capacity: ${currentCap}\nVenue max: ${venueMax}\n\nEnter new total capacity:`, currentCap);
+      if (newCap === null || newCap === "" || parseInt(newCap) === currentCap) return;
+      
+      const capInt = parseInt(newCap);
+      if (isNaN(capInt) || capInt < 1) {
+          showToast('Please enter a valid number.', 'error');
+          return;
+      }
+
+      if (capInt > venueMax) {
+          showToast(`Cannot exceed venue capacity (${venueMax}).`, 'error');
+          return;
+      }
+
+      try {
+          const res = await api.patch(`/events/${eventId}/capacity`, { capacity: capInt });
+          if (res.ok) {
+              showToast('Capacity expanded successfully!', 'success');
+              // Update local data
+              const ev = allEvents.find(e => e.id === eventId);
+              if (ev) ev.capacity = capInt;
+              
+              // Update UI in modal if open
+              const capValEl = document.getElementById(`det-capacity-${eventId}`);
+              if (capValEl) capValEl.textContent = capInt;
+              
+              // Refresh list to update capacity column
+              renderEvents();
+          } else {
+              showToast(res.data.message || 'Failed to update capacity.', 'error');
+          }
+      } catch (err) {
+          console.error(err);
+          showToast('An error occurred.', 'error');
       }
     }
   </script>

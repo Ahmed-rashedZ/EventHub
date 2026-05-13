@@ -992,11 +992,8 @@ class EventController extends Controller
             'publish' => 'sometimes|boolean',
         ]);
 
-        $updateData = [
-            'published_schedule' => $request->published_schedule
-        ];
+        $updateData = ['published_schedule' => $request->published_schedule];
 
-        // If publish flag is explicitly set, use it; otherwise auto-publish if schedule has items
         if ($request->has('publish')) {
             $updateData['is_published'] = $request->publish;
         }
@@ -1006,6 +1003,51 @@ class EventController extends Controller
         return response()->json([
             'message' => 'Published schedule updated successfully.',
             'event' => $event
+        ]);
+    }
+
+    /**
+     * Update only the capacity of an event (Expansion feature).
+     * Accessible by the manager or Admin.
+     */
+    public function updateCapacity($id, Request $request)
+    {
+        $request->validate([
+            'capacity' => 'required|integer|min:1',
+        ]);
+
+        $event = Event::with('venue')->findOrFail($id);
+        $user = $request->user();
+
+        // Check ownership or admin role
+        if ($event->created_by !== $user->id && $user->role !== 'Admin') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $newCapacity = (int) $request->capacity;
+        $bookedCount = $event->tickets()->count();
+
+        // Validate against booked tickets
+        if ($newCapacity < $bookedCount) {
+            return response()->json([
+                'message' => "Cannot decrease capacity below the number of booked tickets ({$bookedCount}).",
+                'errors' => ['capacity' => ["Minimum required capacity is {$bookedCount}."]]
+            ], 422);
+        }
+
+        // Validate against venue capacity (if internal venue)
+        if ($event->venue && $newCapacity > $event->venue->capacity) {
+            return response()->json([
+                'message' => "Capacity cannot exceed the venue's total capacity of {$event->venue->capacity}.",
+                'errors' => ['capacity' => ["Maximum allowed capacity for this venue is {$event->venue->capacity}."]]
+            ], 422);
+        }
+
+        $event->update(['capacity' => $newCapacity]);
+
+        return response()->json([
+            'message' => 'Capacity updated successfully.',
+            'event' => $event->loadCount('tickets')
         ]);
     }
 }
