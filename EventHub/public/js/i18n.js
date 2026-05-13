@@ -10,8 +10,20 @@
  */
 
 /* ─────────────────────────────────────────────────────────────────
-   Translation Dictionary  (English key → Arabic value)
+   Translation Dictionaries
    ───────────────────────────────────────────────────────────────── */
+const I18N_EN = {
+  'Publish Days': 'Publish Days',
+  'published_schedule_desc': 'Select the days you want to display to the public. Unselected days will be considered "Setup Days" and won\'t appear in the public event schedule.',
+  'published_schedule_success': 'Draft saved successfully!',
+  'Public': 'Public',
+  'Setup': 'Setup',
+  'Event published successfully! 🚀': 'Event published successfully! 🚀',
+  'Event unpublished. It is no longer visible to the public.': 'Event unpublished. It is no longer visible to the public.',
+  'Are you sure you want to unpublish this event? It will no longer be visible to the public.': 'Are you sure you want to unpublish this event? It will no longer be visible to the public.',
+  'Please select at least one day to publish.': 'Please select at least one day to publish.',
+};
+
 const I18N_AR = {
   /* ── Page Titles ──────────────────────────────────────── */
   'My Events – EventHub Manager':     'أحداثي – EventHub',
@@ -642,6 +654,16 @@ const I18N_AR = {
   'Create Assistant': 'إنشاء مساعد',
   'Existing Assistants': 'المساعدون الحاليون',
   'Generate Assistant Account': 'إنشاء حساب مساعد',
+  'Publish Days': 'أيام النشر',
+  'published_schedule_desc': 'حدد الأيام التي تريد عرضها للجمهور. الأيام غير المحددة ستعتبر "أيام تجهيز" ولن تظهر في جدول الفعالية العام.',
+  'published_schedule_success': 'تم حفظ المسودة بنجاح!',
+  'Public': 'عام',
+  'Setup': 'تجهيز',
+  'No schedule found for this event.': 'لم يتم العثور على جدول زمني لهذا الحدث.',
+  'Event published successfully! 🚀': 'تم نشر الحدث بنجاح! 🚀',
+  'Event unpublished. It is no longer visible to the public.': 'تم إلغاء نشر الحدث. لم يعد مرئياً للجمهور.',
+  'Are you sure you want to unpublish this event? It will no longer be visible to the public.': 'هل أنت متأكد من إلغاء نشر هذا الحدث؟ لن يكون مرئياً للجمهور بعد الآن.',
+  'Please select at least one day to publish.': 'يرجى اختيار يوم واحد على الأقل للنشر.',
 
   /* ── Event Types (English → Arabic) ────────────────────── */
   'Conference': 'مؤتمر',
@@ -1036,7 +1058,6 @@ const I18N_AR = {
 /* ─────────────────────────────────────────────────────────────────
    Reverse Dictionary (Arabic → English) – auto-built from I18N_AR
    ───────────────────────────────────────────────────────────────── */
-const I18N_EN = {};
 for (const [en, ar] of Object.entries(I18N_AR)) {
   I18N_EN[ar] = en;
 }
@@ -1072,32 +1093,37 @@ function tType(arabicType) {
    Core API
    ───────────────────────────────────────────────────────────────── */
 
+let cachedSortedAR = null;
+let cachedSortedEN = null;
+
 function getLang() {
   return localStorage.getItem('lang') || 'en';
 }
 
 /**
  * Translate a key. Returns Arabic if lang=ar, otherwise the original key.
- * Also handles Arabic→English reverse lookup when lang=en.
- * Use: t('My Events') → 'أحداثي'
  */
 function t(key) {
   const lang = getLang();
-  if (lang === 'ar' && I18N_AR[key]) return I18N_AR[key];
-  if (lang === 'en' && I18N_EN[key]) return I18N_EN[key];
-  return key;
+  const dict = lang === 'ar' ? I18N_AR : I18N_EN;
+  return (dict && dict[key]) ? dict[key] : key;
 }
 
 /**
  * Translate an arbitrary string by applying exact and partial dictionary matches.
- * Useful for dynamic messages containing variables (e.g. "Your event X is approved").
  */
 function translateText(text) {
-  if (!text) return text;
+  if (!text || typeof text !== 'string') return text;
   const lang = getLang();
+  
   const dict = lang === 'ar' ? I18N_AR : I18N_EN;
+  if (!dict) return text;
 
+  // Exact match first
   if (dict[text]) return dict[text];
+
+  // If English and the key wasn't in dict, don't do partial replacement unless we have custom EN rules
+  if (lang === 'en' && Object.keys(I18N_EN).length === 0) return text;
 
   let updated = text;
   let changed = false;
@@ -1107,8 +1133,18 @@ function translateText(text) {
     updated = updated.split('EventHub').join('__EHUB_TOKEN__');
   }
 
-  const entries = Object.entries(dict).sort((a, b) => b[0].length - a[0].length);
-  for (const [key, val] of entries) {
+  // Use cached sorted entries for performance
+  let entries;
+  if (lang === 'ar') {
+    if (!cachedSortedAR) cachedSortedAR = Object.entries(I18N_AR).sort((a, b) => b[0].length - a[0].length);
+    entries = cachedSortedAR;
+  } else {
+    if (!cachedSortedEN) cachedSortedEN = Object.entries(I18N_EN).sort((a, b) => b[0].length - a[0].length);
+    entries = cachedSortedEN;
+  }
+
+  for (let i = 0; i < entries.length; i++) {
+    const [key, val] = entries[i];
     if (updated.includes(key)) {
       updated = updated.split(key).join(val);
       changed = true;
@@ -1296,42 +1332,9 @@ function translateNode(node) {
   const trimmed  = original.trim();
   if (!trimmed) return;
 
-  const lang = getLang();
-  const dict = lang === 'ar' ? I18N_AR : I18N_EN;
-
-  /* 1️⃣  Try exact match first */
-  if (dict[trimmed]) {
-    node.textContent = original.replace(trimmed, dict[trimmed]);
-    return;
-  }
-
-  /* 2️⃣  Try replacing any known key that appears inside the text.
-          This handles "📊 Dashboard" → "📊 لوحة التحكم"           */
-  let updated = trimmed;
-  let changed  = false;
-
-  // Protect the project name "EventHub" from partial dictionary matches (like 'Event')
-  const hasEventHub = updated.includes('EventHub');
-  if (hasEventHub) {
-    updated = updated.split('EventHub').join('__EHUB_TOKEN__');
-  }
-
-  // Sort entries by length descending to prevent partial translations
-  const entries = Object.entries(dict).sort((a, b) => b[0].length - a[0].length);
-  for (const [key, val] of entries) {
-    if (updated.includes(key)) {
-      updated = updated.split(key).join(val); // Replace all occurrences
-      changed = true;
-    }
-  }
-
-  if (hasEventHub) {
-    updated = updated.split('__EHUB_TOKEN__').join('EventHub');
-    changed = true;
-  }
-
-  if (changed && updated !== trimmed) {
-    node.textContent = original.replace(trimmed, updated);
+  const translated = translateText(trimmed);
+  if (translated !== trimmed) {
+    node.textContent = original.replace(trimmed, translated);
   }
 }
 
@@ -1339,9 +1342,13 @@ function translateNode(node) {
 function translateAttrs(el) {
   const lang = getLang();
   const dict = lang === 'ar' ? I18N_AR : I18N_EN;
+  if (!dict) return;
   ['placeholder', 'title'].forEach(attr => {
     const val = el.getAttribute(attr);
-    if (val && dict[val]) el.setAttribute(attr, dict[val]);
+    if (val) {
+      const trans = translateText(val);
+      if (trans !== val) el.setAttribute(attr, trans);
+    }
   });
 }
 

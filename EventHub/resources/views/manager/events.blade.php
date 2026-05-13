@@ -13,14 +13,17 @@
   <script src="/js/i18n.js"></script>
   <script src="/js/flatpickr-custom.js"></script>
 
-<link rel="icon" href="/images/logo.jpg" type="image/jpeg">
+  <link rel="icon" href="/images/logo.jpg" type="image/jpeg">
 </head>
 
 <body>
   <div class="app-layout">
     <aside class="sidebar">
       <div class="sidebar-logo">
-        <div style="display:flex; justify-content:center; align-items:center; width: 100%;"><img src="/images/logo.jpg" alt="EventHub Logo" style="width: 85px; height: 85px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
+        <div style="display:flex; justify-content:center; align-items:center; width: 100%;"><img src="/images/logo.jpg"
+            alt="EventHub Logo"
+            style="width: 85px; height: 85px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+        </div>
       </div>
       <nav class="sidebar-nav">
         <span class="nav-section-label">Overview</span>
@@ -115,22 +118,38 @@
       </div>
 
       <!-- Step Progress Indicator -->
-      <div id="wizard-progress" style="display: flex; align-items: center; gap: 0; padding: 20px 0 24px; position: sticky; top: 60px; background: rgba(15,18,25,0.97); backdrop-filter: blur(16px); z-index: 9;">
-        <div class="wiz-step active" id="wiz-dot-1" style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer;" onclick="goToStep(1)">
+      <div id="wizard-progress"
+        style="display: flex; align-items: center; gap: 0; padding: 20px 0 24px; position: sticky; top: 60px; background: rgba(15,18,25,0.97); backdrop-filter: blur(16px); z-index: 9;">
+        <div class="wiz-step active" id="wiz-dot-1"
+          style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer;"
+          onclick="goToStep(1)">
           <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
-            <div class="wiz-num" id="wiz-num-1" style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: #fff; flex-shrink: 0; transition: all 0.3s ease; box-shadow: 0 3px 10px rgba(139,92,246,0.3);">1</div>
-            <div style="flex: 1; height: 2px; background: rgba(255,255,255,0.06); border-radius: 1px; position: relative; overflow: hidden;">
-              <div id="wiz-line" style="position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: linear-gradient(90deg, #8b5cf6, #7c3aed); border-radius: 1px; transition: width 0.4s ease;"></div>
+            <div class="wiz-num" id="wiz-num-1"
+              style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: #fff; flex-shrink: 0; transition: all 0.3s ease; box-shadow: 0 3px 10px rgba(139,92,246,0.3);">
+              1</div>
+            <div
+              style="flex: 1; height: 2px; background: rgba(255,255,255,0.06); border-radius: 1px; position: relative; overflow: hidden;">
+              <div id="wiz-line"
+                style="position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: linear-gradient(90deg, #8b5cf6, #7c3aed); border-radius: 1px; transition: width 0.4s ease;">
+              </div>
             </div>
           </div>
-          <span id="wiz-label-1" style="font-size: 0.7rem; font-weight: 600; color: #c4b5fd; letter-spacing: 0.03em; transition: color 0.3s;">Event Details</span>
+          <span id="wiz-label-1"
+            style="font-size: 0.7rem; font-weight: 600; color: #c4b5fd; letter-spacing: 0.03em; transition: color 0.3s;">Event
+            Details</span>
         </div>
-        <div class="wiz-step" id="wiz-dot-2" style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer;" onclick="goToStep(2)">
+        <div class="wiz-step" id="wiz-dot-2"
+          style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer;"
+          onclick="goToStep(2)">
           <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
-            <div class="wiz-num" id="wiz-num-2" style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; background: rgba(255,255,255,0.06); color: #64748b; flex-shrink: 0; transition: all 0.3s ease;">2</div>
+            <div class="wiz-num" id="wiz-num-2"
+              style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; background: rgba(255,255,255,0.06); color: #64748b; flex-shrink: 0; transition: all 0.3s ease;">
+              2</div>
             <div style="flex: 1;"></div>
           </div>
-          <span id="wiz-label-2" style="font-size: 0.7rem; font-weight: 600; color: #64748b; letter-spacing: 0.03em; transition: color 0.3s;">Booking & Settings</span>
+          <span id="wiz-label-2"
+            style="font-size: 0.7rem; font-weight: 600; color: #64748b; letter-spacing: 0.03em; transition: color 0.3s;">Booking
+            & Settings</span>
         </div>
       </div>
 
@@ -145,27 +164,49 @@
             </div>
             <div class="form-group">
               <label class="form-label">Description</label>
-              <textarea id="e-desc" class="form-control" placeholder="Briefly describe your event…" required rows="3"></textarea>
+              <textarea id="e-desc" class="form-control" placeholder="Briefly describe your event…" required
+                rows="3"></textarea>
             </div>
             <div class="form-group">
               <label class="form-label">Event Type</label>
               <select id="e-type" class="form-control" required>
-                <option value="مؤتمر"><script>document.write(t('Conference'))</script></option>
-                <option value="ندوة"><script>document.write(t('Seminar'))</script></option>
-                <option value="ورشة عمل"><script>document.write(t('Workshop'))</script></option>
-                <option value="دورة تدريبية"><script>document.write(t('Training Course'))</script></option>
-                <option value="ترفيه"><script>document.write(t('Entertainment'))</script></option>
-                <option value="ملتقى علمي"><script>document.write(t('Scientific Forum'))</script></option>
-                <option value="رياضة"><script>document.write(t('Sports'))</script></option>
-                <option value="تقنية"><script>document.write(t('Technology'))</script></option>
-                <option value="اجتماعية"><script>document.write(t('Social'))</script></option>
+                <option value="مؤتمر">
+                  <script>document.write(t('Conference'))</script>
+                </option>
+                <option value="ندوة">
+                  <script>document.write(t('Seminar'))</script>
+                </option>
+                <option value="ورشة عمل">
+                  <script>document.write(t('Workshop'))</script>
+                </option>
+                <option value="دورة تدريبية">
+                  <script>document.write(t('Training Course'))</script>
+                </option>
+                <option value="ترفيه">
+                  <script>document.write(t('Entertainment'))</script>
+                </option>
+                <option value="ملتقى علمي">
+                  <script>document.write(t('Scientific Forum'))</script>
+                </option>
+                <option value="رياضة">
+                  <script>document.write(t('Sports'))</script>
+                </option>
+                <option value="تقنية">
+                  <script>document.write(t('Technology'))</script>
+                </option>
+                <option value="اجتماعية">
+                  <script>document.write(t('Social'))</script>
+                </option>
               </select>
             </div>
             <div class="form-group">
               <label class="form-label">Event Banner Image</label>
-              <input id="e-image" type="file" accept="image/*" class="form-control" style="padding: 7px 10px;" required />
-              <div id="banner-preview" style="display:none; margin-top:10px; border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,0.06);">
-                <img id="banner-preview-img" src="" style="width:100%; height:140px; object-fit:cover; display:block;" />
+              <input id="e-image" type="file" accept="image/*" class="form-control" style="padding: 7px 10px;"
+                required />
+              <div id="banner-preview"
+                style="display:none; margin-top:10px; border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,0.06);">
+                <img id="banner-preview-img" src=""
+                  style="width:100%; height:140px; object-fit:cover; display:block;" />
               </div>
             </div>
           </div>
@@ -173,7 +214,8 @@
           <div class="modal-footer"
             style="margin-top: 16px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between;">
             <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-            <button type="button" class="btn btn-primary" onclick="nextStep()" style="display:flex;align-items:center;gap:8px;">
+            <button type="button" class="btn btn-primary" onclick="nextStep()"
+              style="display:flex;align-items:center;gap:8px;">
               Continue <span style="font-size:1.1em;">→</span>
             </button>
           </div>
@@ -191,31 +233,43 @@
               <label class="form-label">Event Venue</label>
 
               <!-- Segmented Pill Toggle -->
-              <div id="venue-toggle" style="display: flex; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 4px; margin-bottom: 16px; position: relative;">
-                <div id="venue-toggle-indicator" style="position: absolute; top: 4px; left: 4px; width: calc(50% - 4px); height: calc(100% - 8px); background: linear-gradient(135deg, #8b5cf6, #7c3aed); border-radius: 9px; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 8px rgba(139,92,246,0.3); z-index: 0;"></div>
-                <button type="button" id="btn-internal" onclick="setLocationMode('internal')" style="flex: 1; padding: 10px 16px; background: transparent; border: none; color: #fff; font-weight: 600; font-size: 0.85rem; cursor: pointer; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 6px; transition: color 0.3s;">
+              <div id="venue-toggle"
+                style="display: flex; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 4px; margin-bottom: 16px; position: relative;">
+                <div id="venue-toggle-indicator"
+                  style="position: absolute; top: 4px; left: 4px; width: calc(50% - 4px); height: calc(100% - 8px); background: linear-gradient(135deg, #8b5cf6, #7c3aed); border-radius: 9px; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 8px rgba(139,92,246,0.3); z-index: 0;">
+                </div>
+                <button type="button" id="btn-internal" onclick="setLocationMode('internal')"
+                  style="flex: 1; padding: 10px 16px; background: transparent; border: none; color: #fff; font-weight: 600; font-size: 0.85rem; cursor: pointer; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 6px; transition: color 0.3s;">
                   🏢 Inside Exhibition
                 </button>
-                <button type="button" id="btn-external" onclick="setLocationMode('external')" style="flex: 1; padding: 10px 16px; background: transparent; border: none; color: #64748b; font-weight: 600; font-size: 0.85rem; cursor: pointer; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 6px; transition: color 0.3s;">
+                <button type="button" id="btn-external" onclick="setLocationMode('external')"
+                  style="flex: 1; padding: 10px 16px; background: transparent; border: none; color: #64748b; font-weight: 600; font-size: 0.85rem; cursor: pointer; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 6px; transition: color 0.3s;">
                   🌍 External Venue
                 </button>
               </div>
-              
+
               <!-- Internal: venue select -->
               <div id="venue-internal-wrap" style="display: block;">
                 <div style="position: relative;">
-                  <select id="e-venue" class="form-control" onchange="updatePeriodTimes()" required style="padding-left: 42px; cursor: pointer; background-color: rgba(255,255,255,0.02);">
+                  <select id="e-venue" class="form-control" onchange="updatePeriodTimes()" required
+                    style="padding-left: 42px; cursor: pointer; background-color: rgba(255,255,255,0.02);">
                     <option value="">Select a hall inside the exhibition...</option>
                   </select>
-                  <div style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; opacity: 0.7;">🏢</div>
+                  <div
+                    style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; opacity: 0.7;">
+                    🏢</div>
                 </div>
               </div>
 
               <!-- External: venue name input -->
               <div id="venue-external-wrap" style="display: none;">
                 <div style="position: relative;">
-                  <input id="e-ext-name" type="text" class="form-control" placeholder="External Hall Name (e.g., Corinthia Hotel)" style="padding-left: 42px; background-color: rgba(255,255,255,0.02);" />
-                  <div style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; opacity: 0.7;">🌍</div>
+                  <input id="e-ext-name" type="text" class="form-control"
+                    placeholder="External Hall Name (e.g., Corinthia Hotel)"
+                    style="padding-left: 42px; background-color: rgba(255,255,255,0.02);" />
+                  <div
+                    style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; opacity: 0.7;">
+                    🌍</div>
                 </div>
               </div>
             </div>
@@ -223,8 +277,10 @@
             <div id="internal-fields">
               <div class="form-group" style="margin-top: 16px;">
                 <label class="form-label">📅 Select Event Days</label>
-                <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:8px;">Click on days to select them. Max span: 14 days between first and last day.</small>
-                <div id="e-int-calendar-wrap" style="border:1px solid rgba(139,92,246,0.15);border-radius:16px;overflow:hidden;"></div>
+                <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:8px;">Click on days to
+                  select them. Max span: 14 days between first and last day.</small>
+                <div id="e-int-calendar-wrap"
+                  style="border:1px solid rgba(139,92,246,0.15);border-radius:16px;overflow:hidden;"></div>
                 <input id="e-booking-date" type="text" style="display:none;" />
               </div>
               <div id="int-calendar-slots" style="margin-top:20px;display:flex;flex-direction:column;gap:12px;"></div>
@@ -237,15 +293,19 @@
               </div>
               <div class="form-group">
                 <label class="form-label">Proof of Booking (PDF/Image)</label>
-                <input id="e-booking-proof" type="file" accept=".pdf,image/*" class="form-control" style="padding: 7px 10px;" />
-                <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block">Required. Upload official confirmation of the external booking.</small>
+                <input id="e-booking-proof" type="file" accept=".pdf,image/*" class="form-control"
+                  style="padding: 7px 10px;" />
+                <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block">Required. Upload
+                  official confirmation of the external booking.</small>
               </div>
 
               <!-- Multi-day Calendar -->
               <div class="form-group">
                 <label class="form-label">📅 Select Event Days</label>
-                <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:8px;">Click on days to select them. Max span: 14 days between first and last day.</small>
-                <div id="e-ext-calendar-wrap" style="border:1px solid rgba(139,92,246,0.15);border-radius:16px;overflow:hidden;"></div>
+                <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:8px;">Click on days to
+                  select them. Max span: 14 days between first and last day.</small>
+                <div id="e-ext-calendar-wrap"
+                  style="border:1px solid rgba(139,92,246,0.15);border-radius:16px;overflow:hidden;"></div>
               </div>
 
               <!-- Time slots container -->
@@ -260,11 +320,13 @@
             <div class="form-section-title"><span>⚙️</span> Additional Settings</div>
             <div class="form-group">
               <label class="form-label">Event Objective</label>
-              <textarea id="e-objective" class="form-control" placeholder="What is the main goal of this event?" rows="2" required></textarea>
+              <textarea id="e-objective" class="form-control" placeholder="What is the main goal of this event?"
+                rows="2" required></textarea>
             </div>
             <div class="form-group">
               <label class="form-label">Target Audience</label>
-              <input id="e-audience" type="text" class="form-control" placeholder="e.g. Students, Professionals, General Public" required />
+              <input id="e-audience" type="text" class="form-control"
+                placeholder="e.g. Students, Professionals, General Public" required />
             </div>
             <div class="form-group">
               <label class="form-label">Capacity</label>
@@ -272,25 +334,31 @@
             </div>
             <div class="form-group">
               <label class="form-label">📄 Competent Authority Approval</label>
-              <input id="e-ministry-doc" type="file" accept=".pdf,image/*" class="form-control" style="padding: 7px 10px;" required />
-              <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block">Required. Upload the official approval from the relevant competent authority for this event.</small>
+              <input id="e-ministry-doc" type="file" accept=".pdf,image/*" class="form-control"
+                style="padding: 7px 10px;" required />
+              <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block">Required. Upload the
+                official approval from the relevant competent authority for this event.</small>
             </div>
           </div>
 
           <!-- Agenda Section -->
           <div class="form-section" style="margin-bottom: 0;">
-            <div class="form-section-title"><span>📋</span> Event Agenda <small style="font-weight:400;color:var(--danger);font-size:0.75rem;">(Required)</small></div>
-            <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:12px;">Define the schedule/program for your event. You must add at least one agenda item.</small>
-            
+            <div class="form-section-title"><span>📋</span> Event Agenda <small
+                style="font-weight:400;color:var(--danger);font-size:0.75rem;">(Required)</small></div>
+            <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:12px;">Define the
+              schedule/program for your event. You must add at least one agenda item.</small>
+
             <div id="agenda-items-create" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
-            <button type="button" class="btn btn-ghost btn-sm" onclick="addAgendaItem('agenda-items-create')" style="display:flex;align-items:center;gap:6px;">
+            <button type="button" class="btn btn-ghost btn-sm" onclick="addAgendaItem('agenda-items-create')"
+              style="display:flex;align-items:center;gap:6px;">
               <span style="font-size:1.1rem;">+</span> Add Agenda Item
             </button>
           </div>
 
           <div class="modal-footer"
             style="margin-top: 16px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between;">
-            <button type="button" class="btn btn-ghost" onclick="prevStep()" style="display:flex;align-items:center;gap:8px;">
+            <button type="button" class="btn btn-ghost" onclick="prevStep()"
+              style="display:flex;align-items:center;gap:8px;">
               <span style="font-size:1.1em;">←</span> Back
             </button>
             <button type="submit" class="btn btn-primary" style="display:flex;align-items:center;gap:8px;">
@@ -312,8 +380,11 @@
       </div>
 
       <!-- Review message banner -->
-      <div id="edit-review-banner" style="margin: 16px 0; padding: 12px 16px; background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.15); border-radius: 10px;">
-        <div style="font-size:0.7rem;font-weight:700;color:#f59e0b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">📝 Admin's Review</div>
+      <div id="edit-review-banner"
+        style="margin: 16px 0; padding: 12px 16px; background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.15); border-radius: 10px;">
+        <div
+          style="font-size:0.7rem;font-weight:700;color:#f59e0b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">
+          📝 Admin's Review</div>
         <div id="edit-review-msg" style="font-size:0.85rem;color:#e2e8f0;line-height:1.4;"></div>
       </div>
 
@@ -322,7 +393,8 @@
         <div id="edit-fields-container" class="form-section" style="margin-bottom:0;">
           <!-- Dynamic fields will be injected here -->
         </div>
-        <div class="modal-footer" style="margin-top: 16px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between;">
+        <div class="modal-footer"
+          style="margin-top: 16px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between;">
           <button type="button" class="btn btn-ghost" onclick="closeEditModal()">Cancel</button>
           <button type="submit" class="btn btn-primary" style="display:flex;align-items:center;gap:6px;">
             <span>📤</span> Submit Changes
@@ -343,116 +415,116 @@
     let fpInstance = null;
 
     const user = requireRole('Event Manager');
-    if (user) { 
-        populateSidebar(user); 
-        setActiveNav(); 
-        loadEvents(); 
-        loadVenues(); 
+    if (user) {
+      populateSidebar(user);
+      setActiveNav();
+      loadEvents();
+      loadVenues();
 
-        fpInstance = initFlatpickr("#e-booking-date", {
-            showStats: true,
-            disable: [
-                function(date) {
-                    if (!window.currentVenueBookings || !window.currentVenueBookings.length) return false;
-                    const y = date.getFullYear();
-                    const m = String(date.getMonth() + 1).padStart(2, '0');
-                    const d = String(date.getDate()).padStart(2, '0');
-                    const dateStrLocal = `${y}-${m}-${d}`;
-                    
-                    const bookings = window.currentVenueBookings.filter(b => b.booking_date === dateStrLocal);
-                    if (bookings.length > 0) {
-                        // Maintenance dates are always fully blocked
-                        const hasMaint = bookings.some(b => b.type === 'maintenance');
-                        if (hasMaint) return true;
-                        
-                        const periods = bookings.filter(b => b.type !== 'maintenance').map(b => b.period);
-                        return periods.includes('full_day') || (periods.includes('morning') && periods.includes('evening'));
-                    }
-                    return false;
-                }
-            ],
-            onChange: function() {
-                checkAvailability();
-            },
-            onOpenBefore: function(selectedDates, dateStr, fp) {
-                const venueSelect = document.getElementById('e-venue');
-                const locationType = document.getElementById('e-location-type').value;
-                if (locationType === 'internal' && !venueSelect.value) {
-                    setTimeout(() => fp.close(), 0);
-                    showToast(document.documentElement.lang === 'ar' ? 'يرجى اختيار القاعة أولاً.' : 'Please select a venue first.', 'info');
-                }
-            },
-            onDayCreate: function(dObj, dStr, fp, dayElem) {
-                dayElem.classList.remove('date-fully-booked', 'date-partially-booked', 'date-maintenance');
-                // Clean up any previous tooltip
-                const oldTip = dayElem.querySelector('.maint-tooltip');
-                if (oldTip) oldTip.remove();
-                dayElem.removeAttribute('data-maint-reason');
+      fpInstance = initFlatpickr("#e-booking-date", {
+        showStats: true,
+        disable: [
+          function (date) {
+            if (!window.currentVenueBookings || !window.currentVenueBookings.length) return false;
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            const dateStrLocal = `${y}-${m}-${d}`;
 
-                if (!window.currentVenueBookings || !window.currentVenueBookings.length) return;
-                
-                const y = dayElem.dateObj.getFullYear();
-                const m = String(dayElem.dateObj.getMonth() + 1).padStart(2, '0');
-                const d = String(dayElem.dateObj.getDate()).padStart(2, '0');
-                const dateStrLocal = `${y}-${m}-${d}`;
-                
-                const bookings = window.currentVenueBookings.filter(b => b.booking_date === dateStrLocal);
-                if (bookings.length > 0) {
-                    // Check maintenance first
-                    const maintBooking = bookings.find(b => b.type === 'maintenance');
-                    if (maintBooking) {
-                        dayElem.classList.add('date-maintenance');
-                        const reason = maintBooking.reason || null;
-                        if (reason) {
-                            dayElem.setAttribute('data-maint-reason', reason);
-                            // Add tooltip element
-                            const tooltip = document.createElement('div');
-                            tooltip.className = 'maint-tooltip';
-                            tooltip.textContent = `🔧 ${reason}`;
-                            dayElem.appendChild(tooltip);
-                        }
-                        return;
-                    }
-                    
-                    const periods = bookings.filter(b => b.type !== 'maintenance').map(b => b.period);
-                    if (periods.includes('full_day') || (periods.includes('morning') && periods.includes('evening'))) {
-                        dayElem.classList.add('date-fully-booked');
-                    } else {
-                        dayElem.classList.add('date-partially-booked');
-                    }
-                }
+            const bookings = window.currentVenueBookings.filter(b => b.booking_date === dateStrLocal);
+            if (bookings.length > 0) {
+              // Maintenance dates are always fully blocked
+              const hasMaint = bookings.some(b => b.type === 'maintenance');
+              if (hasMaint) return true;
+
+              const periods = bookings.filter(b => b.type !== 'maintenance').map(b => b.period);
+              return periods.includes('full_day') || (periods.includes('morning') && periods.includes('evening'));
             }
-        });
+            return false;
+          }
+        ],
+        onChange: function () {
+          checkAvailability();
+        },
+        onOpenBefore: function (selectedDates, dateStr, fp) {
+          const venueSelect = document.getElementById('e-venue');
+          const locationType = document.getElementById('e-location-type').value;
+          if (locationType === 'internal' && !venueSelect.value) {
+            setTimeout(() => fp.close(), 0);
+            showToast(document.documentElement.lang === 'ar' ? 'يرجى اختيار القاعة أولاً.' : 'Please select a venue first.', 'info');
+          }
+        },
+        onDayCreate: function (dObj, dStr, fp, dayElem) {
+          dayElem.classList.remove('date-fully-booked', 'date-partially-booked', 'date-maintenance');
+          // Clean up any previous tooltip
+          const oldTip = dayElem.querySelector('.maint-tooltip');
+          if (oldTip) oldTip.remove();
+          dayElem.removeAttribute('data-maint-reason');
 
-        const _ePeriodEl = document.getElementById('e-period');
-        if (_ePeriodEl) {
-            _ePeriodEl.addEventListener('change', function(e) {
-                const selectedOption = this.options[this.selectedIndex];
-                if (selectedOption && selectedOption.getAttribute('data-booked') === 'true') {
-                    showToast(document.documentElement.lang === 'ar' ? 'هذه الفترة محجوزة مسبقاً، يرجى اختيار فترة أخرى.' : 'This period is already booked, please choose another.', 'error');
-                    this.value = ''; 
-                }
-            });
+          if (!window.currentVenueBookings || !window.currentVenueBookings.length) return;
+
+          const y = dayElem.dateObj.getFullYear();
+          const m = String(dayElem.dateObj.getMonth() + 1).padStart(2, '0');
+          const d = String(dayElem.dateObj.getDate()).padStart(2, '0');
+          const dateStrLocal = `${y}-${m}-${d}`;
+
+          const bookings = window.currentVenueBookings.filter(b => b.booking_date === dateStrLocal);
+          if (bookings.length > 0) {
+            // Check maintenance first
+            const maintBooking = bookings.find(b => b.type === 'maintenance');
+            if (maintBooking) {
+              dayElem.classList.add('date-maintenance');
+              const reason = maintBooking.reason || null;
+              if (reason) {
+                dayElem.setAttribute('data-maint-reason', reason);
+                // Add tooltip element
+                const tooltip = document.createElement('div');
+                tooltip.className = 'maint-tooltip';
+                tooltip.textContent = `🔧 ${reason}`;
+                dayElem.appendChild(tooltip);
+              }
+              return;
+            }
+
+            const periods = bookings.filter(b => b.type !== 'maintenance').map(b => b.period);
+            if (periods.includes('full_day') || (periods.includes('morning') && periods.includes('evening'))) {
+              dayElem.classList.add('date-fully-booked');
+            } else {
+              dayElem.classList.add('date-partially-booked');
+            }
+          }
         }
+      });
 
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('flatpickr-day') && e.target.classList.contains('flatpickr-disabled')) {
-                if (e.target.classList.contains('date-maintenance')) {
-                    const reason = e.target.getAttribute('data-maint-reason');
-                    const isAr = document.documentElement.lang === 'ar';
-                    let msg = isAr ? '🔧 هذا التاريخ محجوز للصيانة' : '🔧 This date is reserved for maintenance';
-                    if (reason) {
-                        msg += isAr ? ` (السبب: ${reason})` : ` (Reason: ${reason})`;
-                    }
-                    msg += isAr ? '، يرجى اختيار تاريخ آخر.' : ', please choose another date.';
-                    showToast(msg, 'error');
-                } else if (e.target.classList.contains('date-fully-booked')) {
-                    showToast(document.documentElement.lang === 'ar' ? 'هذا التاريخ محجوز بالكامل، يرجى اختيار تاريخ آخر.' : 'This date is fully booked, please choose another.', 'error');
-                } else {
-                    showToast(document.documentElement.lang === 'ar' ? 'لا يمكنك حجز هذا التاريخ. يجب أن يكون الحجز بعد 30 يوماً من اليوم على الأقل.' : 'You cannot book this date. Bookings must be made at least 30 days in advance.', 'info');
-                }
+      const _ePeriodEl = document.getElementById('e-period');
+      if (_ePeriodEl) {
+        _ePeriodEl.addEventListener('change', function (e) {
+          const selectedOption = this.options[this.selectedIndex];
+          if (selectedOption && selectedOption.getAttribute('data-booked') === 'true') {
+            showToast(document.documentElement.lang === 'ar' ? 'هذه الفترة محجوزة مسبقاً، يرجى اختيار فترة أخرى.' : 'This period is already booked, please choose another.', 'error');
+            this.value = '';
+          }
+        });
+      }
+
+      document.addEventListener('click', function (e) {
+        if (e.target.classList.contains('flatpickr-day') && e.target.classList.contains('flatpickr-disabled')) {
+          if (e.target.classList.contains('date-maintenance')) {
+            const reason = e.target.getAttribute('data-maint-reason');
+            const isAr = document.documentElement.lang === 'ar';
+            let msg = isAr ? '🔧 هذا التاريخ محجوز للصيانة' : '🔧 This date is reserved for maintenance';
+            if (reason) {
+              msg += isAr ? ` (السبب: ${reason})` : ` (Reason: ${reason})`;
             }
-        }, true);
+            msg += isAr ? '، يرجى اختيار تاريخ آخر.' : ', please choose another date.';
+            showToast(msg, 'error');
+          } else if (e.target.classList.contains('date-fully-booked')) {
+            showToast(document.documentElement.lang === 'ar' ? 'هذا التاريخ محجوز بالكامل، يرجى اختيار تاريخ آخر.' : 'This date is fully booked, please choose another.', 'error');
+          } else {
+            showToast(document.documentElement.lang === 'ar' ? 'لا يمكنك حجز هذا التاريخ. يجب أن يكون الحجز بعد 30 يوماً من اليوم على الأقل.' : 'You cannot book this date. Bookings must be made at least 30 days in advance.', 'info');
+          }
+        }
+      }, true);
     }
 
     async function loadEvents() {
@@ -516,13 +588,13 @@
       const tbody = document.getElementById('events-body');
       if (!events.length) { tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">📅</div><p>No events found</p></div></td></tr>'; return; }
       tbody.innerHTML = events.map((ev, i) => {
-        const reviewBadge = ev.review_status === 'needs_review' 
+        const reviewBadge = ev.review_status === 'needs_review'
           ? `<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(245,158,11,0.12);color:#f59e0b;padding:2px 8px;border-radius:8px;font-size:0.7rem;font-weight:600;border:1px solid rgba(245,158,11,0.25);margin-left:6px;">📝 Review Required</span>`
           : ev.review_status === 'reviewed'
-          ? `<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(59,130,246,0.12);color:#3b82f6;padding:2px 8px;border-radius:8px;font-size:0.7rem;font-weight:600;border:1px solid rgba(59,130,246,0.25);margin-left:6px;">🔄 Updated</span>`
-          : '';
+            ? `<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(59,130,246,0.12);color:#3b82f6;padding:2px 8px;border-radius:8px;font-size:0.7rem;font-weight:600;border:1px solid rgba(59,130,246,0.25);margin-left:6px;">🔄 Updated</span>`
+            : '';
 
-        const reviewRow = ev.review_status === 'needs_review' && ev.review_message 
+        const reviewRow = ev.review_status === 'needs_review' && ev.review_message
           ? `<tr><td colspan="8" style="padding:0;border:none;">
               <div style="margin:0 16px 12px; padding:12px 16px; background:rgba(245,158,11,0.06); border:1px solid rgba(245,158,11,0.15); border-radius:10px; display:flex; align-items:center; gap:12px;">
                 <span style="font-size:1.3rem;">📝</span>
@@ -533,7 +605,7 @@
                 </div>
                 <button class="btn btn-sm" style="background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);white-space:nowrap;" onclick="openEditModal(${ev.id})">✏️ Edit</button>
               </div>
-            </td></tr>` 
+            </td></tr>`
           : '';
 
         return `
@@ -554,6 +626,7 @@
           <td style="display:flex;gap:6px;padding:14px 16px;flex-wrap:wrap">
             <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${ev.id})" title="View Details">ℹ️ Details</button>
             <button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='/manager/event-stats/${ev.id}'" title="View Statistics">📊 Stats</button>
+            ${ev.status === 'approved' ? `<button class="btn btn-sm" style="background:${ev.is_published ? 'rgba(16,185,129,0.12)' : 'rgba(139,92,246,0.12)'};color:${ev.is_published ? '#10b981' : '#a78bfa'};border:1px solid ${ev.is_published ? 'rgba(16,185,129,0.25)' : 'rgba(139,92,246,0.25)'}" onclick="openPublishedScheduleModal(${ev.id})" title="Publish Specific Days">${ev.is_published ? '✅' : '📅'} ${t('Publish Days')}</button>` : ''}
             ${ev.status === 'pending' ? `<button class="btn btn-sm" style="background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25)" onclick="deleteEvent(${ev.id})" title="Delete Event">🗑️ Delete</button>` : ''}
           </td>
         </tr>${reviewRow}`;
@@ -703,8 +776,8 @@
               <div>
                 <div class="ed-info-label">Location</div>
                 <div class="ed-info-value">
-                  ${ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` 
-                  : (ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` : '—')}
+                  ${ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>`
+            : (ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` : '—')}
                 </div>
               </div>
             </div>
@@ -737,16 +810,17 @@
             <div><div class="ed-info-label">Target Audience</div><div class="ed-info-value" style="font-size:0.9rem;">${ev.target_audience}</div></div>
           </div>
           ` : ''}
-          ${(function() {
-            const schedule = ev.external_schedule && ev.external_schedule.length > 0 ? ev.external_schedule : 
-                             (ev.internal_schedule && ev.internal_schedule.length > 0 ? ev.internal_schedule : null);
+          ${(function () {
+            const schedule = (ev.published_schedule && ev.published_schedule.length > 0) ? ev.published_schedule :
+              (ev.external_schedule && ev.external_schedule.length > 0 ? ev.external_schedule :
+                (ev.internal_schedule && ev.internal_schedule.length > 0 ? ev.internal_schedule : null));
             if (schedule) {
-              const dn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-              const mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+              const dn = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+              const mn = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
               let scheduleHtml = '<div style="grid-column: 1 / -1;">';
               scheduleHtml += '<div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">📅 Event Schedule (' + schedule.length + ' day' + (schedule.length > 1 ? 's' : '') + ')</div>';
               scheduleHtml += '<div style="display:flex;flex-direction:column;gap:6px;">';
-              schedule.forEach(function(slot) {
+              schedule.forEach(function (slot) {
                 const d = new Date(slot.date + 'T00:00:00');
                 scheduleHtml += '<div style="display:flex;align-items:center;gap:10px;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15);border-radius:10px;padding:10px 14px;">';
                 scheduleHtml += '<div style="min-width:42px;text-align:center;background:rgba(139,92,246,0.12);border-radius:8px;padding:5px 4px;">';
@@ -771,7 +845,7 @@
               return scheduleHtml;
             } else {
               return '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon">🕐</div><div><div class="ed-info-label">Start</div><div class="ed-info-value">' + fmtDate(ev.start_time) + '</div></div></div>' +
-                     '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon">🕔</div><div><div class="ed-info-label">End</div><div class="ed-info-value">' + fmtDate(ev.end_time) + '</div></div></div>';
+                '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon">🕔</div><div><div class="ed-info-label">End</div><div class="ed-info-value">' + fmtDate(ev.end_time) + '</div></div></div>';
             }
           })()}
           <div class="ed-info-card ed-info-warning">
@@ -795,14 +869,33 @@
 
           <!-- Agenda Section -->
           ${(() => {
-            const agenda = ev.agenda;
+            let agenda = ev.agenda;
             const hasAgenda = agenda && typeof agenda === 'object' && (Array.isArray(agenda) ? agenda.length > 0 : Object.keys(agenda).length > 0);
             let agendaHtml = '';
             if (hasAgenda) {
+              // Filter agenda by published_schedule if it exists
+              const pubDates = ev.published_schedule && ev.published_schedule.length > 0
+                ? ev.published_schedule.map(p => p.date) : null;
+
+              if (pubDates && typeof agenda === 'object' && !Array.isArray(agenda)) {
+                const filtered = {};
+                Object.keys(agenda).forEach(dateStr => {
+                  if (pubDates.includes(dateStr)) {
+                    filtered[dateStr] = agenda[dateStr];
+                  }
+                });
+                agenda = filtered;
+              }
+
+              const hasFilteredAgenda = typeof agenda === 'object' && !Array.isArray(agenda)
+                ? Object.keys(agenda).length > 0 : (Array.isArray(agenda) && agenda.length > 0);
+
+              if (!hasFilteredAgenda) return '';
+
               agendaHtml += `<div style="margin-top:16px;"><div style="font-size:0.72rem;font-weight:700;color:#22d3ee;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">📋 Event Agenda</div>`;
               if (typeof agenda === 'object' && !Array.isArray(agenda)) {
-                const dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-                const mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                const dn = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                const mn = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
                 Object.keys(agenda).sort().forEach(dateStr => {
                   const items = agenda[dateStr];
                   if (!items || items.length === 0) return;
@@ -909,68 +1002,68 @@
     window.currentAgendaEditorDay = null;
 
     function filterAgendaEditorByDay(dayStr) {
-        window.currentAgendaEditorDay = dayStr;
-        
-        // Update tabs styling
-        document.querySelectorAll('.agenda-editor-tab').forEach(tab => {
-            if(tab.dataset.day === dayStr) {
-                tab.style.background = 'rgba(139,92,246,0.15)';
-                tab.style.borderColor = 'rgba(139,92,246,0.3)';
-                tab.style.color = '#c4b5fd';
-            } else {
-                tab.style.background = 'transparent';
-                tab.style.borderColor = 'rgba(255,255,255,0.1)';
-                tab.style.color = '#94a3b8';
-            }
-        });
+      window.currentAgendaEditorDay = dayStr;
 
-        // Show/hide items
-        const items = document.querySelectorAll('#agenda-items-editor .agenda-item');
-        items.forEach(item => {
-            const sel = item.querySelector('.agenda-date');
-            if (sel && sel.value === dayStr) {
-                item.style.display = 'flex';
-            } else {
-                item.style.display = 'none';
-            }
-        });
+      // Update tabs styling
+      document.querySelectorAll('.agenda-editor-tab').forEach(tab => {
+        if (tab.dataset.day === dayStr) {
+          tab.style.background = 'rgba(139,92,246,0.15)';
+          tab.style.borderColor = 'rgba(139,92,246,0.3)';
+          tab.style.color = '#c4b5fd';
+        } else {
+          tab.style.background = 'transparent';
+          tab.style.borderColor = 'rgba(255,255,255,0.1)';
+          tab.style.color = '#94a3b8';
+        }
+      });
+
+      // Show/hide items
+      const items = document.querySelectorAll('#agenda-items-editor .agenda-item');
+      items.forEach(item => {
+        const sel = item.querySelector('.agenda-date');
+        if (sel && sel.value === dayStr) {
+          item.style.display = 'flex';
+        } else {
+          item.style.display = 'none';
+        }
+      });
     }
 
     async function openAgendaEditor(eventId) {
       agendaEditingEventId = eventId;
       const container = document.getElementById('agenda-items-editor');
       container.innerHTML = '';
-      
+
       const tabsContainer = document.getElementById('agenda-editor-tabs');
       if (tabsContainer) tabsContainer.innerHTML = '';
 
       // Fetch current event data
       const res = await api.get(`/events/${eventId}`);
       if (!res.ok) { showToast('Error loading event', 'error'); return; }
-      
+
       agendaEventData = res.data;
-      
+
       const schedule = agendaEventData.external_schedule?.length > 0 ? agendaEventData.external_schedule : agendaEventData.internal_schedule;
       if (schedule && Array.isArray(schedule)) {
-          agendaDays = schedule.map(s => s.date).sort();
+        agendaDays = schedule.map(s => s.date).sort();
       } else {
-          agendaDays = agendaEventData.agenda ? Object.keys(agendaEventData.agenda) : [];
+        agendaDays = agendaEventData.agenda ? Object.keys(agendaEventData.agenda) : [];
       }
 
       // Build tabs
       if (tabsContainer) {
-          const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-          agendaDays.forEach(dStr => {
-              const d = new Date(dStr + 'T00:00:00');
-              const label = `${dayNames[d.getDay()]} ${d.getDate()}`;
-              const btn = document.createElement('button');
-              btn.className = 'agenda-editor-tab btn btn-sm';
-              btn.dataset.day = dStr;
-              btn.textContent = label;
-              btn.style.cssText = 'border-radius:20px; border:1px solid rgba(255,255,255,0.1); background:transparent; color:#94a3b8; padding:4px 12px; font-size:0.75rem; white-space:nowrap; cursor:pointer; transition:all 0.2s;';
-              btn.onclick = () => filterAgendaEditorByDay(dStr);
-              tabsContainer.appendChild(btn);
-          });
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        agendaDays.forEach(dStr => {
+          const d = new Date(dStr + 'T00:00:00');
+          const label = `${dayNames[d.getDay()]} ${d.getDate()}`;
+          const btn = document.createElement('button');
+          btn.className = 'agenda-editor-tab btn btn-sm';
+          btn.dataset.day = dStr;
+          btn.textContent = label;
+          btn.style.cssText = 'border-radius:20px; border:1px solid rgba(255,255,255,0.1); background:transparent; color:#94a3b8; padding:4px 12px; font-size:0.75rem; white-space:nowrap; cursor:pointer; transition:all 0.2s;';
+          btn.onclick = () => filterAgendaEditorByDay(dStr);
+          tabsContainer.appendChild(btn);
+        });
       }
 
       // Load existing agenda
@@ -995,9 +1088,9 @@
       }
 
       document.getElementById('agenda-editor-modal').classList.add('open');
-      
+
       if (agendaDays.length > 0) {
-          filterAgendaEditorByDay(agendaDays[0]);
+        filterAgendaEditorByDay(agendaDays[0]);
       }
     }
 
@@ -1011,60 +1104,60 @@
 
     async function saveAgenda() {
       if (!agendaEditingEventId) return;
-      
+
       const cleanAgenda = {};
       const items = document.querySelectorAll('#agenda-items-editor .agenda-item');
       items.forEach(item => {
-          const date = item.querySelector('.agenda-date').value;
-          const title = item.querySelector('.agenda-title').value.trim();
-          const startTime = item.querySelector('.agenda-start').value;
-          const endTime = item.querySelector('.agenda-end').value;
-          const description = item.querySelector('.agenda-desc') ? item.querySelector('.agenda-desc').value.trim() : '';
-          
-          if (date && title && startTime && endTime) {
-              if (!cleanAgenda[date]) cleanAgenda[date] = [];
-              cleanAgenda[date].push({ title, start_time: startTime, end_time: endTime, description });
-          }
+        const date = item.querySelector('.agenda-date').value;
+        const title = item.querySelector('.agenda-title').value.trim();
+        const startTime = item.querySelector('.agenda-start').value;
+        const endTime = item.querySelector('.agenda-end').value;
+        const description = item.querySelector('.agenda-desc') ? item.querySelector('.agenda-desc').value.trim() : '';
+
+        if (date && title && startTime && endTime) {
+          if (!cleanAgenda[date]) cleanAgenda[date] = [];
+          cleanAgenda[date].push({ title, start_time: startTime, end_time: endTime, description });
+        }
       });
 
       // Validate bounds and logic
       let isValid = true;
       for (const day of Object.keys(cleanAgenda)) {
-         let startBound = "00:00", endBound = "23:59";
-         const extS = agendaEventData.external_schedule?.find(x => x.date === day);
-         const intS = agendaEventData.internal_schedule?.find(x => x.date === day);
-         
-         if (extS) { 
-             startBound = extS.start_time; endBound = extS.end_time; 
-         } else if (intS && intS.start_time) { 
-             startBound = intS.start_time; endBound = intS.end_time; 
-         } else if (agendaEventData.start_time) {
-             startBound = agendaEventData.start_time.split('T')[1].substring(0,5);
-             endBound = agendaEventData.end_time.split('T')[1].substring(0,5);
-         }
-         
-         const items = cleanAgenda[day] || [];
-         items.sort((a, b) => a.start_time.localeCompare(b.start_time));
-         
-         for (let i = 0; i < items.length; i++) {
-            const item = items[i];
-            if (item.start_time >= item.end_time) {
-               showToast(`Invalid time in ${day}. Start time must be before end time.`, 'error');
-               isValid = false;
-               break;
-            }
-            if (item.start_time < startBound || item.end_time > endBound) {
-               showToast(`Invalid time in ${day}. Agenda must be strictly between ${startBound} and ${endBound}`, 'error');
-               isValid = false;
-               break;
-            }
-            if (i > 0 && item.start_time < items[i-1].end_time) {
-               showToast(`Overlapping agenda items in ${day} are not allowed.`, 'error');
-               isValid = false;
-               break;
-            }
-         }
-         if (!isValid) break;
+        let startBound = "00:00", endBound = "23:59";
+        const extS = agendaEventData.external_schedule?.find(x => x.date === day);
+        const intS = agendaEventData.internal_schedule?.find(x => x.date === day);
+
+        if (extS) {
+          startBound = extS.start_time; endBound = extS.end_time;
+        } else if (intS && intS.start_time) {
+          startBound = intS.start_time; endBound = intS.end_time;
+        } else if (agendaEventData.start_time) {
+          startBound = agendaEventData.start_time.split('T')[1].substring(0, 5);
+          endBound = agendaEventData.end_time.split('T')[1].substring(0, 5);
+        }
+
+        const items = cleanAgenda[day] || [];
+        items.sort((a, b) => a.start_time.localeCompare(b.start_time));
+
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i];
+          if (item.start_time >= item.end_time) {
+            showToast(`Invalid time in ${day}. Start time must be before end time.`, 'error');
+            isValid = false;
+            break;
+          }
+          if (item.start_time < startBound || item.end_time > endBound) {
+            showToast(`Invalid time in ${day}. Agenda must be strictly between ${startBound} and ${endBound}`, 'error');
+            isValid = false;
+            break;
+          }
+          if (i > 0 && item.start_time < items[i - 1].end_time) {
+            showToast(`Overlapping agenda items in ${day} are not allowed.`, 'error');
+            isValid = false;
+            break;
+          }
+        }
+        if (!isValid) break;
       }
       if (!isValid) return;
 
@@ -1085,145 +1178,145 @@
     let cancellationEventId = null;
 
     function openCancellationModal(eventId) {
-        cancellationEventId = eventId;
-        document.getElementById('cancellation-reason').value = '';
-        document.getElementById('cancellation-modal').classList.add('open');
+      cancellationEventId = eventId;
+      document.getElementById('cancellation-reason').value = '';
+      document.getElementById('cancellation-modal').classList.add('open');
     }
 
     function closeCancellationModal() {
-        document.getElementById('cancellation-modal').classList.remove('open');
-        cancellationEventId = null;
+      document.getElementById('cancellation-modal').classList.remove('open');
+      cancellationEventId = null;
     }
 
     async function submitCancellationRequest() {
-        const reason = document.getElementById('cancellation-reason').value.trim();
-        if (!reason) {
-            showToast(document.documentElement.lang === 'ar' ? 'يرجى إدخال سبب الإلغاء' : 'Please enter a cancellation reason', 'error');
-            return;
-        }
+      const reason = document.getElementById('cancellation-reason').value.trim();
+      if (!reason) {
+        showToast(document.documentElement.lang === 'ar' ? 'يرجى إدخال سبب الإلغاء' : 'Please enter a cancellation reason', 'error');
+        return;
+      }
 
-        const btn = document.getElementById('confirm-cancellation-btn');
-        btn.disabled = true;
-        btn.textContent = document.documentElement.lang === 'ar' ? 'جاري الإرسال...' : 'Submitting...';
+      const btn = document.getElementById('confirm-cancellation-btn');
+      btn.disabled = true;
+      btn.textContent = document.documentElement.lang === 'ar' ? 'جاري الإرسال...' : 'Submitting...';
 
-        try {
-            const res = await api.post(`/events/${cancellationEventId}/request-cancellation`, { cancellation_reason: reason });
-            if (res.ok) {
-                showToast(document.documentElement.lang === 'ar' ? 'تم إرسال طلب الإلغاء بنجاح' : 'Cancellation request submitted successfully', 'success');
-                closeCancellationModal();
-                closeEventDetailsModal();
-                loadEvents();
-            } else {
-                showToast(res.data?.message || 'Error', 'error');
-            }
-        } catch (err) {
-            console.error('Error submitting cancellation:', err);
-            showToast('Error', 'error');
-        } finally {
-            btn.disabled = false;
-            btn.textContent = document.documentElement.lang === 'ar' ? 'إرسال الطلب' : 'Submit Request';
+      try {
+        const res = await api.post(`/events/${cancellationEventId}/request-cancellation`, { cancellation_reason: reason });
+        if (res.ok) {
+          showToast(document.documentElement.lang === 'ar' ? 'تم إرسال طلب الإلغاء بنجاح' : 'Cancellation request submitted successfully', 'success');
+          closeCancellationModal();
+          closeEventDetailsModal();
+          loadEvents();
+        } else {
+          showToast(res.data?.message || 'Error', 'error');
         }
+      } catch (err) {
+        console.error('Error submitting cancellation:', err);
+        showToast('Error', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = document.documentElement.lang === 'ar' ? 'إرسال الطلب' : 'Submit Request';
+      }
     }
 
     async function toggleTicketSales(eventId) {
-        try {
-            const res = await api.patch(`/events/${eventId}/toggle-tickets`);
-            if (res.ok) {
-                showToast(res.data.is_tickets_open ? 
-                    (document.documentElement.lang === 'ar' ? 'تم فتح بيع التذاكر' : 'Ticket sales are now OPEN') : 
-                    (document.documentElement.lang === 'ar' ? 'تم إغلاق بيع التذاكر' : 'Ticket sales are now CLOSED'), 
-                    'success'
-                );
-                // Refresh details to update button state
-                showEventDetails(eventId);
-            } else {
-                showToast(res.data?.message || 'Error', 'error');
-            }
-        } catch (err) {
-            console.error('Error toggling tickets:', err);
-            showToast('Error', 'error');
+      try {
+        const res = await api.patch(`/events/${eventId}/toggle-tickets`);
+        if (res.ok) {
+          showToast(res.data.is_tickets_open ?
+            (document.documentElement.lang === 'ar' ? 'تم فتح بيع التذاكر' : 'Ticket sales are now OPEN') :
+            (document.documentElement.lang === 'ar' ? 'تم إغلاق بيع التذاكر' : 'Ticket sales are now CLOSED'),
+            'success'
+          );
+          // Refresh details to update button state
+          showEventDetails(eventId);
+        } else {
+          showToast(res.data?.message || 'Error', 'error');
         }
+      } catch (err) {
+        console.error('Error toggling tickets:', err);
+        showToast('Error', 'error');
+      }
     }
 
     // ── Create Event Agenda Days Logic ─────────────────────
     let createAgendaDays = [];
 
     function updateCreateAgendaDays() {
-        const locationType = document.getElementById('e-location-type').value;
-        let newDays = [];
-        if (locationType === 'internal') {
-            newDays = [...intSelectedDates].sort();
-        } else {
-            newDays = [...extSelectedDates].sort();
-        }
-        
-        createAgendaDays = newDays;
+      const locationType = document.getElementById('e-location-type').value;
+      let newDays = [];
+      if (locationType === 'internal') {
+        newDays = [...intSelectedDates].sort();
+      } else {
+        newDays = [...extSelectedDates].sort();
+      }
 
-        // Collect existing days in agenda to avoid duplicating
-        const selects = document.querySelectorAll('#agenda-items-create .agenda-date');
-        let existingDatesInAgenda = [];
-        
-        selects.forEach(select => {
-            const currentVal = select.value;
-            if (currentVal) existingDatesInAgenda.push(currentVal);
-            
-            let optionsHtml = '<option value="">' + (document.documentElement.lang === 'ar' ? 'اختر اليوم' : 'Select Day') + '</option>';
-            const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-            createAgendaDays.forEach(dStr => {
-                const d = new Date(dStr + 'T00:00:00');
-                const label = `${dayNames[d.getDay()]} ${d.getDate()}`;
-                const isSelected = (currentVal === dStr) ? 'selected' : '';
-                optionsHtml += `<option value="${dStr}" ${isSelected}>${label}</option>`;
-            });
-            select.innerHTML = optionsHtml;
-        });
+      createAgendaDays = newDays;
 
-        // Remove agenda items for days that were deselected
-        const agendaItems = document.querySelectorAll('#agenda-items-create .agenda-item');
-        agendaItems.forEach(item => {
-            const dateSelect = item.querySelector('.agenda-date');
-            if (dateSelect.value && !createAgendaDays.includes(dateSelect.value)) {
-                item.remove();
-                existingDatesInAgenda = existingDatesInAgenda.filter(d => d !== dateSelect.value);
-            }
-        });
+      // Collect existing days in agenda to avoid duplicating
+      const selects = document.querySelectorAll('#agenda-items-create .agenda-date');
+      let existingDatesInAgenda = [];
 
-        // Auto-add missing days
+      selects.forEach(select => {
+        const currentVal = select.value;
+        if (currentVal) existingDatesInAgenda.push(currentVal);
+
+        let optionsHtml = '<option value="">' + (document.documentElement.lang === 'ar' ? 'اختر اليوم' : 'Select Day') + '</option>';
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         createAgendaDays.forEach(dStr => {
-            if (!existingDatesInAgenda.includes(dStr)) {
-                let startTime = '09:00';
-                let endTime = '10:00';
-                
-                if (locationType === 'external') {
-                    const card = document.querySelector(`.ext-slot-card[data-date="${dStr}"]`);
-                    if (card) {
-                        const sTime = card.querySelector('.ext-slot-start').value;
-                        if (sTime) {
-                           startTime = sTime;
-                           let [h, m] = sTime.split(':').map(Number);
-                           h = (h + 1) % 24;
-                           endTime = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
-                        }
-                    }
-                } else {
-                    const card = document.querySelector(`.int-slot-card[data-date="${dStr}"]`);
-                    if (card) {
-                        const period = card.querySelector('.int-slot-period').value;
-                        if (period === 'evening') {
-                            startTime = '15:00';
-                            endTime = '16:00';
-                        }
-                    }
-                }
-
-                addAgendaItem('agenda-items-create', { 
-                    date: dStr, 
-                    start_time: startTime, 
-                    end_time: endTime, 
-                    title: document.documentElement.lang === 'ar' ? 'النشاط الأول' : 'Activity 1' 
-                });
-            }
+          const d = new Date(dStr + 'T00:00:00');
+          const label = `${dayNames[d.getDay()]} ${d.getDate()}`;
+          const isSelected = (currentVal === dStr) ? 'selected' : '';
+          optionsHtml += `<option value="${dStr}" ${isSelected}>${label}</option>`;
         });
+        select.innerHTML = optionsHtml;
+      });
+
+      // Remove agenda items for days that were deselected
+      const agendaItems = document.querySelectorAll('#agenda-items-create .agenda-item');
+      agendaItems.forEach(item => {
+        const dateSelect = item.querySelector('.agenda-date');
+        if (dateSelect.value && !createAgendaDays.includes(dateSelect.value)) {
+          item.remove();
+          existingDatesInAgenda = existingDatesInAgenda.filter(d => d !== dateSelect.value);
+        }
+      });
+
+      // Auto-add missing days
+      createAgendaDays.forEach(dStr => {
+        if (!existingDatesInAgenda.includes(dStr)) {
+          let startTime = '09:00';
+          let endTime = '10:00';
+
+          if (locationType === 'external') {
+            const card = document.querySelector(`.ext-slot-card[data-date="${dStr}"]`);
+            if (card) {
+              const sTime = card.querySelector('.ext-slot-start').value;
+              if (sTime) {
+                startTime = sTime;
+                let [h, m] = sTime.split(':').map(Number);
+                h = (h + 1) % 24;
+                endTime = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+              }
+            }
+          } else {
+            const card = document.querySelector(`.int-slot-card[data-date="${dStr}"]`);
+            if (card) {
+              const period = card.querySelector('.int-slot-period').value;
+              if (period === 'evening') {
+                startTime = '15:00';
+                endTime = '16:00';
+              }
+            }
+          }
+
+          addAgendaItem('agenda-items-create', {
+            date: dStr,
+            start_time: startTime,
+            end_time: endTime,
+            title: document.documentElement.lang === 'ar' ? 'النشاط الأول' : 'Activity 1'
+          });
+        }
+      });
     }
 
 
@@ -1268,25 +1361,25 @@
         showStats: true,
         appendTo: wrap,
         disable: [
-            function(date) {
-                if (!window.currentVenueBookings || !window.currentVenueBookings.length) return false;
-                const y = date.getFullYear();
-                const m = String(date.getMonth() + 1).padStart(2, '0');
-                const d = String(date.getDate()).padStart(2, '0');
-                const dateStrLocal = `${y}-${m}-${d}`;
-                
-                const bookings = window.currentVenueBookings.filter(b => b.booking_date === dateStrLocal);
-                if (bookings.length > 0) {
-                    const hasMaint = bookings.some(b => b.type === 'maintenance');
-                    if (hasMaint) return true;
-                    
-                    const periods = bookings.filter(b => b.type !== 'maintenance').map(b => b.period);
-                    return periods.includes('full_day') || (periods.includes('morning') && periods.includes('evening'));
-                }
-                return false;
+          function (date) {
+            if (!window.currentVenueBookings || !window.currentVenueBookings.length) return false;
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            const dateStrLocal = `${y}-${m}-${d}`;
+
+            const bookings = window.currentVenueBookings.filter(b => b.booking_date === dateStrLocal);
+            if (bookings.length > 0) {
+              const hasMaint = bookings.some(b => b.type === 'maintenance');
+              if (hasMaint) return true;
+
+              const periods = bookings.filter(b => b.type !== 'maintenance').map(b => b.period);
+              return periods.includes('full_day') || (periods.includes('morning') && periods.includes('evening'));
             }
+            return false;
+          }
         ],
-        onChange: function(selectedDates, dateStr) {
+        onChange: function (selectedDates, dateStr) {
           if (selectedDates.length >= 2) {
             const sorted = [...selectedDates].sort((a, b) => a - b);
             const first = sorted[0];
@@ -1308,41 +1401,41 @@
           }).sort();
           renderIntTimeSlots();
         },
-        onDayCreate: function(dObj, dStr, fp, dayElem) {
-            dayElem.classList.remove('date-fully-booked', 'date-partially-booked', 'date-maintenance');
-            const oldTip = dayElem.querySelector('.maint-tooltip');
-            if (oldTip) oldTip.remove();
-            dayElem.removeAttribute('data-maint-reason');
+        onDayCreate: function (dObj, dStr, fp, dayElem) {
+          dayElem.classList.remove('date-fully-booked', 'date-partially-booked', 'date-maintenance');
+          const oldTip = dayElem.querySelector('.maint-tooltip');
+          if (oldTip) oldTip.remove();
+          dayElem.removeAttribute('data-maint-reason');
 
-            if (!window.currentVenueBookings || !window.currentVenueBookings.length) return;
-            
-            const y = dayElem.dateObj.getFullYear();
-            const m = String(dayElem.dateObj.getMonth() + 1).padStart(2, '0');
-            const d = String(dayElem.dateObj.getDate()).padStart(2, '0');
-            const dateStrLocal = `${y}-${m}-${d}`;
-            
-            const bookings = window.currentVenueBookings.filter(b => b.booking_date === dateStrLocal);
-            if (bookings.length > 0) {
-                const maintBooking = bookings.find(b => b.type === 'maintenance');
-                if (maintBooking) {
-                    dayElem.classList.add('date-maintenance');
-                    if (maintBooking.reason) {
-                        dayElem.setAttribute('data-maint-reason', maintBooking.reason);
-                        const tooltip = document.createElement('div');
-                        tooltip.className = 'maint-tooltip';
-                        tooltip.textContent = `🔧 ${maintBooking.reason}`;
-                        dayElem.appendChild(tooltip);
-                    }
-                    return;
-                }
-                
-                const periods = bookings.filter(b => b.type !== 'maintenance').map(b => b.period);
-                if (periods.includes('full_day') || (periods.includes('morning') && periods.includes('evening'))) {
-                    dayElem.classList.add('date-fully-booked');
-                } else {
-                    dayElem.classList.add('date-partially-booked');
-                }
+          if (!window.currentVenueBookings || !window.currentVenueBookings.length) return;
+
+          const y = dayElem.dateObj.getFullYear();
+          const m = String(dayElem.dateObj.getMonth() + 1).padStart(2, '0');
+          const d = String(dayElem.dateObj.getDate()).padStart(2, '0');
+          const dateStrLocal = `${y}-${m}-${d}`;
+
+          const bookings = window.currentVenueBookings.filter(b => b.booking_date === dateStrLocal);
+          if (bookings.length > 0) {
+            const maintBooking = bookings.find(b => b.type === 'maintenance');
+            if (maintBooking) {
+              dayElem.classList.add('date-maintenance');
+              if (maintBooking.reason) {
+                dayElem.setAttribute('data-maint-reason', maintBooking.reason);
+                const tooltip = document.createElement('div');
+                tooltip.className = 'maint-tooltip';
+                tooltip.textContent = `🔧 ${maintBooking.reason}`;
+                dayElem.appendChild(tooltip);
+              }
+              return;
             }
+
+            const periods = bookings.filter(b => b.type !== 'maintenance').map(b => b.period);
+            if (periods.includes('full_day') || (periods.includes('morning') && periods.includes('evening'))) {
+              dayElem.classList.add('date-fully-booked');
+            } else {
+              dayElem.classList.add('date-partially-booked');
+            }
+          }
         }
       });
     }
@@ -1363,7 +1456,7 @@
       });
 
       const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-      const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
       container.innerHTML = intSelectedDates.map((dateStr) => {
         const d = new Date(dateStr + 'T00:00:00');
@@ -1371,7 +1464,7 @@
         const monthName = monthNames[d.getMonth()];
         const dayNum = d.getDate();
         const prevPeriod = existingPeriods[dateStr] || '';
-        
+
         const bookings = window.currentVenueBookings ? window.currentVenueBookings.filter(b => b.booking_date === dateStr) : [];
         const bookedPeriods = bookings.filter(b => b.type !== 'maintenance').map(b => b.period);
 
@@ -1404,7 +1497,7 @@
       updateCreateAgendaDays();
     }
 
-    window.removeIntDay = function(dateStr) {
+    window.removeIntDay = function (dateStr) {
       if (intCalendarInstance) {
         const current = intCalendarInstance.selectedDates;
         const dObj = new Date(dateStr + 'T00:00:00');
@@ -1415,13 +1508,13 @@
       }
     };
 
-    window.checkIntPeriodAvailability = function(selectElem, dateStr) {
-        const bookings = window.currentVenueBookings ? window.currentVenueBookings.filter(b => b.booking_date === dateStr) : [];
-        const bookedPeriods = bookings.filter(b => b.type !== 'maintenance').map(b => b.period);
-        if (bookedPeriods.includes(selectElem.value) || (selectElem.value === 'full_day' && (bookedPeriods.includes('morning') || bookedPeriods.includes('evening'))) || (bookedPeriods.includes('full_day'))) {
-            showToast('This period is already booked. Please select another.', 'error');
-            selectElem.value = '';
-        }
+    window.checkIntPeriodAvailability = function (selectElem, dateStr) {
+      const bookings = window.currentVenueBookings ? window.currentVenueBookings.filter(b => b.booking_date === dateStr) : [];
+      const bookedPeriods = bookings.filter(b => b.type !== 'maintenance').map(b => b.period);
+      if (bookedPeriods.includes(selectElem.value) || (selectElem.value === 'full_day' && (bookedPeriods.includes('morning') || bookedPeriods.includes('evening'))) || (bookedPeriods.includes('full_day'))) {
+        showToast('This period is already booked. Please select another.', 'error');
+        selectElem.value = '';
+      }
     };
 
     function buildInternalSchedule() {
@@ -1454,7 +1547,7 @@
         inline: true,
         animate: true,
         appendTo: wrap,
-        onChange: function(selectedDates, dateStr) {
+        onChange: function (selectedDates, dateStr) {
           // Enforce 14-day max window
           if (selectedDates.length >= 2) {
             const sorted = [...selectedDates].sort((a, b) => a - b);
@@ -1505,7 +1598,7 @@
       });
 
       const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-      const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
       container.innerHTML = extSelectedDates.map((dateStr, i) => {
         const d = new Date(dateStr + 'T00:00:00');
@@ -1590,19 +1683,19 @@
       const item = document.createElement('div');
       item.className = 'agenda-item';
       item.style.cssText = 'display:flex;flex-direction:column;gap:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(139,92,246,0.15);border-radius:12px;padding:12px 14px;';
-      
+
       let days = [];
       if (containerId === 'agenda-items-create') days = createAgendaDays;
       else if (containerId === 'agenda-items-editor') days = agendaDays;
 
       const isAr = document.documentElement.lang === 'ar';
       let optionsHtml = '<option value="">' + (isAr ? 'اختر اليوم' : 'Select Day') + '</option>';
-      const dayNames = isAr ? ['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'] : ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      const dayNames = isAr ? ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'] : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
       days.forEach(dStr => {
-          const d = new Date(dStr + 'T00:00:00');
-          const label = `${dayNames[d.getDay()]} ${d.getDate()}`;
-          const selected = (data && data.date === dStr) ? 'selected' : '';
-          optionsHtml += `<option value="${dStr}" ${selected}>${label}</option>`;
+        const d = new Date(dStr + 'T00:00:00');
+        const label = `${dayNames[d.getDay()]} ${d.getDate()}`;
+        const selected = (data && data.date === dStr) ? 'selected' : '';
+        optionsHtml += `<option value="${dStr}" ${selected}>${label}</option>`;
       });
 
       item.innerHTML = `
@@ -1644,12 +1737,12 @@
 
       // Add event listener to auto-hide if changed in the editor modal
       const selectElem = item.querySelector('.agenda-date');
-      selectElem.addEventListener('change', function() {
-          if (containerId === 'agenda-items-editor' && window.currentAgendaEditorDay) {
-              if (this.value !== window.currentAgendaEditorDay) {
-                  item.style.display = 'none';
-              }
+      selectElem.addEventListener('change', function () {
+        if (containerId === 'agenda-items-editor' && window.currentAgendaEditorDay) {
+          if (this.value !== window.currentAgendaEditorDay) {
+            item.style.display = 'none';
           }
+        }
       });
     }
 
@@ -1668,7 +1761,7 @@
       const periodEl = document.getElementById('e-period');
       const periodSelect = periodEl ? periodEl.value : '';
       const timeLabel = document.getElementById('selected-period-time');
-      
+
       if (!venueId) {
         if (timeLabel) timeLabel.textContent = document.documentElement.lang === 'ar' ? 'اختر قاعة أولاً لرؤية الوقت' : 'Select a venue first to see the time';
         window.currentVenueBookings = [];
@@ -1679,16 +1772,16 @@
         checkAvailability();
         return;
       }
-      
+
       const v = globalVenues.find(x => x.id == venueId);
       if (v && timeLabel) {
         const formatTime = (t24) => {
-          if(!t24) return '';
+          if (!t24) return '';
           let [h, m] = t24.split(':');
           h = parseInt(h);
           const ampm = h >= 12 ? 'PM' : 'AM';
           h = h % 12;
-          h = h ? h : 12; 
+          h = h ? h : 12;
           return `${h.toString().padStart(2, '0')}:${m} ${ampm}`;
         };
 
@@ -1702,22 +1795,22 @@
       }
 
       if (window.lastFetchedVenueId !== venueId) {
-         window.lastFetchedVenueId = venueId;
-         const res = await api.get(`/venues/${venueId}/bookings`);
-         if (res.ok) {
-            window.currentVenueBookings = res.data;
-         } else {
-            window.currentVenueBookings = [];
-         }
-         if (fpInstance) {
-             fpInstance.redraw();
-             if (fpInstance.updateCustomStats) fpInstance.updateCustomStats();
-         }
-         // Also refresh the internal multi-day calendar
-         if (intCalendarInstance) {
-             intCalendarInstance.redraw();
-             if (intCalendarInstance.updateCustomStats) intCalendarInstance.updateCustomStats();
-         }
+        window.lastFetchedVenueId = venueId;
+        const res = await api.get(`/venues/${venueId}/bookings`);
+        if (res.ok) {
+          window.currentVenueBookings = res.data;
+        } else {
+          window.currentVenueBookings = [];
+        }
+        if (fpInstance) {
+          fpInstance.redraw();
+          if (fpInstance.updateCustomStats) fpInstance.updateCustomStats();
+        }
+        // Also refresh the internal multi-day calendar
+        if (intCalendarInstance) {
+          intCalendarInstance.redraw();
+          if (intCalendarInstance.updateCustomStats) intCalendarInstance.updateCustomStats();
+        }
       }
       checkAvailability();
     }
@@ -1725,34 +1818,34 @@
     function checkAvailability() {
       const date = document.getElementById('e-booking-date').value;
       const periodEl = document.getElementById('e-period');
-      
+
       if (!date) return;
       if (!periodEl) return; // Period dropdown no longer exists in new multi-day UI
 
       const periodOpts = periodEl.options;
-      for(let i=0; i<periodOpts.length; i++) {
-         periodOpts[i].removeAttribute('data-booked');
-         periodOpts[i].text = periodOpts[i].text.replace(' (محجوز)', '').replace(' (Booked)', '');
+      for (let i = 0; i < periodOpts.length; i++) {
+        periodOpts[i].removeAttribute('data-booked');
+        periodOpts[i].text = periodOpts[i].text.replace(' (محجوز)', '').replace(' (Booked)', '');
       }
 
       const bookedPeriods = (window.currentVenueBookings || []).filter(b => b.booking_date === date).map(b => b.period);
-      
-      for(let i=0; i<periodOpts.length; i++) {
-         const p = periodOpts[i].value;
-         if (bookedPeriods.includes(p) || (bookedPeriods.includes('full_day')) || (p === 'full_day' && bookedPeriods.length > 0)) {
-             periodOpts[i].setAttribute('data-booked', 'true');
-             periodOpts[i].text += ` (${document.documentElement.lang === 'ar' ? 'محجوز' : 'Booked'})`;
-         }
+
+      for (let i = 0; i < periodOpts.length; i++) {
+        const p = periodOpts[i].value;
+        if (bookedPeriods.includes(p) || (bookedPeriods.includes('full_day')) || (p === 'full_day' && bookedPeriods.length > 0)) {
+          periodOpts[i].setAttribute('data-booked', 'true');
+          periodOpts[i].text += ` (${document.documentElement.lang === 'ar' ? 'محجوز' : 'Booked'})`;
+        }
       }
-      
+
       if (periodEl.options[periodEl.selectedIndex]?.getAttribute('data-booked') === 'true') {
-         periodEl.value = '';
+        periodEl.value = '';
       }
     }
 
     let currentWizardStep = 1;
 
-    function openModal() { 
+    function openModal() {
       currentWizardStep = 1;
       setLocationMode('internal');
       updateWizardUI();
@@ -1781,7 +1874,7 @@
       // Reset agenda
       const agendaCreate = document.getElementById('agenda-items-create');
       if (agendaCreate) agendaCreate.innerHTML = '';
-      
+
       createAgendaDays = [];
     }
 
@@ -1791,12 +1884,12 @@
       const desc = document.getElementById('e-desc').value.trim();
       const type = document.getElementById('e-type').value;
       const image = document.getElementById('e-image').files[0];
-      
+
       if (!title) { showToast(document.documentElement.lang === 'ar' ? 'الرجاء إدخال عنوان الحدث' : 'Please enter an event title', 'error'); document.getElementById('e-title').focus(); return; }
       if (!desc) { showToast(document.documentElement.lang === 'ar' ? 'الرجاء إدخال الوصف' : 'Please enter a description', 'error'); document.getElementById('e-desc').focus(); return; }
       if (!type) { showToast(document.documentElement.lang === 'ar' ? 'الرجاء اختيار نوع الحدث' : 'Please select an event type', 'error'); document.getElementById('e-type').focus(); return; }
       if (!image) { showToast(document.documentElement.lang === 'ar' ? 'الرجاء رفع صورة غلاف للحدث' : 'Please upload an event banner image', 'error'); document.getElementById('e-image').focus(); return; }
-      
+
       currentWizardStep = 2;
       updateWizardUI();
       // Scroll modal to top
@@ -1861,7 +1954,7 @@
     }
 
     // Banner image preview
-    document.getElementById('e-image').addEventListener('change', function(e) {
+    document.getElementById('e-image').addEventListener('change', function (e) {
       const file = e.target.files[0];
       const preview = document.getElementById('banner-preview');
       const img = document.getElementById('banner-preview-img');
@@ -1888,7 +1981,7 @@
 
       const fieldLabels = {
         title: '📝 Event Title',
-        description: '📄 Description', 
+        description: '📄 Description',
         event_type: '🏷️ Event Type',
         capacity: '👥 Capacity',
         event_objective: '🎯 Event Objective',
@@ -1899,7 +1992,7 @@
       };
 
       fields.forEach(f => {
-        switch(f) {
+        switch (f) {
           case 'title':
             html += `<div class="form-group"><label class="form-label">${fieldLabels[f]}</label>
               <input id="edit-title" type="text" class="form-control" value="${ev.title || ''}" required /></div>`;
@@ -1911,15 +2004,15 @@
           case 'event_type':
             html += `<div class="form-group"><label class="form-label">${fieldLabels[f]}</label>
               <select id="edit-type" class="form-control">
-                <option value="مؤتمر" ${ev.event_type==='مؤتمر'?'selected':''}>Conference</option>
-                <option value="ندوة" ${ev.event_type==='ندوة'?'selected':''}>Seminar</option>
-                <option value="ورشة عمل" ${ev.event_type==='ورشة عمل'?'selected':''}>Workshop</option>
-                <option value="دورة تدريبية" ${ev.event_type==='دورة تدريبية'?'selected':''}>Training</option>
-                <option value="ترفيه" ${ev.event_type==='ترفيه'?'selected':''}>Entertainment</option>
-                <option value="ملتقى علمي" ${ev.event_type==='ملتقى علمي'?'selected':''}>Scientific Forum</option>
-                <option value="رياضة" ${ev.event_type==='رياضة'?'selected':''}>Sports</option>
-                <option value="تقنية" ${ev.event_type==='تقنية'?'selected':''}>Technology</option>
-                <option value="اجتماعية" ${ev.event_type==='اجتماعية'?'selected':''}>Social</option>
+                <option value="مؤتمر" ${ev.event_type === 'مؤتمر' ? 'selected' : ''}>Conference</option>
+                <option value="ندوة" ${ev.event_type === 'ندوة' ? 'selected' : ''}>Seminar</option>
+                <option value="ورشة عمل" ${ev.event_type === 'ورشة عمل' ? 'selected' : ''}>Workshop</option>
+                <option value="دورة تدريبية" ${ev.event_type === 'دورة تدريبية' ? 'selected' : ''}>Training</option>
+                <option value="ترفيه" ${ev.event_type === 'ترفيه' ? 'selected' : ''}>Entertainment</option>
+                <option value="ملتقى علمي" ${ev.event_type === 'ملتقى علمي' ? 'selected' : ''}>Scientific Forum</option>
+                <option value="رياضة" ${ev.event_type === 'رياضة' ? 'selected' : ''}>Sports</option>
+                <option value="تقنية" ${ev.event_type === 'تقنية' ? 'selected' : ''}>Technology</option>
+                <option value="اجتماعية" ${ev.event_type === 'اجتماعية' ? 'selected' : ''}>Social</option>
               </select></div>`;
             break;
           case 'capacity':
@@ -2025,10 +2118,10 @@
         externalWrap.style.display = 'none';
         internalFields.style.display = 'block';
         externalFields.style.display = 'none';
-        
+
         // required toggles
         document.getElementById('e-venue').required = true;
-        
+
         document.getElementById('e-ext-name').required = false;
         document.getElementById('e-booking-proof').required = false;
 
@@ -2042,10 +2135,10 @@
         externalWrap.style.display = 'block';
         internalFields.style.display = 'none';
         externalFields.style.display = 'block';
-        
+
         // required toggles
         document.getElementById('e-venue').required = false;
-        
+
         document.getElementById('e-ext-name').required = true;
         document.getElementById('e-booking-proof').required = true;
 
@@ -2067,7 +2160,7 @@
 
       if (locationType === 'internal') {
         formData.append('venue_id', document.getElementById('e-venue').value);
-        
+
         const internalSchedule = buildInternalSchedule();
         if (intSelectedDates.length === 0) {
           showToast('Please select at least one day for the venue.', 'error');
@@ -2081,7 +2174,7 @@
       } else {
         formData.append('external_venue_name', document.getElementById('e-ext-name').value);
         formData.append('external_venue_location', document.getElementById('e-ext-location').value);
-        
+
         // Build external_schedule JSON from time slots
         const schedule = buildExternalSchedule();
         if (extSelectedDates.length === 0) {
@@ -2093,7 +2186,7 @@
           return;
         }
         formData.append('external_schedule', JSON.stringify(schedule));
-        
+
         const proofFile = document.getElementById('e-booking-proof').files[0];
         if (proofFile) {
           formData.append('booking_proof', proofFile);
@@ -2117,86 +2210,86 @@
 
       // Agenda (Required) - extract from flat list
       if (createAgendaDays.length === 0) {
-          showToast(document.documentElement.lang === 'ar' ? 'يرجى تحديد يوم واحد على الأقل.' : 'Please select at least one day.', 'error');
-          return;
+        showToast(document.documentElement.lang === 'ar' ? 'يرجى تحديد يوم واحد على الأقل.' : 'Please select at least one day.', 'error');
+        return;
       }
 
       let agendaObj = {};
       const items = document.querySelectorAll('#agenda-items-create .agenda-item');
       items.forEach(item => {
-          const date = item.querySelector('.agenda-date').value;
-          const title = item.querySelector('.agenda-title').value.trim();
-          const startTime = item.querySelector('.agenda-start').value;
-          const endTime = item.querySelector('.agenda-end').value;
-          const description = item.querySelector('.agenda-desc').value.trim();
-          
-          if (date && title && startTime && endTime) {
-              if (!agendaObj[date]) agendaObj[date] = [];
-              agendaObj[date].push({ title, start_time: startTime, end_time: endTime, description });
-          }
+        const date = item.querySelector('.agenda-date').value;
+        const title = item.querySelector('.agenda-title').value.trim();
+        const startTime = item.querySelector('.agenda-start').value;
+        const endTime = item.querySelector('.agenda-end').value;
+        const description = item.querySelector('.agenda-desc').value.trim();
+
+        if (date && title && startTime && endTime) {
+          if (!agendaObj[date]) agendaObj[date] = [];
+          agendaObj[date].push({ title, start_time: startTime, end_time: endTime, description });
+        }
       });
 
       let missingAgendaDay = false;
       for (const day of createAgendaDays) {
-          if (!agendaObj[day] || agendaObj[day].length === 0) {
-              missingAgendaDay = true;
-              break;
-          }
+        if (!agendaObj[day] || agendaObj[day].length === 0) {
+          missingAgendaDay = true;
+          break;
+        }
       }
 
       if (missingAgendaDay) {
-          showToast(document.documentElement.lang === 'ar' ? 'الاجندة مطلوبة لكل يوم. يرجى اضافة عنصر واحد على الاقل لكل يوم.' : 'Agenda is required for each day. Please add at least one agenda item for every day.', 'error');
-          return;
+        showToast(document.documentElement.lang === 'ar' ? 'الاجندة مطلوبة لكل يوم. يرجى اضافة عنصر واحد على الاقل لكل يوم.' : 'Agenda is required for each day. Please add at least one agenda item for every day.', 'error');
+        return;
       }
 
       let isValidAgenda = true;
       const getFormatTime = (t24) => { if (!t24) return '00:00'; return t24.substring(0, 5); };
 
       for (const day of Object.keys(agendaObj)) {
-          let startBound = "00:00", endBound = "23:59";
-          
-          if (locationType === 'external') {
-              const schedule = buildExternalSchedule();
-              const s = schedule.find(x => x.date === day);
-              if (s) { startBound = s.start_time; endBound = s.end_time; }
-          } else {
-              const schedule = buildInternalSchedule();
-              const s = schedule.find(x => x.date === day);
-              const venueId = document.getElementById('e-venue').value;
-              const v = globalVenues.find(x => x.id == venueId);
-              if (s && v) {
-                  if (s.period === 'morning') {
-                      startBound = getFormatTime(v.morning_start); endBound = getFormatTime(v.morning_end);
-                  } else if (s.period === 'evening') {
-                      startBound = getFormatTime(v.evening_start); endBound = getFormatTime(v.evening_end);
-                  } else {
-                      startBound = getFormatTime(v.morning_start); endBound = getFormatTime(v.evening_end);
-                  }
-              }
-          }
+        let startBound = "00:00", endBound = "23:59";
 
-          const items = agendaObj[day] || [];
-          items.sort((a, b) => a.start_time.localeCompare(b.start_time));
-          
-          for (let i = 0; i < items.length; i++) {
-              const item = items[i];
-              if (item.start_time >= item.end_time) {
-                  showToast(`Invalid time in ${day}. Start time must be before end time.`, 'error');
-                  isValidAgenda = false;
-                  break;
-              }
-              if (item.start_time < startBound || item.end_time > endBound) {
-                  showToast(`Invalid time in ${day}. Agenda must be strictly between event hours (${startBound} and ${endBound}).`, 'error');
-                  isValidAgenda = false;
-                  break;
-              }
-              if (i > 0 && item.start_time < items[i-1].end_time) {
-                  showToast(`Overlapping agenda items in ${day} are not allowed.`, 'error');
-                  isValidAgenda = false;
-                  break;
-              }
+        if (locationType === 'external') {
+          const schedule = buildExternalSchedule();
+          const s = schedule.find(x => x.date === day);
+          if (s) { startBound = s.start_time; endBound = s.end_time; }
+        } else {
+          const schedule = buildInternalSchedule();
+          const s = schedule.find(x => x.date === day);
+          const venueId = document.getElementById('e-venue').value;
+          const v = globalVenues.find(x => x.id == venueId);
+          if (s && v) {
+            if (s.period === 'morning') {
+              startBound = getFormatTime(v.morning_start); endBound = getFormatTime(v.morning_end);
+            } else if (s.period === 'evening') {
+              startBound = getFormatTime(v.evening_start); endBound = getFormatTime(v.evening_end);
+            } else {
+              startBound = getFormatTime(v.morning_start); endBound = getFormatTime(v.evening_end);
+            }
           }
-          if (!isValidAgenda) break;
+        }
+
+        const items = agendaObj[day] || [];
+        items.sort((a, b) => a.start_time.localeCompare(b.start_time));
+
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i];
+          if (item.start_time >= item.end_time) {
+            showToast(`Invalid time in ${day}. Start time must be before end time.`, 'error');
+            isValidAgenda = false;
+            break;
+          }
+          if (item.start_time < startBound || item.end_time > endBound) {
+            showToast(`Invalid time in ${day}. Agenda must be strictly between event hours (${startBound} and ${endBound}).`, 'error');
+            isValidAgenda = false;
+            break;
+          }
+          if (i > 0 && item.start_time < items[i - 1].end_time) {
+            showToast(`Overlapping agenda items in ${day} are not allowed.`, 'error');
+            isValidAgenda = false;
+            break;
+          }
+        }
+        if (!isValidAgenda) break;
       }
 
       if (!isValidAgenda) return;
@@ -2222,17 +2315,17 @@
           showToast('Download failed.', 'error');
           return;
         }
-        
+
         let filename = `${type}_${eventId}.pdf`;
         const disposition = res.headers.get('content-disposition');
         if (disposition && disposition.indexOf('filename=') !== -1) {
-            const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-            const matches = filenameRegex.exec(disposition);
-            if (matches != null && matches[1]) { 
-                filename = matches[1].replace(/['"]/g, '');
-            }
+          const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+          const matches = filenameRegex.exec(disposition);
+          if (matches != null && matches[1]) {
+            filename = matches[1].replace(/['"]/g, '');
+          }
         }
-        
+
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -2265,16 +2358,22 @@
       </div>
       <div style="padding: 16px 0;">
         <!-- Agenda Tabs for selected day -->
-        <div id="agenda-editor-tabs" style="display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;margin-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.06);scrollbar-width:thin;"></div>
-        
+        <div id="agenda-editor-tabs"
+          style="display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;margin-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.06);scrollbar-width:thin;">
+        </div>
+
         <!-- Agenda items -->
         <div id="agenda-items-editor" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;"></div>
-        <button type="button" class="btn btn-ghost btn-sm" onclick="addAgendaItem('agenda-items-editor', {date: window.currentAgendaEditorDay || ''})" style="display:flex;align-items:center;gap:6px;margin-bottom:16px;">
+        <button type="button" class="btn btn-ghost btn-sm"
+          onclick="addAgendaItem('agenda-items-editor', {date: window.currentAgendaEditorDay || ''})"
+          style="display:flex;align-items:center;gap:6px;margin-bottom:16px;">
           <span style="font-size:1.1rem;">+</span> Add Agenda Item to Selected Day
         </button>
-        <div style="display:flex;justify-content:flex-end;gap:8px;border-top:1px solid rgba(255,255,255,0.06);padding-top:14px;">
+        <div
+          style="display:flex;justify-content:flex-end;gap:8px;border-top:1px solid rgba(255,255,255,0.06);padding-top:14px;">
           <button class="btn btn-ghost" onclick="closeAgendaEditor()">Cancel</button>
-          <button class="btn btn-primary" onclick="saveAgenda()" style="display:flex;align-items:center;gap:6px;">💾 Save Agenda</button>
+          <button class="btn btn-primary" onclick="saveAgenda()" style="display:flex;align-items:center;gap:6px;">💾
+            Save Agenda</button>
         </div>
       </div>
     </div>
@@ -2289,18 +2388,22 @@
       </div>
       <div class="modal-body">
         <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:16px;">
-          Please provide a reason for cancelling this event. This request will be sent to the administrator for approval.
+          Please provide a reason for cancelling this event. This request will be sent to the administrator for
+          approval.
           <br><br>
-          <strong style="color:var(--danger)">Note:</strong> Ticket sales will be suspended immediately upon submitting this request.
+          <strong style="color:var(--danger)">Note:</strong> Ticket sales will be suspended immediately upon submitting
+          this request.
         </p>
         <div class="form-group">
           <label class="form-label">Cancellation Reason</label>
-          <textarea id="cancellation-reason" class="form-control" rows="4" placeholder="e.g. Unforeseen circumstances, medical emergency..."></textarea>
+          <textarea id="cancellation-reason" class="form-control" rows="4"
+            placeholder="e.g. Unforeseen circumstances, medical emergency..."></textarea>
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-ghost" onclick="closeCancellationModal()">Cancel</button>
-        <button class="btn btn-danger" id="confirm-cancellation-btn" onclick="submitCancellationRequest()">Submit Request</button>
+        <button class="btn btn-danger" id="confirm-cancellation-btn" onclick="submitCancellationRequest()">Submit
+          Request</button>
       </div>
     </div>
   </div>
@@ -2309,14 +2412,21 @@
        Wizard Step Animations
        ═══════════════════════════════════════════════════════════════════════ */
     @keyframes wizSlideIn {
-      from { opacity: 0; transform: translateX(20px); }
-      to   { opacity: 1; transform: translateX(0); }
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
 
     /* ═══════════════════════════════════════════════════════════════════════
        Flatpickr Premium Calendar — Event Manager Booking View
        ═══════════════════════════════════════════════════════════════════════ */
-    
+
     .flatpickr-calendar {
       background: #0f1219 !important;
       border: 1px solid rgba(139, 92, 246, 0.15) !important;
@@ -2327,13 +2437,13 @@
 
     /* Only popup (non-inline) calendars get the dark overlay + fixed centering */
     .flatpickr-calendar:not(.inline) {
-      box-shadow: 
-        0 0 0 100vmax rgba(0,0,0,0.65),
+      box-shadow:
+        0 0 0 100vmax rgba(0, 0, 0, 0.65),
         0 24px 60px rgba(0, 0, 0, 0.8),
         0 0 40px rgba(139, 92, 246, 0.06) !important;
       width: 500px !important;
     }
-    
+
     .flatpickr-calendar.open:not(.inline) {
       position: fixed !important;
       top: 50% !important;
@@ -2353,12 +2463,19 @@
       max-width: 100% !important;
       position: relative !important;
     }
-    
+
     @keyframes calendarFadeIn {
-      from { opacity: 0; transform: translate(-50%, -48%) scale(0.97); }
-      to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      from {
+        opacity: 0;
+        transform: translate(-50%, -48%) scale(0.97);
+      }
+
+      to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
     }
-    
+
     /* ── Month Navigation ── */
     .flatpickr-months {
       display: flex !important;
@@ -2378,7 +2495,7 @@
       height: 40px !important;
       overflow: visible !important;
     }
-    
+
     .flatpickr-current-month {
       display: flex !important;
       flex-direction: row !important;
@@ -2393,7 +2510,7 @@
       letter-spacing: -0.01em !important;
       background: transparent !important;
     }
-    
+
     .flatpickr-current-month .flatpickr-monthDropdown-months {
       appearance: none !important;
       -webkit-appearance: none !important;
@@ -2406,11 +2523,11 @@
       padding: 0 2px !important;
       margin: 0 !important;
     }
-    
+
     .flatpickr-current-month .flatpickr-monthDropdown-months:hover {
       background: transparent !important;
     }
-    
+
     .flatpickr-current-month .numInputWrapper {
       width: 5ch !important;
       background: transparent !important;
@@ -2419,7 +2536,7 @@
     .flatpickr-current-month .numInputWrapper span {
       display: none !important;
     }
-    
+
     .flatpickr-current-month .numInputWrapper input.cur-year {
       font-weight: 700 !important;
       color: #f1f5f9 !important;
@@ -2428,7 +2545,7 @@
       margin: 0 !important;
       background: transparent !important;
     }
-    
+
     .flatpickr-months .flatpickr-prev-month,
     .flatpickr-months .flatpickr-next-month {
       position: absolute !important;
@@ -2447,29 +2564,40 @@
       transition: all 0.2s ease !important;
       background: transparent !important;
     }
+
     .flatpickr-months .flatpickr-prev-month svg,
     .flatpickr-months .flatpickr-next-month svg {
       width: 16px !important;
       height: 16px !important;
     }
-    
-    html[lang="ar"] .flatpickr-months .flatpickr-prev-month { right: 0 !important; left: auto !important; }
-    html[lang="ar"] .flatpickr-months .flatpickr-next-month { left: 0 !important; right: auto !important; }
-    
+
+    html[lang="ar"] .flatpickr-months .flatpickr-prev-month {
+      right: 0 !important;
+      left: auto !important;
+    }
+
+    html[lang="ar"] .flatpickr-months .flatpickr-next-month {
+      left: 0 !important;
+      right: auto !important;
+    }
+
     .flatpickr-months .flatpickr-prev-month:hover,
     .flatpickr-months .flatpickr-next-month:hover {
       background: rgba(139, 92, 246, 0.1) !important;
       fill: #c4b5fd !important;
       color: #c4b5fd !important;
     }
-    
+
     /* ── Grid Layout ── */
-    .flatpickr-innerContainer, .flatpickr-rContainer, .dayContainer, .flatpickr-days {
+    .flatpickr-innerContainer,
+    .flatpickr-rContainer,
+    .dayContainer,
+    .flatpickr-days {
       width: 100% !important;
       max-width: 100% !important;
       min-width: 100% !important;
     }
-    
+
     .flatpickr-weekdays {
       display: grid !important;
       grid-template-columns: repeat(7, 1fr) !important;
@@ -2480,12 +2608,12 @@
       border-bottom: none !important;
       background: transparent !important;
     }
-    
+
     .flatpickr-weekdaycontainer {
       display: contents !important;
       background: transparent !important;
     }
-    
+
     span.flatpickr-weekday {
       color: #64748b !important;
       font-size: 0.72rem !important;
@@ -2495,14 +2623,14 @@
       letter-spacing: 0.05em !important;
       background: transparent !important;
     }
-    
+
     .dayContainer {
       display: grid !important;
       grid-template-columns: repeat(7, 1fr) !important;
       gap: 6px !important;
       justify-items: center !important;
     }
-    
+
     /* ── Day Cells ── */
     .flatpickr-day {
       width: 100% !important;
@@ -2511,8 +2639,8 @@
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
-      background: rgba(255,255,255,0.025) !important;
-      border: 1px solid rgba(255,255,255,0.06) !important;
+      background: rgba(255, 255, 255, 0.025) !important;
+      border: 1px solid rgba(255, 255, 255, 0.06) !important;
       border-radius: 10px !important;
       color: #cbd5e1 !important;
       font-size: 0.9rem !important;
@@ -2523,24 +2651,26 @@
       line-height: 1 !important;
       cursor: pointer !important;
     }
-    
-    .flatpickr-day:hover, .flatpickr-day:focus {
+
+    .flatpickr-day:hover,
+    .flatpickr-day:focus {
       background: rgba(139, 92, 246, 0.08) !important;
       border-color: rgba(139, 92, 246, 0.25) !important;
       color: #f1f5f9 !important;
       z-index: 2 !important;
       transform: scale(1.04);
     }
-    
+
     /* Today — purple accent */
     .flatpickr-day.today {
       border: 2px solid #8b5cf6 !important;
       background: rgba(139, 92, 246, 0.06) !important;
       color: #c4b5fd !important;
     }
-    
+
     /* Selected — solid purple gradient */
-    .flatpickr-day.selected, .flatpickr-day.selected:hover {
+    .flatpickr-day.selected,
+    .flatpickr-day.selected:hover {
       background: linear-gradient(135deg, #8b5cf6, #7c3aed) !important;
       border-color: #8b5cf6 !important;
       color: #fff !important;
@@ -2548,20 +2678,23 @@
       box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4) !important;
       transform: scale(1.04);
     }
-    
+
     /* Past / Other month */
-    .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay {
+    .flatpickr-day.prevMonthDay,
+    .flatpickr-day.nextMonthDay {
       opacity: 0.15 !important;
       background: transparent !important;
       border-color: transparent !important;
       cursor: default !important;
     }
-    .flatpickr-day.prevMonthDay:hover, .flatpickr-day.nextMonthDay:hover {
+
+    .flatpickr-day.prevMonthDay:hover,
+    .flatpickr-day.nextMonthDay:hover {
       transform: none !important;
     }
-    
+
     /* ── Booking States ── */
-    
+
     /* Fully Booked — red tint */
     .flatpickr-day.date-fully-booked {
       background: rgba(239, 68, 68, 0.18) !important;
@@ -2569,49 +2702,49 @@
       color: #fca5a5 !important;
       cursor: not-allowed !important;
     }
+
     .flatpickr-day.date-fully-booked:hover {
       background: rgba(239, 68, 68, 0.25) !important;
       transform: none !important;
     }
-    
+
     /* Partially Booked — amber tint */
     .flatpickr-day.date-partially-booked {
       background: rgba(245, 158, 11, 0.15) !important;
       border-color: rgba(245, 158, 11, 0.45) !important;
       color: #fbbf24 !important;
     }
+
     .flatpickr-day.date-partially-booked:hover {
       background: rgba(245, 158, 11, 0.22) !important;
     }
 
     /* ── Maintenance ── */
     .flatpickr-day.date-maintenance {
-      background: 
-        repeating-linear-gradient(
-          -45deg,
+      background:
+        repeating-linear-gradient(-45deg,
           transparent,
           transparent 3px,
           rgba(245, 158, 11, 0.12) 3px,
-          rgba(245, 158, 11, 0.12) 6px
-        ),
+          rgba(245, 158, 11, 0.12) 6px),
         rgba(245, 158, 11, 0.06) !important;
       border: 1.5px solid rgba(245, 158, 11, 0.45) !important;
       color: #fbbf24 !important;
       cursor: not-allowed !important;
       position: relative !important;
     }
+
     .flatpickr-day.date-maintenance:hover {
-      background: 
-        repeating-linear-gradient(
-          -45deg,
+      background:
+        repeating-linear-gradient(-45deg,
           transparent,
           transparent 3px,
           rgba(245, 158, 11, 0.18) 3px,
-          rgba(245, 158, 11, 0.18) 6px
-        ),
+          rgba(245, 158, 11, 0.18) 6px),
         rgba(245, 158, 11, 0.1) !important;
       transform: none !important;
     }
+
     .flatpickr-day.date-maintenance::after {
       content: '🔧';
       position: absolute;
@@ -2639,16 +2772,25 @@
       white-space: nowrap;
       z-index: 99999;
       pointer-events: none;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
       max-width: 220px;
       overflow: hidden;
       text-overflow: ellipsis;
       animation: tooltipFadeIn 0.15s ease-out;
     }
+
     @keyframes tooltipFadeIn {
-      from { opacity: 0; transform: translateX(-50%) translateY(4px); }
-      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
     }
+
     .flatpickr-day .maint-tooltip::after {
       content: '';
       position: absolute;
@@ -2658,27 +2800,30 @@
       border: 6px solid transparent;
       border-top-color: rgba(245, 158, 11, 0.35);
     }
+
     .flatpickr-day:hover .maint-tooltip {
       display: block;
     }
-    
+
     /* ── Misc ── */
-    .flatpickr-calendar.arrowTop:before, .flatpickr-calendar.arrowTop:after {
+    .flatpickr-calendar.arrowTop:before,
+    .flatpickr-calendar.arrowTop:after {
       display: none !important;
     }
-    
+
     html[lang="ar"] .flatpickr-calendar {
       direction: rtl;
     }
 
     /* ── Form Sections ───────────────────────────── */
     .form-section {
-      background: rgba(255,255,255,0.015);
-      border: 1px solid rgba(255,255,255,0.04);
+      background: rgba(255, 255, 255, 0.015);
+      border: 1px solid rgba(255, 255, 255, 0.04);
       border-radius: 12px;
       padding: 24px;
       margin-bottom: 24px;
     }
+
     .form-section-title {
       font-size: 0.85rem;
       font-weight: 700;
@@ -2696,27 +2841,31 @@
       display: flex;
       gap: 12px;
     }
+
     .loc-card {
       flex: 1;
       cursor: pointer;
     }
+
     .loc-card input {
       display: none;
     }
+
     .loc-card-content {
       display: flex;
       align-items: center;
       padding: 12px 14px;
       border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.015);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.015);
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       height: 100%;
     }
+
     .loc-icon {
       font-size: 22px;
       margin-right: 14px;
-      background: rgba(255,255,255,0.05);
+      background: rgba(255, 255, 255, 0.05);
       padding: 8px;
       border-radius: 8px;
       display: flex;
@@ -2724,30 +2873,35 @@
       justify-content: center;
       transition: all 0.2s;
     }
+
     .loc-details {
       flex: 1;
     }
+
     .loc-title {
       font-weight: 700;
       color: #fff;
       font-size: 0.9rem;
       margin-bottom: 2px;
     }
+
     .loc-desc {
       font-size: 0.7rem;
       color: var(--text-muted);
       line-height: 1.3;
     }
+
     .loc-radio {
       width: 18px;
       height: 18px;
       border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.2);
+      border: 2px solid rgba(255, 255, 255, 0.2);
       display: flex;
       align-items: center;
       justify-content: center;
       margin-left: 12px;
     }
+
     .loc-radio-inner {
       width: 8px;
       height: 8px;
@@ -2755,55 +2909,73 @@
       background: transparent;
       transition: all 0.2s;
     }
+
     .loc-card:hover .loc-card-content {
-      background: rgba(255,255,255,0.04);
-      border-color: rgba(255,255,255,0.15);
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.15);
     }
-    
+
     /* Internal Theme */
     .loc-internal .loc-icon {
       background: color-mix(in srgb, var(--primary) 15%, transparent);
-      text-shadow: 0 0 10px rgba(110,64,242,0.4);
+      text-shadow: 0 0 10px rgba(110, 64, 242, 0.4);
     }
-    .loc-internal input:checked + .loc-card-content {
+
+    .loc-internal input:checked+.loc-card-content {
       border-color: var(--primary);
       background: color-mix(in srgb, var(--primary) 6%, transparent);
       box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 10%, transparent);
     }
-    .loc-internal input:checked + .loc-card-content .loc-radio { border-color: var(--primary); }
-    .loc-internal input:checked + .loc-card-content .loc-radio-inner { background: var(--primary); }
+
+    .loc-internal input:checked+.loc-card-content .loc-radio {
+      border-color: var(--primary);
+    }
+
+    .loc-internal input:checked+.loc-card-content .loc-radio-inner {
+      background: var(--primary);
+    }
 
     /* External Theme */
     .loc-external .loc-icon {
       background: color-mix(in srgb, #22d3ee 15%, transparent);
-      text-shadow: 0 0 10px rgba(34,211,238,0.4);
+      text-shadow: 0 0 10px rgba(34, 211, 238, 0.4);
     }
-    .loc-external input:checked + .loc-card-content {
+
+    .loc-external input:checked+.loc-card-content {
       border-color: #22d3ee;
       background: color-mix(in srgb, #22d3ee 6%, transparent);
       box-shadow: 0 4px 12px color-mix(in srgb, #22d3ee 10%, transparent);
     }
-    .loc-external input:checked + .loc-card-content .loc-radio { border-color: #22d3ee; }
-    .loc-external input:checked + .loc-card-content .loc-radio-inner { background: #22d3ee; }
-    
+
+    .loc-external input:checked+.loc-card-content .loc-radio {
+      border-color: #22d3ee;
+    }
+
+    .loc-external input:checked+.loc-card-content .loc-radio-inner {
+      background: #22d3ee;
+    }
+
     /* ── Period Cards ───────────────────────────── */
-    
+
     /* ── Period Cards ───────────────────────────── */
     .period-cards {
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
+
     .period-card {
       flex: 1;
       cursor: pointer;
     }
+
     .period-card input {
       display: none;
     }
+
     .period-card-content {
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.02);
       border-radius: 8px;
       padding: 8px 12px;
       display: flex;
@@ -2811,18 +2983,22 @@
       align-items: center;
       transition: all 0.2s;
     }
+
     .period-card:hover .period-card-content {
-      background: rgba(255,255,255,0.05);
+      background: rgba(255, 255, 255, 0.05);
     }
-    .period-card input:checked + .period-card-content {
+
+    .period-card input:checked+.period-card-content {
       border-color: var(--primary);
       background: color-mix(in srgb, var(--primary) 10%, transparent);
     }
+
     .period-title {
       font-weight: 600;
       color: #fff;
       font-size: 0.85rem;
     }
+
     .period-time {
       font-size: 0.75rem;
       color: var(--text-muted);
@@ -3071,11 +3247,161 @@
   </style>
 
 
+  <!-- Published Schedule Modal -->
+  <div class="modal-overlay" id="published-schedule-modal">
+    <div class="modal" style="max-width:500px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><span id="pub-modal-title">📅 Publish Days</span></h3>
+        <button class="modal-close" onclick="closePublishedScheduleModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p id="pub-modal-desc" style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;"></p>
+        <div id="published-days-list" style="display:flex; flex-direction:column; gap:12px;"></div>
+      </div>
+      <div class="modal-footer"
+        style="margin-top:24px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+        <button type="button" id="pub-unpublish-btn" class="btn btn-sm"
+          style="background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.25);display:none;"
+          onclick="unpublishEvent()">🚫 Unpublish</button>
+        <div style="display:flex; gap:10px; margin-left:auto;">
+          <button type="button" class="btn btn-ghost" onclick="closePublishedScheduleModal()">Cancel</button>
+          <button type="button" class="btn btn-sm"
+            style="background:rgba(139,92,246,0.15);color:#a78bfa;border:1px solid rgba(139,92,246,0.3);"
+            onclick="savePublishedSchedule(false)">💾 Save Draft</button>
+          <button type="button" class="btn btn-primary" onclick="savePublishedSchedule(true)">🚀 Publish</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentPublishedScheduleEventId = null;
+
+    function openPublishedScheduleModal(eventId) {
+      const ev = allEvents.find(e => e.id === eventId);
+      if (!ev) return;
+      currentPublishedScheduleEventId = eventId;
+
+      // Set translations
+      document.getElementById('pub-modal-title').innerText = '📅 ' + t('Publish Days');
+      document.getElementById('pub-modal-desc').innerHTML = t('published_schedule_desc') +
+        `<div style="margin-top:10px;padding:8px 12px;border-radius:8px;font-size:0.8rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;${ev.is_published ? 'background:rgba(16,185,129,0.1);color:#10b981;border:1px solid rgba(16,185,129,0.2);' : 'background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.2);'}">${ev.is_published ? '✅ Published — Visible to public' : '⏳ Draft — Not visible to public yet'}</div>`;
+
+      // Show/hide unpublish button
+      const unpubBtn = document.getElementById('pub-unpublish-btn');
+      unpubBtn.style.display = ev.is_published ? 'inline-flex' : 'none';
+
+      const schedule = (ev.external_schedule && ev.external_schedule.length > 0) ? ev.external_schedule :
+        ((ev.internal_schedule && ev.internal_schedule.length > 0) ? ev.internal_schedule : []);
+
+      const publishedDays = ev.published_schedule || [];
+      const container = document.getElementById('published-days-list');
+
+      if (schedule.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:30px; background:rgba(255,255,255,0.02); border-radius:12px; border:1px dashed rgba(255,255,255,0.1);">
+                <div style="font-size:2rem; margin-bottom:10px;">📅</div>
+                <p style="color:var(--text-muted);">${t('No schedule found for this event.')}</p>
+            </div>`;
+      } else {
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+        container.innerHTML = schedule.map((slot, index) => {
+          const d = new Date(slot.date + 'T00:00:00');
+          const isPublished = publishedDays.some(p => p.date === slot.date);
+          const dayName = dayNames[d.getDay()] || 'Day';
+          const monthName = monthNames[d.getMonth()] || '';
+          const dayNum = d.getDate() || '';
+
+          return `
+                    <div class="publish-day-item" style="display:flex; align-items:center; gap:15px; padding:12px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:12px;">
+                        <div style="min-width: 48px; text-align: center; background: rgba(139,92,246,0.1); border-radius: 8px; padding: 6px;">
+                            <div style="font-size:0.6rem; font-weight:700; color:var(--accent2); text-transform:uppercase;">${dayName}</div>
+                            <div style="font-size:1.1rem; font-weight:800; color:#fff; line-height:1;">${dayNum}</div>
+                            <div style="font-size:0.55rem; color:var(--text-muted);">${monthName}</div>
+                        </div>
+                        <div style="flex:1;">
+                            <div style="font-weight:600; color:#fff; font-size:0.95rem;">${slot.date}</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted); text-transform:capitalize;">${slot.period ? slot.period.replace('_', ' ') : (slot.start_time + ' - ' + slot.end_time)}</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" class="pub-toggle" data-date="${slot.date}" data-index="${index}" ${isPublished ? 'checked' : ''} onchange="this.parentElement.nextElementSibling.innerText = this.checked ? t('Public') : t('Setup'); this.parentElement.nextElementSibling.style.color = this.checked ? 'var(--accent2)' : 'var(--text-muted)';">
+                            <span class="slider round"></span>
+                        </label>
+                        <span style="font-size:0.75rem; color:${isPublished ? 'var(--accent2)' : 'var(--text-muted)'}; font-weight:600; width:60px; text-align:right;">${isPublished ? t('Public') : t('Setup')}</span>
+                    </div>
+                `;
+        }).join('');
+      }
+
+      document.getElementById('published-schedule-modal').classList.add('open');
+    }
+
+    function closePublishedScheduleModal() {
+      document.getElementById('published-schedule-modal').classList.remove('open');
+      currentPublishedScheduleEventId = null;
+    }
+
+    async function savePublishedSchedule(publish = false) {
+      if (!currentPublishedScheduleEventId) return;
+
+      const ev = allEvents.find(e => e.id === currentPublishedScheduleEventId);
+      const schedule = ev.external_schedule && ev.external_schedule.length > 0 ? ev.external_schedule :
+        (ev.internal_schedule && ev.internal_schedule.length > 0 ? ev.internal_schedule : []);
+
+      const toggles = document.querySelectorAll('.pub-toggle');
+      const newPublishedSchedule = [];
+
+      toggles.forEach(tog => {
+        if (tog.checked) {
+          const idx = parseInt(tog.dataset.index);
+          newPublishedSchedule.push(schedule[idx]);
+        }
+      });
+
+      if (publish && newPublishedSchedule.length === 0) {
+        showToast(t('Please select at least one day to publish.'), 'error');
+        return;
+      }
+
+      const res = await api.put(`/events/${currentPublishedScheduleEventId}/published-schedule`, {
+        published_schedule: newPublishedSchedule,
+        publish: publish
+      });
+
+      if (res.ok) {
+        showToast(publish ? t('Event published successfully! 🚀') : t('published_schedule_success'), 'success');
+        closePublishedScheduleModal();
+        loadEvents();
+      } else {
+        showToast(res.data?.message || 'Error', 'error');
+      }
+    }
+
+    async function unpublishEvent() {
+      if (!currentPublishedScheduleEventId) return;
+
+      if (!confirm(t('Are you sure you want to unpublish this event? It will no longer be visible to the public.'))) return;
+
+      const ev = allEvents.find(e => e.id === currentPublishedScheduleEventId);
+      const currentSchedule = ev.published_schedule || [];
+
+      const res = await api.put(`/events/${currentPublishedScheduleEventId}/published-schedule`, {
+        published_schedule: currentSchedule,
+        publish: false
+      });
+
+      if (res.ok) {
+        showToast(t('Event unpublished. It is no longer visible to the public.'), 'success');
+        closePublishedScheduleModal();
+        loadEvents();
+      } else {
+        showToast(res.data?.message || 'Error', 'error');
+      }
+    }
+  </script>
+
+
 </body>
 
 </html>
-
-
-
-
-

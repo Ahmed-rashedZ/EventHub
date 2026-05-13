@@ -33,12 +33,14 @@ class Event extends Model
         'review_status',
         'is_sponsorship_open',
         'is_tickets_open',
+        'is_published',
         'created_by',
         'external_schedule',
         'internal_schedule',
         'agenda',
         'event_objective',
         'target_audience',
+        'published_schedule',
     ];
 
     protected $appends = [
@@ -51,10 +53,12 @@ class Event extends Model
         'end_time' => 'datetime',
         'is_sponsorship_open' => 'boolean',
         'is_tickets_open' => 'boolean',
+        'is_published' => 'boolean',
         'review_fields' => 'array',
         'external_schedule' => 'array',
         'internal_schedule' => 'array',
         'agenda' => 'array',
+        'published_schedule' => 'array',
     ];
 
     protected function serializeDate(\DateTimeInterface $date)

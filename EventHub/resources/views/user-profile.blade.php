@@ -187,14 +187,17 @@
       width: 220px;
     }
   </style>
-<link rel="icon" href="/images/logo.jpg" type="image/jpeg">
+  <link rel="icon" href="/images/logo.jpg" type="image/jpeg">
 </head>
 
 <body>
   <div class="app-layout">
     <aside class="sidebar">
       <div class="sidebar-logo">
-        <div style="display:flex; justify-content:center; align-items:center; width: 100%;"><img src="/images/logo.jpg" alt="EventHub Logo" style="width: 85px; height: 85px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
+        <div style="display:flex; justify-content:center; align-items:center; width: 100%;"><img src="/images/logo.jpg"
+            alt="EventHub Logo"
+            style="width: 85px; height: 85px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+        </div>
       </div>
       <nav class="sidebar-nav" id="sidebar-links">
         <!-- Will be populated by JS -->
@@ -324,65 +327,65 @@
 
     async function loadProfile(id) {
       try {
-      const res = await api.get('/profile/' + id);
-      if (!res.ok) {
-        showToast('User not found', 'error');
-        document.getElementById('profile-loader').innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><p>User not found</p></div>';
-        return;
-      }
-
-      const u = res.data.user;
-      const p = u.profile || {};
-
-      document.getElementById('u-name').innerText = u.name;
-
-      let avatar = '/images/default-avatar.png';
-      if (typeof u.image === 'string' && u.image.trim() !== '') {
-        avatar = (u.image.startsWith('http') || u.image.startsWith('/')) ? u.image : '/storage/' + u.image;
-      } else if (typeof u.avatar === 'string' && u.avatar.trim() !== '') {
-        avatar = (u.avatar.startsWith('http') || u.avatar.startsWith('/')) ? u.avatar : '/storage/' + u.avatar;
-      } else if (typeof p.logo === 'string' && p.logo.trim() !== '') {
-        avatar = (p.logo.startsWith('http') || p.logo.startsWith('/')) ? p.logo : '/' + p.logo;
-      }
-      document.getElementById('u-avatar').src = avatar;
-
-      const roleBadge = document.getElementById('u-role-badge');
-      roleBadge.innerText = u.role;
-      const roleStyles = {
-        'Admin': 'background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.3)',
-        'Event Manager': 'background:rgba(110,64,242,.15);color:#a78bfa;border:1px solid rgba(110,64,242,.3)',
-        'Sponsor': 'background:rgba(234,179,8,.15);color:#eab308;border:1px solid rgba(234,179,8,.3)',
-        'User': 'background:rgba(34,211,238,.15);color:#22d3ee;border:1px solid rgba(34,211,238,.3)',
-        'Assistant': 'background:rgba(34,197,94,.15);color:#22c55e;border:1px solid rgba(34,197,94,.3)',
-      };
-      roleBadge.setAttribute('style', (roleStyles[u.role] || 'background:rgba(255,255,255,.1);color:#fff') + ';display:inline-block;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px');
-
-      const statusBadge = document.getElementById('u-status-badge');
-      if (u.role === 'Sponsor') {
-        if (p.is_available) {
-          statusBadge.innerHTML = '<span class="badge badge-approved">Available for Sponsorship</span>';
-        } else {
-          statusBadge.innerHTML = '<span class="badge badge-rejected">Currently Not Available</span>';
+        const res = await api.get('/profile/' + id);
+        if (!res.ok) {
+          showToast('User not found', 'error');
+          document.getElementById('profile-loader').innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><p>User not found</p></div>';
+          return;
         }
-      } else if (u.role === 'Event Manager') {
-        if (u.manager_average_rating !== undefined && u.manager_average_rating !== null && statusBadge) {
-          statusBadge.innerHTML = `<div style="display:inline-flex; align-items:center; gap:6px; background:rgba(234,179,8,0.15); border:1px solid rgba(234,179,8,0.3); color:#eab308; padding:4px 10px; border-radius:8px; font-weight:700; font-size:0.85rem; margin-top:8px;"><span style="font-size:1rem">⭐</span> ${Number(u.manager_average_rating).toFixed(1)} / 5.0 Average Event Rating</div>`;
+
+        const u = res.data.user;
+        const p = u.profile || {};
+
+        document.getElementById('u-name').innerText = u.name;
+
+        let avatar = '/images/default-avatar.png';
+        if (typeof u.image === 'string' && u.image.trim() !== '') {
+          avatar = (u.image.startsWith('http') || u.image.startsWith('/')) ? u.image : '/storage/' + u.image;
+        } else if (typeof u.avatar === 'string' && u.avatar.trim() !== '') {
+          avatar = (u.avatar.startsWith('http') || u.avatar.startsWith('/')) ? u.avatar : '/storage/' + u.avatar;
+        } else if (typeof p.logo === 'string' && p.logo.trim() !== '') {
+          avatar = (p.logo.startsWith('http') || p.logo.startsWith('/')) ? p.logo : '/' + p.logo;
+        }
+        document.getElementById('u-avatar').src = avatar;
+
+        const roleBadge = document.getElementById('u-role-badge');
+        roleBadge.innerText = u.role;
+        const roleStyles = {
+          'Admin': 'background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.3)',
+          'Event Manager': 'background:rgba(110,64,242,.15);color:#a78bfa;border:1px solid rgba(110,64,242,.3)',
+          'Sponsor': 'background:rgba(234,179,8,.15);color:#eab308;border:1px solid rgba(234,179,8,.3)',
+          'User': 'background:rgba(34,211,238,.15);color:#22d3ee;border:1px solid rgba(34,211,238,.3)',
+          'Assistant': 'background:rgba(34,197,94,.15);color:#22c55e;border:1px solid rgba(34,197,94,.3)',
+        };
+        roleBadge.setAttribute('style', (roleStyles[u.role] || 'background:rgba(255,255,255,.1);color:#fff') + ';display:inline-block;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px');
+
+        const statusBadge = document.getElementById('u-status-badge');
+        if (u.role === 'Sponsor') {
+          if (p.is_available) {
+            statusBadge.innerHTML = '<span class="badge badge-approved">Available for Sponsorship</span>';
+          } else {
+            statusBadge.innerHTML = '<span class="badge badge-rejected">Currently Not Available</span>';
+          }
+        } else if (u.role === 'Event Manager') {
+          if (u.manager_average_rating !== undefined && u.manager_average_rating !== null && statusBadge) {
+            statusBadge.innerHTML = `<div style="display:inline-flex; align-items:center; gap:6px; background:rgba(234,179,8,0.15); border:1px solid rgba(234,179,8,0.3); color:#eab308; padding:4px 10px; border-radius:8px; font-weight:700; font-size:0.85rem; margin-top:8px;"><span style="font-size:1rem">⭐</span> ${Number(u.manager_average_rating).toFixed(1)} / 5.0 Average Event Rating</div>`;
+          } else if (statusBadge) {
+            statusBadge.innerHTML = '';
+          }
         } else if (statusBadge) {
           statusBadge.innerHTML = '';
         }
-      } else if (statusBadge) {
-        statusBadge.innerHTML = '';
-      }
 
-      const bioText = (u.role === 'Sponsor' ? p.company_description : p.bio) || u.bio || 'No description provided.';
-      document.getElementById('u-bio').innerText = bioText;
+        const bioText = (u.role === 'Sponsor' ? p.company_description : p.bio) || u.bio || 'No description provided.';
+        document.getElementById('u-bio').innerText = bioText;
 
-      // Contacts
-      const contactList = document.getElementById('contact-list');
-      let html = '';
+        // Contacts
+        const contactList = document.getElementById('contact-list');
+        let html = '';
 
-      if (u.contact_email) {
-        html += `
+        if (u.contact_email) {
+          html += `
             <div class="contact-card">
                 <span class="contact-icon">📧</span>
                 <div>
@@ -391,8 +394,8 @@
                 </div>
             </div>
           `;
-      } else if (me && me.id === u.id) {
-        html += `
+        } else if (me && me.id === u.id) {
+          html += `
             <div class="contact-card">
                 <span class="contact-icon">📧</span>
                 <div>
@@ -401,10 +404,10 @@
                 </div>
             </div>
           `;
-      }
+        }
 
-      if (u.phone) {
-        html += `
+        if (u.phone) {
+          html += `
             <div class="contact-card">
                 <span class="contact-icon">📞</span>
                 <div>
@@ -413,27 +416,27 @@
                 </div>
             </div>
           `;
-      }
+        }
 
-      if (u.social_links) {
-        const iconMap = {
-          'twitter': '𝕏', 'x': '𝕏',
-          'linkedin': '💼',
-          'website': '🌐', 'portfolio': '🎨',
-          'facebook': '👥', 'instagram': '📸',
-          'whatsapp': '💬', 'telegram': '✈️',
-          'github': '💻', 'youtube': '🎬',
-          'tiktok': '🎵', 'discord': '👾'
-        };
+        if (u.social_links) {
+          const iconMap = {
+            'twitter': '𝕏', 'x': '𝕏',
+            'linkedin': '💼',
+            'website': '🌐', 'portfolio': '🎨',
+            'facebook': '👥', 'instagram': '📸',
+            'whatsapp': '💬', 'telegram': '✈️',
+            'github': '💻', 'youtube': '🎬',
+            'tiktok': '🎵', 'discord': '👾'
+          };
 
-        for (let [p, link] of Object.entries(u.social_links)) {
-          if (link) {
-            const platform = p.split('_')[0]; // strip our unique suffix
-            let icon = iconMap[platform] || '🔗';
-            let dispPlatform = platform.charAt(0).toUpperCase() + platform.slice(1);
-            if (platform === 'twitter' || platform === 'x') dispPlatform = 'X (Twitter)';
+          for (let [p, link] of Object.entries(u.social_links)) {
+            if (link) {
+              const platform = p.split('_')[0]; // strip our unique suffix
+              let icon = iconMap[platform] || '🔗';
+              let dispPlatform = platform.charAt(0).toUpperCase() + platform.slice(1);
+              if (platform === 'twitter' || platform === 'x') dispPlatform = 'X (Twitter)';
 
-            html += `
+              html += `
                     <div class="contact-card">
                         <span class="contact-icon">${icon}</span>
                         <div>
@@ -444,18 +447,18 @@
                         </div>
                     </div>
                   `;
+            }
           }
         }
-      }
 
-      if (p.contacts && p.contacts.length > 0) {
-        p.contacts.forEach(c => {
-          let icon = '🔗';
-          if (c.type === 'phone') icon = '📞';
-          if (c.type === 'website') icon = '🌐';
-          if (c.type === 'email') icon = '✉️';
+        if (p.contacts && p.contacts.length > 0) {
+          p.contacts.forEach(c => {
+            let icon = '🔗';
+            if (c.type === 'phone') icon = '📞';
+            if (c.type === 'website') icon = '🌐';
+            if (c.type === 'email') icon = '✉️';
 
-          html += `
+            html += `
                 <div class="contact-card">
                     <span class="contact-icon">${icon}</span>
                     <div>
@@ -464,18 +467,18 @@
                     </div>
                 </div>
               `;
-        });
-      }
-      contactList.innerHTML = html;
+          });
+        }
+        contactList.innerHTML = html;
 
-      document.getElementById('profile-loader').style.display = 'none';
-      document.getElementById('profile-content').style.display = 'block';
+        document.getElementById('profile-loader').style.display = 'none';
+        document.getElementById('profile-content').style.display = 'block';
 
-      if (u.role === 'Event Manager') {
-        loadManagerEvents(u.id, u.role);
-      } else if (u.role === 'Sponsor') {
-        loadManagerEvents(u.id, u.role);
-      }
+        if (u.role === 'Event Manager') {
+          loadManagerEvents(u.id, u.role);
+        } else if (u.role === 'Sponsor') {
+          loadManagerEvents(u.id, u.role);
+        }
       } catch (err) {
         console.error('Error loading profile:', err);
         document.getElementById('profile-loader').innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><p>Error loading profile</p></div>';
@@ -486,46 +489,46 @@
 
     async function loadManagerEvents(userId, role) {
       try {
-      const res = await api.get('/profile/' + userId + '/portfolio');
-      const section = document.getElementById('mgr-stats-section');
-      if (!section) return;
-      section.style.display = 'block';
+        const res = await api.get('/profile/' + userId + '/portfolio');
+        const section = document.getElementById('mgr-stats-section');
+        if (!section) return;
+        section.style.display = 'block';
 
-      if (role === 'Sponsor') {
-        const title = document.querySelector('.mgr-section-title');
-        if (title) title.innerHTML = '<span>💼</span> Sponsored Events History';
+        if (role === 'Sponsor') {
+          const title = document.querySelector('.mgr-section-title');
+          if (title) title.innerHTML = '<span>💼</span> Sponsored Events History';
 
-        const msTotalLabel = document.querySelector('#ms-total').previousElementSibling;
-        if (msTotalLabel) msTotalLabel.textContent = 'Sponsored';
+          const msTotalLabel = document.querySelector('#ms-total').previousElementSibling;
+          if (msTotalLabel) msTotalLabel.textContent = 'Sponsored';
 
-        const ratingStat = document.querySelector('#ms-rating').parentElement;
-        if (ratingStat) ratingStat.style.display = 'none';
-      }
+          const ratingStat = document.querySelector('#ms-rating').parentElement;
+          if (ratingStat) ratingStat.style.display = 'none';
+        }
 
-      const tbody = document.getElementById('mgr-events-body');
-      if (!res.ok) {
-        tbody.innerHTML = '<tr><td colspan="7" style="color:var(--danger);text-align:center">Failed to load events</td></tr>';
-        return;
-      }
+        const tbody = document.getElementById('mgr-events-body');
+        if (!res.ok) {
+          tbody.innerHTML = '<tr><td colspan="7" style="color:var(--danger);text-align:center">Failed to load events</td></tr>';
+          return;
+        }
 
-      allMgrEvents = res.data.events || [];
+        allMgrEvents = res.data.events || [];
 
-      // Compute stats
-      const total = allMgrEvents.length;
-      const attendees = allMgrEvents.reduce((sum, e) => sum + (e.tickets_count || 0), 0);
-      const ratings = allMgrEvents.filter(e => e.average_rating > 0).map(e => e.average_rating);
-      const avgRating = ratings.length ? Math.round(ratings.reduce((a, b) => a + b, 0) / ratings.length) : null;
+        // Compute stats
+        const total = allMgrEvents.length;
+        const attendees = allMgrEvents.reduce((sum, e) => sum + (e.tickets_count || 0), 0);
+        const ratings = allMgrEvents.filter(e => e.average_rating > 0).map(e => e.average_rating);
+        const avgRating = ratings.length ? Math.round(ratings.reduce((a, b) => a + b, 0) / ratings.length) : null;
 
-      document.getElementById('ms-total').textContent = total;
-      
-      const msAttendance = document.getElementById('ms-attendance');
-      if (msAttendance) msAttendance.textContent = attendees;
+        document.getElementById('ms-total').textContent = total;
 
-      document.getElementById('ms-rating').innerHTML = avgRating !== null
-        ? [1, 2, 3, 4, 5].map(i => `<span style="color:${i <= avgRating ? '#eab308' : 'rgba(255,255,255,.15)'};font-size:1.1rem">★</span>`).join('')
-        : '—';
+        const msAttendance = document.getElementById('ms-attendance');
+        if (msAttendance) msAttendance.textContent = attendees;
 
-      applyMgrFilter();
+        document.getElementById('ms-rating').innerHTML = avgRating !== null
+          ? [1, 2, 3, 4, 5].map(i => `<span style="color:${i <= avgRating ? '#eab308' : 'rgba(255,255,255,.15)'};font-size:1.1rem">★</span>`).join('')
+          : '—';
+
+        applyMgrFilter();
       } catch (err) {
         console.error('Error loading manager events:', err);
         const tbody = document.getElementById('mgr-events-body');
@@ -682,8 +685,8 @@
             <div class="ed-info-card ed-info-accent2">
               <div class="ed-info-icon">📍</div>
               <div><div class="ed-info-label">Location</div><div class="ed-info-value">
-                ${ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` 
-                : (ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` : '—')}
+                ${ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>`
+            : (ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` : '—')}
               </div></div>
             </div>
             ${(me && me.role !== 'Sponsor') ? `
@@ -706,42 +709,43 @@
               `}
             ` : ''}
             ${(() => {
-              const schedule = ev.external_schedule && ev.external_schedule.length > 0 ? ev.external_schedule : 
-                               (ev.internal_schedule && ev.internal_schedule.length > 0 ? ev.internal_schedule : null);
-              if (schedule) {
-                const dn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-                const mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-                let scheduleHtml = '<div style="grid-column: 1 / -1;">';
-                scheduleHtml += '<div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">📅 Event Schedule (' + schedule.length + ' day' + (schedule.length > 1 ? 's' : '') + ')</div>';
-                scheduleHtml += '<div style="display:flex;flex-direction:column;gap:6px;">';
-                schedule.forEach(function(slot) {
-                  const d = new Date(slot.date + 'T00:00:00');
-                  scheduleHtml += '<div style="display:flex;align-items:center;gap:10px;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15);border-radius:10px;padding:10px 14px;">';
-                  scheduleHtml += '<div style="min-width:42px;text-align:center;background:rgba(139,92,246,0.12);border-radius:8px;padding:5px 4px;">';
-                  scheduleHtml += '<div style="font-size:0.55rem;font-weight:700;color:#a78bfa;text-transform:uppercase;">' + dn[d.getDay()] + '</div>';
-                  scheduleHtml += '<div style="font-size:1.1rem;font-weight:800;color:#fff;line-height:1;">' + d.getDate() + '</div>';
-                  scheduleHtml += '<div style="font-size:0.5rem;color:#94a3b8;">' + mn[d.getMonth()] + '</div>';
-                  scheduleHtml += '</div>';
-                  scheduleHtml += '<div style="flex:1;display:flex;align-items:center;gap:8px;">';
-                  if (slot.period) {
-                    scheduleHtml += '<span style="background:rgba(16,185,129,0.1);color:#10b981;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;text-transform:capitalize;">' + slot.period.replace('_', ' ') + '</span>';
-                  }
-                  if (slot.start_time) {
-                    scheduleHtml += '<span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;">' + slot.start_time + '</span>';
-                    scheduleHtml += '<span style="color:#64748b;font-size:0.8rem;">→</span>';
-                  }
-                  if (slot.end_time) {
-                    scheduleHtml += '<span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;">' + slot.end_time + '</span>';
-                  }
-                  scheduleHtml += '</div></div>';
-                });
+            const schedule = (ev.published_schedule && ev.published_schedule.length > 0) ? ev.published_schedule :
+              (ev.external_schedule && ev.external_schedule.length > 0 ? ev.external_schedule :
+                (ev.internal_schedule && ev.internal_schedule.length > 0 ? ev.internal_schedule : null));
+            if (schedule) {
+              const dn = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+              const mn = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              let scheduleHtml = '<div style="grid-column: 1 / -1;">';
+              scheduleHtml += '<div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">📅 Event Schedule (' + schedule.length + ' day' + (schedule.length > 1 ? 's' : '') + ')</div>';
+              scheduleHtml += '<div style="display:flex;flex-direction:column;gap:6px;">';
+              schedule.forEach(function (slot) {
+                const d = new Date(slot.date + 'T00:00:00');
+                scheduleHtml += '<div style="display:flex;align-items:center;gap:10px;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15);border-radius:10px;padding:10px 14px;">';
+                scheduleHtml += '<div style="min-width:42px;text-align:center;background:rgba(139,92,246,0.12);border-radius:8px;padding:5px 4px;">';
+                scheduleHtml += '<div style="font-size:0.55rem;font-weight:700;color:#a78bfa;text-transform:uppercase;">' + dn[d.getDay()] + '</div>';
+                scheduleHtml += '<div style="font-size:1.1rem;font-weight:800;color:#fff;line-height:1;">' + d.getDate() + '</div>';
+                scheduleHtml += '<div style="font-size:0.5rem;color:#94a3b8;">' + mn[d.getMonth()] + '</div>';
+                scheduleHtml += '</div>';
+                scheduleHtml += '<div style="flex:1;display:flex;align-items:center;gap:8px;">';
+                if (slot.period) {
+                  scheduleHtml += '<span style="background:rgba(16,185,129,0.1);color:#10b981;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;text-transform:capitalize;">' + slot.period.replace('_', ' ') + '</span>';
+                }
+                if (slot.start_time) {
+                  scheduleHtml += '<span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;">' + slot.start_time + '</span>';
+                  scheduleHtml += '<span style="color:#64748b;font-size:0.8rem;">→</span>';
+                }
+                if (slot.end_time) {
+                  scheduleHtml += '<span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;">' + slot.end_time + '</span>';
+                }
                 scheduleHtml += '</div></div>';
-                return scheduleHtml;
-              } else {
-                return '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon">🕐</div><div><div class="ed-info-label">Start</div><div class="ed-info-value">' + fmtDate(ev.start_time) + '</div></div></div>' +
-                       '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon">🕔</div><div><div class="ed-info-label">End</div><div class="ed-info-value">' + fmtDate(ev.end_time) + '</div></div></div>';
-              }
-            })()}
+              });
+              scheduleHtml += '</div></div>';
+              return scheduleHtml;
+            } else {
+              return '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon">🕐</div><div><div class="ed-info-label">Start</div><div class="ed-info-value">' + fmtDate(ev.start_time) + '</div></div></div>' +
+                '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon">🕔</div><div><div class="ed-info-label">End</div><div class="ed-info-value">' + fmtDate(ev.end_time) + '</div></div></div>';
+            }
+          })()}
             <div class="ed-info-card ed-info-warning">
               <div class="ed-info-icon">👥</div>
               <div><div class="ed-info-label">Capacity</div><div class="ed-info-value">${ev.capacity}</div></div>
@@ -754,7 +758,7 @@
           
           ${sponsorsHtml}
 
-          ${(() => { const ag=ev.agenda; if(!ag||typeof ag!=='object') return ''; const isArr=Array.isArray(ag); if(isArr&&!ag.length) return ''; if(!isArr&&!Object.keys(ag).length) return ''; let h='<div style="margin-top:16px;"><div style="font-size:0.72rem;font-weight:700;color:#22d3ee;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">📋 Event Agenda</div>'; const dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; const renderItem=a=>`<div style="display:flex;align-items:center;gap:10px;background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:10px;padding:8px 14px;margin-left:8px;"><div style="display:flex;align-items:center;gap:6px;min-width:110px;"><span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.start_time}</span><span style="color:#64748b;font-size:0.7rem;">→</span><span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.end_time}</span></div><div style="flex:1;font-size:0.85rem;color:#e2e8f0;font-weight:500;">${a.title}</div></div>`; if(!isArr){Object.keys(ag).sort().forEach(ds=>{const items=ag[ds];if(!items||!items.length)return;const d=new Date(ds+'T00:00:00');h+=`<div style="margin-bottom:10px;"><div style="font-size:0.68rem;font-weight:600;color:#a78bfa;margin-bottom:6px;padding:4px 10px;background:rgba(139,92,246,0.08);border-radius:6px;display:inline-block;">📅 ${dn[d.getDay()]} ${d.getDate()} ${mn[d.getMonth()]} ${d.getFullYear()}</div><div style="display:flex;flex-direction:column;gap:4px;">${items.map(renderItem).join('')}</div></div>`;});}else{h+=`<div style="display:flex;flex-direction:column;gap:4px;">${ag.map(renderItem).join('')}</div>`;} return h+'</div>'; })()}
+          ${(() => { let ag = ev.agenda; if (!ag || typeof ag !== 'object') return ''; const isArr = Array.isArray(ag); if (isArr && !ag.length) return ''; if (!isArr && !Object.keys(ag).length) return ''; const pubDates = ev.published_schedule && ev.published_schedule.length > 0 ? ev.published_schedule.map(p => p.date) : null; if (pubDates && !isArr) { const f = {}; Object.keys(ag).forEach(ds => { if (pubDates.includes(ds)) f[ds] = ag[ds]; }); ag = f; if (!Object.keys(ag).length) return ''; } let h = '<div style="margin-top:16px;"><div style="font-size:0.72rem;font-weight:700;color:#22d3ee;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">📋 Event Agenda</div>'; const dn = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], mn = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']; const renderItem = a => `<div style="display:flex;align-items:center;gap:10px;background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:10px;padding:8px 14px;margin-left:8px;"><div style="display:flex;align-items:center;gap:6px;min-width:110px;"><span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.start_time}</span><span style="color:#64748b;font-size:0.7rem;">→</span><span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.end_time}</span></div><div style="flex:1;font-size:0.85rem;color:#e2e8f0;font-weight:500;">${a.title}</div></div>`; if (!isArr) { Object.keys(ag).sort().forEach(ds => { const items = ag[ds]; if (!items || !items.length) return; const d = new Date(ds + 'T00:00:00'); h += `<div style="margin-bottom:10px;"><div style="font-size:0.68rem;font-weight:600;color:#a78bfa;margin-bottom:6px;padding:4px 10px;background:rgba(139,92,246,0.08);border-radius:6px;display:inline-block;">📅 ${dn[d.getDay()]} ${d.getDate()} ${mn[d.getMonth()]} ${d.getFullYear()}</div><div style="display:flex;flex-direction:column;gap:4px;">${items.map(renderItem).join('')}</div></div>`; }); } else { h += `<div style="display:flex;flex-direction:column;gap:4px;">${ag.map(renderItem).join('')}</div>`; } return h + '</div>'; })()}
 
           <div class="ed-footer" style="margin-top: 8px;">
             <span class="ed-footer-label">Created by</span>
@@ -1025,8 +1029,3 @@
 </body>
 
 </html>
-
-
-
-
-

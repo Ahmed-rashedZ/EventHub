@@ -10,7 +10,7 @@ use Carbon\Carbon;
 
 class EventController extends Controller
 {
-    // GET /api/events  – public approved events
+    // GET /api/events  – public approved+published events
     public function index(Request $request)
     {
         return response()->json(
@@ -18,6 +18,7 @@ class EventController extends Controller
                 ->withCount('tickets')
                 ->withAvg('ratings', 'rating')
                 ->where('status', 'approved')
+                ->where('is_published', true)
                 ->where('is_tickets_open', true)
                 ->orderBy('start_time')
                 ->get()
@@ -976,5 +977,35 @@ class EventController extends Controller
         $event->save();
 
         return response()->json($event);
+    }
+
+    public function updatePublishedSchedule(Request $request, $id)
+    {
+        $event = Event::findOrFail($id);
+        
+        if ($request->user()->id !== $event->created_by && $request->user()->role !== 'Admin') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $request->validate([
+            'published_schedule' => 'required|array',
+            'publish' => 'sometimes|boolean',
+        ]);
+
+        $updateData = [
+            'published_schedule' => $request->published_schedule
+        ];
+
+        // If publish flag is explicitly set, use it; otherwise auto-publish if schedule has items
+        if ($request->has('publish')) {
+            $updateData['is_published'] = $request->publish;
+        }
+
+        $event->update($updateData);
+
+        return response()->json([
+            'message' => 'Published schedule updated successfully.',
+            'event' => $event
+        ]);
     }
 }
