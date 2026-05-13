@@ -423,7 +423,7 @@ public function createUser(Request $request)
     return response()->json(['message' => 'User created successfully', 'user' => $user->load('profile')], 201);
 }
 
-    public function getAssistants(Request $request)
+public function getAssistants(Request $request)
 {
     $authUser = $request->user();
 
@@ -432,11 +432,36 @@ public function createUser(Request $request)
     }
 
     $assistants = User::where('role', 'Assistant')
-                      ->whereHas('event', function ($query) use ($authUser) {
-                          $query->where('created_by', $authUser->id);
-                      })
-                      ->with('event:id,title')
-                      ->get(['id', 'name', 'email', 'event_id', 'is_active', 'phone']);
+        ->where(function($query) use ($authUser) {
+            $query->whereHas('event', function ($q) use ($authUser) {
+                $q->where('created_by', $authUser->id);
+            })->orWhereHas('attendanceLogs.ticket.event', function ($q) use ($authUser) {
+                $q->where('created_by', $authUser->id);
+            });
+        })
+        ->with(['event:id,title', 'attendanceLogs.ticket:id,event_id'])
+        ->get(['id', 'name', 'email', 'event_id', 'is_active', 'phone']);
+
+    // Map the results to include past_event_ids and scan counts
+    $assistants = $assistants->map(function ($assistant) {
+        $eventScans = [];
+        foreach ($assistant->attendanceLogs as $log) {
+            if ($log->ticket && $log->ticket->event_id) {
+                $eId = $log->ticket->event_id;
+                if (!isset($eventScans[$eId])) {
+                    $eventScans[$eId] = 0;
+                }
+                $eventScans[$eId]++;
+            }
+        }
+
+        // Remove the heavy relation before returning
+        unset($assistant->attendanceLogs);
+        $assistant->event_scans = $eventScans;
+        $assistant->past_event_ids = array_keys($eventScans);
+        
+        return $assistant;
+    });
 
     return response()->json($assistants);
 }
@@ -496,10 +521,25 @@ public function updateAssistant(Request $request, $id)
         $event = Event::where('id', $request->event_id)->where('created_by', $authUser->id)->first();
         if (!$event) return response()->json(['message' => 'Invalid event assignment'], 403);
         $assistant->event_id = $request->event_id;
+    } else {
+        $event = $assistant->event; // fallback to current event for email
     }
+    
     if ($request->has('password')) $assistant->password = Hash::make($request->password);
 
     $assistant->save();
+
+    // Send email notification
+    try {
+        \Illuminate\Support\Facades\Mail::to($assistant->email)->send(new \App\Mail\AssistantAccountUpdated(
+            $assistant->name,
+            $assistant->email,
+            $request->password, // send raw password if changed, otherwise null
+            $event ? $event->title : 'Unknown Event'
+        ));
+    } catch (\Exception $e) {
+        // Ignore mail errors so we don't break the response
+    }
 
     return response()->json(['message' => 'Assistant updated successfully', 'assistant' => $assistant]);
 }

@@ -93,4 +93,12 @@ class User extends Authenticatable
                     ->withPivot(['tier', 'contribution_amount'])
                     ->withTimestamps();
     }
+
+    /**
+     * All attendance logs for this assistant (scanned_by).
+     */
+    public function attendanceLogs()
+    {
+        return $this->hasMany(AttendanceLog::class, 'scanned_by');
+    }
 }

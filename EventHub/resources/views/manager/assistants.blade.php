@@ -83,7 +83,23 @@
       </div>
 
       <div class="assistant-card" style="flex: 1.5; max-width: none;">
-        <h3 style="margin-top:0; margin-bottom: 20px;">Existing Assistants</h3>
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 20px; flex-wrap:wrap; gap:16px;">
+          <h3 style="margin:0;">Existing Assistants</h3>
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <div style="position:relative">
+              <input type="text" id="filter-name" class="form-control" placeholder="Search name or email..." style="width: 220px; padding-left: 36px;" oninput="applyFilter()">
+              <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:14px; opacity:0.5;">🔍</span>
+            </div>
+            <select id="filter-event" class="form-control" style="width: 200px;" onchange="applyFilter()">
+              <option value="">All Events</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- Leaderboard Widget -->
+        <div id="leaderboard-container" style="display:none; margin-bottom: 24px;">
+        </div>
+
         <div id="assistants-list">
           <p style="color:var(--text-muted); font-size: 0.9rem;">Loading assistants...</p>
         </div>
@@ -105,6 +121,7 @@
   async function loadEvents() {
     const res = await api.get('/events/list/my');
     const select = document.getElementById('a-event');
+    const filterSelect = document.getElementById('filter-event');
     if (res.ok) {
       res.data.forEach(ev => {
         eventsMap[ev.id] = ev.title;
@@ -112,14 +129,110 @@
         opt.value = ev.id;
         opt.textContent = ev.title;
         select.appendChild(opt);
+
+        const filterOpt = document.createElement('option');
+        filterOpt.value = ev.id;
+        filterOpt.textContent = ev.title;
+        filterSelect.appendChild(filterOpt);
       });
     }
   }
 
+  let allAssistants = [];
+
   async function loadAssistants() {
     const res = await api.get('/assistants');
+    if (res.ok) {
+      allAssistants = res.data;
+      applyFilter();
+    } else {
+      document.getElementById('assistants-list').innerHTML = '<div style="text-align:center; padding:40px; color:var(--danger);"><p>Failed to load assistants.</p></div>';
+    }
+  }
+
+  function applyFilter() {
+    const nameFilter = document.getElementById('filter-name').value.toLowerCase();
+    const eventFilter = document.getElementById('filter-event').value;
+
+    const filtered = allAssistants.filter(a => {
+      const matchName = a.name.toLowerCase().includes(nameFilter) || a.email.toLowerCase().includes(nameFilter);
+      
+      let matchEvent = true;
+      if (eventFilter !== "") {
+        const isCurrentEvent = a.event && a.event.id.toString() === eventFilter;
+        const isPastEvent = a.past_event_ids && a.past_event_ids.includes(parseInt(eventFilter));
+        matchEvent = isCurrentEvent || isPastEvent;
+      }
+
+      return matchName && matchEvent;
+    });
+
+    renderLeaderboard(eventFilter, filtered);
+    renderAssistantsList(filtered);
+  }
+
+  function renderLeaderboard(eventId, assistantsInEvent) {
+    const container = document.getElementById('leaderboard-container');
+    if (!eventId) {
+      container.style.display = 'none';
+      return;
+    }
+
+    // Filter out assistants who have 0 scans for this event
+    const activeAssistants = assistantsInEvent.filter(a => a.event_scans && a.event_scans[eventId] > 0);
+    
+    if (activeAssistants.length === 0) {
+      container.style.display = 'none';
+      return;
+    }
+
+    // Sort by scans descending and take top 5
+    activeAssistants.sort((a, b) => (b.event_scans[eventId] || 0) - (a.event_scans[eventId] || 0));
+    const topAssistants = activeAssistants.slice(0, 5);
+    const eventName = eventsMap[eventId] || 'Selected Event';
+
+    let html = `
+      <div style="background: rgba(110,64,242,0.06); border: 1px solid rgba(139,92,246,0.15); border-radius: 12px; padding: 20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <h4 style="margin:0; color:#c4b5fd; display:flex; align-items:center; gap:8px;">
+            <span style="font-size:1.2rem;">🏆</span> Top 5 Scanners - ${eventName}
+          </h4>
+        </div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px;">
+    `;
+
+    topAssistants.forEach((a, index) => {
+      const scans = a.event_scans[eventId];
+      const medals = ['🥇', '🥈', '🥉'];
+      const rankBadge = index < 3 ? `<span style="font-size:1.2rem;">${medals[index]}</span>` : `<div style="width:24px; height:24px; border-radius:50%; background:rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:bold; color:var(--text-muted);">#${index+1}</div>`;
+      
+      html += `
+          <div style="background:rgba(15,18,25,0.5); border:1px solid rgba(255,255,255,0.05); border-radius:10px; padding:12px 16px; display:flex; align-items:center; gap:12px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+            ${rankBadge}
+            <div style="flex:1;">
+              <div style="font-weight:700; font-size:0.9rem; color:#fff;">${a.name}</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">${a.email.split('@')[0]}</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-weight:800; color:#a78bfa; font-size:1.2rem; line-height:1;">${scans}</div>
+              <div style="font-size:0.65rem; color:var(--text-muted); text-transform:uppercase; margin-top:4px;">Scans</div>
+            </div>
+          </div>
+      `;
+    });
+
+    html += `
+        </div>
+      </div>
+    `;
+    
+    container.innerHTML = html;
+    container.style.display = 'block';
+  }
+
+  function renderAssistantsList(data) {
     const listDiv = document.getElementById('assistants-list');
-    if (res.ok && res.data.length > 0) {
+    if (data.length > 0) {
       listDiv.innerHTML = '<div class="table-wrap"><table style="width:100%; border-collapse: collapse;">' +
         '<thead><tr>' +
         '<th style="text-align:left; padding:12px 14px; font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); border-bottom:1px solid var(--border);">Name</th>' +
@@ -127,7 +240,7 @@
         '<th style="text-align:left; padding:12px 14px; font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); border-bottom:1px solid var(--border);">Status</th>' +
         '<th style="text-align:right; padding:12px 14px; font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); border-bottom:1px solid var(--border);">Actions</th>' +
         '</tr></thead><tbody>' +
-        res.data.map(a => `
+        data.map(a => `
           <tr style="transition: background 0.2s; cursor: default;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
             <td style="padding:14px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle;">
               <div style="font-weight:600; color:#fff;">${a.name}</div>
@@ -157,7 +270,7 @@
           </tr>`).join('') +
         '</tbody></table></div>';
     } else {
-      listDiv.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);"><div style="font-size:2rem; margin-bottom:12px;">👥</div><p>No assistants created yet.</p></div>';
+      listDiv.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);"><div style="font-size:2rem; margin-bottom:12px;">👥</div><p>No assistants match the filter.</p></div>';
     }
   }
 
