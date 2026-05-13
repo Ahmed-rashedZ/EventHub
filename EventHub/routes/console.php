@@ -9,3 +9,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('app:prune-rejected-partners')->daily();
+Schedule::command('app:send-event-reminders')->everyThirtyMinutes();

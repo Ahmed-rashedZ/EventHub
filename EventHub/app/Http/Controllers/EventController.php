@@ -914,6 +914,27 @@ class EventController extends Controller
             }
         }
 
+        // Notify and update Ticket Holders
+        $tickets = \App\Models\Ticket::where('event_id', $event->id)
+            ->where('status', '!=', 'cancelled')
+            ->get();
+
+        foreach ($tickets as $ticket) {
+            $ticket->update(['status' => 'cancelled']);
+            
+            $attendee = User::find($ticket->user_id);
+            if ($attendee) {
+                $attendee->notify(new SystemNotification(
+                    'Event Cancelled 🚫',
+                    "We're sorry, the event \"{$event->title}\" for which you have a ticket has been cancelled.",
+                    'event',
+                    '🚫',
+                    '/user/my-tickets',
+                    $event->id
+                ));
+            }
+        }
+
         return response()->json(['message' => 'Event cancelled successfully', 'event' => $event]);
     }
 
