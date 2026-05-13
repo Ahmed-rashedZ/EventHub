@@ -125,6 +125,7 @@ public function registerPartner(Request $request)
     public function login(Request $request)
 {
     $credentials = $request->only('email', 'password');
+    $platform = $request->input('platform', 'mobile'); // Default to mobile if not specified
 
     if (!Auth::attempt($credentials)) {
         return response()->json(['message' => 'Invalid credentials'], 401);
@@ -136,6 +137,26 @@ public function registerPartner(Request $request)
     if (!$user->is_active) {
         Auth::logout();
         return response()->json(['message' => 'Your account has been suspended. Please contact support.'], 403);
+    }
+
+    // ── Platform-Based Role Restrictions ──
+    $mobileRoles = ['User', 'Assistant'];
+    $webRoles = ['Admin', 'Event Manager', 'Sponsor'];
+
+    if ($platform === 'web' && in_array($user->role, $mobileRoles)) {
+        Auth::logout();
+        return response()->json([
+            'message' => 'هذا الحساب مخصص لتطبيق الموبايل فقط. لا يمكنك تسجيل الدخول عبر الويب.',
+            'error_code' => 'MOBILE_ONLY_ACCOUNT'
+        ], 403);
+    }
+
+    if ($platform === 'mobile' && in_array($user->role, $webRoles)) {
+        Auth::logout();
+        return response()->json([
+            'message' => 'حسابات الويب لا يمكنها تسجيل الدخول عبر تطبيق الموبايل.',
+            'error_code' => 'WEB_ONLY_ACCOUNT'
+        ], 403);
     }
 
     $token = $user->createToken('auth_token')->plainTextToken;

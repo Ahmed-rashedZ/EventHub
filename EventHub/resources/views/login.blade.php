@@ -82,6 +82,7 @@
     const res = await api.post('/login', {
       email: document.getElementById('email').value,
       password: document.getElementById('password').value,
+      platform: 'web',
     });
 
     if (res.ok) {
