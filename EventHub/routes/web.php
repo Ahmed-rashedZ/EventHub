@@ -127,3 +127,24 @@ Route::get('/demo-branding', function () {
 
     return view('demo-branding', compact('event', 'sponsors'));
 });
+
+// 🧪 رابط لاختبار الإشعارات بسهولة (افتحه في المتصفح)
+Route::get('/test-notification', function () {
+    // إرسال للإيميل المطلوب تحديداً
+    $user = \App\Models\User::where('email', 'user@email.com')->first();
+    
+    if (!$user) return "❌ المستخدم user@email.com غير موجود في قاعدة البيانات!";
+    
+    try {
+        $user->notify(new \App\Notifications\SystemNotification(
+            'أهلاً بك! 🎉',
+            'نظام الإشعارات يعمل الآن بنجاح للإيميل المطلوب.',
+            'event',
+            '🔔'
+        ));
+        
+        return "✅ تم إرسال إشعار تجريبي للمستخدم: " . $user->email;
+    } catch (\Exception $e) {
+        return "❌ فشل الإرسال: " . $e->getMessage();
+    }
+});

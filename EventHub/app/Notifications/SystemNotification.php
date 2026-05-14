@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Services\FcmService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
@@ -44,6 +45,7 @@ class SystemNotification extends Notification
 
     /**
      * Get the notification's delivery channels.
+     * Always stores in database. Sends FCM if user has a token.
      *
      * @return array<int, string>
      */
@@ -53,12 +55,26 @@ class SystemNotification extends Notification
     }
 
     /**
-     * Get the array representation of the notification (stored in `notifications` table).
-     *
-     * @return array<string, mixed>
+     * Handle sending via FCM after storing in database.
+     * Called automatically by Laravel's notification system.
      */
-    public function toArray(object $notifiable): array
+    public function toDatabase(object $notifiable): array
     {
+        // Send FCM push notification if user has a token
+        $fcmToken = $notifiable->fcm_token ?? null;
+        if ($fcmToken) {
+            FcmService::sendToDevice(
+                fcmToken: $fcmToken,
+                title: $this->icon . ' ' . $this->title,
+                body: $this->message,
+                data: [
+                    'type'       => $this->type,
+                    'related_id' => (string) ($this->relatedId ?? ''),
+                    'action_url' => $this->actionUrl ?? '',
+                ]
+            );
+        }
+
         return [
             'title'      => $this->title,
             'message'    => $this->message,

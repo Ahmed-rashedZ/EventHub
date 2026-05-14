@@ -43,6 +43,7 @@ class User extends Authenticatable
         'doc_tax_number_note',
         'doc_articles_of_association_note',
         'doc_practice_license_note',
+        'fcm_token',
     ];
 
     protected $hidden = [

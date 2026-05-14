@@ -109,6 +109,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/notifications',              [NotificationController::class, 'index']);
     Route::put('/notifications/read-all',     [NotificationController::class, 'markAllRead']);
     Route::put('/notifications/{id}/read',    [NotificationController::class, 'markRead']);
+    Route::post('/fcm-token',                 [NotificationController::class, 'saveFcmToken']);
 
     // ── Analytics ──
     Route::get('/analytics/system',       [AnalyticsController::class, 'system']);
