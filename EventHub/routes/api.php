@@ -25,6 +25,7 @@ Route::post('/password/reset',  [AuthController::class, 'resetPassword']);
 Route::get('/events',       [EventController::class, 'index']);
 Route::get('/events/{id}',  [EventController::class, 'show']);
 Route::get('/events/{id}/reviews', [EventController::class, 'reviews']);
+Route::get('/categories', [EventController::class, 'categories']);
 
 // Public venue list
 Route::get('/venues', [VenueController::class, 'index']);

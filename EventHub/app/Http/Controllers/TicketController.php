@@ -35,20 +35,25 @@ class TicketController extends Controller
             return response()->json(['message' => 'You already have a ticket for this event'], 422);
         }
 
-        // Check capacity
+        // Check capacity and get the next ticket number
         $bookedCount = Ticket::where('event_id', $event->id)->count();
         if ($bookedCount >= $event->capacity) {
             return response()->json(['message' => 'Event is fully booked'], 422);
         }
 
+        // Get the highest current ticket number for this event and add 1
+        $maxNumber = Ticket::where('event_id', $event->id)->max('ticket_number');
+        $ticketNumber = ($maxNumber ?? 0) + 1;
+
         // Generate unique QR code token
         $qrCode = strtoupper(Str::random(10)) . '-' . $event->id . '-' . $user->id;
 
         $ticket = Ticket::create([
-            'event_id' => $event->id,
-            'user_id'  => $user->id,
-            'qr_code'  => $qrCode,
-            'status'   => 'unused',
+            'event_id'      => $event->id,
+            'user_id'       => $user->id,
+            'qr_code'       => $qrCode,
+            'status'        => 'unused',
+            'ticket_number' => $ticketNumber,
         ]);
 
         // ── Notify Event Manager about new ticket booking ──
@@ -80,6 +85,12 @@ class TicketController extends Controller
             ->latest()
             ->get()
             ->map(function ($ticket) {
+                // If ticket_number is null, fallback to calculating it based on creation order for this event
+                if (is_null($ticket->ticket_number)) {
+                    $ticket->ticket_number = Ticket::where('event_id', $ticket->event_id)
+                        ->where('id', '<=', $ticket->id)
+                        ->count();
+                }
                 $ticket->qr_url = "https://api.qrserver.com/v1/create-qr-code/?data={$ticket->qr_code}&size=200x200";
                 return $ticket;
             });

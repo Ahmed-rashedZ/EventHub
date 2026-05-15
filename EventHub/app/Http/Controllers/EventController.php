@@ -25,6 +25,14 @@ class EventController extends Controller
         );
     }
 
+    public function categories()
+    {
+        return response()->json([
+            'مؤتمر', 'ندوة', 'ورشة عمل', 'دورة تدريبية', 'ترفيه', 
+            'ملتقى علمي', 'رياضة', 'تقنية', 'اجتماعية', 'معرض'
+        ]);
+    }
+
     // GET /api/events/pending  – admin sees pending events
     public function pending(Request $request)
     {
