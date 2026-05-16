@@ -528,13 +528,17 @@ class EventController extends Controller
         $event = Event::findOrFail($id);
         $user = $request->user();
 
-        // Check if user has a ticket
-        $hasTicket = \App\Models\Ticket::where('event_id', $event->id)->where('user_id', $user->id)->exists();
-        if (!$hasTicket) {
-            return response()->json(['message' => 'You cannot review an event without a valid ticket.'], 403);
+        // Check if user has attended (ticket status must be 'used')
+        $attendance = \App\Models\Ticket::where('event_id', $event->id)
+            ->where('user_id', $user->id)
+            ->where('status', 'used')
+            ->exists();
+
+        if (!$attendance) {
+            return response()->json(['message' => 'You cannot review an event unless you have attended and your ticket has been scanned.'], 403);
         }
 
-        // Check if event has started
+        // Check if event has started or passed
         if ($event->time_status === 'upcoming') {
             return response()->json(['message' => 'You cannot review an event that has not started yet.'], 403);
         }
@@ -567,6 +571,28 @@ class EventController extends Controller
             'average_rating' => $event->fresh()->average_rating
         ]);
     }
+
+    // DELETE /api/events/{id}/rate - Delete user's rating
+    public function deleteRating(Request $request, $id)
+    {
+        $event = Event::findOrFail($id);
+        $user = $request->user();
+
+        $rating = \App\Models\Rating::where('event_id', $event->id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if ($rating) {
+            $rating->delete();
+            return response()->json([
+                'message' => 'Rating deleted successfully',
+                'average_rating' => $event->fresh()->average_rating
+            ]);
+        }
+
+        return response()->json(['message' => 'Rating not found'], 404);
+    }
+
 
     // GET /api/events/{id}/reviews  – Get reviews for an event
     public function reviews($id)
