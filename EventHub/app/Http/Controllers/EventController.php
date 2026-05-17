@@ -13,16 +13,20 @@ class EventController extends Controller
     // GET /api/events  – public approved+published events
     public function index(Request $request)
     {
-        return response()->json(
-            Event::with('venue', 'creator:id,name', 'sponsors.profile')
-                ->withCount('tickets')
-                ->withAvg('ratings', 'rating')
-                ->where('status', 'approved')
-                ->where('is_published', true)
-                ->where('is_tickets_open', true)
-                ->orderBy('start_time')
-                ->get()
-        );
+        $events = Event::with('venue', 'creator:id,name', 'sponsors.profile')
+            ->withCount('tickets')
+            ->withAvg('ratings', 'rating')
+            ->where('status', 'approved')
+            ->where('is_published', true)
+            ->where('is_tickets_open', true)
+            ->orderBy('start_time')
+            ->get();
+
+        $events->transform(function ($event) {
+            return $this->applyPublishedSchedule($event);
+        });
+
+        return response()->json($events);
     }
 
     public function categories()
@@ -382,6 +386,10 @@ class EventController extends Controller
         $event->status = 'approved';
         $event->save();
 
+        if ($event->is_published) {
+            $this->notifyInterestedUsers($event);
+        }
+
         // ── Notify the Event Manager ──
         $manager = User::find($event->created_by);
         if ($manager) {
@@ -447,6 +455,8 @@ class EventController extends Controller
             });
         }
             
+        $event = $this->applyPublishedSchedule($event);
+
         return response()->json($event);
     }
 
@@ -491,6 +501,37 @@ class EventController extends Controller
 
     // POST /api/events/{id}/rate  – User rates an event
 
+
+    private function applyPublishedSchedule($event)
+    {
+        if ($event->published_schedule && is_array($event->published_schedule) && count($event->published_schedule) > 0) {
+            $dates = collect($event->published_schedule)->pluck('date')->sort()->values();
+            if ($dates->count() > 0) {
+                $firstDate = $dates->first();
+                $lastDate = $dates->last();
+                
+                $event->start_time = \Carbon\Carbon::parse($firstDate . ' ' . \Carbon\Carbon::parse($event->start_time)->format('H:i:s'));
+                $event->end_time = \Carbon\Carbon::parse($lastDate . ' ' . \Carbon\Carbon::parse($event->end_time)->format('H:i:s'));
+                
+                if ($event->agenda && is_array($event->agenda)) {
+                    $filteredAgenda = [];
+                    foreach ($event->agenda as $date => $items) {
+                        if (\Carbon\Carbon::hasFormat($date, 'Y-m-d')) {
+                            if ($dates->contains($date)) {
+                                $filteredAgenda[$date] = $items;
+                            }
+                        } else {
+                            $filteredAgenda[$date] = $items;
+                        }
+                    }
+                    if (count(array_filter(array_keys($event->agenda), fn($k) => \Carbon\Carbon::hasFormat($k, 'Y-m-d'))) > 0) {
+                        $event->agenda = (object)$filteredAgenda;
+                    }
+                }
+            }
+        }
+        return $event;
+    }
 
     private function validateAgenda($agenda)
     {
@@ -1048,12 +1089,17 @@ class EventController extends Controller
         ]);
 
         $updateData = ['published_schedule' => $request->published_schedule];
+        $wasPublished = $event->is_published;
 
         if ($request->has('publish')) {
             $updateData['is_published'] = $request->publish;
         }
 
         $event->update($updateData);
+
+        if ($request->has('publish') && $request->publish && !$wasPublished && $event->status === 'approved') {
+            $this->notifyInterestedUsers($event);
+        }
 
         return response()->json([
             'message' => 'Published schedule updated successfully.',
@@ -1104,5 +1150,24 @@ class EventController extends Controller
             'message' => 'Capacity updated successfully.',
             'event' => $event->loadCount('tickets')
         ]);
+    }
+
+    private function notifyInterestedUsers(Event $event)
+    {
+        $users = \App\Models\User::whereNotNull('interests')->get();
+            
+        foreach ($users as $user) {
+            $interests = is_array($user->interests) ? $user->interests : [];
+            if (!in_array($event->event_type, $interests)) continue;
+
+            $user->notify(new SystemNotification(
+                'فعالية جديدة تهمك! 🎉',
+                "تم نشر فعالية جديدة \"{$event->title}\" من نوع {$event->event_type}.",
+                'event',
+                '🎉',
+                '/user/events/' . $event->id,
+                $event->id
+            ));
+        }
     }
 }

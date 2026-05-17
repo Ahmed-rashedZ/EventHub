@@ -179,6 +179,8 @@ public function updateProfile(Request $request)
         'company_description' => 'nullable|string',
         'is_available' => 'nullable|boolean',
         'contacts' => 'nullable|string', // Will interpret as JSON array [{"type":"phone", "value":"..."}]
+        'interests' => 'nullable|array',
+        'interests.*' => 'string',
     ]);
 
     $user = $request->user();
@@ -186,6 +188,9 @@ public function updateProfile(Request $request)
     $user->email = $request->email;
     if ($request->filled('password')) {
         $user->password = Hash::make($request->password);
+    }
+    if ($request->has('interests')) {
+        $user->interests = $request->interests;
     }
     $user->save();
 

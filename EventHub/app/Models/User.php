@@ -44,6 +44,7 @@ class User extends Authenticatable
         'doc_articles_of_association_note',
         'doc_practice_license_note',
         'fcm_token',
+        'interests',
     ];
 
     protected $hidden = [
@@ -58,6 +59,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'is_active' => 'boolean',
             'social_links' => 'array',
+            'interests' => 'array',
         ];
     }
 
