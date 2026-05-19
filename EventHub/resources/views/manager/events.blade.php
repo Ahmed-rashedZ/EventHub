@@ -704,70 +704,6 @@
         `;
         }
 
-        let assistantsHtml = '';
-        if (ev.assistants && ev.assistants.length > 0) {
-          assistantsHtml = `
-          <div class="ed-section mt-4" style="margin-top: 16px;">
-            <div class="ed-section-label">Assigned Assistants</div>
-            <div style="display:flex; flex-direction:column; gap:8px;">
-              ${ev.assistants.map(as => `
-                 <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.04); padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.05);">
-                    <div style="width:36px; height:36px; font-size:14px; display:inline-flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:50%; font-weight:700; color:#fff; overflow:hidden;">
-                        ${(() => {
-                          const initials = as.name ? as.name.charAt(0).toUpperCase() : '?';
-                          if (as.logo) {
-                            return `<img src="/storage/${as.logo}" style="width:100%;height:100%;object-fit:cover;">`;
-                          }
-                          return initials;
-                        })()}
-                    </div>
-                    <div style="flex:1">
-                        <div style="font-size:0.85rem; font-weight:600; color:#fff;">${as.name}</div>
-                        <div style="font-size:0.72rem; color:var(--text-muted);">${as.email}</div>
-                    </div>
-                    <span style="background:rgba(16,185,129,0.15); color:#10b981; padding:4px 10px; border-radius:8px; font-size:0.72rem; font-weight:600; border:1px solid rgba(16,185,129,0.25);">Joined</span>
-                 </div>
-              `).join('')}
-            </div>
-          </div>
-          `;
-        }
-
-        let reviewsHtml = '';
-        if (reviewData.reviews.length > 0) {
-          reviewsHtml = `
-          <div class="ed-section" style="margin-top: 16px;">
-            <div class="ed-section-label" style="display:flex;justify-content:space-between;align-items:center;">
-               <span>👥 Attendee Reviews</span>
-               <span style="color:#eab308;font-weight:700;font-size:0.8rem">⭐ ${Number(reviewData.average_rating).toFixed(1)}</span>
-            </div>
-            <div style="display:flex; flex-direction:column; gap:12px; max-height:250px; overflow-y:auto; padding-right:4px;">
-              ${reviewData.reviews.map(r => `
-                <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:10px; padding:12px;">
-                  <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                    <div style="display:flex; align-items:center; gap:8px;">
-                      <div class="avatar" style="width:36px; height:36px; font-size:14px; display:inline-flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:50%; overflow:hidden;">
-                        ${(() => {
-              const src = r.user?.image || r.user?.avatar || r.user?.profile?.logo;
-              if (src) {
-                const fullSrc = (src.startsWith('http') || src.startsWith('/')) ? src : '/storage/' + src;
-                return `<img src="${fullSrc}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'; this.parentElement.innerText='${r.user?.name?.charAt(0).toUpperCase() || '?'}'">`;
-              }
-              return r.user?.name ? r.user.name.charAt(0).toUpperCase() : '?';
-            })()}
-                      </div>
-                      <span style="font-size:0.8rem; font-weight:600; color:#fff">${r.user?.name || 'Anonymous'}</span>
-                    </div>
-                    <div style="color:#eab308; font-size:0.8rem;">${'⭐'.repeat(r.rating)}</div>
-                  </div>
-                  ${r.review_text ? `<p style="font-size:0.85rem; color:rgba(255,255,255,0.7); margin:0;">"${r.review_text}"</p>` : '<p style="font-size:0.85rem; color:rgba(255,255,255,0.3); margin:0; font-style:italic">No written comment</p>'}
-                </div>
-              `).join('')}
-            </div>
-          </div>
-        `;
-        }
-
         content.innerHTML = `
       ${bannerSection}
       <div class="ed-body">
@@ -897,8 +833,6 @@
           </div>
           
           ${sponsorsHtml}
-          ${assistantsHtml}
-          ${reviewsHtml}
 
           <!-- Agenda Section -->
           ${(() => {
