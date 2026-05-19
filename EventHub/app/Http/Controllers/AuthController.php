@@ -174,6 +174,10 @@ public function registerPartner(Request $request)
 
     $token = $user->createToken('auth_token')->plainTextToken;
 
+    if ($user->role === 'Assistant') {
+        $user->loadCount('attendanceLogs');
+    }
+
     return response()->json([
         'user' => $user->load(['profile.contacts']),
         'token' => $token,
@@ -246,7 +250,11 @@ public function updateProfile(Request $request)
     }
 
     // Reload the user with their profile so the frontend gets the latest data
-    $user = User::with(['profile.contacts'])->find($user->id);
+    $query = User::with(['profile.contacts']);
+    if ($user->role === 'Assistant') {
+        $query->withCount('attendanceLogs');
+    }
+    $user = $query->find($user->id);
 
     return response()->json(['message' => 'Profile updated successfully', 'user' => $user]);
 }
@@ -265,6 +273,10 @@ public function getProfile(Request $request)
         $user->load('profile');
     } else {
         $user->load(['profile.contacts']);
+    }
+
+    if ($user->role === 'Assistant') {
+        $user->loadCount('attendanceLogs');
     }
 
     return response()->json([
