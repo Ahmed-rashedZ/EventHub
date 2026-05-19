@@ -130,8 +130,9 @@ class AssistantController extends Controller
                 });
             })
             ->with([
-                'event:id,title,description,image,start_time,end_time,capacity',
+                'event:id,title,description,image,start_time,end_time,capacity,created_by',
                 'event.venue:id,name,location',
+                'event.creator:id,name',
             ])
             ->orderBy('created_at', 'desc')
             ->get()
@@ -162,6 +163,10 @@ class AssistantController extends Controller
                     'time_status' => $timeStatus,
                     'total_tickets' => $totalTickets,
                     'scanned_tickets' => $scannedTickets,
+                    'creator' => $event->creator ? [
+                        'id' => $event->creator->id,
+                        'name' => $event->creator->name,
+                    ] : null,
                 ];
             })
             ->filter()
