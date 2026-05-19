@@ -201,7 +201,7 @@ class AssistantController extends Controller
                     'qr_code' => $ticket->qr_code,
                     'ticket_status' => $ticket->status, // 'valid' or 'used'
                     'scanned_by' => $log ? ($log->scanner->name ?? 'Unknown') : null,
-                    'scanned_at' => $log ? $log->scanned_at?->toDateTimeString() : null,
+                    'scanned_at' => $log ? $log->scanned_at?->toIso8601String() : null,
                 ];
             });
 
@@ -322,7 +322,7 @@ class AssistantController extends Controller
                 return [
                     'user_name' => $log->ticket->user->name ?? 'Unknown',
                     'qr_code' => $log->ticket->qr_code ?? '',
-                    'scanned_at' => $log->scanned_at?->toDateTimeString(),
+                    'scanned_at' => $log->scanned_at?->toIso8601String(),
                 ];
             });
 
