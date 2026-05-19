@@ -19,12 +19,17 @@ class CheckinController extends Controller
 
         $request->validate([
             'qr_code' => 'required|string',
+            'event_id' => 'nullable|integer',
         ]);
 
         $ticket = Ticket::with('event')->where('qr_code', $request->qr_code)->first();
 
         if (!$ticket) {
             return response()->json(['message' => 'Invalid QR code'], 404);
+        }
+
+        if ($request->filled('event_id') && (int) $ticket->event_id !== (int) $request->event_id) {
+            return response()->json(['message' => 'This ticket belongs to another event.'], 422);
         }
 
         // Check if assistant has access to this event (new invitation system + old fallback)
