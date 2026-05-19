@@ -104,4 +104,43 @@ class User extends Authenticatable
     {
         return $this->hasMany(AttendanceLog::class, 'scanned_by');
     }
+
+    /**
+     * All assistance requests received by this assistant.
+     */
+    public function assistanceRequests()
+    {
+        return $this->hasMany(AssistanceRequest::class, 'assistant_id');
+    }
+
+    /**
+     * Events this assistant has accepted invitations for.
+     */
+    public function assistedEvents()
+    {
+        return $this->belongsToMany(Event::class, 'assistance_requests', 'assistant_id', 'event_id')
+                    ->wherePivot('status', 'accepted')
+                    ->withPivot(['status', 'responded_at', 'message'])
+                    ->withTimestamps();
+    }
+
+    /**
+     * Check if this assistant has access to a specific event
+     * (either via new invitation system or old direct event_id assignment).
+     */
+    public function hasAccessToEvent(int $eventId): bool
+    {
+        // New system: accepted assistance request
+        $hasRequest = AssistanceRequest::where('assistant_id', $this->id)
+            ->where('event_id', $eventId)
+            ->where('status', 'accepted')
+            ->exists();
+
+        if ($hasRequest) return true;
+
+        // Old system fallback: direct event_id on user
+        if ($this->event_id && $this->event_id == $eventId) return true;
+
+        return false;
+    }
 }

@@ -457,6 +457,28 @@ class EventController extends Controller
             
         $event = $this->applyPublishedSchedule($event);
 
+        // Fetch and attach accepted assistants if the user is an Event Manager
+        $user = request()->user() ?? auth('sanctum')->user();
+        if ($user && $user->role === 'Event Manager') {
+            $assistants = \App\Models\AssistanceRequest::where('event_id', $event->id)
+                ->where('status', 'accepted')
+                ->with('assistant.profile')
+                ->get()
+                ->map(function ($req) {
+                    if (!$req->assistant) return null;
+                    return [
+                        'id' => $req->assistant->id,
+                        'name' => $req->assistant->name,
+                        'email' => $req->assistant->email,
+                        'logo' => $req->assistant->profile->logo ?? null,
+                    ];
+                })
+                ->filter()
+                ->values();
+
+            $event->setAttribute('assistants', $assistants);
+        }
+
         return response()->json($event);
     }
 

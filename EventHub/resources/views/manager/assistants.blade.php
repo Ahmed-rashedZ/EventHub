@@ -7,18 +7,47 @@
   <link rel="stylesheet" href="/css/style.css"/>
   <script src="/js/i18n.js"></script>
   <style>
-    .assistant-card { background: var(--surface2); padding: 20px; border-radius: 12px; border: 1px solid var(--border); max-width: 600px; }
-    .status-badge { padding: 4px 8px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
-    .status-active { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-    .status-inactive { background: rgba(239, 68, 68, 0.1); color: var(--error); }
-    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
-    .modal-content { background: var(--surface2); margin: 5% auto; padding: 24px; border-radius: 16px; border: 1px solid var(--border); width: 80%; max-width: 900px; max-height: 85vh; overflow-y: auto; }
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
-    .stat-box { background: var(--surface1); padding: 16px; border-radius: 12px; border: 1px solid var(--border); }
-    .history-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-bottom: 1px solid var(--border); }
-    .history-item img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+    .assistants-layout { display: grid; grid-template-columns: 1fr; gap: 24px; }
+    @media(min-width: 1024px) { .assistants-layout { grid-template-columns: 380px 1fr; } }
+    .invite-card { background: var(--surface2); padding: 24px; border-radius: 16px; border: 1px solid var(--border); position: sticky; top: 20px; }
+    .invite-card h3 { margin: 0 0 4px; font-size: 1.1rem; }
+    .invite-card .subtitle { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px; }
+    .tab-bar { display: flex; gap: 4px; padding: 4px; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px; }
+    .tab-btn { flex: 1; padding: 10px 16px; border-radius: 10px; border: none; background: transparent; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.25s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .tab-btn:hover { color: #fff; background: rgba(255,255,255,0.04); }
+    .tab-btn.active { background: linear-gradient(135deg, #6e40f2, #8b5cf6); color: #fff; box-shadow: 0 4px 12px rgba(110,64,242,0.3); }
+    .tab-count { background: rgba(255,255,255,0.15); padding: 2px 7px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; }
+    .tab-btn:not(.active) .tab-count { background: rgba(255,255,255,0.08); }
+    .available-grid { display: grid; grid-template-columns: 1fr; gap: 10px; max-height: 400px; overflow-y: auto; padding-right: 4px; }
+    .available-grid::-webkit-scrollbar { width: 4px; }
+    .available-grid::-webkit-scrollbar-track { background: transparent; }
+    .available-grid::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+    .avail-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 12px; transition: all 0.2s; }
+    .avail-item:hover { border-color: rgba(139,92,246,0.3); background: rgba(139,92,246,0.04); }
+    .avail-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #6e40f2, #2dd4bf); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; font-size: 0.9rem; flex-shrink: 0; overflow:hidden; }
+    .avail-info { flex: 1; min-width: 0; }
+    .avail-name { font-weight: 600; font-size: 0.9rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .avail-email { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+    .invite-btn { padding: 6px 14px; border-radius: 8px; border: none; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+    .invite-btn.primary { background: linear-gradient(135deg, #6e40f2, #8b5cf6); color: #fff; }
+    .invite-btn.primary:hover { transform: scale(1.03); box-shadow: 0 2px 8px rgba(110,64,242,0.4); }
+    .invite-btn.disabled { background: rgba(255,255,255,0.06); color: var(--text-muted); cursor: default; pointer-events: none; }
+    .invite-btn.sending { background: rgba(245,158,11,0.2); color: #f59e0b; cursor: wait; }
+    .inv-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+    .inv-table th { text-align: left; padding: 12px 14px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+    .inv-table td { padding: 14px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
+    .inv-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+    .status-pill { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 600; }
+    .status-pending  { background: rgba(245,158,11,0.1); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); }
+    .status-accepted { background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.2); }
+    .status-rejected { background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
+    .scans-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; background: rgba(139,92,246,0.1); color: #a78bfa; border: 1px solid rgba(139,92,246,0.2); }
+    .cancel-btn { padding: 5px 12px; border-radius: 8px; border: 1px solid rgba(239,68,68,0.25); background: rgba(239,68,68,0.1); color: #ef4444; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .cancel-btn:hover { background: rgba(239,68,68,0.2); }
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+    .empty-state .icon { font-size: 2.5rem; margin-bottom: 12px; }
   </style>
-<link rel="icon" href="/images/logo.jpg" type="image/jpeg">
+  <link rel="icon" href="/images/logo.jpg" type="image/jpeg">
 </head>
 <body>
 <div class="app-layout">
@@ -34,74 +63,52 @@
       <a class="nav-item" href="/manager/sponsorship"><span class="nav-icon">💼</span> Sponsorship</a>
       <span class="nav-section-label">Settings</span>
       <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
-    </nav> 
+    </nav>
     @include('partials._sidebar-footer')
   </aside>
 
   <main class="main-content">
     <div class="topbar">
-      <div><h1 class="page-title">Assistants Management</h1><p class="page-subtitle">Manage your event assistants and track their check-in performance</p></div>
+      <div>
+        <h1 class="page-title">Assistants Management</h1>
+        <p class="page-subtitle">Invite available assistants to your events and track their performance</p>
+      </div>
     </div>
 
-    <div style="display: flex; gap: 20px; align-items: flex-start;">
-      <div class="assistant-card" style="flex: 1;">
-        <h3 id="form-title" style="margin-top:0; margin-bottom: 20px;">Generate Assistant Account</h3>
-        <p id="form-desc" style="color:var(--text-muted); font-size: 0.9rem; margin-bottom: 24px;">
-          Assistants use their accounts to log in on their mobile devices and scan QR codes for attendance tracking.
-        </p>
-        
-        <form id="assistant-form">
-          <input type="hidden" id="edit-id"/>
-          <div class="form-group">
-            <label class="form-label">Assistant Name</label>
-            <input id="a-name" type="text" class="form-control" placeholder="e.g. Gate 1 Scanner" required/>
+    <div class="assistants-layout">
+      <!-- Left: Invite Panel -->
+      <div class="invite-card">
+        <h3>📨 Invite Assistants</h3>
+        <p class="subtitle">Browse available assistants and send event invitations</p>
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label" style="font-size: 0.8rem;">Select Event to Invite For</label>
+          <select id="invite-event" class="form-control"></select>
+        </div>
+        <div style="position:relative; margin-bottom: 16px;">
+          <input type="text" id="search-available" class="form-control" placeholder="Search assistants..." style="padding-left: 36px;">
+          <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:14px; opacity:0.5;">🔍</span>
+        </div>
+        <div id="available-list" class="available-grid">
+          <div class="empty-state" style="padding: 30px;">
+            <div class="icon">👆</div>
+            <p>Select an event first to see available assistants</p>
           </div>
-          <div class="form-group">
-            <label class="form-label">Assistant Email (Login ID)</label>
-            <input id="a-email" type="email" class="form-control" placeholder="gate1@myevent.com" required/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Password <span id="pass-hint" style="font-size:0.75rem; color:var(--text-muted)">(Leave blank to keep current)</span></label>
-            <input id="a-pass" type="password" class="form-control" minlength="8"/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Assign to Event</label>
-            <select id="a-event" class="form-control" required>
-              <option value="">Select an Event...</option>
-            </select>
-          </div>
-          <div style="display:flex; justify-content: space-between; margin-top:20px;">
-            <button type="button" class="btn btn-ghost" id="cancel-edit" style="display:none;" onclick="resetForm()">Cancel</button>
-            <button type="submit" class="btn btn-primary" id="save-btn">Create Assistant</button>
-          </div>
-        </form>
-
-        <div id="success-box" style="display:none; margin-top:30px; padding: 20px; background: rgba(16,185,129,0.1); border: 1px solid var(--success); border-radius: 8px;">
-          <h4 style="color: var(--success); margin-top:0;">✅ Success!</h4>
-          <p style="margin-bottom:0; font-size: 0.9rem; color: var(--text-secondary)">The assistant data has been updated. They can now log in and access the QR scanner.</p>
         </div>
       </div>
 
-      <div class="assistant-card" style="flex: 1.5; max-width: none;">
-        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 20px; flex-wrap:wrap; gap:16px;">
-          <h3 style="margin:0;">Existing Assistants</h3>
-          <div style="display:flex; gap:12px; flex-wrap:wrap;">
-            <div style="position:relative">
-              <input type="text" id="filter-name" class="form-control" placeholder="Search name or email..." style="width: 220px; padding-left: 36px;" oninput="applyFilter()">
-              <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:14px; opacity:0.5;">🔍</span>
-            </div>
-            <select id="filter-event" class="form-control" style="width: 200px;" onchange="applyFilter()">
-              <option value="">All Events</option>
-            </select>
-          </div>
+      <!-- Right: Invitations List -->
+      <div>
+        <div class="tab-bar">
+          <button class="tab-btn active" id="tab-all">All <span class="tab-count" id="count-all">0</span></button>
+          <button class="tab-btn" id="tab-pending">⏳ Pending <span class="tab-count" id="count-pending">0</span></button>
+          <button class="tab-btn" id="tab-accepted">✅ Accepted <span class="tab-count" id="count-accepted">0</span></button>
+          <button class="tab-btn" id="tab-rejected">❌ Rejected <span class="tab-count" id="count-rejected">0</span></button>
         </div>
-        
-        <!-- Leaderboard Widget -->
-        <div id="leaderboard-container" style="display:none; margin-bottom: 24px;">
+        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+          <select id="filter-event" class="form-control" style="max-width: 260px;"><option value="">All Events</option></select>
         </div>
-
-        <div id="assistants-list">
-          <p style="color:var(--text-muted); font-size: 0.9rem;">Loading assistants...</p>
+        <div id="invitations-container" style="background: var(--surface2); border-radius: 16px; border: 1px solid var(--border); overflow: hidden;">
+          <div class="empty-state"><div class="icon">📬</div><p>Loading invitations...</p></div>
         </div>
       </div>
     </div>
@@ -113,239 +120,294 @@
 <script src="/js/notifications.js"></script>
 <script src="/js/auth.js"></script>
 <script>
-  const user = requireRole('Event Manager');
-  if (user) { populateSidebar(user); setActiveNav(); loadEvents(); loadAssistants(); }
+// ════════════════════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════════════════════
+var eventsMap = {};
+var allInvitations = [];
+var currentTab = 'all';
+var availableCache = [];
 
-  let eventsMap = {};
+// ════════════════════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════════════════════
+var user = requireRole('Event Manager');
+if (user) {
+  populateSidebar(user);
+  setActiveNav();
+  loadEvents().then(function() { loadInvitations(); });
+}
 
-  async function loadEvents() {
-    const res = await api.get('/events/list/my');
-    const select = document.getElementById('a-event');
-    const filterSelect = document.getElementById('filter-event');
-    if (res.ok) {
-      res.data.forEach(ev => {
+// ════════════════════════════════════════════════════════════════
+//  EVENTS
+// ════════════════════════════════════════════════════════════════
+document.getElementById('invite-event').addEventListener('change', function() {
+  loadAvailableAssistants();
+});
+document.getElementById('search-available').addEventListener('input', function() {
+  loadAvailableAssistants();
+});
+document.getElementById('filter-event').addEventListener('change', function() {
+  loadInvitations();
+});
+
+// Tab buttons
+document.getElementById('tab-all').addEventListener('click', function() { switchTab('all', this); });
+document.getElementById('tab-pending').addEventListener('click', function() { switchTab('pending', this); });
+document.getElementById('tab-accepted').addEventListener('click', function() { switchTab('accepted', this); });
+document.getElementById('tab-rejected').addEventListener('click', function() { switchTab('rejected', this); });
+
+// ════════════════════════════════════════════════════════════════
+//  LOAD EVENTS
+// ════════════════════════════════════════════════════════════════
+function loadEvents() {
+  return api.get('/events/list/my').then(function(res) {
+    var inviteSelect = document.getElementById('invite-event');
+    var filterSelect = document.getElementById('filter-event');
+    inviteSelect.innerHTML = '<option value="">Choose an event...</option>';
+    if (res.ok && res.data) {
+      res.data.forEach(function(ev) {
         eventsMap[ev.id] = ev.title;
-        const opt = document.createElement('option');
-        opt.value = ev.id;
-        opt.textContent = ev.title;
-        select.appendChild(opt);
-
-        const filterOpt = document.createElement('option');
-        filterOpt.value = ev.id;
-        filterOpt.textContent = ev.title;
-        filterSelect.appendChild(filterOpt);
+        
+        // Only allow inviting assistants to approved events that haven't ended
+        if (ev.status === 'approved' && ev.time_status !== 'ended') {
+          var opt = document.createElement('option');
+          opt.value = ev.id;
+          opt.textContent = ev.title;
+          inviteSelect.appendChild(opt);
+        }
+        
+        // Show all events in the filter dropdown for invitation history
+        var fOpt = document.createElement('option');
+        fOpt.value = ev.id;
+        fOpt.textContent = ev.title;
+        filterSelect.appendChild(fOpt);
       });
     }
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+//  LOAD AVAILABLE ASSISTANTS
+// ════════════════════════════════════════════════════════════════
+function loadAvailableAssistants() {
+  var eventId = document.getElementById('invite-event').value;
+  var search = document.getElementById('search-available').value;
+  var container = document.getElementById('available-list');
+
+  if (!eventId) {
+    container.innerHTML = '<div class="empty-state" style="padding:30px;"><div class="icon">👆</div><p>Select an event first</p></div>';
+    return;
   }
 
-  let allAssistants = [];
+  container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted);">Loading...</div>';
 
-  async function loadAssistants() {
-    const res = await api.get('/assistants');
-    if (res.ok) {
-      allAssistants = res.data;
-      applyFilter();
-    } else {
-      document.getElementById('assistants-list').innerHTML = '<div style="text-align:center; padding:40px; color:var(--danger);"><p>Failed to load assistants.</p></div>';
+  var url = '/manager/available-assistants?event_id=' + eventId;
+  if (search) url += '&search=' + encodeURIComponent(search);
+
+  api.get(url).then(function(res) {
+    if (!res.ok) {
+      container.innerHTML = '<div class="empty-state" style="padding:20px;"><p style="color:var(--error);">Failed to load</p></div>';
+      return;
     }
-  }
+    if (res.data.length === 0) {
+      container.innerHTML = '<div class="empty-state" style="padding:30px;"><div class="icon">🔍</div><p>No available assistants found</p></div>';
+      return;
+    }
 
-  function applyFilter() {
-    const nameFilter = document.getElementById('filter-name').value.toLowerCase();
-    const eventFilter = document.getElementById('filter-event').value;
-
-    const filtered = allAssistants.filter(a => {
-      const matchName = a.name.toLowerCase().includes(nameFilter) || a.email.toLowerCase().includes(nameFilter);
+    availableCache = res.data;
+    var html = '';
+    res.data.forEach(function(a, idx) {
+      var initials = a.name.charAt(0).toUpperCase();
+      var btnHtml = '';
       
-      let matchEvent = true;
-      if (eventFilter !== "") {
-        const isCurrentEvent = a.event && a.event.id.toString() === eventFilter;
-        const isPastEvent = a.past_event_ids && a.past_event_ids.includes(parseInt(eventFilter));
-        matchEvent = isCurrentEvent || isPastEvent;
+      if (a.invitation_status === 'accepted') {
+        btnHtml = '<button class="invite-btn disabled" style="background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.2);">Joined</button>';
+      } else if (a.invitation_status === 'pending') {
+        btnHtml = '<button class="invite-btn disabled">⏳ Invited</button>';
+      } else if (a.invitation_status === 'rejected') {
+        btnHtml = '<button class="invite-btn disabled" style="background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2);">Rejected</button>';
+      } else {
+        btnHtml = '<button class="invite-btn primary" data-idx="' + idx + '">Invite</button>';
       }
 
-      return matchName && matchEvent;
+      html += '<div class="avail-item">' +
+        '<div class="avail-avatar">' + initials + '</div>' +
+        '<div class="avail-info">' +
+          '<div class="avail-name">' + a.name + '</div>' +
+          '<div class="avail-email">' + a.email + '</div>' +
+        '</div>' +
+        btnHtml +
+      '</div>';
     });
-
-    renderLeaderboard(eventFilter, filtered);
-    renderAssistantsList(filtered);
-  }
-
-  function renderLeaderboard(eventId, assistantsInEvent) {
-    const container = document.getElementById('leaderboard-container');
-    if (!eventId) {
-      container.style.display = 'none';
-      return;
-    }
-
-    // Filter out assistants who have 0 scans for this event
-    const activeAssistants = assistantsInEvent.filter(a => a.event_scans && a.event_scans[eventId] > 0);
-    
-    if (activeAssistants.length === 0) {
-      container.style.display = 'none';
-      return;
-    }
-
-    // Sort by scans descending and take top 5
-    activeAssistants.sort((a, b) => (b.event_scans[eventId] || 0) - (a.event_scans[eventId] || 0));
-    const topAssistants = activeAssistants.slice(0, 5);
-    const eventName = eventsMap[eventId] || 'Selected Event';
-
-    let html = `
-      <div style="background: rgba(110,64,242,0.06); border: 1px solid rgba(139,92,246,0.15); border-radius: 12px; padding: 20px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-          <h4 style="margin:0; color:#c4b5fd; display:flex; align-items:center; gap:8px;">
-            <span style="font-size:1.2rem;">🏆</span> Top 5 Scanners - ${eventName}
-          </h4>
-        </div>
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px;">
-    `;
-
-    topAssistants.forEach((a, index) => {
-      const scans = a.event_scans[eventId];
-      const medals = ['🥇', '🥈', '🥉'];
-      const rankBadge = index < 3 ? `<span style="font-size:1.2rem;">${medals[index]}</span>` : `<div style="width:24px; height:24px; border-radius:50%; background:rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:bold; color:var(--text-muted);">#${index+1}</div>`;
-      
-      html += `
-          <div style="background:rgba(15,18,25,0.5); border:1px solid rgba(255,255,255,0.05); border-radius:10px; padding:12px 16px; display:flex; align-items:center; gap:12px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
-            ${rankBadge}
-            <div style="flex:1;">
-              <div style="font-weight:700; font-size:0.9rem; color:#fff;">${a.name}</div>
-              <div style="font-size:0.75rem; color:var(--text-muted);">${a.email.split('@')[0]}</div>
-            </div>
-            <div style="text-align:right;">
-              <div style="font-weight:800; color:#a78bfa; font-size:1.2rem; line-height:1;">${scans}</div>
-              <div style="font-size:0.65rem; color:var(--text-muted); text-transform:uppercase; margin-top:4px;">Scans</div>
-            </div>
-          </div>
-      `;
-    });
-
-    html += `
-        </div>
-      </div>
-    `;
-    
     container.innerHTML = html;
-    container.style.display = 'block';
-  }
 
-  function renderAssistantsList(data) {
-    const listDiv = document.getElementById('assistants-list');
-    if (data.length > 0) {
-      listDiv.innerHTML = '<div class="table-wrap"><table style="width:100%; border-collapse: collapse;">' +
-        '<thead><tr>' +
-        '<th style="text-align:left; padding:12px 14px; font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); border-bottom:1px solid var(--border);">Name</th>' +
-        '<th style="text-align:left; padding:12px 14px; font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); border-bottom:1px solid var(--border);">Event</th>' +
-        '<th style="text-align:left; padding:12px 14px; font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); border-bottom:1px solid var(--border);">Status</th>' +
-        '<th style="text-align:right; padding:12px 14px; font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); border-bottom:1px solid var(--border);">Actions</th>' +
-        '</tr></thead><tbody>' +
-        data.map(a => `
-          <tr style="transition: background 0.2s; cursor: default;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
-            <td style="padding:14px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle;">
-              <div style="font-weight:600; color:#fff;">${a.name}</div>
-              <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">${a.email}</div>
-            </td>
-            <td style="padding:14px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; color:var(--text-muted);">
-              ${a.event ? a.event.title : '—'}
-            </td>
-            <td style="padding:14px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle;">
-              <span style="display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:8px; font-size:0.75rem; font-weight:600; background:${a.is_active ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)'}; color:${a.is_active ? '#10b981' : '#ef4444'}; border:1px solid ${a.is_active ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'};">
-                 ${a.is_active ? 'Active' : 'Suspended'}
-              </span>
-            </td>
-            <td style="padding:14px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; text-align:right;">
-              <div style="display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap;">
-                <button class="btn btn-sm" style="background:rgba(34,211,238,.12); color:#22d3ee; border:1px solid rgba(34,211,238,.25); display:inline-flex; align-items:center; gap:4px;" onclick="window.location.href='/manager/assistants/${a.id}/stats'">
-                  📊 Stats
-                </button>
-                <button class="btn btn-sm" style="background:rgba(245,158,11,0.15); color:#f59e0b; border:1px solid rgba(245,158,11,0.3); display:inline-flex; align-items:center; gap:4px;" onclick="editAssistant(${JSON.stringify(a).replace(/"/g, '&quot;')})">
-                  ✏️ Edit
-                </button>
-                <button class="btn btn-sm" style="background:${a.is_active ? 'rgba(239,68,68,.12)' : 'rgba(16,185,129,.12)'}; color:${a.is_active ? '#ef4444' : '#10b981'}; border:1px solid ${a.is_active ? 'rgba(239,68,68,.25)' : 'rgba(16,185,129,.25)'}; display:inline-flex; align-items:center; gap:4px;" onclick="toggleStatus(${a.id})">
-                  ${a.is_active ? '🚫 Suspend' : '✅ Activate'}
-                </button>
-              </div>
-            </td>
-          </tr>`).join('') +
-        '</tbody></table></div>';
-    } else {
-      listDiv.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);"><div style="font-size:2rem; margin-bottom:12px;">👥</div><p>No assistants match the filter.</p></div>';
-    }
-  }
-
-  async function toggleStatus(id) {
-    const res = await api.patch(`/assistants/${id}/status`);
-    if (res.ok) {
-      showToast('Status updated!', 'success');
-      loadAssistants();
-    }
-  }
-
-  function editAssistant(a) {
-    document.getElementById('form-title').textContent = 'Edit Assistant';
-    document.getElementById('form-desc').textContent = 'Modify assistant details or reassign them to another event.';
-    document.getElementById('edit-id').value = a.id;
-    document.getElementById('a-name').value = a.name;
-    document.getElementById('a-email').value = a.email;
-    document.getElementById('a-event').value = a.event_id;
-    document.getElementById('a-pass').required = false;
-    document.getElementById('pass-hint').style.display = 'inline';
-    document.getElementById('save-btn').textContent = 'Update Assistant';
-    document.getElementById('cancel-edit').style.display = 'inline';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  function resetForm() {
-    document.getElementById('form-title').textContent = 'Generate Assistant Account';
-    document.getElementById('form-desc').textContent = 'Assistants use their accounts to log in on their mobile devices and scan QR codes.';
-    document.getElementById('edit-id').value = '';
-    document.getElementById('assistant-form').reset();
-    document.getElementById('a-pass').required = true;
-    document.getElementById('pass-hint').style.display = 'none';
-    document.getElementById('save-btn').textContent = 'Create Assistant';
-    document.getElementById('cancel-edit').style.display = 'none';
-  }
-
-  document.getElementById('assistant-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = document.getElementById('save-btn');
-    const editId = document.getElementById('edit-id').value;
-    btn.textContent = editId ? 'Updating...' : 'Creating...'; btn.disabled = true;
-
-    const body = {
-      name: document.getElementById('a-name').value,
-      email: document.getElementById('a-email').value,
-      event_id: document.getElementById('a-event').value,
-    };
-    if (document.getElementById('a-pass').value) {
-      body.password = document.getElementById('a-pass').value;
-    }
-
-    let res;
-    if (editId) {
-      res = await api.put(`/assistants/${editId}`, body);
-    } else {
-      body.role = 'Assistant';
-      res = await api.post('/users', body);
-    }
-    
-    if (res.ok) {
-      showToast(editId ? 'Assistant updated!' : 'Assistant created!', 'success');
-      resetForm();
-      document.getElementById('success-box').style.display = 'block';
-      setTimeout(() => { document.getElementById('success-box').style.display = 'none'; }, 5000);
-      loadAssistants();
-    } else {
-      const msg = res.data?.errors ? Object.values(res.data.errors).flat().join('. ') : res.data?.message || 'Error saving assistant';
-      showToast(msg, 'error');
-    }
-    btn.textContent = editId ? 'Update Assistant' : 'Create Assistant'; btn.disabled = false;
+    // Attach click handlers to all invite buttons
+    var buttons = container.querySelectorAll('.invite-btn.primary');
+    buttons.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var idx = parseInt(this.getAttribute('data-idx'));
+        sendInvite(idx, this);
+      });
+    });
   });
+}
+
+// ════════════════════════════════════════════════════════════════
+//  SEND INVITE (direct — no modal)
+// ════════════════════════════════════════════════════════════════
+function sendInvite(idx, btnElement) {
+  var assistant = availableCache[idx];
+  var eventId = document.getElementById('invite-event').value;
+
+  if (!assistant || !eventId) {
+    showToast('Please select an event first', 'error');
+    return;
+  }
+
+  var eventName = eventsMap[eventId] || 'this event';
+  if (!confirm('Send invitation to "' + assistant.name + '" for "' + eventName + '"?')) {
+    return;
+  }
+
+  // Visual feedback
+  btnElement.textContent = 'Sending...';
+  btnElement.className = 'invite-btn sending';
+
+  var body = {
+    assistant_id: assistant.id,
+    event_id: parseInt(eventId)
+  };
+
+  api.post('/manager/invite-assistant', body).then(function(res) {
+    if (res.ok) {
+      showToast('✅ Invitation sent to ' + assistant.name + '!', 'success');
+      btnElement.textContent = '⏳ Invited';
+      btnElement.className = 'invite-btn disabled';
+      loadInvitations();
+    } else {
+      var msg = (res.data && res.data.message) ? res.data.message : 'Failed to send invitation';
+      showToast('❌ ' + msg, 'error');
+      btnElement.textContent = 'Invite';
+      btnElement.className = 'invite-btn primary';
+    }
+  }).catch(function(err) {
+    showToast('Network error', 'error');
+    btnElement.textContent = 'Invite';
+    btnElement.className = 'invite-btn primary';
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+//  LOAD INVITATIONS
+// ════════════════════════════════════════════════════════════════
+function loadInvitations() {
+  var eventId = document.getElementById('filter-event').value;
+  var url = '/manager/invitations';
+  if (eventId) url += '?event_id=' + eventId;
+
+  api.get(url).then(function(res) {
+    var container = document.getElementById('invitations-container');
+    if (!res.ok) {
+      container.innerHTML = '<div class="empty-state"><p style="color:var(--error);">Failed to load invitations</p></div>';
+      return;
+    }
+    allInvitations = res.data;
+    updateCounts();
+    renderInvitations();
+  });
+}
+
+function updateCounts() {
+  document.getElementById('count-all').textContent = allInvitations.length;
+  document.getElementById('count-pending').textContent = allInvitations.filter(function(i) { return i.status === 'pending'; }).length;
+  document.getElementById('count-accepted').textContent = allInvitations.filter(function(i) { return i.status === 'accepted'; }).length;
+  document.getElementById('count-rejected').textContent = allInvitations.filter(function(i) { return i.status === 'rejected'; }).length;
+}
+
+function switchTab(tab, el) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  el.classList.add('active');
+  renderInvitations();
+}
+
+function renderInvitations() {
+  var container = document.getElementById('invitations-container');
+  var data = allInvitations;
+  if (currentTab !== 'all') {
+    data = data.filter(function(i) { return i.status === currentTab; });
+  }
+
+  if (data.length === 0) {
+    var msgs = {
+      all: 'No invitations sent yet. Invite assistants from the left panel.',
+      pending: 'No pending invitations.',
+      accepted: 'No accepted invitations yet.',
+      rejected: 'No rejected invitations.'
+    };
+    container.innerHTML = '<div class="empty-state"><div class="icon">📬</div><p>' + (msgs[currentTab] || '') + '</p></div>';
+    return;
+  }
+
+  var html = '<table class="inv-table"><thead><tr>' +
+    '<th>Assistant</th><th>Event</th><th>Status</th><th>Scans</th><th>Date</th><th style="text-align:right;">Actions</th>' +
+    '</tr></thead><tbody>';
+
+  data.forEach(function(inv) {
+    var name = (inv.assistant && inv.assistant.name) ? inv.assistant.name : 'Unknown';
+    var email = (inv.assistant && inv.assistant.email) ? inv.assistant.email : '';
+    var eventTitle = (inv.event && inv.event.title) ? inv.event.title : 'Unknown';
+    var statusCls = 'status-' + inv.status;
+    var statusLabel = inv.status.charAt(0).toUpperCase() + inv.status.slice(1);
+    var statusIcons = { pending: '⏳', accepted: '✅', rejected: '❌' };
+    var scans = inv.scans_count || 0;
+    var createdDate = inv.created_at ? new Date(inv.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—';
+    var initials = name.charAt(0).toUpperCase();
+
+    var actions = '';
+    if (inv.status === 'pending') {
+      actions = '<button class="cancel-btn" data-inv-id="' + inv.id + '">✕ Cancel</button>';
+    }
+
+    html += '<tr>' +
+      '<td><div style="display:flex;align-items:center;gap:10px;">' +
+        '<div class="avail-avatar" style="width:34px;height:34px;font-size:0.75rem;">' + initials + '</div>' +
+        '<div><div style="font-weight:600;color:#fff;font-size:0.9rem;">' + name + '</div>' +
+        '<div style="font-size:0.72rem;color:var(--text-muted);">' + email + '</div></div>' +
+      '</div></td>' +
+      '<td style="color:var(--text-secondary);font-size:0.88rem;">' + eventTitle + '</td>' +
+      '<td><span class="status-pill ' + statusCls + '">' + (statusIcons[inv.status] || '') + ' ' + statusLabel + '</span></td>' +
+      '<td>' + (inv.status === 'accepted' ? '<span class="scans-badge">📱 ' + scans + '</span>' : '<span style="color:var(--text-muted);">—</span>') + '</td>' +
+      '<td style="font-size:0.82rem;color:var(--text-muted);">' + createdDate + '</td>' +
+      '<td style="text-align:right;">' + actions + '</td>' +
+    '</tr>';
+  });
+
+  html += '</tbody></table>';
+  container.innerHTML = html;
+
+  // Attach cancel handlers
+  container.querySelectorAll('.cancel-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var invId = this.getAttribute('data-inv-id');
+      cancelInvite(invId);
+    });
+  });
+}
+
+function cancelInvite(id) {
+  if (!confirm('Cancel this invitation?')) return;
+  api.delete('/manager/invitations/' + id).then(function(res) {
+    if (res.ok) {
+      showToast('Invitation cancelled', 'success');
+      loadInvitations();
+      loadAvailableAssistants();
+    } else {
+      showToast((res.data && res.data.message) ? res.data.message : 'Failed to cancel', 'error');
+    }
+  });
+}
 </script>
 </body>
-
-
-
-
-
+</html>

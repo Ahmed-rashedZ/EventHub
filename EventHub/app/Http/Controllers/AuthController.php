@@ -34,15 +34,26 @@ public function register(Request $request)
         'name' => 'required|string|max:255',
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8',
-        'role' => 'nullable|string|in:User', // Only allow 'User' role via public registration
+        'role' => 'nullable|string|in:User,Assistant',
     ]);
+
+    $role = $request->role ?? 'User';
 
     $user = User::create([
         'name' => $request->name,
         'email' => $request->email,
         'password' => Hash::make($request->password),
-        'role' => 'User' // Force 'User' role for public registration
+        'role' => $role,
     ]);
+
+    // Create profile for Assistants with is_available = false by default
+    if ($role === 'Assistant') {
+        Profile::create([
+            'user_id' => $user->id,
+            'profile_type' => 'individual',
+            'is_available' => false,
+        ]);
+    }
 
     $token = $user->createToken('auth_token')->plainTextToken;
 

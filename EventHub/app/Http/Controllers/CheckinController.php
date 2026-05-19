@@ -27,8 +27,8 @@ class CheckinController extends Controller
             return response()->json(['message' => 'Invalid QR code'], 404);
         }
 
-        // 🔥 New: Check if Assistant is assigned to THIS event
-        if ($assistant->event_id && $assistant->event_id != $ticket->event_id) {
+        // Check if assistant has access to this event (new invitation system + old fallback)
+        if (!$assistant->hasAccessToEvent($ticket->event_id)) {
             return response()->json(['message' => 'Unauthorized: You are not assigned to this event'], 403);
         }
 

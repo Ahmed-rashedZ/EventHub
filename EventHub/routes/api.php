@@ -12,6 +12,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\AssistantAnalyticsController;
+use App\Http\Controllers\AssistantController;
 
 // ─── Public routes ────────────────────────────────────────────────────────────
 Route::post('/register', [AuthController::class, 'register']);
@@ -130,6 +131,21 @@ Route::middleware('auth:sanctum')->group(function () {
     // ── Resubmit (For Partners) ──
     Route::post('/verifications/reupload', [VerificationController::class, 'reuploadDocument']);
     Route::get('/verifications/my-documents', [VerificationController::class, 'myDocuments']);
+
+    // ── Manager Invitation System (New) ──
+    Route::get('/manager/available-assistants',   [AssistantController::class, 'getAvailableAssistants']);
+    Route::post('/manager/invite-assistant',      [AssistantController::class, 'sendInvitation']);
+    Route::get('/manager/invitations',            [AssistantController::class, 'getManagerInvitations']);
+    Route::delete('/manager/invitations/{id}',    [AssistantController::class, 'cancelInvitation']);
+
+    // ── Assistant (Self-Service) Routes ──
+    Route::get('/assistant/requests',               [AssistantController::class, 'getRequests']);
+    Route::post('/assistant/requests/{id}/respond',  [AssistantController::class, 'respondToRequest']);
+    Route::match(['put', 'patch'], '/assistant/availability', [AssistantController::class, 'toggleAvailability']);
+    Route::get('/assistant/work',                    [AssistantController::class, 'getAcceptedEvents']);
+    Route::get('/assistant/work/{id}',               [AssistantController::class, 'getEventWorkDetails']);
+    Route::get('/assistant/history',                 [AssistantController::class, 'getHistory']);
+    Route::get('/assistant/history/{id}/stats',      [AssistantController::class, 'getEventStats']);
 });
 
 // ── Storage Proxy for CORS (Flutter Web Fix) ──

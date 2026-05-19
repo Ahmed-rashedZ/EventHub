@@ -704,6 +704,35 @@
         `;
         }
 
+        let assistantsHtml = '';
+        if (ev.assistants && ev.assistants.length > 0) {
+          assistantsHtml = `
+          <div class="ed-section mt-4" style="margin-top: 16px;">
+            <div class="ed-section-label">Assigned Assistants</div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              ${ev.assistants.map(as => `
+                 <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.04); padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.05);">
+                    <div style="width:36px; height:36px; font-size:14px; display:inline-flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:50%; font-weight:700; color:#fff; overflow:hidden;">
+                        ${(() => {
+                          const initials = as.name ? as.name.charAt(0).toUpperCase() : '?';
+                          if (as.logo) {
+                            return `<img src="/storage/${as.logo}" style="width:100%;height:100%;object-fit:cover;">`;
+                          }
+                          return initials;
+                        })()}
+                    </div>
+                    <div style="flex:1">
+                        <div style="font-size:0.85rem; font-weight:600; color:#fff;">${as.name}</div>
+                        <div style="font-size:0.72rem; color:var(--text-muted);">${as.email}</div>
+                    </div>
+                    <span style="background:rgba(16,185,129,0.15); color:#10b981; padding:4px 10px; border-radius:8px; font-size:0.72rem; font-weight:600; border:1px solid rgba(16,185,129,0.25);">Joined</span>
+                 </div>
+              `).join('')}
+            </div>
+          </div>
+          `;
+        }
+
         let reviewsHtml = '';
         if (reviewData.reviews.length > 0) {
           reviewsHtml = `
@@ -868,6 +897,7 @@
           </div>
           
           ${sponsorsHtml}
+          ${assistantsHtml}
           ${reviewsHtml}
 
           <!-- Agenda Section -->
