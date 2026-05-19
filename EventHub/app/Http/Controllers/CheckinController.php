@@ -44,6 +44,12 @@ class CheckinController extends Controller
             ], 422);
         }
 
+        if ($ticket->event->time_status !== 'live') {
+            return response()->json([
+                'message' => 'Cannot scan tickets: The event is not live.',
+            ], 422);
+        }
+
         // Mark ticket as used
         $ticket->status = 'used';
         $ticket->save();
