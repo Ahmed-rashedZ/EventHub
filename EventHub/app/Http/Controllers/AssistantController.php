@@ -387,6 +387,42 @@ class AssistantController extends Controller
                     ->first();
                 if ($existingReq) {
                     $invitationStatus = $existingReq->status;
+                } else {
+                    // Check if assistant has a time conflict with this event
+                    $currentEvent = \App\Models\Event::find($eventId);
+                    if ($currentEvent) {
+                        $eventStart = \Carbon\Carbon::parse($currentEvent->start_time);
+                        $eventEnd = $currentEvent->end_time 
+                            ? \Carbon\Carbon::parse($currentEvent->end_time) 
+                            : $eventStart->copy()->addHours(3);
+
+                        $now = now();
+                        $acceptedRequests = AssistanceRequest::where('assistant_id', $a->id)
+                            ->where('status', 'accepted')
+                            ->whereHas('event', function ($q) use ($now) {
+                                $q->where(function ($q2) use ($now) {
+                                    $q2->whereNull('end_time')
+                                       ->orWhere('end_time', '>=', $now);
+                                });
+                            })
+                            ->with('event')
+                            ->get();
+
+                        foreach ($acceptedRequests as $req) {
+                            $otherEvent = $req->event;
+                            if (!$otherEvent) continue;
+
+                            $otherStart = \Carbon\Carbon::parse($otherEvent->start_time);
+                            $otherEnd = $otherEvent->end_time 
+                                ? \Carbon\Carbon::parse($otherEvent->end_time) 
+                                : $otherStart->copy()->addHours(3);
+
+                            if ($eventStart->lt($otherEnd) && $otherStart->lt($eventEnd)) {
+                                $invitationStatus = 'busy';
+                                break;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -452,6 +488,40 @@ class AssistantController extends Controller
 
         if ($existing) {
             return response()->json(['message' => 'This assistant has already been invited to this event (status: ' . $existing->status . ')'], 422);
+        }
+
+        // Check if the assistant has a time conflict (overlapping accepted event)
+        $eventStart = \Carbon\Carbon::parse($event->start_time);
+        $eventEnd = $event->end_time 
+            ? \Carbon\Carbon::parse($event->end_time) 
+            : $eventStart->copy()->addHours(3);
+
+        $now = now();
+        $acceptedRequests = AssistanceRequest::where('assistant_id', $assistant->id)
+            ->where('status', 'accepted')
+            ->whereHas('event', function ($q) use ($now) {
+                $q->where(function ($q2) use ($now) {
+                    $q2->whereNull('end_time')
+                       ->orWhere('end_time', '>=', $now);
+                });
+            })
+            ->with('event')
+            ->get();
+
+        foreach ($acceptedRequests as $req) {
+            $otherEvent = $req->event;
+            if (!$otherEvent) continue;
+
+            $otherStart = \Carbon\Carbon::parse($otherEvent->start_time);
+            $otherEnd = $otherEvent->end_time 
+                ? \Carbon\Carbon::parse($otherEvent->end_time) 
+                : $otherStart->copy()->addHours(3);
+
+            if ($eventStart->lt($otherEnd) && $otherStart->lt($eventEnd)) {
+                return response()->json([
+                    'message' => "هذا المساعد مشغول بالفعل بحدث آخر (\"{$otherEvent->title}\") خلال هذا الوقت."
+                ], 422);
+            }
         }
 
         $invitation = AssistanceRequest::create([

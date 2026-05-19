@@ -427,6 +427,7 @@ const I18N_AR = {
   'Loading assistants...': 'جاري تحميل المساعدين...',
   'Delete': 'حذف',
   'No assistants created yet.': 'لا يوجد مساعدون بعد.',
+  'Busy': 'مشغول',
 
   /* ── Search Placeholders ───────────────────────────────── */
   'Search users…': 'البحث في المستخدمين...',

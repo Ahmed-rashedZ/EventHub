@@ -227,6 +227,8 @@ function loadAvailableAssistants() {
         btnHtml = '<button class="invite-btn disabled">⏳ Invited</button>';
       } else if (a.invitation_status === 'rejected') {
         btnHtml = '<button class="invite-btn disabled" style="background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2);">Rejected</button>';
+      } else if (a.invitation_status === 'busy') {
+        btnHtml = '<button class="invite-btn disabled" style="background: rgba(245,158,11,0.1); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); cursor: not-allowed;" title="Assistant has another event at the same time">⚠️ ' + t('Busy') + '</button>';
       } else {
         btnHtml = '<button class="invite-btn primary" data-idx="' + idx + '">Invite</button>';
       }
