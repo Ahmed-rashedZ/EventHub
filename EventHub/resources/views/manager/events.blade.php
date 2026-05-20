@@ -626,7 +626,7 @@
           <td style="display:flex;gap:6px;padding:14px 16px;flex-wrap:wrap">
             <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${ev.id})" title="View Details">ℹ️ Details</button>
             <button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='/manager/event-stats/${ev.id}'" title="View Statistics">📊 Stats</button>
-            ${ev.status === 'approved' ? `<button class="btn btn-sm" style="background:${ev.is_published ? 'rgba(16,185,129,0.12)' : 'rgba(139,92,246,0.12)'};color:${ev.is_published ? '#10b981' : '#a78bfa'};border:1px solid ${ev.is_published ? 'rgba(16,185,129,0.25)' : 'rgba(139,92,246,0.25)'}" onclick="openPublishedScheduleModal(${ev.id})" title="Publish Specific Days">${ev.is_published ? '✅' : '📅'} ${t('Publish Days')}</button>` : ''}
+            ${ev.status === 'approved' && ev.time_status !== 'ended' ? `<button class="btn btn-sm" style="background:${ev.is_published ? 'rgba(16,185,129,0.12)' : 'rgba(139,92,246,0.12)'};color:${ev.is_published ? '#10b981' : '#a78bfa'};border:1px solid ${ev.is_published ? 'rgba(16,185,129,0.25)' : 'rgba(139,92,246,0.25)'}" onclick="openPublishedScheduleModal(${ev.id})" title="Publish Specific Days">${ev.is_published ? '✅' : '📅'} ${t('Publish Days')}</button>` : ''}
             ${ev.status === 'pending' ? `<button class="btn btn-sm" style="background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25)" onclick="deleteEvent(${ev.id})" title="Delete Event">🗑️ Delete</button>` : ''}
           </td>
         </tr>${reviewRow}`;
@@ -818,7 +818,7 @@
             <div>
               <div class="ed-info-label" style="display:flex;align-items:center;gap:6px;">
                 Capacity 
-                ${ev.status === 'approved' ? `<button class="btn-icon-sm" onclick="expandCapacity(${ev.id}, ${ev.capacity}, ${ev.venue?.capacity || 99999})" title="Expand Capacity" style="padding:2px;background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.2);border-radius:4px;cursor:pointer;">✏️</button>` : ''}
+                ${ev.status === 'approved' && ev.time_status !== 'ended' ? `<button class="btn-icon-sm" onclick="expandCapacity(${ev.id}, ${ev.capacity}, ${ev.venue?.capacity || 99999})" title="Expand Capacity" style="padding:2px;background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.2);border-radius:4px;cursor:pointer;">✏️</button>` : ''}
               </div>
               <div class="ed-info-value" id="det-capacity-${ev.id}">${ev.capacity}</div>
             </div>
@@ -899,18 +899,20 @@
           })()}
 
           <!-- Agenda Management Button (Manager only) -->
+          ${ev.time_status !== 'ended' ? `
           <div style="margin-top:12px;display:flex;justify-content:center;">
             <button class="btn btn-sm" style="background:rgba(34,211,238,0.1);color:#22d3ee;border:1px solid rgba(34,211,238,0.2);display:flex;align-items:center;gap:6px;" onclick="openAgendaEditor(${ev.id})">
               📋 Edit Agenda
             </button>
           </div>
+          ` : ''}
 
           <!-- Footer -->
           <div class="ed-footer" style="margin-top: 16px; padding-bottom: 12px; display: flex; flex-direction: column; gap: 12px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
             
             <!-- Management Controls -->
             <div style="display: flex; gap: 10px; flex-wrap: wrap; width: 100%; margin-top: 12px;">
-              ${ev.status === 'approved' ? `
+              ${ev.status === 'approved' && ev.time_status !== 'ended' ? `
                 <button class="btn btn-sm ${ev.is_tickets_open ? 'btn-danger' : 'btn-success'}" 
                         style="flex: 1; min-width: 140px; justify-content: center;" 
                         onclick="toggleTicketSales(${ev.id})">

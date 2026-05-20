@@ -835,6 +835,10 @@ class EventController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
+        if ($event->time_status === 'ended') {
+            return response()->json(['message' => 'Cannot update agenda of an ended event.'], 422);
+        }
+
         $request->validate([
             'agenda' => 'present|nullable',
         ]);
@@ -1087,6 +1091,10 @@ class EventController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
+        if ($event->time_status === 'ended') {
+            return response()->json(['message' => 'Cannot toggle tickets for an ended event.'], 400);
+        }
+
         if (!in_array($event->status, ['approved', 'cancellation_requested'])) {
             return response()->json(['message' => 'Cannot toggle tickets for this event status.'], 400);
         }
@@ -1103,6 +1111,10 @@ class EventController extends Controller
         
         if ($request->user()->id !== $event->created_by && $request->user()->role !== 'Admin') {
             return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        if ($event->time_status === 'ended') {
+            return response()->json(['message' => 'Cannot update published schedule of an ended event.'], 422);
         }
 
         $request->validate([
@@ -1145,6 +1157,10 @@ class EventController extends Controller
         // Check ownership or admin role
         if ($event->created_by !== $user->id && $user->role !== 'Admin') {
             return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        if ($event->time_status === 'ended') {
+            return response()->json(['message' => 'Cannot update capacity of an ended event.'], 422);
         }
 
         $newCapacity = (int) $request->capacity;
