@@ -41,7 +41,7 @@ class TicketController extends Controller
 
         // Check capacity and get the next ticket number
         $bookedCount = Ticket::where('event_id', $event->id)->count();
-        if ($bookedCount >= $event->capacity) {
+        if ($event->capacity !== null && $bookedCount >= $event->capacity) {
             return response()->json(['message' => 'Event is fully booked'], 422);
         }
 
@@ -66,7 +66,7 @@ class TicketController extends Controller
             $bookedNow = Ticket::where('event_id', $event->id)->count();
             $manager->notify(new SystemNotification(
                 'New Ticket Booked 🎟️',
-                "{$user->name} booked a ticket for \"{$event->title}\" ({$bookedNow}/{$event->capacity})",
+                "{$user->name} booked a ticket for \"{$event->title}\" ({$bookedNow}/" . ($event->capacity ?? '∞') . ")",
                 'ticket',
                 '🎟️',
                 '/manager/event-stats/' . $event->id,

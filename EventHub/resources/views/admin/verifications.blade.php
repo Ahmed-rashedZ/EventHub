@@ -264,7 +264,7 @@
             <div>
               <div class="vf-name">${req.name} ${badge}</div>
               <div class="vf-email">${req.email}</div>
-              <div class="vf-role">${t(req.role)}</div>
+              <div class="vf-role">${t(req.role)} ${req.profile && req.profile.company_type ? `• ${req.profile.company_type}` : ''}</div>
             </div>
           </div>
           <div>

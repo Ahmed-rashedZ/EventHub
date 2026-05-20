@@ -13,7 +13,6 @@ class ExhibitionApplication extends Model
         'initiator',
         'message',
         'status',
-        'booth_preference',
         'product_category',
     ];
 
@@ -32,10 +31,6 @@ class ExhibitionApplication extends Model
         return $this->belongsTo(User::class, 'event_manager_id');
     }
 
-    public function booth()
-    {
-        return $this->hasOne(ExhibitionBooth::class, 'application_id');
-    }
 
     public function negotiation()
     {

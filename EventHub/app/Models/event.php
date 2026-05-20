@@ -43,6 +43,7 @@ class Event extends Model
         'event_objective',
         'target_audience',
         'published_schedule',
+        'is_exhibitor_registration_open',
     ];
 
     protected $appends = [
@@ -63,6 +64,7 @@ class Event extends Model
         'internal_schedule' => 'array',
         'agenda' => 'array',
         'published_schedule' => 'array',
+        'is_exhibitor_registration_open' => 'boolean',
     ];
 
     protected function serializeDate(\DateTimeInterface $date)
@@ -193,5 +195,23 @@ class Event extends Model
         return $this->hasMany(ExhibitionApplication::class)
                     ->where('status', 'accepted')
                     ->with(['company.profile', 'booth']);
+    }
+
+    /**
+     * Check if the event is currently accepting exhibitor applications.
+     * Based on manual toggle AND 30-day deadline before start_time.
+     */
+    public function canAcceptExhibitorApplications(): bool
+    {
+        if (!$this->is_exhibition || !$this->is_exhibitor_registration_open) {
+            return false;
+        }
+
+        // Must be at least 30 days before start_time
+        if (now()->diffInDays($this->start_time, false) < 30) {
+            return false;
+        }
+
+        return true;
     }
 }

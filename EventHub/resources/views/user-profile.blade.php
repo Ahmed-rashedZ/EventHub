@@ -475,9 +475,7 @@
         document.getElementById('profile-loader').style.display = 'none';
         document.getElementById('profile-content').style.display = 'block';
 
-        if (u.role === 'Event Manager') {
-          loadManagerEvents(u.id, u.role);
-        } else if (u.role === 'Sponsor' || u.role === 'Company') {
+        if (u.role === 'Event Manager' || u.role === 'Sponsor') {
           loadManagerEvents(u.id, u.role);
         }
       } catch (err) {

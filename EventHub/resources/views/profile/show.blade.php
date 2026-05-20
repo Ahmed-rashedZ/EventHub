@@ -123,6 +123,11 @@
             <div class="profile-content">
                 <h1 class="profile-name">{{ $user->name }}</h1>
                 <span class="profile-role badge role-{{ strtolower(str_replace(' ', '-', $user->role)) }}"><script>document.write(t('{{ $user->role }}'))</script></span>
+                @if(optional($user->profile)->company_type)
+                    <span class="profile-role badge" style="background: rgba(110, 64, 242, 0.1); color: var(--accent); border-color: rgba(110, 64, 242, 0.2); margin-left: 8px;">
+                        {{ optional($user->profile)->company_type }}
+                    </span>
+                @endif
                 
                 <div class="profile-info-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 3rem; text-align: left;">
                     <!-- About Section -->

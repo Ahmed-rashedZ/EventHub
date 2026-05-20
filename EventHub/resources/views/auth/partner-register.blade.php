@@ -107,6 +107,24 @@
           </select>
         </div>
 
+        <div class="form-group" id="grp-company_type" style="display:none;">
+          <label class="form-label"><script>document.write(t('Company Sector / Category'))</script></label>
+          <select id="pr-company_type" class="form-control" style="cursor:pointer;">
+            <option value="" disabled selected><script>document.write(t('Select Sector'))</script></option>
+            <option value="Technology"><script>document.write(t('Technology'))</script></option>
+            <option value="Healthcare"><script>document.write(t('Healthcare'))</script></option>
+            <option value="Telecommunications"><script>document.write(t('Telecommunications'))</script></option>
+            <option value="Sports"><script>document.write(t('Sports'))</script></option>
+            <option value="Marketing & Media"><script>document.write(t('Marketing & Media'))</script></option>
+            <option value="Education"><script>document.write(t('Education'))</script></option>
+            <option value="Construction & Real Estate"><script>document.write(t('Construction & Real Estate'))</script></option>
+            <option value="Food & Beverage"><script>document.write(t('Food & Beverage'))</script></option>
+            <option value="Logistics"><script>document.write(t('Logistics'))</script></option>
+            <option value="Finance & Banking"><script>document.write(t('Finance & Banking'))</script></option>
+            <option value="Other"><script>document.write(t('Other'))</script></option>
+          </select>
+        </div>
+
         <div class="form-group">
           <label class="form-label" id="lbl-name"><script>document.write(t('Company / Individual Name'))</script></label>
           <input id="pr-name" type="text" class="form-control" required />
@@ -229,10 +247,14 @@
 
     document.getElementById('pr-role').addEventListener('change', (e) => {
       const role = e.target.value;
+      document.getElementById('grp-company_type').style.display = (role === 'Sponsor' || role === 'Company') ? '' : 'none';
       if (role === 'Sponsor' || role === 'Company') {
         document.getElementById('lbl-name').textContent = t('Company Name / Entity Name');
+        document.getElementById('pr-company_type').required = true;
       } else {
         document.getElementById('lbl-name').textContent = t('Manager Full Name');
+        document.getElementById('pr-company_type').required = false;
+        document.getElementById('pr-company_type').value = '';
       }
       updateDocsForRole(role);
     });
@@ -248,6 +270,9 @@
       fd.append('name', document.getElementById('pr-name').value);
       fd.append('email', document.getElementById('pr-email').value);
       fd.append('password', document.getElementById('pr-pass').value);
+      if (role === 'Sponsor' || role === 'Company') {
+        fd.append('company_type', document.getElementById('pr-company_type').value);
+      }
 
       // Append only visible documents based on role
       const visibleCards = document.querySelectorAll('.pr-doc-card[data-roles]');

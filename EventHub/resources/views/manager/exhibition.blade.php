@@ -111,7 +111,7 @@
       <div class="card" style="margin-bottom: 30px;">
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Company</th><th>Bio</th><th>Contact</th><th>Action</th></tr></thead>
+            <thead><tr><th>Company</th><th>Sector</th><th>Contact</th><th>Action</th></tr></thead>
             <tbody id="companies-body">
               <tr class="loading-row"><td colspan="4"><div class="spinner" style="margin:auto"></div></td></tr>
             </tbody>
@@ -138,7 +138,7 @@
     <form id="req-form">
       <div class="form-group">
         <label class="form-label">Event</label>
-        <select id="r-event" class="form-control" required title="Select Exhibition Event">
+        <select id="r-event" class="form-control i18n-skip" required title="Select Exhibition Event">
           <option value="">Select an exhibition event…</option>
         </select>
       </div>
@@ -159,45 +159,6 @@
   </div>
 </div>
 
-<!-- Booth Assignment Modal -->
-<div class="modal-overlay" id="booth-modal">
-  <div class="modal" style="max-width:460px; border-top:3px solid #8b5cf6;">
-    <div class="modal-header">
-      <h3 class="modal-title">🎪 Booth & Rank Assignment</h3>
-      <button class="modal-close" onclick="closeBoothModal()">✕</button>
-    </div>
-    <div id="booth-company-name" style="font-weight:700; color:var(--accent2); font-size:1rem; margin-bottom:14px;"></div>
-    <div class="booth-form-row">
-      <div class="form-group">
-        <label class="form-label">Booth Number</label>
-        <input type="text" id="booth-number" class="form-control" placeholder="e.g. B12"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Booth Size</label>
-        <select id="booth-size" class="form-control">
-          <option value="small">Small</option>
-          <option value="medium" selected>Medium</option>
-          <option value="large">Large</option>
-          <option value="custom">Custom</option>
-        </select>
-      </div>
-    </div>
-    <div class="booth-form-row">
-      <div class="form-group">
-        <label class="form-label">Booth Fee</label>
-        <input type="number" id="booth-fee" class="form-control" placeholder="0.00" step="0.01" min="0"/>
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Notes</label>
-      <textarea id="booth-notes" class="form-control" placeholder="Optional notes about this booth..." style="min-height:60px;"></textarea>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-ghost" onclick="closeBoothModal()">Cancel</button>
-      <button type="button" class="btn btn-primary" onclick="saveBooth()" style="font-weight:700;">💾 Save Booth</button>
-    </div>
-  </div>
-</div>
 
 <!-- View Message Modal -->
 <div class="modal-overlay" id="msg-modal">
@@ -292,8 +253,6 @@
       const pending = apps.filter(a => a.status === 'pending').length;
       const negotiating = apps.filter(a => a.status === 'negotiating').length;
       
-      // Feature: Financial Summary
-      const totalFees = apps.reduce((sum, a) => sum + (parseFloat(a.booth?.booth_fee) || 0), 0);
 
       // Sort apps: accepted (by rank) first, then negotiating, then pending, then others
       apps.sort((a, b) => {
@@ -308,8 +267,6 @@
 
       const rows = apps.map((app, i) => {
         const comp = app.company || {};
-        const booth = app.booth;
-        const boothInfo = booth ? `#${booth.booth_number || '—'} (${booth.booth_size || 'medium'})` : '—';
 
         let actionHtml = '';
         if (app.status === 'pending') {
@@ -324,20 +281,19 @@
         } else if (app.status === 'negotiating' || app.status === 'accepted') {
           actionHtml = `
             <button class="btn btn-sm" onclick="openAgreementModal(${app.id}, 'exhibition')" style="padding:3px 10px;font-size:11px;background:rgba(34,211,238,0.1);color:#22d3ee;border:1px solid rgba(34,211,238,0.2);font-weight:600;">📋 ${t('Contract')}</button>
-            <button class="btn btn-sm" onclick="openBoothModal(${app.id}, '${(comp.name || '').replace(/'/g, "\\'")}', ${JSON.stringify(booth).replace(/"/g, '&quot;')})" style="padding:3px 10px;font-size:11px;background:rgba(139,92,246,0.1);color:#a78bfa;border:1px solid rgba(139,92,246,0.2);font-weight:600;">🎪 ${t('Booth')}</button>
           `;
         }
 
         return `
         <tr>
           <td style="font-weight:600;cursor:pointer;color:var(--accent2);" onclick="navigateToProfile(${app.company_id})">
-            <span class="i18n-skip">${comp.name || '—'}</span>
+            <div class="i18n-skip">${comp.name || '—'}</div>
+            <div style="font-size:0.7rem; color:var(--text-muted); font-weight:400;">${comp.profile?.company_type || t('General')}</div>
           </td>
-        <td style="color:var(--text-muted);font-size:0.82rem;">${app.product_category || '—'}</td>
-        <td>${badge(app.status)}</td>
-        <td style="color:var(--text-muted);font-size:0.82rem;">${boothInfo}</td>
-        <td><div style="display:flex;gap:6px;flex-wrap:wrap;">${actionHtml}</div></td>
-      </tr>`;
+          <td style="color:var(--text-muted);font-size:0.82rem;">${app.product_category || '—'}</td>
+          <td>${badge(app.status)}</td>
+          <td><div style="display:flex;gap:6px;flex-wrap:wrap;">${actionHtml}</div></td>
+        </tr>`;
       }).join('');
 
       return `
@@ -355,10 +311,6 @@
           </div>
           <div style="display:flex;align-items:center;gap:16px;">
             <div class="exh-stats">
-              <div class="exh-stat" style="color:var(--accent2); border-color:rgba(34,211,238,0.2);">
-                <div class="val">${totalFees.toLocaleString()} <span style="font-size:0.7rem; font-weight:600;">${t('LYD')}</span></div>
-                <div class="label">${t('Total Fees')}</div>
-              </div>
               <div class="exh-stat" style="color:var(--success); border-color:rgba(34,197,94,0.2);">
                 <div class="val">${accepted}</div>
                 <div class="label">${t('Accepted')}</div>
@@ -385,14 +337,10 @@
                <input type="text" class="form-control" placeholder="${t('Search company...')}" style="padding-left:32px; font-size:0.75rem; height:32px; border-radius:6px;" onkeyup="filterCompanies(${gi}, this.value)">
                <span style="position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:0.8rem; opacity:0.5;">🔍</span>
             </div>
-            <select class="form-control" style="width:140px; font-size:0.75rem; height:32px; border-radius:6px; padding:0 8px;" onchange="filterCompanies(${gi}, '', this.value)">
-               <option value="">${t('All Categories')}</option>
-               ${[...new Set(apps.map(a => a.product_category).filter(Boolean))].map(c => `<option value="${c}">${c}</option>`).join('')}
-            </select>
           </div>
           <div class="table-wrap" style="margin:0;">
             <table id="table-${gi}">
-              <thead><tr><th>${t('Company')}</th><th>${t('Category')}</th><th>${t('Status')}</th><th>${t('Booth')}</th><th>${t('Actions')}</th></tr></thead>
+              <thead><tr><th>${t('Company')}</th><th>${t('Category')}</th><th>${t('Status')}</th><th>${t('Actions')}</th></tr></thead>
               <tbody>${rows}</tbody>
             </table>
           </div>
@@ -408,63 +356,19 @@
     chev.classList.toggle('open');
   }
 
-  function filterCompanies(idx, query = '', category = '') {
+  function filterCompanies(idx, query = '') {
     const table = document.getElementById(`table-${idx}`);
+    if (!table) return;
     const rows = table.querySelectorAll('tbody tr');
-    const q = query.toLowerCase();
+    const q = query.toLowerCase().trim();
     
     rows.forEach(row => {
-      const companyName = row.cells[0].innerText.toLowerCase();
-      const companyCategory = row.cells[1].innerText;
-      
-      const matchesQuery = companyName.includes(q);
-      const matchesCategory = !category || companyCategory === category;
-      
-      row.style.display = (matchesQuery && matchesCategory) ? '' : 'none';
+      // The first cell contains name and type divs
+      const companyName = row.cells[0].querySelector('div')?.innerText.toLowerCase() || row.cells[0].innerText.toLowerCase();
+      row.style.display = companyName.includes(q) ? '' : 'none';
     });
   }
 
-  // ── Booth Modal ──
-  let boothTarget = null;
-
-  function openBoothModal(appId, companyName, boothData) {
-    boothTarget = appId;
-    document.getElementById('booth-company-name').textContent = companyName;
-    document.getElementById('booth-number').value = boothData?.booth_number || '';
-    document.getElementById('booth-size').value = boothData?.booth_size || 'medium';
-    document.getElementById('booth-fee').value = boothData?.booth_fee || '';
-    document.getElementById('booth-notes').value = boothData?.notes || '';
-    document.getElementById('booth-modal').classList.add('open');
-  }
-
-  function closeBoothModal() {
-    document.getElementById('booth-modal').classList.remove('open');
-    boothTarget = null;
-  }
-
-  async function saveBooth() {
-    if (!boothTarget) return;
-    const boothNumber = document.getElementById('booth-number').value;
-    const boothSize = document.getElementById('booth-size').value;
-    const boothFee = document.getElementById('booth-fee').value;
-    const notes = document.getElementById('booth-notes').value;
-
-    const res = await api.patch(`/exhibition/${boothTarget}/booth`, {
-      booth_number: boothNumber,
-      booth_size: boothSize,
-      booth_fee: boothFee ? parseFloat(boothFee) : 0,
-      notes: notes,
-    });
-
-    if (!res.ok) {
-      showToast(res.data?.message || t('Error saving booth'), 'error');
-      return;
-    }
-
-    showToast(t('Booth saved successfully!') + ' 🎪', 'success');
-    closeBoothModal();
-    loadData();
-  }
 
   // ── Accept / Reject ──
   async function respondReq(id, status) {
@@ -499,7 +403,7 @@
             </div>
           </div>
         </td>
-        <td style="color:var(--text-muted); font-size: 0.85rem;" class="i18n-skip">${c.profile?.bio || '—'}</td>
+        <td style="color:var(--text-muted); font-size: 0.85rem;" class="i18n-skip">${c.profile?.company_type || t('Other')}</td>
         <td style="color:var(--text-muted)">${c.email}</td>
         <td>
           <div style="display:flex; gap:8px;">

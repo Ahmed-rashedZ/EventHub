@@ -69,11 +69,12 @@ class ProfileController extends Controller
 
         $user->update($data);
 
-        if ($user->role === 'Sponsor') {
+        if ($user->role === 'Sponsor' || $user->role === 'Company') {
             $user->profile()->updateOrCreate(
                 ['user_id' => $user->id],
                 [
                     'profile_type' => 'company',
+                    'company_type' => $request->input('company_type'),
                     'bio' => $request->input('bio'),
                 ]
             );

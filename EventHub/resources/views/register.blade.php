@@ -28,16 +28,14 @@
           <p style="margin: 0; font-size: 0.85rem; color: var(--text-secondary);"><script>document.write(t('Please download the EventHub Mobile App to create your account and buy tickets.'))</script></p>
         </div>
 
-        <div class="card" style="padding: 16px; margin-bottom: 16px; background: rgba(16,185,129,0.1); border: 1px solid var(--success);">
-          <h4 style="margin: 0 0 8px 0; color: var(--success);">💼 <script>document.write(t('Managers & Sponsors'))</script></h4>
-          <p style="margin: 0 0 12px 0; font-size: 0.85rem; color: var(--text-secondary);"><script>document.write(t('Accounts for Event Managers and Sponsors must be verified by the System Administrator.'))</script></p>
-          <a href="/register/partner" class="btn btn-success btn-sm" style="display:inline-block; text-decoration:none;"><script>document.write(t('Apply as Partner →'))</script></a>
-        </div>
-
-        <div class="card" style="padding: 16px; background: rgba(245,158,11,0.1); border: 1px solid #f59e0b;">
-          <h4 style="margin: 0 0 8px 0; color: #f59e0b;">🏛️ <script>document.write(t('Companies & Exhibitors'))</script></h4>
-          <p style="margin: 0 0 12px 0; font-size: 0.85rem; color: var(--text-secondary);"><script>document.write(t('Apply as a company to participate in exhibitions.'))</script></p>
-          <a href="/register/partner" class="btn btn-sm" style="display:inline-block; text-decoration:none; background:#f59e0b; color:#fff;"><script>document.write(t('Apply as Partner →'))</script></a>
+        <div class="card" style="padding: 20px; background: rgba(139,92,246,0.08); border: 1px solid var(--accent); border-radius: 16px;">
+          <h4 style="margin: 0 0 10px 0; color: var(--accent2); font-size: 1.1rem;">🤝 <script>document.write(t('Partners & Exhibitors'))</script></h4>
+          <p style="margin: 0 0 16px 0; font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;">
+            <script>document.write(t('Join as an Event Manager, Sponsor, or Exhibitor. Your account will be reviewed and verified by our team.'))</script>
+          </p>
+          <a href="/register/partner" class="btn btn-primary" style="display:block; text-align:center; text-decoration:none; font-weight:700;">
+            <script>document.write(t('Apply as Partner →'))</script>
+          </a>
         </div>
       </div>
 

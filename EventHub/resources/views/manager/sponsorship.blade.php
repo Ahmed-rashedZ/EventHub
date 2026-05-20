@@ -12,17 +12,7 @@
 <div class="app-layout">
   <aside class="sidebar">
     <div class="sidebar-logo" style="display:flex; justify-content:center; align-items:center; padding: 8px 0;"><img src="/images/logo.jpg" alt="EventHub Logo" style="width: 85px; height: 85px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
-    <nav class="sidebar-nav">
-      <span class="nav-section-label">Overview</span>
-      <a class="nav-item" href="/manager/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
-      <span class="nav-section-label">Events</span>
-      <a class="nav-item" href="/manager/events"><span class="nav-icon">📅</span> My Events</a>
-      <a class="nav-item" href="/manager/assistants"><span class="nav-icon">👥</span> Assistants</a>
-      <a class="nav-item" href="/manager/attendance"><span class="nav-icon">📍</span> Attendance</a>
-      <a class="nav-item active" href="/manager/sponsorship"><span class="nav-icon">💼</span> Sponsorship</a>
-      <span class="nav-section-label">Settings</span>
-      <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
-    </nav>
+    <nav class="sidebar-nav" id="sidebar-links"></nav>
     @include('partials._sidebar-footer')
   </aside>
 
@@ -37,7 +27,7 @@
         <div class="card" style="margin-bottom: 30px;">
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Sponsor</th><th>Company</th><th>Contact</th><th>Action</th></tr></thead>
+              <thead><tr><th>Sponsor</th><th>Sector</th><th>Contact</th><th>Action</th></tr></thead>
               <tbody id="sponsors-body">
                 <tr class="loading-row"><td colspan="4"><div class="spinner" style="margin:auto"></div></td></tr>
               </tbody>
@@ -50,7 +40,7 @@
     <div class="card">
       <div class="table-wrap">
         <table>
-          <thead><tr><th>#</th><th>Event</th><th>Message</th><th>Sponsor</th><th>Status</th><th>Action</th><th>Tier</th></tr></thead>
+          <thead><tr><th>#</th><th>Event</th><th>Sponsor (Sector)</th><th>Status</th><th>Action</th><th>Tier</th></tr></thead>
           <tbody id="req-body">
             <tr class="loading-row"><td colspan="7"><div class="spinner" style="margin:auto"></div></td></tr>
           </tbody>
@@ -70,7 +60,7 @@
     <form id="req-form">
       <div class="form-group">
         <label class="form-label">Event</label>
-        <select id="r-event" class="form-control" required>
+        <select id="r-event" class="form-control i18n-skip" required>
           <option value="">Select your event…</option>
         </select>
       </div>
@@ -243,12 +233,10 @@
       return `
       <tr>
         <td style="color:var(--text-muted)">${i + 1}</td>
-        <td><div style="font-weight:600">${r.event?.title || '—'}</div></td>
-        <td style="color:var(--text-muted)">
-            ${(r.negotiation?.final_notes || r.message) ? `<button class="btn btn-ghost btn-sm" onclick="showMsg('${(r.negotiation?.final_notes || r.message).replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n')}')" style="font-size:12px; padding: 4px 8px;">💬 Read Message</button>` : '—'}
-        </td>
+        <td><div style="font-weight:600" class="i18n-skip">${r.event?.title || '—'}</div></td>
         <td style="color:var(--accent2); font-weight:500; cursor:pointer;" onclick="navigateToProfile(${r.sponsor_id})">
-            <span class="i18n-skip">${r.sponsor?.name || 'Open'}</span>
+            <div class="i18n-skip">${r.sponsor?.name || 'Open'}</div>
+            <div style="font-size:0.7rem; color:var(--text-muted); font-weight:400;">${r.sponsor?.profile?.company_type || t('General')}</div>
         </td>
         <td>${badge(r.status)}</td>
         <td><div style="display: flex; gap: 8px; flex-wrap:wrap;">${actionHtml}</div></td>
@@ -289,7 +277,7 @@
                 </div>
             </div>
         </td>
-        <td style="color:var(--text-muted)" class="i18n-skip">${s.name}</td>
+        <td style="color:var(--text-muted)" class="i18n-skip">${s.profile?.company_type || t('Other')}</td>
         <td style="color:var(--text-muted)">${s.email}</td>
         <td>
            <div style="display:flex; gap:8px;">

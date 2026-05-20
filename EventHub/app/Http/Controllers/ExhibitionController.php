@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\ExhibitionApplication;
-use App\Models\ExhibitionBooth;
 use App\Models\AgreementNegotiation;
 use App\Models\AgreementVersion;
 use App\Models\Event;
@@ -27,7 +26,6 @@ class ExhibitionController extends Controller
             'event_id'         => 'required|exists:events,id',
             'company_id'       => $user->role === 'Event Manager' ? 'required|exists:users,id' : 'nullable',
             'message'          => 'nullable|string|max:1000',
-            'booth_preference' => 'nullable|string|in:small,medium,large,custom',
             'product_category' => 'nullable|string|max:255',
         ]);
 
@@ -92,8 +90,8 @@ class ExhibitionController extends Controller
                 return response()->json(['message' => 'You must be available to send applications'], 403);
             }
 
-            if (!$event->is_applications_open) {
-                return response()->json(['message' => 'This exhibition is currently closed to new applications'], 403);
+            if (!$event->canAcceptExhibitorApplications()) {
+                return response()->json(['message' => 'Exhibition registration is currently closed or the deadline has passed'], 403);
             }
 
             // Duplicate check
@@ -142,12 +140,12 @@ class ExhibitionController extends Controller
             ->update(['status' => 'rejected']);
 
         if ($user->role === 'Company') {
-            $apps = ExhibitionApplication::with(['event.venue', 'manager', 'booth', 'negotiation'])
+            $apps = ExhibitionApplication::with(['event.venue', 'manager', 'negotiation'])
                 ->where('company_id', $user->id)
                 ->latest()
                 ->get();
         } elseif ($user->role === 'Event Manager') {
-            $apps = ExhibitionApplication::with(['event.venue', 'company.profile', 'booth', 'negotiation'])
+            $apps = ExhibitionApplication::with(['event.venue', 'company.profile', 'negotiation'])
                 ->where('event_manager_id', $user->id)
                 ->get()
                 ->sortBy(function ($app) {
@@ -155,7 +153,7 @@ class ExhibitionController extends Controller
                 })
                 ->values();
         } elseif ($user->role === 'Admin') {
-            $apps = ExhibitionApplication::with(['event', 'company', 'manager', 'booth', 'negotiation'])->latest()->get();
+            $apps = ExhibitionApplication::with(['event', 'company', 'manager', 'negotiation'])->latest()->get();
         } else {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
@@ -167,7 +165,7 @@ class ExhibitionController extends Controller
     public function show(Request $request, $id)
     {
         $user = $request->user();
-        $app = ExhibitionApplication::with(['event.venue', 'company.profile', 'manager', 'booth', 'negotiation'])->findOrFail($id);
+        $app = ExhibitionApplication::with(['event.venue', 'company.profile', 'manager', 'negotiation'])->findOrFail($id);
 
         // Authorization
         if ($user->role === 'Company' && $app->company_id !== $user->id) {
@@ -270,107 +268,5 @@ class ExhibitionController extends Controller
         }
 
         return response()->json($app);
-    }
-
-    // PATCH /api/exhibition/{id}/booth — Assign booth details
-    public function assignBooth(Request $request, $id)
-    {
-        $user = $request->user();
-        if ($user->role !== 'Event Manager') {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
-        $app = ExhibitionApplication::findOrFail($id);
-
-        if ($app->event_manager_id !== $user->id) {
-            return response()->json(['message' => 'Not your application'], 403);
-        }
-
-        if (!in_array($app->status, ['accepted', 'negotiating'])) {
-            return response()->json(['message' => 'Application must be accepted or in negotiation first'], 400);
-        }
-
-        $request->validate([
-            'booth_number' => 'nullable|string|max:20',
-            'booth_size'   => 'nullable|in:small,medium,large,custom',
-            'booth_fee'    => 'nullable|numeric|min:0',
-            'notes'        => 'nullable|string|max:1000',
-        ]);
-
-        // Unique booth number per event
-        if ($request->booth_number) {
-            $exists = ExhibitionBooth::where('event_id', $app->event_id)
-                ->where('booth_number', $request->booth_number)
-                ->where('company_id', '!=', $app->company_id)
-                ->exists();
-            if ($exists) {
-                return response()->json(['message' => 'This booth number is already assigned to another company in this exhibition'], 400);
-            }
-        }
-
-        $booth = ExhibitionBooth::updateOrCreate(
-            ['application_id' => $app->id],
-            [
-                'event_id'     => $app->event_id,
-                'company_id'   => $app->company_id,
-                'booth_number' => $request->booth_number,
-                'booth_size'   => $request->booth_size ?? 'medium',
-                'booth_fee'    => $request->booth_fee ?? 0,
-                'notes'        => $request->notes,
-            ]
-        );
-
-        // Notify company
-        $company = User::find($app->company_id);
-        $event = Event::find($app->event_id);
-        if ($company && $event) {
-            $company->notify(new SystemNotification(
-                'تم تخصيص جناحك 🎪',
-                "تم تخصيص جناحك في معرض \"{$event->title}\": رقم {$booth->booth_number}, حجم {$booth->booth_size}.",
-                'exhibition',
-                '🎪',
-                '/company/booth',
-                $app->event_id
-            ));
-        }
-
-        return response()->json(['message' => 'Booth assigned successfully', 'booth' => $booth]);
-    }
-
-    // PATCH /api/exhibition/{id}/rank — Update company rank in exhibition
-    public function updateRank(Request $request, $id)
-    {
-        $user = $request->user();
-        if ($user->role !== 'Event Manager') {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
-        $app = ExhibitionApplication::findOrFail($id);
-
-        if ($app->event_manager_id !== $user->id) {
-            return response()->json(['message' => 'Not your application'], 403);
-        }
-
-        if (!in_array($app->status, ['accepted', 'negotiating'])) {
-            return response()->json(['message' => 'Can only update rank for accepted applications'], 400);
-        }
-
-        $request->validate([
-            'rank'       => 'nullable|string|max:100',
-            'rank_order' => 'nullable|integer|min:0|max:999',
-        ]);
-
-        $booth = ExhibitionBooth::where('application_id', $app->id)->first();
-
-        if (!$booth) {
-            return response()->json(['message' => 'Please assign a booth first before setting rank'], 400);
-        }
-
-        $booth->update([
-            'rank'       => $request->rank,
-            'rank_order' => $request->rank_order ?? 99,
-        ]);
-
-        return response()->json(['message' => 'Rank updated successfully', 'booth' => $booth]);
     }
 }

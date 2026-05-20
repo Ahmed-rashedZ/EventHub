@@ -194,7 +194,7 @@ class AssistantController extends Controller
         }
 
         // Fetch event
-        $event = \App\Models\Event::with('venue:id,name,location')->findOrFail($id);
+        $event = \App\Models\Event::with(['venue:id,name,location', 'exhibitors'])->findOrFail($id);
 
         // Fetch participants (tickets with user + attendance log)
         $tickets = \App\Models\Ticket::with(['user:id,name,email', 'attendanceLog.scanner:id,name'])
@@ -314,7 +314,7 @@ class AssistantController extends Controller
             return response()->json(['message' => 'Unauthorized: No access to this event'], 403);
         }
 
-        $event = \App\Models\Event::with('venue:id,name,location')->findOrFail($id);
+        $event = \App\Models\Event::with(['venue:id,name,location', 'exhibitors'])->findOrFail($id);
 
         $totalBooked = DB::table('tickets')->where('event_id', $id)->count();
         $totalScanned = DB::table('tickets')->where('event_id', $id)->where('status', 'used')->count();

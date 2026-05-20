@@ -65,6 +65,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/events/list/all',            [EventController::class, 'all']);
     Route::patch('/events/{id}/toggle-sponsorship', [EventController::class, 'toggleSponsorship']);
     Route::patch('/events/{id}/toggle-applications', [EventController::class, 'toggleApplications']);
+    Route::patch('/events/{id}/toggle-exhibitor-registration', [EventController::class, 'toggleExhibitorRegistration']);
     Route::post('/events/{id}/rate',          [EventController::class, 'rate']);
     Route::delete('/events/{id}/rate',        [EventController::class, 'deleteRating']);
     Route::put('/events/{id}/review',         [EventController::class, 'sendReview']);

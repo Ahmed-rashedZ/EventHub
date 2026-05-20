@@ -111,7 +111,7 @@ function renderAgreementContent(data, id, type) {
     html += `<button onclick="downloadAgreement(${id}, '${type}')" style="display:inline-flex;align-items:center;gap:4px;padding:5px 12px;background:rgba(34,211,238,0.08);color:#22d3ee;border:1px solid rgba(34,211,238,0.2);border-radius:6px;font-size:0.72rem;font-weight:600;cursor:pointer;">📥 ${t('Download Contract')}</button>`;
   }
   if (isFinalized) {
-    html += `<button onclick="downloadFinalPdf(${id}, '${type}')" style="display:inline-flex;align-items:center;gap:4px;padding:5px 12px;background:rgba(16,185,129,0.08);color:#10b981;border:1px solid rgba(16,185,129,0.2);border-radius:6px;font-size:0.72rem;font-weight:600;cursor:pointer;">📄 ${t('Download Final PDF')}</button>`;
+    html += `<button onclick="downloadFinalPdf(${id}, '${type}')" style="display:inline-flex;align-items:center;gap:4px;padding:5px 12px;background:rgba(16,185,129,0.08);color:#10b981;border:1px solid rgba(16,185,129,0.2);border-radius:6px;font-size:0.72rem;font-weight:600;cursor:pointer;">📄 ${t('Download Final Agreement')}</button>`;
   }
   html += `</div>`;
 

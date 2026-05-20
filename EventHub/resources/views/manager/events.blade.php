@@ -25,18 +25,7 @@
             style="width: 85px; height: 85px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
         </div>
       </div>
-      <nav class="sidebar-nav">
-        <span class="nav-section-label">Overview</span>
-        <a class="nav-item" href="/manager/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
-        <span class="nav-section-label">Events</span>
-        <a class="nav-item active" href="/manager/events"><span class="nav-icon">📅</span> My Events</a>
-        <a class="nav-item" href="/manager/assistants"><span class="nav-icon">👥</span> Assistants</a>
-        <a class="nav-item" href="/manager/attendance"><span class="nav-icon">📍</span> Attendance</a>
-        <a class="nav-item" href="/manager/sponsorship"><span class="nav-icon">💼</span> Sponsorship</a>
-        <a class="nav-item" href="/manager/exhibition"><span class="nav-icon">🏛️</span> Exhibitions</a>
-        <span class="nav-section-label">Settings</span>
-        <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
-      </nav>
+      <nav class="sidebar-nav" id="sidebar-links"></nav>
       @include('partials._sidebar-footer')
     </aside>
 
@@ -340,7 +329,17 @@
             </div>
             <div class="form-group">
               <label class="form-label">Capacity</label>
-              <input id="e-capacity" type="number" class="form-control" placeholder="200" min="1" required />
+              <div style="display:flex; gap:15px; margin-bottom:10px; background:rgba(255,255,255,0.03); padding:8px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.05);">
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.85rem; color:#fff;">
+                  <input type="radio" name="capacity_type" value="fixed" checked onchange="toggleCapacityInput('create', this.value)" style="width:16px; height:16px; accent-color:#8b5cf6;"> <script>document.write(t('Fixed Number'))</script>
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.85rem; color:#fff;">
+                  <input type="radio" name="capacity_type" value="unlimited" onchange="toggleCapacityInput('create', this.value)" style="width:16px; height:16px; accent-color:#8b5cf6;"> <script>document.write(t('Unlimited'))</script> (مفتوح)
+                </label>
+              </div>
+              <div id="capacity-input-wrap">
+                <input id="e-capacity" type="number" class="form-control" placeholder="200" min="1" required />
+              </div>
             </div>
             <div class="form-group">
               <label class="form-label">📄 Competent Authority Approval</label>
@@ -621,19 +620,28 @@
         return `
         <tr>
           <td style="color:var(--text-muted)">${i + 1}</td>
-          <td><div style="font-weight:600">${ev.title}</div></td>
+          <td><div style="font-weight:600" class="i18n-skip">${ev.title}</div></td>
           <td style="color:var(--text-muted)">${ev.venue_id ? (ev.venue?.name || '—') : (ev.external_venue_name ? ev.external_venue_name + ' (External)' : '—')}</td>
           <td style="color:var(--text-muted);white-space:nowrap">${fmtDateShort(ev.start_time)}</td>
-          <td style="color:var(--text-muted)">${ev.capacity}</td>
+          <td style="color:var(--text-muted)">${ev.capacity || (document.documentElement.lang === 'ar' ? 'مفتوح' : 'Unlimited')}</td>
           <td>
-             <div style="display:flex; align-items:center;">
+             <div style="display:flex; align-items:center; margin-bottom: ${ev.is_exhibition ? '8px' : '0'}">
                <input type="checkbox" id="spon-tog-${ev.id}" ${ev.is_sponsorship_open ? 'checked' : ''} onchange="toggleSponsorship(${ev.id}, this.checked)" 
                  style="width:16px; height:16px; margin-right:5px; ${(ev.status !== 'approved' || ev.time_status === 'live' || ev.time_status === 'ended') ? 'cursor:not-allowed;' : 'cursor:pointer;'}" 
                  ${(ev.status !== 'approved' || ev.time_status === 'live' || ev.time_status === 'ended') ? 'disabled' : ''}
                  title="${ev.status !== 'approved' ? 'Event must be approved first' : (ev.time_status === 'live' || ev.time_status === 'ended' ? 'Cannot change sponsorship for live/ended events' : '')}"/>
-               <label for="spon-tog-${ev.id}" style="font-size:12px; ${(ev.status !== 'approved' || ev.time_status === 'live' || ev.time_status === 'ended') ? 'color:var(--text-muted); cursor:not-allowed;' : 'cursor:pointer;'}" 
-                 title="${ev.status !== 'approved' ? 'Event must be approved first' : (ev.time_status === 'live' || ev.time_status === 'ended' ? 'Cannot change sponsorship for live/ended events' : '')}">Open</label>
+               <label for="spon-tog-${ev.id}" style="font-size:11px; ${(ev.status !== 'approved' || ev.time_status === 'live' || ev.time_status === 'ended') ? 'color:var(--text-muted); cursor:not-allowed;' : 'cursor:pointer;'}" 
+                 title="${ev.status !== 'approved' ? 'Event must be approved first' : (ev.time_status === 'live' || ev.time_status === 'ended' ? 'Cannot change sponsorship for live/ended events' : '')}">Sponsorship</label>
              </div>
+             ${ev.is_exhibition ? `
+             <div style="display:flex; align-items:center;">
+               <input type="checkbox" id="exh-tog-${ev.id}" ${ev.is_exhibitor_registration_open ? 'checked' : ''} onchange="toggleExhibitorRegistration(${ev.id}, this.checked)" 
+                 style="width:16px; height:16px; margin-right:5px; ${(ev.status !== 'approved' || ev.time_status === 'ended') ? 'cursor:not-allowed;' : 'cursor:pointer;'}" 
+                 ${(ev.status !== 'approved' || ev.time_status === 'ended') ? 'disabled' : ''}/>
+               <label for="exh-tog-${ev.id}" style="font-size:11px; ${(ev.status !== 'approved' || ev.time_status === 'ended') ? 'color:var(--text-muted); cursor:not-allowed;' : 'cursor:pointer;'}" 
+                 title="${ev.status !== 'approved' ? 'Event must be approved first' : (ev.time_status === 'ended' ? 'Exhibition has ended' : '')}">Register</label>
+             </div>
+             ` : ''}
              ${ev.status !== 'approved' ? '<div style="font-size:10px;color:#ef4444;margin-top:4px;">Needs Approval</div>' : ''}
              ${ev.status === 'approved' && (ev.time_status === 'live' || ev.time_status === 'ended') ? `<div style="font-size:10px;color:var(--text-muted);margin-top:4px;">Event ${ev.time_status === 'live' ? 'is live' : 'has ended'}</div>` : ''}
           </td>
@@ -726,7 +734,7 @@
         <!-- Header: Title + Type + Badges -->
         <div class="ed-header">
           <div class="ed-title-row">
-            <h2 class="ed-title">${ev.title}</h2>
+            <h2 class="ed-title i18n-skip">${ev.title}</h2>
             <span class="ed-type-pill" style="--tcolor:${tColor}">${tIcon} ${eType}</span>
           </div>
           <div class="ed-badges">
@@ -1308,10 +1316,31 @@
     async function toggleSponsorship(eventId, checked) {
       const res = await api.patch(`/events/${eventId}/toggle-sponsorship`);
       if (res.ok) {
-        showToast(res.data.is_sponsorship_open ? 'Sponsorship is now OPEN for this event.' : 'Sponsorship is now CLOSED for this event.', 'success');
+        showToast(res.data.event.is_sponsorship_open ? 'Sponsorship is now OPEN for this event.' : 'Sponsorship is now CLOSED for this event.', 'success');
       } else {
         showToast(res.data?.message || 'Error updating status', 'error');
-        document.getElementById(`spon-tog-${eventId}`).checked = !checked; // revert UI visually
+        document.getElementById(`spon-tog-${eventId}`).checked = !checked;
+      }
+    }
+
+    async function toggleExhibitorRegistration(eventId, checked) {
+      const res = await api.patch(`/events/${eventId}/toggle-exhibitor-registration`);
+      if (res.ok) {
+        const isOpen = res.data.event.is_exhibitor_registration_open;
+        const canAccept = res.data.can_accept_exhibitors;
+        if (isOpen) {
+            if (canAccept) {
+                showToast('Exhibitor registration is now OPEN.', 'success');
+            } else {
+                showToast('Registration toggled ON, but it remains inactive due to the 30-day deadline.', 'info');
+            }
+        } else {
+            showToast('Exhibitor registration is now CLOSED.', 'success');
+        }
+      } else {
+        showToast(res.data?.message || 'Error updating status', 'error');
+        const tog = document.getElementById(`exh-tog-${eventId}`);
+        if (tog) tog.checked = !checked;
       }
     }
 
@@ -1666,6 +1695,32 @@
         }
       });
       return schedule;
+    }
+
+    function toggleCapacityInput(mode, value) {
+      if (mode === 'create') {
+        const wrap = document.getElementById('capacity-input-wrap');
+        const input = document.getElementById('e-capacity');
+        if (value === 'unlimited') {
+          wrap.style.display = 'none';
+          input.required = false;
+        } else {
+          wrap.style.display = 'block';
+          input.required = true;
+          input.focus();
+        }
+      } else if (mode === 'edit') {
+        const wrap = document.getElementById('edit-capacity-input-wrap');
+        const input = document.getElementById('edit-capacity');
+        if (value === 'unlimited') {
+          wrap.style.display = 'none';
+          input.required = false;
+        } else {
+          wrap.style.display = 'block';
+          input.required = true;
+          input.focus();
+        }
+      }
     }
 
     // ── Agenda Builder ─────────────────────────────
@@ -2032,8 +2087,19 @@
               </select></div>`;
             break;
           case 'capacity':
+            const isUnlimited = ev.capacity === null;
             html += `<div class="form-group"><label class="form-label">${fieldLabels[f]}</label>
-              <input id="edit-capacity" type="number" class="form-control" value="${ev.capacity || ''}" min="1" required /></div>`;
+              <div style="display:flex; gap:15px; margin-bottom:10px; background:rgba(255,255,255,0.03); padding:8px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.05);">
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.85rem; color:#fff;">
+                  <input type="radio" name="edit_capacity_type" value="fixed" ${!isUnlimited ? 'checked' : ''} onchange="toggleCapacityInput('edit', this.value)" style="width:16px; height:16px; accent-color:#8b5cf6;"> Fixed Number
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.85rem; color:#fff;">
+                  <input type="radio" name="edit_capacity_type" value="unlimited" ${isUnlimited ? 'checked' : ''} onchange="toggleCapacityInput('edit', this.value)" style="width:16px; height:16px; accent-color:#8b5cf6;"> Unlimited (مفتوح)
+                </label>
+              </div>
+              <div id="edit-capacity-input-wrap" style="${isUnlimited ? 'display:none;' : ''}">
+                <input id="edit-capacity" type="number" class="form-control" value="${ev.capacity || ''}" min="1" ${!isUnlimited ? 'required' : ''} />
+              </div></div>`;
             break;
           case 'event_objective':
             html += `<div class="form-group"><label class="form-label">${fieldLabels[f]}</label>
@@ -2085,8 +2151,11 @@
       const typeEl = document.getElementById('edit-type');
       if (typeEl) formData.append('event_type', typeEl.value);
 
+      const capType = document.querySelector('input[name="edit_capacity_type"]:checked')?.value;
       const capEl = document.getElementById('edit-capacity');
-      if (capEl) formData.append('capacity', capEl.value);
+      if (capEl) {
+        formData.append('capacity', capType === 'unlimited' ? '' : capEl.value);
+      }
 
       const objEl = document.getElementById('edit-objective');
       if (objEl) formData.append('event_objective', objEl.value);
@@ -2250,7 +2319,9 @@
         }
       }
 
-      formData.append('capacity', document.getElementById('e-capacity').value);
+      const capType = document.querySelector('input[name="capacity_type"]:checked').value;
+      const capValue = document.getElementById('e-capacity').value;
+      formData.append('capacity', capType === 'unlimited' ? '' : capValue);
       formData.append('event_objective', document.getElementById('e-objective').value);
       formData.append('target_audience', document.getElementById('e-audience').value);
 

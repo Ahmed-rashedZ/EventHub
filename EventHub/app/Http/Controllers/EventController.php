@@ -82,7 +82,7 @@ class EventController extends Controller
             'description'        => 'required|string',
             'event_type'         => 'required|string|in:مؤتمر,ندوة,ورشة عمل,دورة تدريبية,ترفيه,ملتقى علمي,رياضة,تقنية,اجتماعية,معرض',
             'location_type'      => 'required|in:internal,external',
-            'capacity'           => 'required|integer|min:1',
+            'capacity'           => 'nullable|integer|min:1',
             'image'              => 'required|image|max:2048',
             'ministry_document'  => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'agenda'             => 'required|json',
@@ -97,7 +97,7 @@ class EventController extends Controller
             ]);
 
             $venue = \App\Models\Venue::find($request->venue_id);
-            if ($venue && $request->capacity > $venue->capacity) {
+            if ($venue && $request->capacity && $request->capacity > $venue->capacity) {
                 return response()->json([
                     'message' => "Capacity cannot exceed the venue's total capacity of {$venue->capacity}.",
                     'errors' => ['capacity' => ["Maximum allowed capacity is {$venue->capacity}."]]
@@ -439,7 +439,7 @@ class EventController extends Controller
     // GET /api/events/{id}  – single event details
     public function show($id)
     {
-        $event = Event::with('venue', 'creator:id,name', 'sponsors.profile')
+        $event = Event::with('venue', 'creator:id,name', 'sponsors.profile', 'exhibitors')
             ->withCount('tickets')
             ->withAvg('ratings', 'rating')
             ->findOrFail($id);
@@ -519,7 +519,48 @@ class EventController extends Controller
         $event->is_sponsorship_open = !$event->is_sponsorship_open;
         $event->save();
         
-        return response()->json($event);
+        return response()->json([
+            'event' => $event,
+            'can_accept_exhibitors' => $event->canAcceptExhibitorApplications()
+        ]);
+    }
+
+    // PATCH /api/events/{id}/toggle-exhibitor-registration
+    public function toggleExhibitorRegistration($id, Request $request)
+    {
+        if ($request->user()->role !== 'Event Manager') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $event = Event::findOrFail($id);
+
+        if ($event->created_by !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        if (!$event->is_exhibition) {
+            return response()->json(['message' => 'This event is not an exhibition'], 400);
+        }
+
+        if ($event->status !== 'approved') {
+            return response()->json(['message' => 'Cannot toggle registration for an event that is not approved.'], 400);
+        }
+
+        // Automatic 30-day block check (Manager can try to open, but logic will block if < 30 days)
+        if (!$event->is_exhibitor_registration_open && now()->diffInDays($event->start_time, false) < 30) {
+            return response()->json([
+                'message' => 'Registration cannot be opened. The 30-day deadline before the event has passed.',
+                'can_accept_exhibitors' => false
+            ], 400);
+        }
+
+        $event->is_exhibitor_registration_open = !$event->is_exhibitor_registration_open;
+        $event->save();
+
+        return response()->json([
+            'event' => $event,
+            'can_accept_exhibitors' => $event->canAcceptExhibitorApplications()
+        ]);
     }
 
     // POST /api/events/{id}/rate  – User rates an event
@@ -773,7 +814,7 @@ class EventController extends Controller
             $updateData['event_type'] = $request->event_type;
         }
         if (in_array('capacity', $allowedFields) && $request->has('capacity')) {
-            $updateData['capacity'] = (int) $request->capacity;
+            $updateData['capacity'] = $request->capacity ? (int) $request->capacity : null;
         }
         if (in_array('event_objective', $allowedFields) && $request->has('event_objective')) {
             $updateData['event_objective'] = $request->event_objective;
@@ -1152,7 +1193,7 @@ class EventController extends Controller
     public function updateCapacity($id, Request $request)
     {
         $request->validate([
-            'capacity' => 'required|integer|min:1',
+            'capacity' => 'nullable|integer|min:1',
         ]);
 
         $event = Event::with('venue')->findOrFail($id);
@@ -1167,11 +1208,11 @@ class EventController extends Controller
             return response()->json(['message' => 'Cannot update capacity of an ended event.'], 422);
         }
 
-        $newCapacity = (int) $request->capacity;
+        $newCapacity = $request->capacity !== null ? (int) $request->capacity : null;
         $bookedCount = $event->tickets()->count();
 
         // Validate against booked tickets
-        if ($newCapacity < $bookedCount) {
+        if ($newCapacity !== null && $newCapacity < $bookedCount) {
             return response()->json([
                 'message' => "Cannot decrease capacity below the number of booked tickets ({$bookedCount}).",
                 'errors' => ['capacity' => ["Minimum required capacity is {$bookedCount}."]]
@@ -1179,7 +1220,7 @@ class EventController extends Controller
         }
 
         // Validate against venue capacity (if internal venue)
-        if ($event->venue && $newCapacity > $event->venue->capacity) {
+        if ($event->venue && $newCapacity !== null && $newCapacity > $event->venue->capacity) {
             return response()->json([
                 'message' => "Capacity cannot exceed the venue's total capacity of {$event->venue->capacity}.",
                 'errors' => ['capacity' => ["Maximum allowed capacity for this venue is {$event->venue->capacity}."]]

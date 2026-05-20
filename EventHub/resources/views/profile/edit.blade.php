@@ -143,6 +143,18 @@
                             @enderror
                         </div>
 
+                        @if(in_array($user->role, ['Sponsor', 'Company']))
+                        <div class="form-group">
+                            <label class="form-label"><script>document.write(t('Company Sector / Category'))</script></label>
+                            <select name="company_type" class="form-control">
+                                <option value="" disabled {{ !optional($user->profile)->company_type ? 'selected' : '' }}>{{ __('Select Sector') }}</option>
+                                @foreach(['Technology', 'Healthcare', 'Telecommunications', 'Sports', 'Marketing & Media', 'Education', 'Construction & Real Estate', 'Food & Beverage', 'Logistics', 'Finance & Banking', 'Other'] as $sector)
+                                    <option value="{{ $sector }}" {{ optional($user->profile)->company_type == $sector ? 'selected' : '' }}>{{ $sector }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @endif
+
 
 
                         <!-- Phones -->

@@ -180,11 +180,11 @@
         return `
         <tr>
           <td style="color:var(--text-muted)">${i + 1}</td>
-          <td><div style="font-weight:600; ${ev.status === 'cancelled' ? 'text-decoration:line-through; color:var(--danger)' : ''}">${ev.title}</div></td>
+          <td><div style="font-weight:600; ${ev.status === 'cancelled' ? 'text-decoration:line-through; color:var(--danger)' : ''}" class="i18n-skip">${ev.title}</div></td>
           <td style="color:var(--text-muted)">${ev.venue_id ? (ev.venue?.name || '—') : (ev.external_venue_name ? ev.external_venue_name + ' (External)' : '—')}</td>
           <td style="color:var(--text-muted)">${ev.creator?.name || '—'}</td>
           <td style="color:var(--text-muted);white-space:nowrap">${fmtDateShort(ev.start_time)}</td>
-          <td style="color:var(--text-muted)">${ev.capacity}</td>
+          <td style="color:var(--text-muted)">${ev.capacity || 'Unlimited (مفتوح)'}</td>
           <td>${badge(ev.status)} ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''} ${reviewBadge}</td>
           <td style="display:flex;gap:6px;padding:14px 16px;flex-wrap:wrap">
             <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${ev.id})" title="View Details">ℹ️ Details</button>
@@ -300,7 +300,7 @@
 
           <div class="ed-header">
             <div class="ed-title-row">
-              <h2 class="ed-title">${ev.title}</h2>
+              <h2 class="ed-title i18n-skip">${ev.title}</h2>
               <span class="ed-type-pill" style="--tcolor:${tColor}">${tIcon} ${eType}</span>
             </div>
             <div class="ed-badges">
@@ -423,7 +423,7 @@
             })()}
             <div class="ed-info-card ed-info-warning">
               <div class="ed-info-icon">👥</div>
-              <div><div class="ed-info-label">Capacity</div><div class="ed-info-value">${ev.capacity}</div></div>
+              <div><div class="ed-info-label">Capacity</div><div class="ed-info-value">${ev.capacity || 'Unlimited (مفتوح)'}</div></div>
             </div>
             <div class="ed-info-card ed-info-warning">
               <div class="ed-info-icon">🎟️</div>

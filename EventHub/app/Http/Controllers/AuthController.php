@@ -71,6 +71,7 @@ public function registerPartner(Request $request)
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8',
         'role' => 'required|string|in:Event Manager,Sponsor,Company',
+        'company_type' => 'nullable|required_if:role,Sponsor,Company|string|max:100',
         'doc_commercial_register' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
         'doc_tax_number' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
     ];
@@ -110,6 +111,7 @@ public function registerPartner(Request $request)
         Profile::create([
             'user_id' => $user->id,
             'profile_type' => 'company',
+            'company_type' => $request->company_type,
             'is_available' => true,
         ]);
     }
@@ -132,12 +134,9 @@ public function registerPartner(Request $request)
         ));
     }
 
-    $token = $user->createToken('auth_token')->plainTextToken;
-
     return response()->json([
         'user' => $user->load(['profile']),
-        'token' => $token,
-        'message' => 'Registration successful. Your account is pending verification.'
+        'message' => 'Registration successful. Your account is pending verification and review by the administration.'
     ]);
 }
     public function login(Request $request)
@@ -177,6 +176,23 @@ public function registerPartner(Request $request)
         ], 403);
     }
 
+    // ── Partner Verification Check ──
+    $partnerRoles = ['Event Manager', 'Sponsor', 'Company'];
+    if (in_array($user->role, $partnerRoles) && $user->verification_status !== 'verified') {
+        $status = $user->verification_status;
+        Auth::logout();
+        
+        $msg = 'حسابك لا يزال قيد المراجعة والتحقق. سيتم تفعيل الدخول بمجرد اعتماد وثائقك من قبل الإدارة.';
+        if ($status === 'rejected') {
+            $msg = 'تم رفض وثائق التحقق الخاصة بك. يرجى مراجعة قسم التحقق لمعرفة الأسباب أو التواصل مع الدعم.';
+        }
+        
+        return response()->json([
+            'message' => $msg,
+            'verification_status' => $status
+        ], 403);
+    }
+
     $token = $user->createToken('auth_token')->plainTextToken;
 
     if ($user->role === 'Assistant') {
@@ -197,6 +213,7 @@ public function updateProfile(Request $request)
         'bio' => 'nullable|string',
         'logo' => 'nullable|image|max:2048', // 2MB max image
         'company_description' => 'nullable|string',
+        'company_type' => 'nullable|string|max:100',
         'is_available' => 'nullable|boolean',
         'contacts' => 'nullable|string', // Will interpret as JSON array [{"type":"phone", "value":"..."}]
         'interests' => 'nullable|array',
@@ -221,6 +238,7 @@ public function updateProfile(Request $request)
         'profile_type' => $profileType,
         'bio' => $request->bio,
         'company_description' => $request->company_description,
+        'company_type' => $request->company_type,
     ];
     
     // Sponsors and Companies can toggle their availability

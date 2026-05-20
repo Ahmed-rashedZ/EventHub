@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\ExhibitionApplication;
-use App\Models\ExhibitionBooth;
 use App\Models\Event;
 use Illuminate\Http\Request;
 
@@ -23,7 +22,6 @@ class CompanyAnalyticsController extends Controller
         $rejected = $apps->where('status', 'rejected')->count();
         $pending = $apps->where('status', 'pending')->count();
 
-        $booths = ExhibitionBooth::where('company_id', $user->id)->with('event')->get();
 
         // Profile completion check
         $profile = $user->profile;
@@ -41,7 +39,7 @@ class CompanyAnalyticsController extends Controller
         $profileCompletion = round(($filled / $totalFields) * 100);
 
         // Upcoming exhibitions
-        $upcomingApps = ExhibitionApplication::with(['event.venue', 'booth'])
+        $upcomingApps = ExhibitionApplication::with(['event.venue'])
             ->where('company_id', $user->id)
             ->whereIn('status', ['accepted', 'negotiating'])
             ->whereHas('event', function ($q) {
@@ -53,15 +51,13 @@ class CompanyAnalyticsController extends Controller
                     'event_id'           => $app->event_id,
                     'title'              => $app->event->title,
                     'start_time'         => $app->event->start_time,
-                    'booth_number'       => $app->booth?->booth_number,
-                    'booth_size'         => $app->booth?->booth_size,
                     'application_status' => $app->status,
                     'agreement_status'   => $app->negotiation?->status,
                 ];
             });
 
         // Past exhibitions
-        $pastApps = ExhibitionApplication::with(['event.venue', 'booth'])
+        $pastApps = ExhibitionApplication::with(['event.venue'])
             ->where('company_id', $user->id)
             ->whereHas('event', function ($q) {
                 $q->where('end_time', '<', now());
@@ -72,14 +68,12 @@ class CompanyAnalyticsController extends Controller
                     'event_id'           => $app->event_id,
                     'title'              => $app->event->title,
                     'start_time'         => $app->event->start_time,
-                    'booth_number'       => $app->booth?->booth_number,
-                    'booth_size'         => $app->booth?->booth_size,
                     'application_status' => $app->status,
                 ];
             });
 
         // Application history
-        $history = ExhibitionApplication::with(['event', 'booth'])
+        $history = ExhibitionApplication::with(['event'])
             ->where('company_id', $user->id)
             ->latest()
             ->get()
@@ -91,12 +85,6 @@ class CompanyAnalyticsController extends Controller
                     'event_title'    => $app->event->title ?? '—',
                     'submitted_at'   => $app->created_at->format('Y-m-d'),
                     'status'         => $app->status,
-                    'booth'          => $app->booth ? [
-                        'number' => $app->booth->booth_number,
-                        'size'   => $app->booth->booth_size,
-                        'fee'    => $app->booth->booth_fee,
-                        'rank'   => $app->booth->rank,
-                    ] : null,
                 ];
             });
 
@@ -121,7 +109,7 @@ class CompanyAnalyticsController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        $apps = ExhibitionApplication::with(['event.venue', 'booth', 'negotiation'])
+        $apps = ExhibitionApplication::with(['event.venue', 'negotiation'])
             ->where('company_id', $user->id)
             ->latest()
             ->get();
