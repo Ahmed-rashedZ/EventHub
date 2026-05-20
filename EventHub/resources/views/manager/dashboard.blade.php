@@ -106,6 +106,32 @@ function animVal(el, end, suffix='') {
   (function step(t){const p=Math.min((t-st)/800,1);el.textContent=Math.round(s+(end-s)*(1-Math.pow(1-p,3)))+suffix;if(p<1)requestAnimationFrame(step)})(st);
 }
 
+function badge(status) {
+  const map = {
+    pending:     { bg:'rgba(234,179,8,0.12)', color:'#eab308', label:'Pending' },
+    approved:    { bg:'rgba(16,185,129,0.12)', color:'#10b981', label:'Approved' },
+    rejected:    { bg:'rgba(239,68,68,0.12)', color:'#ef4444', label:'Rejected' },
+    cancelled:   { bg:'rgba(156,163,175,0.12)', color:'#9ca3af', label:'Cancelled' },
+  };
+  const s = map[status] || { bg:'rgba(156,163,175,0.1)', color:'#9ca3af', label: status };
+  return `<span style="padding:2px 8px;border-radius:6px;font-size:0.62rem;font-weight:700;background:${s.bg};color:${s.color};display:inline-block;white-space:nowrap">${t(s.label)}</span>`;
+}
+
+function timeBadge(status) {
+  const map = {
+    past:      { bg:'rgba(156,163,175,0.1)', color:'#9ca3af', label:'Past' },
+    ongoing:   { bg:'rgba(16,185,129,0.15)', color:'#10b981', label:'Live' },
+    upcoming:  { bg:'rgba(59,130,246,0.15)', color:'#3b82f6', label:'Soon' },
+  };
+  const s = map[status] || { bg:'rgba(156,163,175,0.05)', color:'#9ca3af', label: status };
+  return `<span style="padding:2px 8px;border-radius:6px;font-size:0.62rem;font-weight:700;background:${s.bg};color:${s.color};margin-left:4px">${t(s.label)}</span>`;
+}
+
+function fmtDateShort(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('en-GB', { day:'numeric', month:'short' });
+}
+
 const COLORS = { approved:'#22c55e', pending:'#f59e0b', rejected:'#ef4444' };
 const TYPE_COLORS = { 'مؤتمر':'#3b82f6', 'ندوة':'#8b5cf6', 'ورشة عمل':'#10b981', 'دورة تدريبية':'#06b6d4', 'ترفيه':'#ec4899', 'ملتقى علمي':'#f59e0b', 'رياضة':'#22c55e', 'تقنية':'#6366f1', 'اجتماعية':'#f97316' };
 const TYPE_ICONS  = { 'مؤتمر':'🎙️', 'ندوة':'📖', 'ورشة عمل':'🔧', 'دورة تدريبية':'🎓', 'ترفيه':'🎭', 'ملتقى علمي':'🔬', 'رياضة':'⚽', 'تقنية':'💻', 'اجتماعية':'🤝' };
@@ -125,7 +151,7 @@ async function loadAnalytics() {
   document.getElementById('s-events-sub').textContent = `${d.approved_events} approved · ${d.pending_events} pending`;
   document.getElementById('s-tickets-sub').textContent = `${d.used_tickets} checked in`;
   document.getElementById('s-rate-sub').textContent = `${d.used_tickets} of ${d.total_tickets} attended`;
-  document.getElementById('s-cap-sub').textContent = `${d.total_tickets} of ${d.total_capacity} capacity`;
+  document.getElementById('s-cap-sub').textContent = d.total_capacity ? `${d.total_tickets} of ${d.total_capacity} capacity` : `${d.total_tickets} registrations`;
 
 
   // Status donut
@@ -156,6 +182,9 @@ async function loadAnalytics() {
     const frColor = fr>80?'#22c55e':fr>50?'#f59e0b':'#ef4444';
     const arColor = ar>80?'#22c55e':ar>50?'#f59e0b':'#3b82f6';
     const evRating = Number(ev.average_rating || 0).toFixed(1);
+    const fillLabel = ev.capacity ? `${ev.tickets_count}/${ev.capacity} (${fr}%)` : `${ev.tickets_count} / —`;
+    const fillWidth = ev.capacity ? fr : 100;
+
     return `<div class="an-ev-card">
       <div class="an-ev-header">
         <div class="an-ev-title" style="${ev.status === 'cancelled' ? 'text-decoration:line-through; color:var(--danger)' : ''}">${ev.title}</div>
@@ -166,7 +195,7 @@ async function loadAnalytics() {
         <div class="an-ev-metric"><div class="an-ev-metric-label">Registered</div><div class="an-ev-metric-val">${ev.tickets_count}</div></div>
         <div class="an-ev-metric"><div class="an-ev-metric-label">Attended</div><div class="an-ev-metric-val">${ev.attended_count}</div></div>
       </div>
-      <div class="an-ev-bar-wrap"><div class="an-ev-bar-label"><span>Fill Rate</span><span>${ev.tickets_count}/${ev.capacity} (${fr}%)</span></div><div class="an-ev-bar"><div class="an-ev-bar-fill" style="width:${fr}%;background:${frColor}"></div></div></div>
+      <div class="an-ev-bar-wrap"><div class="an-ev-bar-label"><span>Fill Rate</span><span>${fillLabel}</span></div><div class="an-ev-bar"><div class="an-ev-bar-fill" style="width:${fillWidth}%;background:${frColor}"></div></div></div>
       <div class="an-ev-bar-wrap"><div class="an-ev-bar-label"><span>Attendance</span><span>${ev.attended_count}/${ev.tickets_count} (${ar}%)</span></div><div class="an-ev-bar"><div class="an-ev-bar-fill" style="width:${ar}%;background:${arColor}"></div></div></div>
       <div class="an-ev-footer"><span>${badge(ev.status)} ${ev.status==='approved'?timeBadge(ev.time_status):''}</span><span>${fmtDateShort(ev.start_time)}</span></div>
     </div>`;

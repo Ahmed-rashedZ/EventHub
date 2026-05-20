@@ -14,6 +14,7 @@ use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\AssistantAnalyticsController;
 use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\ExhibitionController;
+use App\Http\Controllers\ExhibitionInventoryController;
 use App\Http\Controllers\CompanyAnalyticsController;
 
 // ─── Public routes ────────────────────────────────────────────────────────────
@@ -110,6 +111,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/exhibition/{id}',              [ExhibitionController::class, 'show']);
     Route::put('/exhibition/{id}',              [ExhibitionController::class, 'update']);
     Route::patch('/exhibition/{id}/booth',      [ExhibitionController::class, 'assignBooth']);
+    
+    // ── Exhibition Inventory ──
+    Route::get('/exhibition/inventory/{eventId}', [ExhibitionInventoryController::class, 'index']);
+    Route::post('/exhibition/inventory/{eventId}/zones', [ExhibitionInventoryController::class, 'storeZone']);
+    Route::delete('/exhibition/inventory/zones/{id}', [ExhibitionInventoryController::class, 'destroyZone']);
+    Route::post('/exhibition/inventory/zones/{zoneId}/booths', [ExhibitionInventoryController::class, 'storeBooth']);
+    Route::post('/exhibition/inventory/zones/{zoneId}/booths/batch', [ExhibitionInventoryController::class, 'batchGenerateBooths']);
+    Route::put('/exhibition/inventory/booths/{id}', [ExhibitionInventoryController::class, 'updateBooth']);
+    Route::delete('/exhibition/inventory/booths/{id}', [ExhibitionInventoryController::class, 'destroyBooth']);
+
     Route::patch('/exhibition/{id}/rank',       [ExhibitionController::class, 'updateRank']);
 
     // ── Agreements ──

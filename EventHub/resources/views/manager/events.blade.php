@@ -727,6 +727,41 @@
         `;
         }
 
+        // Build Exhibitors section
+        let exhibitorsHtml = '';
+        if (ev.exhibitors && ev.exhibitors.length > 0) {
+          const exItems = ev.exhibitors.map(ex => {
+            const user = ex.company || {};
+            const profile = user.profile || {};
+            const name = profile.company_name || user.name || '—';
+            const letter = name.charAt(0).toUpperCase();
+            const rawLogo = profile.logo;
+            const logo = rawLogo ? ((rawLogo.startsWith('http') || rawLogo.startsWith('/')) ? rawLogo : '/storage/' + rawLogo) : null;
+            const avatarHtml = logo ? `<img src="${logo}" style="width:100%;height:100%;object-fit:cover;" onerror="this.onerror=null;this.parentElement.innerHTML='<span style=\'font-size:15px;\'>${letter}</span>';">` : `<span style="font-size:15px;">${letter}</span>`;
+            return `
+              <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.03);padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);cursor:pointer;transition:all 0.2s;" 
+                   onmouseover="this.style.background='rgba(255,255,255,0.06)';this.style.borderColor='rgba(255,255,255,0.12)'" 
+                   onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.borderColor='rgba(255,255,255,0.06)'" 
+                   onclick="navigateToProfile(${ex.company_id})">
+                <div style="width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;background:var(--accent-gradient);border-radius:50%;overflow:hidden;font-weight:700;color:#fff;flex-shrink:0;box-shadow:0 4px 10px rgba(0,0,0,0.2);">
+                  ${avatarHtml}
+                </div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:0.95rem;font-weight:600;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name}</div>
+                </div>
+              </div>`;
+          }).join('');
+          exhibitorsHtml = `
+            <div style="margin-top:20px;">
+              <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent2);margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+                <span style="font-size:1.1rem;">🏢</span> ${t('Participating Companies')} (${ev.exhibitors.length})
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));gap:10px;">
+                ${exItems}
+              </div>
+            </div>`;
+        }
+
         content.innerHTML = `
       ${bannerSection}
       <div class="ed-body">
@@ -856,6 +891,8 @@
           </div>
           
           ${sponsorsHtml}
+
+          ${exhibitorsHtml}
 
           <!-- Agenda Section -->
           ${(() => {

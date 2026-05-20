@@ -14,6 +14,8 @@ class ExhibitionApplication extends Model
         'message',
         'status',
         'product_category',
+        'booth_number',
+        'booth_size',
     ];
 
     public function event()
@@ -45,5 +47,10 @@ class ExhibitionApplication extends Model
     public function scopeAccepted($query)
     {
         return $query->where('status', 'accepted');
+    }
+
+    public function booth()
+    {
+        return $this->hasOne(ExhibitionBooth::class, 'exhibition_application_id');
     }
 }

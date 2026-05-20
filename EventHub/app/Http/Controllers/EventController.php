@@ -18,7 +18,10 @@ class EventController extends Controller
             ->withAvg('ratings', 'rating')
             ->where('status', 'approved')
             ->where('is_published', true)
-            ->where('is_tickets_open', true)
+            ->where(function ($query) {
+                $query->where('is_tickets_open', true)
+                      ->orWhere('is_exhibitor_registration_open', true);
+            })
             ->orderBy('start_time')
             ->get();
 

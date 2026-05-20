@@ -145,7 +145,7 @@ class ExhibitionController extends Controller
                 ->latest()
                 ->get();
         } elseif ($user->role === 'Event Manager') {
-            $apps = ExhibitionApplication::with(['event.venue', 'company.profile', 'negotiation'])
+            $apps = ExhibitionApplication::with(['event.venue', 'company.profile', 'negotiation', 'booth.zone'])
                 ->where('event_manager_id', $user->id)
                 ->get()
                 ->sortBy(function ($app) {
@@ -268,5 +268,49 @@ class ExhibitionController extends Controller
         }
 
         return response()->json($app);
+    }
+
+    public function assignBooth(Request $request, $id)
+    {
+        $user = $request->user();
+        if ($user->role !== 'Event Manager') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $app = ExhibitionApplication::findOrFail($id);
+        if ($app->event_manager_id !== $user->id) {
+            return response()->json(['message' => 'Not your application'], 403);
+        }
+
+        $request->validate([
+            'booth_id' => 'nullable|exists:exhibition_booths,id',
+        ]);
+
+        // Clear existing booth assignment for this application
+        \App\Models\ExhibitionBooth::where('exhibition_application_id', $app->id)->update(['exhibition_application_id' => null]);
+
+        if ($request->booth_id) {
+            $booth = \App\Models\ExhibitionBooth::findOrFail($request->booth_id);
+            if ($booth->exhibition_application_id && $booth->exhibition_application_id != $app->id) {
+                return response()->json(['message' => 'Booth is already assigned to another company'], 400);
+            }
+            $booth->update(['exhibition_application_id' => $app->id]);
+            
+            // Sync legacy fields for compatibility
+            $app->update([
+                'booth_number' => $booth->booth_number,
+                'booth_size'   => $booth->size
+            ]);
+        } else {
+            $app->update([
+                'booth_number' => null,
+                'booth_size'   => null
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Booth information updated successfully',
+            'app' => $app->load('booth.zone')
+        ]);
     }
 }

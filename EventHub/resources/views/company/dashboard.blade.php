@@ -290,51 +290,49 @@
         ? `<div class="ed-banner" style="background-image:url('/storage/${ev.image}')"><div class="ed-banner-fade"></div></div>`
         : `<div class="ed-banner ed-banner-placeholder"><span class="ed-banner-emoji">${tIcon}</span><div class="ed-banner-fade"></div></div>`;
 
-      // Exhibition Status Section
-      let statusSection = '';
-      if (myApp) {
-          let statusText = myApp.status.toUpperCase();
-          let statusDesc = '';
-          let statusActions = '';
-          
-          if (myApp.status === 'pending') {
-              if (myApp.initiator === 'company') {
-                  statusDesc = t('Your application is awaiting manager approval.');
-              } else {
-                  statusDesc = t('The manager invited you to exhibit.');
-                  statusActions = `
-                      <div style="margin-top:10px; display:flex; gap:8px;">
-                          <button class="btn btn-success btn-sm" onclick="respondRequest(${myApp.id}, 'accepted')">${t('Accept')}</button>
-                          <button class="btn btn-danger btn-sm" onclick="respondRequest(${myApp.id}, 'rejected')">${t('Reject')}</button>
-                      </div>
-                  `;
-              }
-          } else if (myApp.status === 'negotiating') {
-              statusDesc = t('Agreement offer sent. Please review the contract.');
-              statusActions = `<div style="margin-top:10px;"><a href="/company/exhibitions" class="btn btn-primary btn-sm">${t('Review Contract')}</a></div>`;
-          } else if (myApp.status === 'accepted') {
-              statusDesc = t('Participation confirmed!');
-              if (myApp.booth) {
-                  statusDesc += ` (${t('Booth')} #${myApp.booth.booth_number})`;
-              }
-          }
 
-          statusSection = `
-              <div class="ed-status-card" style="background:rgba(139,92,246,0.1); border:1px solid rgba(139,92,246,0.2); border-radius:12px; padding:15px; margin-bottom:15px;">
-                  <div style="font-size:0.75rem; font-weight:700; color:#a78bfa; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">${t('Application Status')}</div>
-                  <div style="font-size:1.1rem; font-weight:800; color:#fff;">${statusText}</div>
-                  <div style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;">${statusDesc}</div>
-                  ${statusActions}
+      // Build Exhibitors section
+      let exhibitorsHtml = '';
+      if (ev.exhibitors && ev.exhibitors.length > 0) {
+        const exItems = ev.exhibitors.map(ex => {
+          const user = ex.company || {};
+          const profile = user.profile || {};
+          const name = profile.company_name || user.name || '—';
+          const letter = name.charAt(0).toUpperCase();
+          const rawLogo = profile.logo || user.image || user.avatar;
+          const logo = rawLogo ? ((rawLogo.startsWith('http') || rawLogo.startsWith('/')) ? rawLogo : '/storage/' + rawLogo) : null;
+          const avatarHtml = logo ? `<img src="${logo}" style="width:100%;height:100%;object-fit:cover;" onerror="this.onerror=null;this.parentElement.innerHTML='<span style=\'font-size:15px;\'>${letter}</span>';">` : `<span style="font-size:15px;">${letter}</span>`;
+          return `
+            <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.03);padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);cursor:pointer;transition:all 0.2s;" 
+                 onmouseover="this.style.background='rgba(255,255,255,0.06)';this.style.borderColor='rgba(255,255,255,0.12)'" 
+                 onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.borderColor='rgba(255,255,255,0.06)'" 
+                 onclick="navigateToProfile(${ex.company_id})">
+              <div style="width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;background:var(--accent-gradient);border-radius:50%;overflow:hidden;font-weight:700;color:#fff;flex-shrink:0;box-shadow:0 4px 10px rgba(0,0,0,0.2);">
+                ${avatarHtml}
               </div>
-          `;
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:0.95rem;font-weight:600;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name}</div>
+              </div>
+            </div>`;
+        }).join('');
+        exhibitorsHtml = `
+          <div style="margin-top:20px;">
+            <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent2);margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+              <span style="font-size:1.1rem;">🏢</span> ${t('Participating Companies')} (${ev.exhibitors.length})
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));gap:10px;">
+              ${exItems}
+            </div>
+          </div>`;
       }
+
 
       content.innerHTML = `
       ${bannerSection}
       <div class="ed-body">
         <div class="ed-header">
           <div class="ed-title-row">
-            <h2 class="ed-title">${ev.title}</h2>
+            <h2 class="ed-title i18n-skip">${ev.title}</h2>
             <span class="ed-type-pill" style="--tcolor:${tColor}">${tIcon} ${eType}</span>
           </div>
           <div class="ed-badges">
@@ -342,7 +340,7 @@
           </div>
         </div>
 
-        ${statusSection}
+
 
         <div class="ed-section">
           <div class="ed-section-label">About this Event</div>
@@ -453,7 +451,11 @@
             </div>
           </div>
 
+
+          ${exhibitorsHtml}
+
         <div class="ed-footer mt-2" style="justify-content:space-between; margin-top:20px;">
+
           <div style="display:flex; align-items:center; gap:8px;">
               <span class="ed-footer-label">Created by</span>
               <span class="ed-footer-name cursor-pointer" onclick="navigateToProfile(${ev.creator?.id})" style="color:var(--accent2);">${ev.creator?.name || '—'}</span>

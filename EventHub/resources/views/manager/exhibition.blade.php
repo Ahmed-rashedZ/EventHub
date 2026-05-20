@@ -87,6 +87,100 @@
     .booth-form-row { display: flex; gap: 10px; margin-bottom: 10px; }
     .booth-form-row .form-group { flex: 1; margin-bottom: 0; }
     .booth-form-row .form-control { font-size: 0.85rem; padding: 8px 10px; }
+
+    .tab-btn { padding: 12px 20px; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    .layout-grid { display: flex; flex-direction: column; gap: 24px; padding: 10px 0; }
+    .zone-box { 
+      background: rgba(255,255,255,0.01); 
+      border: 1px solid rgba(255,255,255,0.05); 
+      border-radius: 16px; 
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .zone-header { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      margin-bottom: 16px; 
+      border-bottom: 1px solid rgba(255,255,255,0.05); 
+      padding-bottom: 12px; 
+    }
+    .booth-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
+    .booth-item { 
+      background: rgba(255,255,255,0.02); 
+      border: 1px solid rgba(255,255,255,0.05); 
+      border-radius: 12px; 
+      padding: 12px; 
+      position: relative;
+      display: flex; 
+      flex-direction: column; 
+      gap: 2px; 
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: default;
+    }
+    .booth-item:hover {
+      background: rgba(255,255,255,0.04);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .booth-item.available { border-top: 3px solid #10b981; }
+    .booth-item.allocated { border-top: 3px solid var(--accent); background: rgba(110,64,242,0.03); }
+    .booth-num { font-weight: 800; font-size: 0.95rem; color: #fff; }
+    .booth-size { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
+    .booth-comp { 
+      font-size: 0.75rem; 
+      color: var(--accent); 
+      font-weight: 700; 
+      text-overflow: ellipsis; 
+      overflow: hidden; 
+      white-space: nowrap; 
+      margin-top: 4px;
+      border-top: 1px solid rgba(110,64,242,0.1);
+      padding-top: 4px;
+    }
+    .booth-actions { 
+      position: absolute; 
+      top: 8px; 
+      right: 8px; 
+      display: none; 
+      gap: 6px; 
+      background: rgba(0,0,0,0.6);
+      padding: 4px;
+      border-radius: 6px;
+      backdrop-filter: blur(4px);
+    }
+    .booth-item:hover .booth-actions { display: flex; }
+    .btn-icon { 
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none; 
+      border: none; 
+      color: var(--text-muted); 
+      cursor: pointer; 
+      font-size: 0.85rem; 
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .btn-icon:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+    /* Fix optical group styling in dark mode */
+    select optgroup {
+      background: #191c24;
+      color: var(--accent2);
+      font-weight: 700;
+      font-style: normal;
+    }
+    select option {
+      background: #191c24;
+      color: #fff;
+    }
   </style>
 </head>
 <body>
@@ -121,7 +215,7 @@
     </div>
 
     <!-- Exhibition Groups -->
-    <h2 class="page-title" style="font-size: 1.2rem; font-weight: 600;">My Exhibitions</h2>
+    <h2 class="page-title" style="font-size: 1.2rem; font-weight: 600;">Exhibitions</h2>
     <div id="exhibition-groups">
       <div class="card" style="padding:40px; text-align:center;"><div class="spinner" style="margin:auto"></div></div>
     </div>
@@ -174,6 +268,9 @@
   </div>
 </div>
 
+  </div>
+</div>
+
 <!-- Agreement Negotiation Modal -->
 <div class="modal-overlay" id="agreement-modal">
   <div class="modal" style="max-width:520px; width:95%; padding:0; border-top:3px solid #0ea5e9; max-height:85vh; display:flex; flex-direction:column; border-radius:16px;">
@@ -184,6 +281,116 @@
     <div id="agreement-content" style="padding:12px 20px 20px; overflow-y:auto; flex:1;">
       <div class="spinner" style="margin:40px auto"></div>
     </div>
+  </div>
+</div>
+
+<!-- Assign Booth Modal -->
+<div class="modal-overlay" id="booth-modal">
+  <div class="modal" style="max-width: 400px;">
+    <div class="modal-header">
+      <h3 class="modal-title">Assign Booth Location</h3>
+      <button class="modal-close" onclick="closeBoothModal()">✕</button>
+    </div>
+    <form id="booth-form">
+      <input type="hidden" id="b-app-id" />
+      <div style="margin-bottom:15px; color:var(--text-muted); font-size:0.9rem;">
+        Assigning for: <span id="b-comp-name" style="font-weight:700; color:var(--text);"></span>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Select Booth</label>
+        <select id="b-id-select" class="form-control" required></select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeBoothModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Assignment</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add Zone Modal -->
+<div class="modal-overlay" id="zone-modal">
+  <div class="modal" style="max-width: 400px;">
+    <div class="modal-header">
+      <h3 class="modal-title">Add New Zone</h3>
+      <button class="modal-close" onclick="closeZoneModalUI()">✕</button>
+    </div>
+    <form id="zone-form">
+      <input type="hidden" id="z-event-id" />
+      <div class="form-group">
+        <label class="form-label">Zone Name</label>
+        <input type="text" id="z-name" class="form-control" placeholder="e.g. Zone A, Hall 1" required>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeZoneModalUI()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Create Zone</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add/Edit Booth Modal -->
+<div class="modal-overlay" id="booth-item-modal">
+  <div class="modal" style="max-width: 400px;">
+    <div class="modal-header">
+      <h3 class="modal-title" id="booth-item-title">Add Booth</h3>
+      <button class="modal-close" onclick="closeBoothItemModal()">✕</button>
+    </div>
+    <form id="booth-item-form">
+      <input type="hidden" id="bi-id" />
+      <input type="hidden" id="bi-zone-id" />
+      <input type="hidden" id="bi-event-id" />
+      <div class="form-group">
+        <label class="form-label">Booth Number</label>
+        <input type="text" id="bi-number" class="form-control" placeholder="e.g. A-1" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Size</label>
+        <input type="text" id="bi-size" class="form-control" placeholder="e.g. 9 or 3x3">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeBoothItemModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Booth</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Batch Generate Modal -->
+<div class="modal-overlay" id="batch-modal">
+  <div class="modal" style="max-width: 450px;">
+    <div class="modal-header">
+      <h3 class="modal-title">Batch Generate Booths</h3>
+      <button class="modal-close" onclick="closeBatchModalUI()">✕</button>
+    </div>
+    <form id="batch-form-ui">
+      <input type="hidden" id="batch-zone-id" />
+      <input type="hidden" id="batch-event-id" />
+      <div class="booth-form-row">
+        <div class="form-group">
+          <label class="form-label">Prefix</label>
+          <input type="text" id="batch-prefix" class="form-control" placeholder="e.g. A-" value="A-" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Start Number</label>
+          <input type="number" id="batch-start" class="form-control" placeholder="e.g. 1" value="1" min="1" required>
+        </div>
+      </div>
+      <div class="booth-form-row">
+        <div class="form-group">
+          <label class="form-label">How many?</label>
+          <input type="number" id="batch-count" class="form-control" placeholder="e.g. 10" value="8" min="1" max="100" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Default Size</label>
+          <input type="text" id="batch-size" class="form-control" placeholder="e.g. 9 or 3x3">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeBatchModalUI()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Generate Batch</button>
+      </div>
+    </form>
   </div>
 </div>
 
@@ -212,6 +419,8 @@
     if (!d) return '—';
     return new Date(d).toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' });
   }
+
+  let exhGroups = [];
 
   async function loadData() {
     const res = await api.get('/exhibition');
@@ -245,7 +454,9 @@
       return new Date(b.event?.start_time || 0) - new Date(a.event?.start_time || 0);
     });
 
-    container.innerHTML = sorted.map((g, gi) => {
+    exhGroups = sorted;
+
+    container.innerHTML = exhGroups.map((g, gi) => {
       const ev = g.event || {};
       const apps = g.apps;
       const total = apps.length;
@@ -281,6 +492,7 @@
         } else if (app.status === 'negotiating' || app.status === 'accepted') {
           actionHtml = `
             <button class="btn btn-sm" onclick="openAgreementModal(${app.id}, 'exhibition')" style="padding:3px 10px;font-size:11px;background:rgba(34,211,238,0.1);color:#22d3ee;border:1px solid rgba(34,211,238,0.2);font-weight:600;">📋 ${t('Contract')}</button>
+            <button class="btn btn-sm" onclick="openBoothModal(${app.id}, '${comp.name.replace(/'/g, "\\'")}', ${app.event_id})" style="padding:3px 10px;font-size:11px;background:rgba(16,185,129,0.1);color:#10b981;border:1px solid rgba(16,185,129,0.2);font-weight:600;">📍 ${t('Assign Booth')}</button>
           `;
         }
 
@@ -291,6 +503,10 @@
             <div style="font-size:0.7rem; color:var(--text-muted); font-weight:400;">${comp.profile?.company_type || t('General')}</div>
           </td>
           <td style="color:var(--text-muted);font-size:0.82rem;">${app.product_category || '—'}</td>
+          <td style="color:var(--accent); font-weight:600; font-size:0.82rem;">
+            <div>${app.booth ? (app.booth.zone?.name + ': ' + app.booth.booth_number) : (app.booth_number || '—')}</div>
+            <div style="font-size:0.65rem; color:var(--text-muted); font-weight:400;">${app.booth ? (app.booth.size || '') : (app.booth_size || '')}</div>
+          </td>
           <td>${badge(app.status)}</td>
           <td><div style="display:flex;gap:6px;flex-wrap:wrap;">${actionHtml}</div></td>
         </tr>`;
@@ -332,17 +548,37 @@
           </div>
         </div>
         <div class="exh-body ${isOpen ? 'open' : ''}" id="exh-body-${gi}">
-          <div style="padding:10px 20px; background:rgba(0,0,0,0.1); display:flex; gap:10px; align-items:center; border-bottom:1px solid var(--border);">
-            <div style="position:relative; flex:1;">
-               <input type="text" class="form-control" placeholder="${t('Search company...')}" style="padding-left:32px; font-size:0.75rem; height:32px; border-radius:6px;" onkeyup="filterCompanies(${gi}, this.value)">
-               <span style="position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:0.8rem; opacity:0.5;">🔍</span>
+          <div style="display:flex;gap:20px;border-bottom:1px solid var(--border);padding:0 28px;">
+            <div class="tab-btn active" onclick="switchExhTab(event, ${gi}, 'apps')" id="tab-apps-${gi}">${t('Applications')}</div>
+            <div class="tab-btn" onclick="switchExhTab(event, ${gi}, 'layout')" id="tab-layout-${gi}">${t('Exhibition Layout')}</div>
+          </div>
+
+          <div id="content-apps-${gi}" class="tab-pane active" style="padding:24px 28px;">
+            <div class="search-bar" style="margin-bottom: 20px;">
+              <div style="position:relative;">
+                <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:0.9rem; opacity:0.5;">🔍</span>
+                <input type="text" class="form-control" placeholder="${t('Search company...')}" style="padding-left:38px; border-radius:10px; background:rgba(255,255,255,0.03);" onkeyup="filterCompanies(${gi}, this.value)">
+              </div>
+            </div>
+            <div class="table-wrap" style="margin:0;">
+              <table id="table-${gi}">
+                <thead><tr><th>${t('Company')}</th><th>${t('Category')}</th><th>${t('Booth')}</th><th>${t('Status')}</th><th>${t('Actions')}</th></tr></thead>
+                <tbody>${rows}</tbody>
+              </table>
             </div>
           </div>
-          <div class="table-wrap" style="margin:0;">
-            <table id="table-${gi}">
-              <thead><tr><th>${t('Company')}</th><th>${t('Category')}</th><th>${t('Status')}</th><th>${t('Actions')}</th></tr></thead>
-              <tbody>${rows}</tbody>
-            </table>
+
+          <div id="content-layout-${gi}" class="tab-pane" style="padding:24px 28px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+              <div>
+                <h4 style="margin:0; font-size:1rem;">${t('Zones & Booths Configuration')}</h4>
+                <p style="font-size:0.75rem; color:var(--text-muted); margin:4px 0 0;">${t('Manage exhibition zones and available slots')}</p>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="openZoneModalUI(${g.event.id})">➕ ${t('Add Zone')}</button>
+            </div>
+            <div id="layout-container-${g.event.id}" class="layout-grid">
+              <div class="spinner" style="margin:20px auto"></div>
+            </div>
           </div>
         </div>
       </div>`;
@@ -485,6 +721,230 @@
       showToast(res.data?.message || t('Error sending invitation'), 'error');
     }
   });
+
+  function switchExhTab(e, gi, tab) {
+    const parent = document.getElementById(`exh-body-${gi}`);
+    parent.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    parent.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    
+    document.getElementById(`tab-${tab}-${gi}`).classList.add('active');
+    document.getElementById(`content-${tab}-${gi}`).classList.add('active');
+
+    if (tab === 'layout') {
+      const g = exhGroups[gi];
+      const eventId = g.event_id || g.event.id;
+      loadLayoutData(eventId);
+    }
+  }
+
+  async function loadLayoutData(eventId) {
+    const container = document.getElementById(`layout-container-${eventId}`);
+    const res = await api.get(`/exhibition/inventory/${eventId}`);
+    if (!res.ok) return showToast('Failed to load layout', 'error');
+
+    const zones = res.data;
+    if (zones.length === 0) {
+      container.innerHTML = `<div style="text-align:center; padding:40px; color:var(--text-muted);">
+        <p>${t('No zones defined yet.')}</p>
+        <button class="btn btn-ghost btn-sm" onclick="openZoneModalUI(${eventId})">➕ ${t('Create First Zone')}</button>
+      </div>`;
+      return;
+    }
+
+    container.innerHTML = zones.map(z => `
+      <div class="zone-box">
+        <div class="zone-header">
+          <h5 style="margin:0; font-size:0.9rem;">${z.name}</h5>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-ghost btn-sm" style="padding:2px 8px; font-size:0.7rem;" onclick="openBatchModalUI(${z.id}, ${eventId})">➕ ${t('Batch Add')}</button>
+            <button class="btn btn-ghost btn-sm" style="padding:2px 8px; font-size:0.7rem;" onclick="openBoothModalInZone(${z.id}, ${eventId})">➕ ${t('Booth')}</button>
+            <button class="btn-icon" style="color:#ef4444;" onclick="deleteZone(${z.id}, ${eventId})">✕</button>
+          </div>
+        </div>
+        <div class="booth-list">
+          ${z.booths.map(b => `
+            <div class="booth-item ${b.exhibition_application_id ? 'allocated' : 'available'}">
+              <div class="booth-num">${b.booth_number}</div>
+              <div class="booth-size">${b.size || '—'}</div>
+              ${b.application ? `<div class="booth-comp" title="${b.application.company.name}">${b.application.company.name}</div>` : ''}
+              <div class="booth-actions">
+                <button class="btn-icon" onclick="editBooth(${b.id}, '${b.booth_number}', '${b.size || ''}', ${eventId})">✏️</button>
+                <button class="btn-icon" style="color:#f87171;" onclick="deleteBooth(${b.id}, ${eventId})">🗑</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // --- Zone / Booth Management Modals & Logic ---
+  function openZoneModalUI(eventId) {
+    document.getElementById('z-event-id').value = eventId;
+    document.getElementById('z-name').value = '';
+    document.getElementById('zone-modal').classList.add('open');
+  }
+  function closeZoneModalUI() { document.getElementById('zone-modal').classList.remove('open'); }
+
+  async function deleteZone(id, eventId) {
+    if (!confirm(t('Are you sure?'))) return;
+    const res = await api.delete(`/exhibition/inventory/zones/${id}`);
+    if (res.ok) { showToast(t('Zone deleted'), 'success'); loadLayoutData(eventId); }
+  }
+
+  function openBatchModalUI(zoneId, eventId) {
+    document.getElementById('batch-zone-id').value = zoneId;
+    document.getElementById('batch-event-id').value = eventId;
+    document.getElementById('batch-modal').classList.add('open');
+  }
+  function closeBatchModalUI() { document.getElementById('batch-modal').classList.remove('open'); }
+
+  function openBoothModalInZone(zoneId, eventId) {
+    document.getElementById('bi-id').value = '';
+    document.getElementById('bi-zone-id').value = zoneId;
+    document.getElementById('bi-event-id').value = eventId;
+    document.getElementById('bi-number').value = '';
+    document.getElementById('bi-size').value = '';
+    document.getElementById('booth-item-title').innerText = t('Booth');
+    document.getElementById('booth-item-modal').classList.add('open');
+  }
+  function closeBoothItemModal() { document.getElementById('booth-item-modal').classList.remove('open'); }
+
+  function editBooth(id, num, size, eventId) {
+    document.getElementById('bi-id').value = id;
+    document.getElementById('bi-number').value = num;
+    document.getElementById('bi-size').value = size;
+    document.getElementById('bi-event-id').value = eventId;
+    document.getElementById('booth-item-title').innerText = t('Booth');
+    document.getElementById('booth-item-modal').classList.add('open');
+  }
+
+  async function deleteBooth(id, eventId) {
+    if (!confirm(t('Are you sure?'))) return;
+    const res = await api.delete(`/exhibition/inventory/booths/${id}`);
+    if (res.ok) { showToast(t('Booth deleted'), 'success'); loadLayoutData(eventId); }
+    else { showToast(res.data?.message || 'Error', 'error'); }
+  }
+
+  const formatSize = (s) => {
+    if (!s || s.trim() === '') return '';
+    const trimmed = s.trim();
+    // If it's a numeric value (e.g. "3" or "3.5"), append "m²"
+    if (!isNaN(trimmed)) return trimmed + ' m²';
+    return trimmed;
+  };
+
+  // --- Form Handlers ---
+  document.getElementById('zone-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const eventId = document.getElementById('z-event-id').value;
+    const name = document.getElementById('z-name').value;
+    const res = await api.post(`/exhibition/inventory/${eventId}/zones`, { name });
+    if (res.ok) { 
+      showToast(t('Zone created'), 'success'); 
+      closeZoneModalUI();
+      loadLayoutData(eventId); 
+    }
+  });
+
+  document.getElementById('booth-item-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('bi-id').value;
+    const zoneId = document.getElementById('bi-zone-id').value;
+    const eventId = document.getElementById('bi-event_id')?.value || document.getElementById('bi-event-id').value;
+    const number = document.getElementById('bi-number').value;
+    const size = formatSize(document.getElementById('bi-size').value);
+
+    let res;
+    if (id) {
+       res = await api.put(`/exhibition/inventory/booths/${id}`, { booth_number: number, size });
+    } else {
+       res = await api.post(`/exhibition/inventory/zones/${zoneId}/booths`, { booth_number: number, size });
+    }
+
+    if (res.ok) {
+       showToast(id ? 'Updated' : 'Created', 'success');
+       closeBoothItemModal();
+       loadLayoutData(eventId);
+    } else {
+       showToast(res.data?.message || 'Error', 'error');
+    }
+  });
+
+  document.getElementById('batch-form-ui').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const zoneId = document.getElementById('batch-zone-id').value;
+    const eventId = document.getElementById('batch-event-id').value;
+    const prefix = document.getElementById('batch-prefix').value;
+    const start = document.getElementById('batch-start').value;
+    const count = document.getElementById('batch-count').value;
+    const size = formatSize(document.getElementById('batch-size').value);
+
+    const res = await api.post(`/exhibition/inventory/zones/${zoneId}/booths/batch`, {
+      prefix, start, count, size
+    });
+    if (res.ok) { 
+      showToast(t('Booths generated'), 'success'); 
+      closeBatchModalUI();
+      loadLayoutData(eventId); 
+    } else {
+      showToast(res.data?.message || 'Error', 'error');
+    }
+  });
+
+  // --- Assign Booth Update ---
+  async function openBoothModal(id, name, eventId) {
+    document.getElementById('b-app-id').value = id;
+    document.getElementById('b-comp-name').innerText = name;
+    
+    const boothSelect = document.getElementById('b-id-select');
+    boothSelect.innerHTML = '<option value="">' + t('Loading booths...') + '</option>';
+    document.getElementById('booth-modal').classList.add('open');
+
+    const res = await api.get(`/exhibition/inventory/${eventId}`);
+    if (!res.ok) {
+       boothSelect.innerHTML = '<option value="">Error loading</option>';
+       return;
+    }
+
+    let options = `<option value="">-- Select Booth --</option>`;
+    res.data.forEach(zone => {
+      const availableInZone = zone.booths.filter(b => !b.exhibition_application_id || b.exhibition_application_id == id);
+      if (availableInZone.length > 0) {
+        options += `<optgroup label="${zone.name}">`;
+        availableInZone.forEach(b => {
+          const selected = b.exhibition_application_id == id ? 'selected' : '';
+          options += `<option value="${b.id}" ${selected}>${b.booth_number} (${b.size || 'No size'})</option>`;
+        });
+        options += `</optgroup>`;
+      }
+    });
+
+    boothSelect.innerHTML = options;
+  }
+
+  function closeBoothModal() {
+    document.getElementById('booth-modal').classList.remove('open');
+  }
+
+  document.getElementById('booth-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('b-app-id').value;
+    const boothId = document.getElementById('b-id-select').value;
+
+    const res = await api.patch(`/exhibition/${id}/booth`, {
+      booth_id: boothId || null
+    });
+
+    if (res.ok) {
+      showToast(t('Booth assigned successfully!'), 'success');
+      closeBoothModal();
+      loadData();
+    } else {
+      showToast(res.data?.message || t('Error assigning booth'), 'error');
+    }
+  });
+
 </script>
 </body>
 </html>

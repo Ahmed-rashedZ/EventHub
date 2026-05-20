@@ -130,7 +130,9 @@ class AnalyticsController extends Controller
                 'total_applications'   => \App\Models\ExhibitionApplication::where('event_manager_id', $user->id)->count(),
                 'pending_applications' => \App\Models\ExhibitionApplication::where('event_manager_id', $user->id)->where('status', 'pending')->count(),
                 'accepted_applications' => \App\Models\ExhibitionApplication::where('event_manager_id', $user->id)->whereIn('status', ['accepted', 'negotiating'])->count(),
-                'total_booths'         => \App\Models\ExhibitionBooth::whereIn('event_id', $eventIds)->count(),
+                'total_booths'         => \App\Models\ExhibitionBooth::whereHas('zone', function($q) use ($eventIds) {
+                    $q->whereIn('event_id', $eventIds);
+                })->count(),
             ],
         ]);
     }
