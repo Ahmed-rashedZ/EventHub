@@ -24,7 +24,7 @@ class AssistantController extends Controller
         $requests = AssistanceRequest::where('assistant_id', $user->id)
             ->where('status', 'pending')
             ->with([
-                'event:id,title,description,image,start_time,end_time,capacity',
+                'event:id,title,description,image,start_time,end_time,capacity,venue_id,external_venue_name,external_venue_location',
                 'event.venue:id,name,location',
                 'manager:id,name,email',
             ])
@@ -130,7 +130,7 @@ class AssistantController extends Controller
                 });
             })
             ->with([
-                'event:id,title,description,image,start_time,end_time,capacity,created_by',
+                'event:id,title,description,image,start_time,end_time,capacity,created_by,venue_id,external_venue_name,external_venue_location',
                 'event.venue:id,name,location',
                 'event.creator:id,name',
             ])
@@ -160,6 +160,8 @@ class AssistantController extends Controller
                     'start_time' => $event->start_time,
                     'end_time' => $event->end_time,
                     'venue' => $event->venue,
+                    'external_venue_name' => $event->external_venue_name,
+                    'external_venue_location' => $event->external_venue_location,
                     'time_status' => $timeStatus,
                     'total_tickets' => $totalTickets,
                     'scanned_tickets' => $scannedTickets,
@@ -251,7 +253,7 @@ class AssistantController extends Controller
                 $q->where('end_time', '<', $now);
             })
             ->with([
-                'event:id,title,description,image,start_time,end_time,capacity',
+                'event:id,title,description,image,start_time,end_time,capacity,venue_id,external_venue_name,external_venue_location',
                 'event.venue:id,name,location',
             ]);
 
@@ -285,6 +287,8 @@ class AssistantController extends Controller
                     'start_time' => $event->start_time,
                     'end_time' => $event->end_time,
                     'venue' => $event->venue,
+                    'external_venue_name' => $event->external_venue_name,
+                    'external_venue_location' => $event->external_venue_location,
                     'my_scans' => $myScans,
                 ];
             })
@@ -532,9 +536,18 @@ class AssistantController extends Controller
             'status' => 'pending',
         ]);
 
+        // Send Email Invitation
+        try {
+            \Illuminate\Support\Facades\Mail::to($assistant->email)
+                ->send(new \App\Mail\AssistantInvitation($assistant, $event, $user, $request->message));
+        } catch (\Exception $e) {
+            // Log error but don't fail the request
+            \Illuminate\Support\Facades\Log::error('Failed to send assistant invitation email: ' . $e->getMessage());
+        }
+
         return response()->json([
             'message' => 'Invitation sent successfully',
-            'invitation' => $invitation->load(['assistant:id,name,email', 'event:id,title']),
+            'invitation' => $invitation->load(['assistant:id,name,email', 'event:id,title,external_venue_name,external_venue_location']),
         ], 201);
     }
 
@@ -553,7 +566,7 @@ class AssistantController extends Controller
             ->with([
                 'assistant:id,name,email',
                 'assistant.profile:id,user_id,logo',
-                'event:id,title,start_time,end_time,image',
+                'event:id,title,start_time,end_time,image,venue_id,external_venue_name,external_venue_location',
                 'event.venue:id,name',
             ])
             ->orderBy('created_at', 'desc');
