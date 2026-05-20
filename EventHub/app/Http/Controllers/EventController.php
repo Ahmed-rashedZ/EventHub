@@ -355,6 +355,7 @@ class EventController extends Controller
             'created_by'      => $request->user()->id,
             'image'           => $imagePath,
             'agenda'          => $agendaJson,
+            'is_exhibition'   => ($request->event_type === 'معرض'),
         ]);
 
         $event = Event::create($eventData);
@@ -522,6 +523,33 @@ class EventController extends Controller
     }
 
     // POST /api/events/{id}/rate  – User rates an event
+
+    // PATCH /api/events/{id}/toggle-applications
+    public function toggleApplications($id, Request $request)
+    {
+        if ($request->user()->role !== 'Event Manager') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $event = Event::findOrFail($id);
+
+        if ($event->created_by !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        if (!$event->is_exhibition) {
+            return response()->json(['message' => 'This event is not an exhibition'], 400);
+        }
+
+        if ($event->status !== 'approved') {
+            return response()->json(['message' => 'Cannot toggle applications for an event that is not approved.'], 400);
+        }
+
+        $event->is_applications_open = !$event->is_applications_open;
+        $event->save();
+
+        return response()->json($event);
+    }
 
 
     private function applyPublishedSchedule($event)
@@ -853,31 +881,7 @@ class EventController extends Controller
             // Legacy flat format — keep as-is for backward compat
         }
 
-        $wasApproved = $event->status === 'approved';
-        $updateData = ['agenda' => $agenda];
-        
-        if ($wasApproved) {
-            $updateData['status'] = 'pending';
-            $updateData['review_status'] = 'none';
-            $updateData['review_message'] = null;
-        }
-
-        $event->update($updateData);
-
-        if ($wasApproved) {
-            // Notify Admins
-            $admins = User::where('role', 'Admin')->get();
-            foreach ($admins as $admin) {
-                $admin->notify(new SystemNotification(
-                    'Event Agenda Updated 🔄',
-                    "Event \"{$event->title}\" agenda was updated by {$request->user()->name} and needs re-approval.",
-                    'event',
-                    '📋',
-                    '/admin/events',
-                    $event->id
-                ));
-            }
-        }
+        $event->update(['agenda' => $agenda]);
 
         return response()->json(['message' => 'Agenda updated successfully', 'event' => $event->fresh()->load('venue')]);
     }

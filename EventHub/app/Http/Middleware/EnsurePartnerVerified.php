@@ -17,7 +17,7 @@ class EnsurePartnerVerified
     {
         $user = $request->user();
 
-        if ($user && in_array($user->role, ['Event Manager', 'Sponsor'])) {
+        if ($user && in_array($user->role, ['Event Manager', 'Sponsor', 'Company'])) {
             if ($user->verification_status !== 'verified') {
                 if ($request->expectsJson() || $request->is('api/*')) {
                     return response()->json([

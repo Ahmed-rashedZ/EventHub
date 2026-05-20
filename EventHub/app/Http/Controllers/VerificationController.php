@@ -30,7 +30,7 @@ class VerificationController extends Controller
 
     private function getDocTypesForUser(User $user): array
     {
-        return $user->role === 'Sponsor' ? self::SPONSOR_DOC_TYPES : self::DOC_TYPES;
+        return in_array($user->role, ['Sponsor', 'Company']) ? self::SPONSOR_DOC_TYPES : self::DOC_TYPES;
     }
 
     /**
@@ -42,7 +42,7 @@ class VerificationController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        $requests = User::whereIn('role', ['Event Manager', 'Sponsor'])
+        $requests = User::whereIn('role', ['Event Manager', 'Sponsor', 'Company'])
             ->where(function ($query) {
                 $query->whereIn('verification_status', ['pending', 'changes_requested'])
                       ->orWhere(function ($q) {
@@ -229,7 +229,7 @@ class VerificationController extends Controller
     {
         $user = $request->user();
 
-        if (!$user || !in_array($user->role, ['Event Manager', 'Sponsor'])) {
+        if (!$user || !in_array($user->role, ['Event Manager', 'Sponsor', 'Company'])) {
             abort(403);
         }
 
@@ -255,7 +255,7 @@ class VerificationController extends Controller
     {
         $user = $request->user();
 
-        if (!in_array($user->role, ['Event Manager', 'Sponsor'])) {
+        if (!in_array($user->role, ['Event Manager', 'Sponsor', 'Company'])) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -318,7 +318,7 @@ class VerificationController extends Controller
     {
         $user = $request->user();
 
-        if (!in_array($user->role, ['Event Manager', 'Sponsor'])) {
+        if (!in_array($user->role, ['Event Manager', 'Sponsor', 'Company'])) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 

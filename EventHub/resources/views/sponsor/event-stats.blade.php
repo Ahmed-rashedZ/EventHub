@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -81,15 +81,8 @@
 <div class="app-layout">
   <aside class="sidebar">
     <div class="sidebar-logo" style="display:flex; justify-content:center; align-items:center; padding: 8px 0;"><img src="/images/logo.jpg" alt="EventHub Logo" style="width: 85px; height: 85px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
-    <nav class="sidebar-nav">
-      <span class="nav-section-label">Overview</span>
-      <a class="nav-item" href="/sponsor/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
-      <span class="nav-section-label">Opportunities</span>
-      <a class="nav-item" href="/sponsor/events"><span class="nav-icon">🌍</span> Browse Events</a>
-      <a class="nav-item" href="/sponsor/requests"><span class="nav-icon">💼</span> Sponsorships</a>
-      <a class="nav-item active" href="/sponsor/history"><span class="nav-icon">📜</span> History</a>
-      <span class="nav-section-label">Settings</span>
-      <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
+    <nav class="sidebar-nav" id="sidebar-links" style="display:flex; flex-direction:column; gap:4px; padding-top:10px;">
+      <!-- Filled by auth.js -->
     </nav>
     @include('partials._sidebar-footer')
   </aside>
@@ -99,7 +92,7 @@
     <div id="page-content" style="display:none">
 
       <!-- Back Link -->
-      <a class="es-back" href="/sponsor/history">← Back to History</a>
+      <a class="es-back" href="/sponsor/history" id="back-link">← Back to History</a>
 
 
       <!-- Stat Cards -->
@@ -181,8 +174,21 @@
 <script src="/js/notifications.js"></script>
 <script src="/js/auth.js"></script>
 <script>
-const user = requireRole('Sponsor');
-if (user) { populateSidebar(user); setActiveNav(); loadEventStats(); }
+const user = requireRole('Sponsor', 'Company');
+if (user) { 
+  populateSidebar(user); 
+  setActiveNav(); 
+  
+  if (user.role === 'Company') {
+    const backBtn = document.getElementById('back-link');
+    if (backBtn) {
+       backBtn.href = '/company/exhibitions';
+       backBtn.innerHTML = '← Back to Applications';
+    }
+  }
+  
+  loadEventStats(); 
+}
 
 Chart.defaults.color = '#7d8590';
 Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';

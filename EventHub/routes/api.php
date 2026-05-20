@@ -13,6 +13,8 @@ use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\AssistantAnalyticsController;
 use App\Http\Controllers\AssistantController;
+use App\Http\Controllers\ExhibitionController;
+use App\Http\Controllers\CompanyAnalyticsController;
 
 // ─── Public routes ────────────────────────────────────────────────────────────
 Route::post('/register', [AuthController::class, 'register']);
@@ -49,6 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/assistants/{id}', [AuthController::class, 'updateAssistant']); // For Managers
     Route::delete('/assistants/{id}', [AuthController::class, 'deleteAssistant']); // For Managers
     Route::get('/sponsors/available', [AuthController::class, 'getAvailableSponsors']);
+    Route::get('/companies/available', [AuthController::class, 'getAvailableCompanies']);
 
     // Auth
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -61,6 +64,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/events/list/my',             [EventController::class, 'myEvents']);
     Route::get('/events/list/all',            [EventController::class, 'all']);
     Route::patch('/events/{id}/toggle-sponsorship', [EventController::class, 'toggleSponsorship']);
+    Route::patch('/events/{id}/toggle-applications', [EventController::class, 'toggleApplications']);
     Route::post('/events/{id}/rate',          [EventController::class, 'rate']);
     Route::delete('/events/{id}/rate',        [EventController::class, 'deleteRating']);
     Route::put('/events/{id}/review',         [EventController::class, 'sendReview']);
@@ -98,6 +102,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/sponsorship',        [SponsorshipController::class, 'index']);
     Route::put('/sponsorship/{id}',   [SponsorshipController::class, 'update']);
     Route::patch('/sponsorship/{id}/tier', [SponsorshipController::class, 'updateTier']);
+
+    // ── Exhibition ──
+    Route::post('/exhibition',                  [ExhibitionController::class, 'store']);
+    Route::get('/exhibition',                   [ExhibitionController::class, 'index']);
+    Route::get('/exhibition/{id}',              [ExhibitionController::class, 'show']);
+    Route::put('/exhibition/{id}',              [ExhibitionController::class, 'update']);
+    Route::patch('/exhibition/{id}/booth',      [ExhibitionController::class, 'assignBooth']);
+    Route::patch('/exhibition/{id}/rank',       [ExhibitionController::class, 'updateRank']);
 
     // ── Agreements ──
     Route::post('/agreements/{id}/generate',       [AgreementController::class, 'generate']);
@@ -146,6 +158,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/assistant/work/{id}',               [AssistantController::class, 'getEventWorkDetails']);
     Route::get('/assistant/history',                 [AssistantController::class, 'getHistory']);
     Route::get('/assistant/history/{id}/stats',      [AssistantController::class, 'getEventStats']);
+
+    // ── Company Analytics ──
+    Route::get('/company/analytics',    [CompanyAnalyticsController::class, 'overview']);
+    Route::get('/company/exhibitions',  [CompanyAnalyticsController::class, 'myExhibitions']);
 });
 
 // ── Storage Proxy for CORS (Flutter Web Fix) ──

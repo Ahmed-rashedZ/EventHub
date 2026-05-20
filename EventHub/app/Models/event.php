@@ -33,6 +33,8 @@ class Event extends Model
         'review_status',
         'is_sponsorship_open',
         'is_tickets_open',
+        'is_exhibition',
+        'is_applications_open',
         'is_published',
         'created_by',
         'external_schedule',
@@ -53,6 +55,8 @@ class Event extends Model
         'end_time' => 'datetime',
         'is_sponsorship_open' => 'boolean',
         'is_tickets_open' => 'boolean',
+        'is_exhibition' => 'boolean',
+        'is_applications_open' => 'boolean',
         'is_published' => 'boolean',
         'review_fields' => 'array',
         'external_schedule' => 'array',
@@ -170,5 +174,24 @@ class Event extends Model
     public function sponsorsByTier(string $tier)
     {
         return $this->sponsors()->wherePivot('tier', $tier)->get();
+    }
+
+    // ─── Exhibition Relationships ──────────────────────────────────────────
+
+    public function exhibitionApplications()
+    {
+        return $this->hasMany(ExhibitionApplication::class);
+    }
+
+    public function booths()
+    {
+        return $this->hasMany(ExhibitionBooth::class);
+    }
+
+    public function exhibitors()
+    {
+        return $this->hasMany(ExhibitionApplication::class)
+                    ->where('status', 'accepted')
+                    ->with(['company.profile', 'booth']);
     }
 }

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -89,6 +89,7 @@
       <a class="nav-item" href="/manager/assistants"><span class="nav-icon">👥</span> Assistants</a>
       <a class="nav-item" href="/manager/attendance"><span class="nav-icon">📍</span> Attendance</a>
       <a class="nav-item" href="/manager/sponsorship"><span class="nav-icon">💼</span> Sponsorship</a>
+      <a class="nav-item" href="/manager/exhibition"><span class="nav-icon">🏛️</span> Exhibitions</a>
       <span class="nav-section-label">Settings</span>
       <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
     </nav>

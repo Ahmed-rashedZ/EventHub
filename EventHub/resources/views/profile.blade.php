@@ -127,8 +127,12 @@
 
   (async function initProfilePage() {
     if (!u) return;
-    if (u.role === 'Sponsor') {
+    if (u.role === 'Sponsor' || u.role === 'Company') {
       document.getElementById('p-available').disabled = true;
+      const labelSpan = document.querySelector('#availability-group span');
+      if (labelSpan) {
+        labelSpan.innerText = u.role === 'Company' ? t('Available for Exhibitions') : t('Open to Sponsorship');
+      }
       const pres = await api.get('/profile');
       if (pres.ok && pres.data?.user) {
         u = pres.data.user;
@@ -164,7 +168,7 @@
             document.getElementById('avatar-preview-container').style.border = 'none';
         }
 
-        if (u.role === 'Sponsor') {
+        if (u.role === 'Sponsor' || u.role === 'Company') {
             document.getElementById('availability-group').style.display = 'block';
             const avail = availabilityFromDatabase(u.profile.is_available);
             if (avail === null) {
@@ -323,7 +327,7 @@
     });
     fd.append('contacts', JSON.stringify(dynamicContacts));
     
-    if (u.role === 'Sponsor') {
+    if (u.role === 'Sponsor' || u.role === 'Company') {
         fd.append('is_available', document.getElementById('p-available').checked ? '1' : '0');
     }
 
@@ -348,7 +352,7 @@
           document.getElementById('current-logo').src = u_logo;
           document.getElementById('current-logo').style.display = 'block';
       }
-      if (res.data.user.role === 'Sponsor' && res.data.user.profile) {
+      if ((res.data.user.role === 'Sponsor' || res.data.user.role === 'Company') && res.data.user.profile) {
           const avail = availabilityFromDatabase(res.data.user.profile.is_available);
           if (avail !== null) {
             document.getElementById('p-available').checked = avail;

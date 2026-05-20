@@ -33,6 +33,7 @@
         <a class="nav-item" href="/manager/assistants"><span class="nav-icon">👥</span> Assistants</a>
         <a class="nav-item" href="/manager/attendance"><span class="nav-icon">📍</span> Attendance</a>
         <a class="nav-item" href="/manager/sponsorship"><span class="nav-icon">💼</span> Sponsorship</a>
+        <a class="nav-item" href="/manager/exhibition"><span class="nav-icon">🏛️</span> Exhibitions</a>
         <span class="nav-section-label">Settings</span>
         <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
       </nav>
@@ -197,7 +198,16 @@
                 <option value="اجتماعية">
                   <script>document.write(t('Social'))</script>
                 </option>
+                <option value="معرض">
+                  <script>document.write(t('Exhibition'))</script>
+                </option>
               </select>
+              <div id="exhibition-hint" style="display:none; margin-top:8px; padding:10px; background:rgba(139,92,246,0.1); border:1px dashed rgba(139,92,246,0.3); border-radius:10px;">
+                <div style="display:flex; align-items:center; gap:8px; font-size:0.85rem; color:#c4b5fd;">
+                  <span>🏛️</span>
+                  <p style="margin:0;"><script>document.write(t('Exhibition features (booths, company applications, and contracts) will be enabled for this event.'))</script></p>
+                </div>
+              </div>
             </div>
             <div class="form-group">
               <label class="form-label">Event Banner Image</label>
@@ -1437,7 +1447,10 @@
         const dayName = dayNames[d.getDay()];
         const monthName = monthNames[d.getMonth()];
         const dayNum = d.getDate();
-        const prevPeriod = existingPeriods[dateStr] || '';
+        const venueId = document.getElementById('e-venue').value;
+        const venue = globalVenues.find(v => v.id == venueId);
+        const isFair = venue && (venue.id == 24 || venue.name.toLowerCase().includes('معرض طرابلس'));
+        const forcedPeriod = isFair ? 'full_day' : (existingPeriods[dateStr] || '');
 
         const bookings = window.currentVenueBookings ? window.currentVenueBookings.filter(b => b.booking_date === dateStr) : [];
         const bookedPeriods = bookings.filter(b => b.type !== 'maintenance').map(b => b.period);
@@ -1453,13 +1466,14 @@
             <div style="font-size:0.6rem;color:#94a3b8;margin-top:1px;">${monthName}</div>
           </div>
           <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
-            <label style="font-size:0.65rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;">Select Period</label>
-            <select class="int-slot-period form-control" style="padding:6px 10px;font-size:0.85rem;" onchange="checkIntPeriodAvailability(this, '${dateStr}')" required>
-              <option value="">Select a period...</option>
-              <option value="morning" ${prevPeriod === 'morning' ? 'selected' : ''} ${bookedPeriods.includes('morning') || bookedPeriods.includes('full_day') ? 'disabled' : ''}>Morning Period ☀</option>
-              <option value="evening" ${prevPeriod === 'evening' ? 'selected' : ''} ${bookedPeriods.includes('evening') || bookedPeriods.includes('full_day') ? 'disabled' : ''}>Evening Period 🌙</option>
-              <option value="full_day" ${prevPeriod === 'full_day' ? 'selected' : ''} ${bookedPeriods.includes('morning') || bookedPeriods.includes('evening') || bookedPeriods.includes('full_day') ? 'disabled' : ''}>Full Day 🗓️</option>
+            <label style="font-size:0.65rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;">${isFair ? (document.documentElement.lang === 'ar' ? 'تايب الحجز (محجوز بالكامل)' : 'Booking Type (Entire Fair)') : 'Select Period'}</label>
+            <select class="int-slot-period form-control" style="padding:6px 10px;font-size:0.85rem;" onchange="checkIntPeriodAvailability(this, '${dateStr}')" ${isFair ? 'disabled' : ''} required>
+              ${isFair ? '' : '<option value="">Select a period...</option>'}
+              <option value="morning" ${forcedPeriod === 'morning' ? 'selected' : ''} ${isFair || bookedPeriods.includes('morning') || bookedPeriods.includes('full_day') ? 'disabled' : ''}>Morning Period ☀</option>
+              <option value="evening" ${forcedPeriod === 'evening' ? 'selected' : ''} ${isFair || bookedPeriods.includes('evening') || bookedPeriods.includes('full_day') ? 'disabled' : ''}>Evening Period 🌙</option>
+              <option value="full_day" ${forcedPeriod === 'full_day' ? 'selected' : ''} ${bookedPeriods.includes('morning') || bookedPeriods.includes('evening') || bookedPeriods.includes('full_day') ? 'disabled' : ''}>Full Day 🗓️</option>
             </select>
+            ${isFair ? `<input type="hidden" class="int-slot-period" value="full_day">` : ''}
           </div>
           <button type="button" onclick="removeIntDay('${dateStr}')" style="
             background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25);
@@ -1496,7 +1510,10 @@
       const schedule = [];
       cards.forEach(card => {
         const date = card.dataset.date;
-        const period = card.querySelector('.int-slot-period').value;
+        let periodEl = card.querySelector('input.int-slot-period');
+        if (!periodEl) periodEl = card.querySelector('select.int-slot-period');
+        
+        const period = periodEl ? periodEl.value : '';
         if (date && period) {
           schedule.push({ date, period });
         }
@@ -1724,10 +1741,33 @@
 
     async function loadVenues() {
       const res = await api.get('/venues');
-      const sel = document.getElementById('e-venue');
-      if (!res.ok) { sel.innerHTML = '<option value="">No venues available</option>'; return; }
+      if (!res.ok) { 
+        document.getElementById('e-venue').innerHTML = '<option value="">No venues available</option>'; 
+        return; 
+      }
       globalVenues = res.data;
-      sel.innerHTML = '<option value="">Select a hall inside the exhibition...</option>' + res.data.map(v => `<option value="${v.id}">${v.name} (${v.location})</option>`).join('');
+      renderVenues(document.getElementById('e-type').value);
+    }
+
+    function renderVenues(eventType) {
+      const sel = document.getElementById('e-venue');
+      const isExhibition = eventType === 'معرض';
+      
+      const filtered = globalVenues.filter(v => {
+        const isFair = v.name.includes('معرض طرابلس');
+        return isExhibition ? isFair : !isFair;
+      });
+
+      if (filtered.length === 0) {
+        sel.innerHTML = `<option value="">${document.documentElement.lang === 'ar' ? 'لا توجد قاعات متاحة لهدا التايب حاليا' : 'No halls available for this type currently'}</option>`;
+      } else {
+        const placeholder = isExhibition 
+          ? (document.documentElement.lang === 'ar' ? 'اختر المعرض...' : 'Select the exhibition fair...')
+          : (document.documentElement.lang === 'ar' ? 'اختر القاعة داخل المعرض...' : 'Select a hall inside the exhibition...');
+          
+        sel.innerHTML = `<option value="">${placeholder}</option>` + 
+          filtered.map(v => `<option value="${v.id}">${v.name} (${v.location})</option>`).join('');
+      }
     }
 
     async function updatePeriodTimes() {
@@ -1785,6 +1825,7 @@
           intCalendarInstance.redraw();
           if (intCalendarInstance.updateCustomStats) intCalendarInstance.updateCustomStats();
         }
+        renderIntTimeSlots();
       }
       checkAvailability();
     }
@@ -1987,6 +2028,7 @@
                 <option value="رياضة" ${ev.event_type === 'رياضة' ? 'selected' : ''}>Sports</option>
                 <option value="تقنية" ${ev.event_type === 'تقنية' ? 'selected' : ''}>Technology</option>
                 <option value="اجتماعية" ${ev.event_type === 'اجتماعية' ? 'selected' : ''}>Social</option>
+                <option value="معرض" ${ev.event_type === 'معرض' ? 'selected' : ''}>Exhibition</option>
               </select></div>`;
             break;
           case 'capacity':
@@ -2121,6 +2163,46 @@
       }
     }
 
+    // Exhibition Hint Toggle Logic
+    const eTypeEl = document.getElementById('e-type');
+    if (eTypeEl) {
+      eTypeEl.addEventListener('change', function() {
+        const hint = document.getElementById('exhibition-hint');
+        if (this.value === 'معرض') {
+          hint.style.display = 'block';
+        } else {
+          hint.style.display = 'none';
+        }
+        renderVenues(this.value);
+      });
+    }
+
+    // Global modal functions
+    window.openModal = window.openModal || function() {
+      const modal = document.getElementById('event-modal');
+      if (modal) {
+        modal.classList.add('open');
+        // Reset everything
+        const form = document.getElementById('event-form');
+        form.reset();
+        document.getElementById('exhibition-hint').style.display = 'none';
+        renderVenues(document.getElementById('e-type').value);
+        goToStep(1);
+      }
+    };
+
+    window.closeModal = window.closeModal || function() {
+      const modal = document.getElementById('event-modal');
+      if (modal) modal.classList.remove('open');
+    };
+
+    // Delegated listener for Edit Modal type change
+    document.addEventListener('change', function(e) {
+      if (e.target && e.target.id === 'edit-type') {
+        // Handle edit modal logic if needed
+      }
+    });
+
     document.getElementById('event-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const formData = new FormData();
@@ -2136,6 +2218,7 @@
         formData.append('venue_id', document.getElementById('e-venue').value);
 
         const internalSchedule = buildInternalSchedule();
+        
         if (intSelectedDates.length === 0) {
           showToast('Please select at least one day for the venue.', 'error');
           return;

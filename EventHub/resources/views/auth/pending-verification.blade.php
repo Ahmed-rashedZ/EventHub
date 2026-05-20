@@ -186,7 +186,7 @@
       let hasRejected = false;
 
       // Filter docs based on role
-      const applicableDocs = u.role === 'Sponsor' 
+      const applicableDocs = ['Sponsor', 'Company'].includes(u.role)
         ? DOC_TYPES.filter(d => ['doc_commercial_register', 'doc_tax_number'].includes(d.key))
         : DOC_TYPES;
 
@@ -248,7 +248,7 @@
       const uStr = sessionStorage.getItem('user');
       const user = uStr ? JSON.parse(uStr) : {};
 
-      const applicableDocs = user.role === 'Sponsor' 
+      const applicableDocs = ['Sponsor', 'Company'].includes(user.role)
         ? DOC_TYPES.filter(d => ['doc_commercial_register', 'doc_tax_number'].includes(d.key))
         : DOC_TYPES;
 

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -18,20 +18,26 @@
     <div class="auth-card">
       <div class="auth-logo" style="display:flex; justify-content:center; align-items:center; margin-bottom: 20px;"><img src="/images/logo.jpg" alt="EventHub Logo" style="width: 95px; height: 95px; object-fit: contain; border-radius: 50%; box-shadow: 0 8px 24px rgba(0,0,0,0.1);"></div>
 
-      <h2 class="auth-heading">Registration Restricted</h2>
-      <p class="auth-subheading">To join the EventHub platform:</p>
+      <h2 class="auth-heading"><script>document.write(t('Registration Restricted'))</script></h2>
+      <p class="auth-subheading"><script>document.write(t('To join the EventHub platform:'))</script></p>
 
       <div style="margin-top: 24px; text-align: left;">
         <div class="card"
           style="padding: 16px; margin-bottom: 16px; background: rgba(59,130,246,0.1); border: 1px solid var(--primary);">
-          <h4 style="margin: 0 0 8px 0; color: var(--primary);">📱 Attendees (Users)</h4>
-          <p style="margin: 0; font-size: 0.85rem; color: var(--text-secondary);">Please download the <strong>EventHub Mobile App</strong> to create your account and buy tickets.</p>
+          <h4 style="margin: 0 0 8px 0; color: var(--primary);">📱 <script>document.write(t('Attendees (Users)'))</script></h4>
+          <p style="margin: 0; font-size: 0.85rem; color: var(--text-secondary);"><script>document.write(t('Please download the EventHub Mobile App to create your account and buy tickets.'))</script></p>
         </div>
 
-        <div class="card" style="padding: 16px; background: rgba(16,185,129,0.1); border: 1px solid var(--success);">
-          <h4 style="margin: 0 0 8px 0; color: var(--success);">💼 Managers & Sponsors</h4>
-          <p style="margin: 0 0 12px 0; font-size: 0.85rem; color: var(--text-secondary);">Accounts for Event Managers and Sponsors must be verified by the System Administrator.</p>
-          <a href="/register/partner" class="btn btn-success btn-sm" style="display:inline-block; text-decoration:none;">Apply as Partner →</a>
+        <div class="card" style="padding: 16px; margin-bottom: 16px; background: rgba(16,185,129,0.1); border: 1px solid var(--success);">
+          <h4 style="margin: 0 0 8px 0; color: var(--success);">💼 <script>document.write(t('Managers & Sponsors'))</script></h4>
+          <p style="margin: 0 0 12px 0; font-size: 0.85rem; color: var(--text-secondary);"><script>document.write(t('Accounts for Event Managers and Sponsors must be verified by the System Administrator.'))</script></p>
+          <a href="/register/partner" class="btn btn-success btn-sm" style="display:inline-block; text-decoration:none;"><script>document.write(t('Apply as Partner →'))</script></a>
+        </div>
+
+        <div class="card" style="padding: 16px; background: rgba(245,158,11,0.1); border: 1px solid #f59e0b;">
+          <h4 style="margin: 0 0 8px 0; color: #f59e0b;">🏛️ <script>document.write(t('Companies & Exhibitors'))</script></h4>
+          <p style="margin: 0 0 12px 0; font-size: 0.85rem; color: var(--text-secondary);"><script>document.write(t('Apply as a company to participate in exhibitions.'))</script></p>
+          <a href="/register/partner" class="btn btn-sm" style="display:inline-block; text-decoration:none; background:#f59e0b; color:#fff;"><script>document.write(t('Apply as Partner →'))</script></a>
         </div>
       </div>
 

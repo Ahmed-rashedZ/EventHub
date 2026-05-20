@@ -57,7 +57,7 @@
     
     if (user && token && hasCookie) {
       const u = JSON.parse(user);
-      if (['Event Manager', 'Sponsor'].includes(u.role) && u.verification_status !== 'verified') {
+      if (['Event Manager', 'Sponsor', 'Company'].includes(u.role) && u.verification_status !== 'verified') {
         window.location.href = '/pending-verification';
       } else {
         redirectByRole(u.role);
@@ -70,7 +70,14 @@
   })();
 
   function redirectByRole(role) {
-    const map = { 'Admin': '/admin/dashboard', 'Event Manager': '/manager/dashboard', 'Sponsor': '/sponsor/dashboard', 'User': '/profile', 'Assistant': '/profile' };
+    const map = { 
+      'Admin': '/admin/dashboard', 
+      'Event Manager': '/manager/dashboard', 
+      'Sponsor': '/sponsor/dashboard', 
+      'Company': '/company/dashboard',
+      'User': '/profile', 
+      'Assistant': '/profile' 
+    };
     window.location.href = map[role] || '/login';
   }
 
@@ -92,7 +99,7 @@
       showToast(translateText('Welcome back, ' + res.data.user.name + '!'), 'success');
       
       setTimeout(() => {
-        if (['Event Manager', 'Sponsor'].includes(res.data.user.role) && res.data.user.verification_status !== 'verified') {
+        if (['Event Manager', 'Sponsor', 'Company'].includes(res.data.user.role) && res.data.user.verification_status !== 'verified') {
           window.location.href = '/pending-verification';
         } else {
           redirectByRole(res.data.user.role);

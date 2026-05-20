@@ -88,6 +88,7 @@ function requireRole(...roles) {
             'Admin':         '/admin/dashboard',
             'Event Manager': '/manager/dashboard',
             'Sponsor':       '/sponsor/dashboard',
+            'Company':       '/company/dashboard',
             'User':          '/profile',
             'Assistant':     '/profile'
         };
@@ -141,6 +142,7 @@ function buildSidebarLinks(role, activePath) {
         html += nav('/manager/assistants',  '👥', 'Assistants');
         html += nav('/manager/attendance',  '📍', 'Attendance');
         html += nav('/manager/sponsorship', '💼', 'Sponsorship');
+        html += nav('/manager/exhibition',  '🏛️', 'Exhibitions');
 
     } else if (role === 'Sponsor') {
         html += `<span class="nav-section-label">${t('Overview')}</span>`;
@@ -149,6 +151,12 @@ function buildSidebarLinks(role, activePath) {
         html += nav('/sponsor/events',    '🌍', 'Browse Events');
         html += nav('/sponsor/requests',  '💼', 'Browse Requests');
         html += nav('/sponsor/history',   '📜', 'History');
+    } else if (role === 'Company') {
+        html += `<span class="nav-section-label">${t('Overview')}</span>`;
+        html += nav('/company/dashboard',   '📊', 'Dashboard');
+        html += `<span class="nav-section-label">${t('Exhibitions')}</span>`;
+        html += nav('/company/exhibitions', '🏢', 'My Applications');
+        html += nav('/company/events',      '🌍', 'Browse Exhibitions');
     }
 
     html += `<span class="nav-section-label">${t('Settings')}</span>`;

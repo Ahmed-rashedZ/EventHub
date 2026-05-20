@@ -355,13 +355,14 @@
           'Admin': 'background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.3)',
           'Event Manager': 'background:rgba(110,64,242,.15);color:#a78bfa;border:1px solid rgba(110,64,242,.3)',
           'Sponsor': 'background:rgba(234,179,8,.15);color:#eab308;border:1px solid rgba(234,179,8,.3)',
+          'Company': 'background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.3)',
           'User': 'background:rgba(34,211,238,.15);color:#22d3ee;border:1px solid rgba(34,211,238,.3)',
           'Assistant': 'background:rgba(34,197,94,.15);color:#22c55e;border:1px solid rgba(34,197,94,.3)',
         };
         roleBadge.setAttribute('style', (roleStyles[u.role] || 'background:rgba(255,255,255,.1);color:#fff') + ';display:inline-block;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px');
 
         const statusBadge = document.getElementById('u-status-badge');
-        if (u.role === 'Sponsor') {
+        if (u.role === 'Sponsor' || u.role === 'Company') {
           if (p.is_available) {
             statusBadge.innerHTML = '<span class="badge badge-approved">Available for Sponsorship</span>';
           } else {
@@ -377,7 +378,7 @@
           statusBadge.innerHTML = '';
         }
 
-        const bioText = (u.role === 'Sponsor' ? p.company_description : p.bio) || u.bio || 'No description provided.';
+        const bioText = (u.role === 'Sponsor' || u.role === 'Company' ? p.company_description : p.bio) || u.bio || 'No description provided.';
         document.getElementById('u-bio').innerText = bioText;
 
         // Contacts
@@ -476,7 +477,7 @@
 
         if (u.role === 'Event Manager') {
           loadManagerEvents(u.id, u.role);
-        } else if (u.role === 'Sponsor') {
+        } else if (u.role === 'Sponsor' || u.role === 'Company') {
           loadManagerEvents(u.id, u.role);
         }
       } catch (err) {
@@ -494,7 +495,7 @@
         if (!section) return;
         section.style.display = 'block';
 
-        if (role === 'Sponsor') {
+        if (role === 'Sponsor' || role === 'Company') {
           const title = document.querySelector('.mgr-section-title');
           if (title) title.innerHTML = '<span>💼</span> Sponsored Events History';
 

@@ -13,23 +13,22 @@ use Illuminate\Support\Facades\Storage;
 
 class AgreementController extends Controller
 {
-    /**
-     * GET /api/agreements/{sponsorship_id}
-     * Fetch negotiation details + all versions for a sponsorship request.
-     */
-    public function show(Request $request, $sponsorshipId)
+    public function show(Request $request, $id)
     {
         $user = $request->user();
-        $sreq = SponsorshipRequest::findOrFail($sponsorshipId);
+        $type = $request->query('type', 'sponsor');
+        $target = $this->getTarget($id, $type);
 
-        // Authorization: only the involved sponsor, manager, or admin
-        if (!$this->canAccess($user, $sreq)) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+        if (!$target) return response()->json(['message' => 'Target not found'], 404);
+        if (!$this->canAccess($user, $target)) return response()->json(['message' => 'Unauthorized'], 403);
+
+        $query = AgreementNegotiation::with(['versions.uploader', 'lastSubmitter']);
+        if ($type === 'exhibition') {
+            $query->where('exhibition_application_id', $id);
+        } else {
+            $query->where('sponsorship_request_id', $id);
         }
-
-        $negotiation = AgreementNegotiation::with(['versions.uploader', 'lastSubmitter'])
-            ->where('sponsorship_request_id', $sponsorshipId)
-            ->first();
+        $negotiation = $query->first();
 
         if (!$negotiation) {
             return response()->json(['message' => 'No agreement negotiation found'], 404);
@@ -37,42 +36,55 @@ class AgreementController extends Controller
 
         return response()->json([
             'negotiation' => $negotiation,
-            'sponsorship_request' => $sreq->load(['event', 'sponsor', 'manager']),
+            'sponsorship_request' => $type === 'sponsor' ? $target->load(['event', 'sponsor', 'manager']) : null,
+            'exhibition_application' => $type === 'exhibition' ? $target->load(['event', 'company', 'manager']) : null,
         ]);
     }
 
-    /**
-     * POST /api/agreements/{sponsorship_id}/generate
-     * Generate the initial Word agreement after preliminary acceptance.
-     */
-    public function generate(Request $request, $sponsorshipId)
+    public function generate(Request $request, $id)
     {
         $user = $request->user();
-        $sreq = SponsorshipRequest::with(['event.venue', 'sponsor', 'manager'])->findOrFail($sponsorshipId);
+        $type = $request->query('type', 'sponsor');
+        $target = $this->getTarget($id, $type);
 
-        if (!$this->canAccess($user, $sreq)) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
+        if (!$target) return response()->json(['message' => 'Target not found'], 404);
+        if (!$this->canAccess($user, $target)) return response()->json(['message' => 'Unauthorized'], 403);
 
-        if (!in_array($sreq->status, ['accepted', 'negotiating'])) {
-            return response()->json(['message' => 'Agreement can only be generated for accepted sponsorships'], 400);
+        if (!in_array($target->status, ['accepted', 'negotiating'])) {
+            return response()->json(['message' => 'Agreement can only be generated for accepted targets'], 400);
         }
 
         // Check if negotiation already exists
-        $existing = AgreementNegotiation::where('sponsorship_request_id', $sponsorshipId)->first();
+        $query = AgreementNegotiation::query();
+        if ($type === 'exhibition') {
+            $query->where('exhibition_application_id', $id);
+        } else {
+            $query->where('sponsorship_request_id', $id);
+        }
+        $existing = $query->first();
+
         if ($existing) {
             return response()->json(['message' => 'Agreement already generated', 'negotiation' => $existing->load('versions.uploader')], 200);
         }
 
         // Generate Word document
-        $filePath = AgreementWordService::generate($sreq);
+        if ($type === 'exhibition') {
+            $filePath = AgreementWordService::generateExhibition($target);
+        } else {
+            $filePath = AgreementWordService::generate($target);
+        }
 
         // Create negotiation record
-        $negotiation = AgreementNegotiation::create([
-            'sponsorship_request_id' => $sreq->id,
-            'status'                 => 'draft',
-            'last_submitted_by'      => $user->id,
-        ]);
+        $negotiationData = [
+            'status'            => 'draft',
+            'last_submitted_by' => $user->id,
+        ];
+        if ($type === 'exhibition') {
+            $negotiationData['exhibition_application_id'] = $id;
+        } else {
+            $negotiationData['sponsorship_request_id'] = $id;
+        }
+        $negotiation = AgreementNegotiation::create($negotiationData);
 
         // Create first version
         AgreementVersion::create([
@@ -87,36 +99,41 @@ class AgreementController extends Controller
         $negotiation->load('versions.uploader');
 
         // Notify the other party
-        $otherUserId = ($user->id === $sreq->sponsor_id) ? $sreq->event_manager_id : $sreq->sponsor_id;
+        $managerId = $target->event_manager_id;
+        $partnerId = ($type === 'exhibition') ? $target->company_id : $target->sponsor_id;
+        $otherUserId = ($user->id === $partnerId) ? $managerId : $partnerId;
         $otherUser = User::find($otherUserId);
+        
         if ($otherUser) {
             $otherUser->notify(new SystemNotification(
-                'عقد رعاية جديد 📋',
-                "تم إنشاء عقد رعاية لحدث \"{$sreq->event->title}\". يرجى مراجعة العقد وتعديل البنود.",
+                'عقد جديد 📋',
+                "تم إنشاء عقد لحدث \"{$target->event->title}\". يرجى مراجعة العقد وتعديل البنود.",
                 'agreement',
                 '📋',
-                $otherUser->role === 'Sponsor' ? '/sponsor/requests' : '/manager/sponsorship',
-                $sreq->event_id
+                $otherUser->role === 'Event Manager' ? '/manager/sponsorship' : ($type === 'exhibition' ? '/company/applications' : '/sponsor/requests'),
+                $target->event_id
             ));
         }
 
         return response()->json($negotiation, 201);
     }
 
-    /**
-     * GET /api/agreements/{sponsorship_id}/download/{version?}
-     * Download a specific version or the latest.
-     */
-    public function download(Request $request, $sponsorshipId, $version = null)
+    public function download(Request $request, $id, $version = null)
     {
         $user = $request->user();
-        $sreq = SponsorshipRequest::findOrFail($sponsorshipId);
+        $type = $request->query('type', 'sponsor');
+        $target = $this->getTarget($id, $type);
 
-        if (!$this->canAccess($user, $sreq)) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+        if (!$target) return response()->json(['message' => 'Target not found'], 404);
+        if (!$this->canAccess($user, $target)) return response()->json(['message' => 'Unauthorized'], 403);
+
+        $query = AgreementNegotiation::query();
+        if ($type === 'exhibition') {
+            $query->where('exhibition_application_id', $id);
+        } else {
+            $query->where('sponsorship_request_id', $id);
         }
-
-        $negotiation = AgreementNegotiation::where('sponsorship_request_id', $sponsorshipId)->firstOrFail();
+        $negotiation = $query->firstOrFail();
 
         if ($version) {
             $ver = AgreementVersion::where('negotiation_id', $negotiation->id)
@@ -133,26 +150,27 @@ class AgreementController extends Controller
         return Storage::disk('public')->download($ver->file_path);
     }
 
-    /**
-     * GET /api/agreements/{sponsorship_id}/download-final
-     * Download the final contract — returns the LAST UPLOADED file (with all negotiated modifications).
-     */
-    public function downloadFinal(Request $request, $sponsorshipId)
+    public function downloadFinal(Request $request, $id)
     {
         $user = $request->user();
-        $sreq = SponsorshipRequest::findOrFail($sponsorshipId);
+        $type = $request->query('type', 'sponsor');
+        $target = $this->getTarget($id, $type);
 
-        if (!$this->canAccess($user, $sreq)) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+        if (!$target) return response()->json(['message' => 'Target not found'], 404);
+        if (!$this->canAccess($user, $target)) return response()->json(['message' => 'Unauthorized'], 403);
+
+        $query = AgreementNegotiation::query();
+        if ($type === 'exhibition') {
+            $query->where('exhibition_application_id', $id);
+        } else {
+            $query->where('sponsorship_request_id', $id);
         }
-
-        $negotiation = AgreementNegotiation::where('sponsorship_request_id', $sponsorshipId)->firstOrFail();
+        $negotiation = $query->firstOrFail();
 
         if ($negotiation->status !== 'accepted') {
             return response()->json(['message' => 'Agreement not finalized yet'], 400);
         }
 
-        // Priority 1: Return the LAST UPLOADED file directly (this is the file with all negotiated edits)
         $lastUploadedVersion = $negotiation->versions()
             ->where('action', 'uploaded')
             ->whereNotNull('file_path')
@@ -163,12 +181,11 @@ class AgreementController extends Controller
 
         if ($lastUploadedVersion && Storage::disk('public')->exists($lastUploadedVersion->file_path)) {
             $ext = strtolower(pathinfo($lastUploadedVersion->file_path, PATHINFO_EXTENSION));
-            $downloadName = 'agreement_' . $sponsorshipId . '_final.' . $ext;
+            $downloadName = 'agreement_' . $id . '_final.' . $ext;
             return Storage::disk('public')->download($lastUploadedVersion->file_path, $downloadName);
         }
 
-        // Priority 2: Return the generated final PDF (if it exists from generateFinalPdf)
-        $finalPath = 'agreements/agreement_' . $sponsorshipId . '_final.pdf';
+        $finalPath = 'agreements/agreement_' . ($type === 'exhibition' ? 'exhib_' : '') . $id . '_final.pdf';
         if (Storage::disk('public')->exists($finalPath)) {
             return Storage::disk('public')->download($finalPath);
         }
@@ -176,44 +193,39 @@ class AgreementController extends Controller
         return response()->json(['message' => 'Final contract not found'], 404);
     }
 
-    /**
-     * POST /api/agreements/{sponsorship_id}/upload
-     * Upload a modified agreement and send review request.
-     */
-    public function upload(Request $request, $sponsorshipId)
+    public function upload(Request $request, $id)
     {
         $user = $request->user();
-        $sreq = SponsorshipRequest::with('event')->findOrFail($sponsorshipId);
+        $type = $request->query('type', 'sponsor');
+        $target = $this->getTarget($id, $type);
 
-        if (!$this->canAccess($user, $sreq)) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
+        if (!$target) return response()->json(['message' => 'Target not found'], 404);
+        if (!$this->canAccess($user, $target)) return response()->json(['message' => 'Unauthorized'], 403);
 
         $request->validate([
             'file'    => 'required|file|mimes:docx,doc,pdf|max:10240',
             'message' => 'nullable|string|max:2000',
         ]);
 
-        $negotiation = AgreementNegotiation::where('sponsorship_request_id', $sponsorshipId)->firstOrFail();
+        $query = AgreementNegotiation::query();
+        if ($type === 'exhibition') {
+            $query->where('exhibition_application_id', $id);
+        } else {
+            $query->where('sponsorship_request_id', $id);
+        }
+        $negotiation = $query->firstOrFail();
 
-        if ($negotiation->status === 'accepted') {
-            return response()->json(['message' => 'Agreement already finalized, cannot upload new versions'], 400);
+        if ($negotiation->status === 'accepted' || $negotiation->status === 'rejected') {
+            return response()->json(['message' => 'Agreement already finalized or rejected'], 400);
         }
 
-        if ($negotiation->status === 'rejected') {
-            return response()->json(['message' => 'Agreement was rejected, cannot upload new versions'], 400);
-        }
-
-        // Get next version number
         $lastVersion = $negotiation->versions()->max('version_number') ?? 0;
         $newVersionNum = $lastVersion + 1;
 
-        // Store file
         $dir = 'agreements';
-        $fileName = 'agreement_' . $sponsorshipId . '_v' . $newVersionNum . '.' . $request->file('file')->getClientOriginalExtension();
+        $fileName = 'agreement_' . ($type === 'exhibition' ? 'exhib_' : '') . $id . '_v' . $newVersionNum . '.' . $request->file('file')->getClientOriginalExtension();
         $filePath = $request->file('file')->storeAs($dir, $fileName, 'public');
 
-        // Create version record
         AgreementVersion::create([
             'negotiation_id' => $negotiation->id,
             'version_number' => $newVersionNum,
@@ -223,172 +235,145 @@ class AgreementController extends Controller
             'message'        => $request->message,
         ]);
 
-        // Update negotiation status
         $negotiation->update([
             'status'            => 'pending_review',
             'last_submitted_by' => $user->id,
         ]);
 
-        $negotiation->load('versions.uploader');
-
-        // Notify the other party
-        $otherUserId = ($user->id === $sreq->sponsor_id) ? $sreq->event_manager_id : $sreq->sponsor_id;
+        // Notify other party
+        $managerId = $target->event_manager_id;
+        $partnerId = ($type === 'exhibition') ? $target->company_id : $target->sponsor_id;
+        $otherUserId = ($user->id === $partnerId) ? $managerId : $partnerId;
         $otherUser = User::find($otherUserId);
+        
         if ($otherUser) {
             $otherUser->notify(new SystemNotification(
-                'عقد رعاية محدث 📝',
-                "{$user->name} رفع نسخة جديدة من عقد \"{$sreq->event->title}\". يرجى مراجعة التعديلات.",
+                'عقد محدوث 📝',
+                "{$user->name} رفع نسخة جديدة من عقد \"{$target->event->title}\".",
                 'agreement',
                 '📝',
-                $otherUser->role === 'Sponsor' ? '/sponsor/requests' : '/manager/sponsorship',
-                $sreq->event_id
+                $otherUser->role === 'Event Manager' ? '/manager/sponsorship' : ($type === 'exhibition' ? '/company/applications' : '/sponsor/requests'),
+                $target->event_id
             ));
         }
 
         return response()->json($negotiation);
     }
 
-    /**
-     * PUT /api/agreements/{sponsorship_id}/respond
-     * Accept, reject, or request revision on the agreement.
-     */
-    public function respond(Request $request, $sponsorshipId)
+    public function respond(Request $request, $id)
     {
         $user = $request->user();
-        $sreq = SponsorshipRequest::with('event')->findOrFail($sponsorshipId);
+        $type = $request->query('type', 'sponsor');
+        $target = $this->getTarget($id, $type);
 
-        if (!$this->canAccess($user, $sreq)) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
+        if (!$target) return response()->json(['message' => 'Target not found'], 404);
+        if (!$this->canAccess($user, $target)) return response()->json(['message' => 'Unauthorized'], 403);
 
         $request->validate([
             'action'  => 'required|in:accepted,rejected,revision_requested',
             'message' => 'nullable|string|max:2000',
         ]);
 
-        $negotiation = AgreementNegotiation::where('sponsorship_request_id', $sponsorshipId)->firstOrFail();
+        $query = AgreementNegotiation::query();
+        if ($type === 'exhibition') {
+            $query->where('exhibition_application_id', $id);
+        } else {
+            $query->where('sponsorship_request_id', $id);
+        }
+        $negotiation = $query->firstOrFail();
 
-        // Cannot accept own submission
         if ($negotiation->last_submitted_by === $user->id && $request->action === 'accepted') {
-            return response()->json(['message' => 'You cannot accept your own submission. Wait for the other party to review.'], 400);
+            return response()->json(['message' => 'You cannot accept your own submission.'], 400);
         }
 
         if ($negotiation->status === 'accepted') {
             return response()->json(['message' => 'Agreement already finalized'], 400);
         }
 
-        // Get latest version number for the response record
         $lastVersion = $negotiation->versions()->max('version_number') ?? 0;
         $latestVersionModel = $negotiation->latestVersion;
 
-        // Create response version record
         AgreementVersion::create([
             'negotiation_id' => $negotiation->id,
-            'version_number' => $lastVersion, // Same version number, different action
+            'version_number' => $lastVersion,
             'file_path'      => $latestVersionModel ? $latestVersionModel->file_path : '',
             'uploaded_by'    => $user->id,
             'action'         => $request->action,
             'message'        => $request->message,
         ]);
 
-        // Update negotiation status
-        $newStatus = $request->action;
-        if ($request->action === 'accepted') {
-            $newStatus = 'accepted';
-        } elseif ($request->action === 'rejected') {
-            $newStatus = 'rejected';
-        } else {
-            $newStatus = 'revision_requested';
-        }
-
         $negotiation->update([
-            'status'      => $newStatus,
+            'status'      => $request->action,
             'final_notes' => $request->message,
         ]);
 
-        // If accepted, finalize: attach sponsor to event + generate final PDF
         if ($request->action === 'accepted') {
-            $sreq->load(['event.venue', 'manager', 'sponsor']);
+            $target->status = 'accepted';
+            $target->save();
 
-            // Update sponsorship request to OFFICIALLY accepted
-            $sreq->status = 'accepted';
-            $sreq->save();
+            if ($type === 'sponsor') {
+                \App\Models\EventSponsor::updateOrCreate([
+                    'event_id'   => $target->event_id,
+                    'sponsor_id' => $target->sponsor_id,
+                ], ['tier' => null, 'contribution_amount' => 0]);
+            }
 
-            // NOW attach the sponsor to the event (only after contract is finalized)
-            \App\Models\EventSponsor::updateOrCreate([
-                'event_id'   => $sreq->event_id,
-                'sponsor_id' => $sreq->sponsor_id,
-            ], [
-                'tier'                => null,
-                'contribution_amount' => 0,
-            ]);
-
-            // Generate final PDF
-            AgreementWordService::generateFinalPdf($sreq, $negotiation);
+            if ($type === 'exhibition') {
+                AgreementWordService::generateExhibitionFinalPdf($target, $negotiation);
+            } else {
+                AgreementWordService::generateFinalPdf($target, $negotiation);
+            }
         }
 
-        $negotiation->load('versions.uploader');
-
-        // Notify the other party
-        $otherUserId = ($user->id === $sreq->sponsor_id) ? $sreq->event_manager_id : $sreq->sponsor_id;
+        // Notify other party
+        $managerId = $target->event_manager_id;
+        $partnerId = ($type === 'exhibition') ? $target->company_id : $target->sponsor_id;
+        $otherUserId = ($user->id === $partnerId) ? $managerId : $partnerId;
         $otherUser = User::find($otherUserId);
+        
         if ($otherUser) {
-            $actionText = match ($request->action) {
-                'accepted'           => 'قبل العقد ✅',
-                'rejected'           => 'رفض العقد ❌',
-                'revision_requested' => 'طلب تعديلات على العقد 🔄',
-            };
-            $icon = match ($request->action) {
-                'accepted' => '✅',
-                'rejected' => '❌',
-                'revision_requested' => '🔄',
-            };
-
+            $icon = match($request->action) { 'accepted'=>'✅', 'rejected'=>'❌', default=>'🔄' };
             $otherUser->notify(new SystemNotification(
                 "رد على العقد {$icon}",
-                "{$user->name} {$actionText} لحدث \"{$sreq->event->title}\"." .
-                    ($request->message ? "\nالرسالة: \"{$request->message}\"" : ''),
+                "{$user->name} " . ($request->action === 'accepted' ? 'قبل العقد' : ($request->action === 'rejected' ? 'رفض العقد' : 'طلب تعديلات')) . " لحدث \"{$target->event->title}\".",
                 'agreement',
                 $icon,
-                $otherUser->role === 'Sponsor' ? '/sponsor/requests' : '/manager/sponsorship',
-                $sreq->event_id
+                $otherUser->role === 'Event Manager' ? '/manager/sponsorship' : ($type === 'exhibition' ? '/company/applications' : '/sponsor/requests'),
+                $target->event_id
             ));
         }
 
         return response()->json($negotiation);
     }
 
-    /**
-     * PUT /api/agreements/{sponsorship_id}/cancel
-     * Cancel the agreement during negotiation phase. Requires a message.
-     */
-    public function cancel(Request $request, $sponsorshipId)
+    public function cancel(Request $request, $id)
     {
         $user = $request->user();
-        $sreq = SponsorshipRequest::with('event')->findOrFail($sponsorshipId);
+        $type = $request->query('type', 'sponsor');
+        $target = $this->getTarget($id, $type);
 
-        if (!$this->canAccess($user, $sreq)) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+        if (!$target) return response()->json(['message' => 'Target not found'], 404);
+        if (!$this->canAccess($user, $target)) return response()->json(['message' => 'Unauthorized'], 403);
+
+        $request->validate(['message' => 'required|string|min:5|max:2000']);
+
+        if ($target->status !== 'negotiating') {
+            return response()->json(['message' => 'Cannot cancel — not in negotiation'], 400);
         }
 
-        $request->validate([
-            'message' => 'required|string|min:5|max:2000',
-        ]);
+        $target->status = 'cancelled';
+        $target->save();
 
-        // Only allow cancellation during negotiating phase
-        if ($sreq->status !== 'negotiating') {
-            return response()->json(['message' => 'Cannot cancel — agreement is already finalized or not in negotiation'], 400);
+        $query = AgreementNegotiation::query();
+        if ($type === 'exhibition') {
+            $query->where('exhibition_application_id', $id);
+        } else {
+            $query->where('sponsorship_request_id', $id);
         }
-
-        // Update sponsorship request to cancelled
-        $sreq->status = 'cancelled';
-        $sreq->save();
-
-        // Update negotiation if exists
-        $negotiation = AgreementNegotiation::where('sponsorship_request_id', $sponsorshipId)->first();
+        $negotiation = $query->first();
+        
         if ($negotiation) {
             $lastVersion = $negotiation->versions()->max('version_number') ?? 0;
-
             AgreementVersion::create([
                 'negotiation_id' => $negotiation->id,
                 'version_number' => $lastVersion,
@@ -397,24 +382,23 @@ class AgreementController extends Controller
                 'action'         => 'rejected',
                 'message'        => '🚫 تم إلغاء الاتفاقية: ' . $request->message,
             ]);
-
-            $negotiation->update([
-                'status'      => 'rejected',
-                'final_notes' => $request->message,
-            ]);
+            $negotiation->update(['status' => 'rejected', 'final_notes' => $request->message]);
         }
 
-        // Notify the other party
-        $otherUserId = ($user->id === $sreq->sponsor_id) ? $sreq->event_manager_id : $sreq->sponsor_id;
+        // Notify other party
+        $managerId = $target->event_manager_id;
+        $partnerId = ($type === 'exhibition') ? $target->company_id : $target->sponsor_id;
+        $otherUserId = ($user->id === $partnerId) ? $managerId : $partnerId;
         $otherUser = User::find($otherUserId);
+        
         if ($otherUser) {
             $otherUser->notify(new SystemNotification(
-                'تم إلغاء اتفاقية الرعاية 🚫',
-                "{$user->name} ألغى اتفاقية الرعاية لحدث \"{$sreq->event->title}\".\nالسبب: \"{$request->message}\"",
+                'تم إلغاء الاتفاقية 🚫',
+                "{$user->name} ألغى الاتفاقية لحدث \"{$target->event->title}\".\nالسبب: \"{$request->message}\"",
                 'agreement',
                 '🚫',
-                $otherUser->role === 'Sponsor' ? '/sponsor/requests' : '/manager/sponsorship',
-                $sreq->event_id
+                $otherUser->role === 'Event Manager' ? '/manager/sponsorship' : ($type === 'exhibition' ? '/company/applications' : '/sponsor/requests'),
+                $target->event_id
             ));
         }
 
@@ -422,12 +406,31 @@ class AgreementController extends Controller
     }
 
     /**
-     * Check if user can access this sponsorship's agreement.
+     * Get the target model (SponsorshipRequest or ExhibitionApplication).
      */
-    private function canAccess($user, $sreq): bool
+    private function getTarget($id, $type)
     {
-        return $user->role === 'Admin'
-            || $user->id === $sreq->sponsor_id
-            || $user->id === $sreq->event_manager_id;
+        if ($type === 'exhibition') {
+            return \App\Models\ExhibitionApplication::find($id);
+        }
+        return SponsorshipRequest::find($id);
+    }
+
+    /**
+     * Check if user can access this agreement.
+     */
+    private function canAccess($user, $target): bool
+    {
+        if ($user->role === 'Admin') return true;
+        
+        if ($target instanceof SponsorshipRequest) {
+            return $user->id === $target->sponsor_id || $user->id === $target->event_manager_id;
+        }
+        
+        if ($target instanceof \App\Models\ExhibitionApplication) {
+            return $user->id === $target->company_id || $user->id === $target->event_manager_id;
+        }
+
+        return false;
     }
 }

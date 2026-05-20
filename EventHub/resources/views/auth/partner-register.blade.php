@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -93,8 +93,8 @@
         <h1>EventHub Partner</h1>
       </div>
 
-      <h2 class="auth-heading" style="margin-bottom:8px;">Partner Registration</h2>
-      <p class="auth-subheading">Apply as an Event Manager or Sponsor.</p>
+      <h2 class="auth-heading" style="margin-bottom:8px;"><script>document.write(t('Partner Registration'))</script></h2>
+      <p class="auth-subheading"><script>document.write(t('Apply as an Event Manager, Sponsor, or Company.'))</script></p>
 
       <form id="partner-form" style="text-align:left; margin-top: 24px;">
         <div class="form-group">
@@ -103,6 +103,7 @@
             <option value="" disabled selected><script>document.write(t('Select Role'))</script></option>
             <option value="Event Manager"><script>document.write(t('Event Manager'))</script></option>
             <option value="Sponsor"><script>document.write(t('Sponsor'))</script></option>
+            <option value="Company"><script>document.write(t('Company'))</script></option>
           </select>
         </div>
 
@@ -127,8 +128,8 @@
           <p style="font-size:0.73rem; color:var(--text-muted); margin:0 0 12px 0;"><script>document.write(t('Upload all required documents below (PDF/JPG/PNG, max 5 MB each).'))</script></p>
 
           <div class="pr-docs-grid" id="pr-docs-grid">
-            <!-- Commercial Register (both roles) -->
-            <label class="pr-doc-card" id="card-doc_commercial_register" data-roles="Event Manager,Sponsor">
+            <!-- Commercial Register (all roles) -->
+            <label class="pr-doc-card" id="card-doc_commercial_register" data-roles="Event Manager,Sponsor,Company">
               <div class="doc-icon">📋</div>
               <div class="doc-label"><script>document.write(t('Commercial Register'))</script></div>
               <div class="doc-file-name" id="fname-doc_commercial_register"><script>document.write(t('Click to select file...'))</script></div>
@@ -136,8 +137,8 @@
                 onchange="onDocSelected(this, 'doc_commercial_register')" />
             </label>
 
-            <!-- Tax Number (both roles) -->
-            <label class="pr-doc-card" id="card-doc_tax_number" data-roles="Event Manager,Sponsor">
+            <!-- Tax Number (all roles) -->
+            <label class="pr-doc-card" id="card-doc_tax_number" data-roles="Event Manager,Sponsor,Company">
               <div class="doc-icon">🔢</div>
               <div class="doc-label"><script>document.write(t('Tax Number Certificate'))</script></div>
               <div class="doc-file-name" id="fname-doc_tax_number"><script>document.write(t('Click to select file...'))</script></div>
@@ -228,7 +229,11 @@
 
     document.getElementById('pr-role').addEventListener('change', (e) => {
       const role = e.target.value;
-      document.getElementById('lbl-name').textContent = role === 'Sponsor' ? t('Company Name / Entity Name') : t('Manager Full Name');
+      if (role === 'Sponsor' || role === 'Company') {
+        document.getElementById('lbl-name').textContent = t('Company Name / Entity Name');
+      } else {
+        document.getElementById('lbl-name').textContent = t('Manager Full Name');
+      }
       updateDocsForRole(role);
     });
 

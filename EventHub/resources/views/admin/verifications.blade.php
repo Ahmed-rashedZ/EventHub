@@ -246,7 +246,7 @@
     }
 
     container.innerHTML = data.map(req => {
-      const icon = req.role === 'Sponsor' ? '💼' : '🎭';
+      const icon = req.role === 'Sponsor' ? '💼' : (req.role === 'Company' ? '🏛️' : '🎭');
       const isResubmit = req.verification_status === 'changes_requested';
       const isDocUpdate = req.verification_status === 'verified';
       let badge = '';
@@ -292,7 +292,7 @@
     const container = document.getElementById('doc-cards-container');
     
     // Filter docs based on role
-    let applicableDocs = req.role === 'Sponsor' 
+    let applicableDocs = ['Sponsor', 'Company'].includes(req.role)
       ? DOC_TYPES.filter(d => ['doc_commercial_register', 'doc_tax_number'].includes(d.key))
       : DOC_TYPES;
 
@@ -377,7 +377,7 @@
     const isDocUpdate = currentReq.verification_status === 'verified';
 
     // Get applicable docs
-    let applicableDocs = currentReq.role === 'Sponsor' 
+    let applicableDocs = ['Sponsor', 'Company'].includes(currentReq.role)
       ? DOC_TYPES.filter(d => ['doc_commercial_register', 'doc_tax_number'].includes(d.key))
       : DOC_TYPES;
 

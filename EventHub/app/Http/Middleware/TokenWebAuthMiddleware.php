@@ -36,6 +36,7 @@ class TokenWebAuthMiddleware
                 'Admin' => '/admin/dashboard',
                 'Event Manager' => '/manager/dashboard',
                 'Sponsor' => '/sponsor/dashboard',
+                'Company' => '/company/dashboard',
                 'User' => '/profile',
                 'Assistant' => '/profile'
             ];

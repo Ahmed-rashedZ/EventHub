@@ -114,6 +114,22 @@ class User extends Authenticatable
     }
 
     /**
+     * All exhibition applications by this company.
+     */
+    public function exhibitionApplications()
+    {
+        return $this->hasMany(ExhibitionApplication::class, 'company_id');
+    }
+
+    /**
+     * All booths assigned to this company.
+     */
+    public function assignedBooths()
+    {
+        return $this->hasMany(ExhibitionBooth::class, 'company_id');
+    }
+
+    /**
      * Events this assistant has accepted invitations for.
      */
     public function assistedEvents()

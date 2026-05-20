@@ -47,15 +47,24 @@ Route::middleware('web.auth')->group(function () {
         Route::view('/dashboard', 'manager.dashboard');
         Route::view('/events', 'manager.events');
         Route::view('/sponsorship', 'manager.sponsorship');
+        Route::view('/exhibition', 'manager.exhibition');
         Route::view('/event-stats/{id}', 'manager.event-stats');
     });
 
-    // Sponsor Routes
-    Route::middleware(['web.auth:Sponsor', 'verified_partner'])->prefix('sponsor')->group(function () {
+    // Sponsor/Company Shared Routes (Browsing)
+    Route::middleware(['web.auth:Sponsor,Company', 'verified_partner'])->prefix('sponsor')->group(function () {
         Route::view('/dashboard', 'sponsor.dashboard');
         Route::view('/requests', 'sponsor.requests');
         Route::view('/events', 'sponsor.events');
         Route::view('/history', 'sponsor.history');
+        Route::view('/event-stats/{id}', 'sponsor.event-stats');
+    });
+
+    // Company Routes
+    Route::middleware(['web.auth:Company', 'verified_partner'])->prefix('company')->group(function () {
+        Route::view('/dashboard', 'company.dashboard');
+        Route::view('/exhibitions', 'company.exhibitions');
+        Route::view('/events', 'company.events');
         Route::view('/event-stats/{id}', 'sponsor.event-stats');
     });
 

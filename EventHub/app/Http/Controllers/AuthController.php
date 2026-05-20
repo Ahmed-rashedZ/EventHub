@@ -70,7 +70,7 @@ public function registerPartner(Request $request)
         'name' => 'required|string|max:255',
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8',
-        'role' => 'required|string|in:Event Manager,Sponsor',
+        'role' => 'required|string|in:Event Manager,Sponsor,Company',
         'doc_commercial_register' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
         'doc_tax_number' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
     ];
@@ -106,7 +106,7 @@ public function registerPartner(Request $request)
 
     $user = User::create($userData);
 
-    if ($request->role === 'Sponsor') {
+    if (in_array($request->role, ['Sponsor', 'Company'])) {
         Profile::create([
             'user_id' => $user->id,
             'profile_type' => 'company',
@@ -115,7 +115,12 @@ public function registerPartner(Request $request)
     }
 
     // ── Notify all Admins about new partner registration ──
-    $roleLabel = $request->role === 'Event Manager' ? 'Event Manager' : 'Sponsor';
+    $roleLabel = match($request->role) {
+        'Event Manager' => 'Event Manager',
+        'Sponsor' => 'Sponsor',
+        'Company' => 'Company',
+        default => $request->role,
+    };
     $admins = User::where('role', 'Admin')->get();
     foreach ($admins as $admin) {
         $admin->notify(new SystemNotification(
@@ -154,7 +159,7 @@ public function registerPartner(Request $request)
 
     // ── Platform-Based Role Restrictions ──
     $mobileRoles = ['User', 'Assistant'];
-    $webRoles = ['Admin', 'Event Manager', 'Sponsor'];
+    $webRoles = ['Admin', 'Event Manager', 'Sponsor', 'Company'];
 
     if ($platform === 'web' && in_array($user->role, $mobileRoles)) {
         Auth::logout();
@@ -218,8 +223,8 @@ public function updateProfile(Request $request)
         'company_description' => $request->company_description,
     ];
     
-    // Only Sponsors can toggle their availability (persist exact boolean from request)
-    if ($request->has('is_available') && $user->role === 'Sponsor') {
+    // Sponsors and Companies can toggle their availability
+    if ($request->has('is_available') && in_array($user->role, ['Sponsor', 'Company'])) {
         $profilePayload['is_available'] = $request->boolean('is_available');
     }
 
@@ -263,12 +268,12 @@ public function getProfile(Request $request)
 {
     $user = $request->user();
     
-    // Ensure Sponsor has a profile so is_available exists
-    if ($user->role === 'Sponsor' && !$user->profile) {
+    // Ensure Sponsor/Company has a profile so is_available exists
+    if (in_array($user->role, ['Sponsor', 'Company']) && !$user->profile) {
         Profile::create([
             'user_id' => $user->id,
             'profile_type' => 'company',
-            'is_available' => true // Default to true as per migration
+            'is_available' => true
         ]);
         $user->load('profile');
     } else {
@@ -291,8 +296,8 @@ public function updateAvailability(Request $request)
     ]);
 
     $user = $request->user();
-    if ($user->role !== 'Sponsor') {
-        return response()->json(['message' => 'Only sponsors can toggle availability'], 403);
+    if (!in_array($user->role, ['Sponsor', 'Company'])) {
+        return response()->json(['message' => 'Only sponsors and companies can toggle availability'], 403);
     }
 
     $isAvailable = $request->boolean('is_available');
@@ -379,6 +384,19 @@ public function getAvailableSponsors(Request $request)
         ->get();
 
     return response()->json($sponsors);
+}
+
+public function getAvailableCompanies(Request $request)
+{
+    $companies = User::where('role', 'Company')
+        ->where('verification_status', 'verified')
+        ->whereHas('profile', function($q) {
+            $q->available();
+        })
+        ->with(['profile.contacts'])
+        ->get();
+
+    return response()->json($companies);
 }
 
 public function createUser(Request $request)

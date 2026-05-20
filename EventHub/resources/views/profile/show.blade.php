@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -98,33 +98,7 @@
         <aside class="sidebar">
             <div class="sidebar-logo" style="display:flex; justify-content:center; align-items:center; padding: 8px 0;"><img src="/images/logo.jpg" alt="EventHub Logo" style="width: 85px; height: 85px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
             <nav class="sidebar-nav" id="sidebar-links">
-                @if(Auth::user()->role === 'Admin')
-                    <span class="nav-section-label">Overview</span>
-                    <a class="nav-item" href="/admin/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
-                    <span class="nav-section-label">Management</span>
-                    <a class="nav-item" href="/admin/users"><span class="nav-icon">👥</span> Users</a>
-                    <a class="nav-item" href="/admin/events"><span class="nav-icon">📅</span> Events</a>
-                    <a class="nav-item" href="/admin/venues"><span class="nav-icon">🏛️</span> Venues</a>
-                    <a class="nav-item" href="/admin/verifications"><span class="nav-icon">🛡️</span> Verifications</a>
-                @elseif(Auth::user()->role === 'Event Manager')
-                    <span class="nav-section-label">Overview</span>
-                    <a class="nav-item" href="/manager/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
-                    <span class="nav-section-label">Events</span>
-                    <a class="nav-item" href="/manager/events"><span class="nav-icon">📅</span> My Events</a>
-                    <a class="nav-item" href="/manager/assistants"><span class="nav-icon">👥</span> Assistants</a>
-                    <a class="nav-item" href="/manager/attendance"><span class="nav-icon">📍</span> Attendance</a>
-                    <a class="nav-item" href="/manager/sponsorship"><span class="nav-icon">💼</span> Sponsorship</a>
-                @elseif(Auth::user()->role === 'Sponsor')
-                    <span class="nav-section-label">Overview</span>
-                    <a class="nav-item" href="/sponsor/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
-                    <span class="nav-section-label">Opportunities</span>
-                    <a class="nav-item" href="/sponsor/events"><span class="nav-icon">🌍</span> Browse Events</a>
-                    <a class="nav-item" href="/sponsor/requests"><span class="nav-icon">💼</span> Sponsorships</a>
-                    <a class="nav-item" href="/sponsor/history"><span class="nav-icon">📜</span> History</a>
-                @endif
-
-                <span class="nav-section-label">Settings</span>
-                <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
+                <!-- Will be populated by JS -->
             </nav>
             @include('partials._sidebar-footer')
         </aside>
@@ -148,7 +122,7 @@
 
             <div class="profile-content">
                 <h1 class="profile-name">{{ $user->name }}</h1>
-                <span class="profile-role badge role-{{ strtolower(str_replace(' ', '-', $user->role)) }}">{{ $user->role }}</span>
+                <span class="profile-role badge role-{{ strtolower(str_replace(' ', '-', $user->role)) }}"><script>document.write(t('{{ $user->role }}'))</script></span>
                 
                 <div class="profile-info-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 3rem; text-align: left;">
                     <!-- About Section -->
@@ -223,6 +197,9 @@
         const user = requireAuth();
         if (user) {
             populateSidebar(user);
+            // On this page, we might want to ensure the sidebar is always populated
+            const linksDiv = document.getElementById('sidebar-links');
+            if (linksDiv) linksDiv.innerHTML = buildSidebarLinks(user.role);
             setActiveNav();
         }
     </script>

@@ -213,7 +213,7 @@
                     </form>
                 </div>
 
-                @if(in_array($user->role, ['Event Manager', 'Sponsor']))
+                @if(in_array($user->role, ['Event Manager', 'Sponsor', 'Company']))
                 <div class="profile-card" style="margin-top: 2rem;">
                     <h3 style="margin-top: 0; margin-bottom: 0.5rem;"><script>document.write(t('Verification Documents'))</script></h3>
                     <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
@@ -503,7 +503,7 @@
         }
 
         // Load documents on page load for partners
-        @if(in_array($user->role, ['Event Manager', 'Sponsor']))
+        @if(in_array($user->role, ['Event Manager', 'Sponsor', 'Company']))
             loadMyDocuments();
         @endif
     </script>

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Browse Events – EventHub Sponsor</title>
+  <title>Browse Exhibitions – EventHub Company</title>
   <link rel="stylesheet" href="/css/style.css" />
   <script src="/js/i18n.js"></script>
   <style>
@@ -51,8 +51,8 @@
     <main class="main-content">
       <div class="topbar">
         <div>
-          <h1 class="page-title">Browse Events</h1>
-          <p class="page-subtitle">Discover opportunities to sponsor upcoming verified events</p>
+          <h1 class="page-title">Browse Exhibitions</h1>
+          <p class="page-subtitle">Discover opportunities to exhibit at upcoming verified events</p>
         </div>
         <div class="topbar-actions" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
           <div style="position:relative">
@@ -119,7 +119,7 @@
   <div class="modal-overlay" id="req-modal">
     <div class="modal">
       <div class="modal-header">
-        <h3 class="modal-title">Sponsor Event</h3>
+        <h3 class="modal-title">Apply for Exhibition</h3>
         <button class="modal-close" onclick="closeModal()">✕</button>
       </div>
       <form id="req-form">
@@ -131,12 +131,12 @@
         <div class="form-group">
           <label class="form-label">Message / Intro</label>
           <textarea id="r-message" class="form-control"
-            placeholder="Introduce yourself and state what sponsorship options you are interested in..."
+            placeholder="Introduce your company and specify what kind of booth you are looking for..."
             rows="4"></textarea>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-          <button type="submit" class="btn btn-primary" id="btn-submit">Send Request</button>
+          <button type="submit" class="btn btn-primary" id="btn-submit">Apply for Booth</button>
         </div>
       </form>
     </div>
@@ -147,7 +147,7 @@
   <script src="/js/notifications.js"></script>
   <script src="/js/auth.js"></script>
   <script>
-    const user = requireRole('Sponsor', 'Company');
+    const user = requireRole('Company');
     /** @type {boolean|null} null until loaded from GET /profile */
     let sponsorAvailability = null;
 
@@ -196,7 +196,7 @@
       try {
         const [eventsRes, reqsRes] = await Promise.all([
           api.get('/events'),
-          api.get('/sponsorship')
+          api.get('/company/exhibitions')
         ]);
 
         myRequestEventIds = [];
@@ -218,9 +218,8 @@
           return;
         }
 
-        // Store all approved events — don't pre-filter by time_status;
-        // the sort dropdown handles "live" and "ended" filtering.
-        allEvents = eventsRes.data;
+        // Filter events that are exhibitions
+        allEvents = eventsRes.data.filter(e => e.is_exhibition);
         applyFilter();
       } catch (err) {
         console.error('Error loading events:', err);
@@ -269,10 +268,10 @@
 
         let reqBtnHtml = '';
         if (hasRequested) {
-          reqBtnHtml = `<span style="font-size:11px; color:var(--text-muted); margin-right:8px; font-style:italic;">Already Requested</span>
-                        <button class="btn btn-ghost btn-sm" style="opacity:0.4; cursor:not-allowed;" disabled>Request</button>`;
+          reqBtnHtml = `<span style="font-size:11px; color:var(--text-muted); margin-right:8px; font-style:italic;">Already Applied</span>
+                        <button class="btn btn-ghost btn-sm" style="opacity:0.4; cursor:not-allowed;" disabled>Apply</button>`;
         } else {
-          reqBtnHtml = `<button class="btn btn-primary btn-sm req-btn" onclick="openModal(${e.id}, '${e.title.replace(/'/g, "\\'")}')" ${sponsorAvailability !== true ? 'disabled' : ''} title="${sponsorAvailability === true ? 'Request to sponsor' : (sponsorAvailability === false ? 'Turn on Open to Sponsorship on your dashboard or profile' : 'Loading visibility…')}">Request</button>`;
+          reqBtnHtml = `<button class="btn btn-primary btn-sm req-btn" onclick="openModal(${e.id}, '${e.title.replace(/'/g, "\\'")}')" ${sponsorAvailability !== true ? 'disabled' : ''} title="${sponsorAvailability === true ? 'Apply for Exhibition' : (sponsorAvailability === false ? 'Turn on Open to Invitations on your dashboard' : 'Loading visibility…')}">Apply</button>`;
         }
 
         return `
@@ -289,7 +288,7 @@
         <td style="color:var(--text-muted)">${fmtDateShort(e.start_time)} <div style="margin-top:4px;">${timeBadge(e.time_status)}</div></td>
         <td style="color:var(--text-muted)">${e.capacity ? e.capacity.toLocaleString() : 'N/A'}</td>
         <td style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-           <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${e.id})" title="View Details">ℹ️ Details</button>
+           <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${e.id})" title="${t('View Details')}">ℹ️ ${t('Details')}</button>
            <div style="display:flex; align-items:center;">
              ${reqBtnHtml}
            </div>
@@ -301,7 +300,7 @@
     function openModal(eventId, eventTitle) {
       if (sponsorAvailability !== true) {
         showToast(sponsorAvailability === false
-          ? 'Turn on "Open to Sponsorship" on your dashboard or profile to send requests.'
+          ? 'Turn on "Open to Invitations" on your dashboard or profile to apply.'
           : 'Visibility status is still loading or unavailable.', 'warning');
         return;
       }
@@ -323,19 +322,20 @@
 
       const payload = {
         event_id: +document.getElementById('r-event-id').value,
-        message: document.getElementById('r-message').value
+        message: document.getElementById('r-message').value,
+        initiator: 'company'
       };
 
-      const res = await api.post('/sponsorship', payload);
+      const res = await api.post('/exhibition', payload);
 
       if (res.ok) {
-        showToast('Request sent directly to Event Manager!', 'success');
+        showToast('Application sent directly to Event Manager!', 'success');
         closeModal();
       } else {
-        showToast(res.data?.message || 'Error sending request', 'error');
+        showToast(res.data?.message || 'Error sending application', 'error');
       }
 
-      btn.textContent = 'Send Request';
+      btn.textContent = 'Apply for Booth';
       btn.disabled = false;
     });
 
@@ -350,66 +350,61 @@
 
       Promise.all([
         api.get(`/events/${eventId}`),
-        api.get(`/events/${eventId}/reviews`)
-      ]).then(([res, revRes]) => {
+        api.get(`/company/exhibitions`)
+      ]).then(([res, appRes]) => {
         if (!res.ok) {
           content.innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><p>Could not fetch event details</p></div>';
           return;
         }
         const ev = res.data;
-        const reviewData = revRes.ok ? revRes.data : { average_rating: 0, reviews: [] };
-        const eType = ev.event_type || 'Other';
-        const tColor = typeColors[eType] || typeColors.Other;
-        const tIcon = typeIcons[eType] || '📌';
+        const apps = appRes.ok ? appRes.data : [];
+        const myApp = apps.find(a => a.event_id == eventId);
+
+        const eType = ev.event_type || 'Exhibition';
+        const tColor = typeColors[eType] || typeColors.Other || '#8b5cf6';
+        const tIcon = typeIcons[eType] || '🏢';
 
         const bannerSection = ev.image
           ? `<div class="ed-banner" style="background-image:url('/storage/${ev.image}')"><div class="ed-banner-fade"></div></div>`
           : `<div class="ed-banner ed-banner-placeholder"><span class="ed-banner-emoji">${tIcon}</span><div class="ed-banner-fade"></div></div>`;
 
-        let sponsorsHtml = '';
-        if (ev.sponsors && ev.sponsors.length > 0) {
-          const getTierBadge = (tier) => {
-            switch (tier) {
-              case 'diamond': return '<span style="background:rgba(6,182,212,0.15); color:#06b6d4; padding:3px 8px; border-radius:12px; border:1px solid rgba(6,182,212,0.3); font-size:10px;">💎 Diamond</span>';
-              case 'gold': return '<span style="background:rgba(234,179,8,0.15); color:#eab308; padding:3px 8px; border-radius:12px; border:1px solid rgba(234,179,8,0.3); font-size:10px;">🥇 Gold</span>';
-              case 'silver': return '<span style="background:rgba(156,163,175,0.15); color:#9ca3af; padding:3px 8px; border-radius:12px; border:1px solid rgba(156,163,175,0.3); font-size:10px;">🥈 Silver</span>';
-              case 'bronze': return '<span style="background:rgba(217,119,6,0.15); color:#d97706; padding:3px 8px; border-radius:12px; border:1px solid rgba(217,119,6,0.3); font-size:10px;">🥉 Bronze</span>';
-              default: return `<span style="background:rgba(255,255,255,0.1); color:#fff; padding:3px 8px; border-radius:12px; border:1px solid rgba(255,255,255,0.2); font-size:10px;">${tier || 'Sponsor'}</span>`;
+        // Exhibition Status Section (Tailored for Company)
+        let statusSection = '';
+        if (myApp) {
+            let statusText = myApp.status.toUpperCase();
+            let statusDesc = '';
+            let statusActions = '';
+            
+            if (myApp.status === 'pending') {
+                if (myApp.initiator === 'company') {
+                    statusDesc = t('Your application is awaiting manager approval.');
+                } else {
+                    statusDesc = t('The manager invited you to exhibit.');
+                    statusActions = `
+                        <div style="margin-top:10px; display:flex; gap:8px;">
+                            <button class="btn btn-success btn-sm" onclick="respondRequest(${myApp.id}, 'accepted')">${t('Accept')}</button>
+                            <button class="btn btn-danger btn-sm" onclick="respondRequest(${myApp.id}, 'rejected')">${t('Reject')}</button>
+                        </div>
+                    `;
+                }
+            } else if (myApp.status === 'negotiating') {
+                statusDesc = t('Agreement offer sent. Please review the contract.');
+                statusActions = `<div style="margin-top:10px;"><a href="/company/exhibitions" class="btn btn-primary btn-sm">${t('Review Contract')}</a></div>`;
+            } else if (myApp.status === 'accepted') {
+                statusDesc = t('Participation confirmed!');
+                if (myApp.booth) {
+                    statusDesc += ` (${t('Booth')} #${myApp.booth.booth_number})`;
+                }
             }
-          };
 
-          sponsorsHtml = `
-            <div class="ed-section mt-4">
-              <div class="ed-section-label">Current Sponsors</div>
-              <div style="display:flex; flex-direction:column; gap:8px;">
-                ${ev.sponsors.map(sp => `
-                   <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.04); padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.05); cursor:pointer;" onclick="navigateToProfile(${sp.id})">
-                    <div class="avatar" style="width:36px; height:36px; font-size:14px; display:inline-flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:50%; overflow:hidden;">
-                        ${(() => {
-              const src = sp.image || sp.avatar || sp.profile?.logo;
-              if (src) {
-                const fullSrc = (src.startsWith('http') || src.startsWith('/')) ? src : '/storage/' + src;
-                return `<img src="${fullSrc}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'; this.parentElement.innerText='${sp.name?.charAt(0).toUpperCase() || '?'}'">`;
-              }
-              return sp.name ? sp.name.charAt(0).toUpperCase() : '?';
-            })()}
-                    </div>
-                      <div style="flex:1">
-                          <div style="font-size:0.85rem; font-weight:600; color:#fff;">${sp.name}</div>
-                          <div style="margin-top: 2px;">${getTierBadge(sp.pivot?.tier)}</div>
-                      </div>
-                   </div>
-                `).join('')}
-              </div>
-            </div>
-          `;
-        } else {
-          sponsorsHtml = `
-            <div class="ed-section mt-4">
-              <div class="ed-section-label">Current Sponsors</div>
-              <p class="ed-description" style="font-size:0.85rem; font-style:italic;">Be the first to sponsor this event!</p>
-            </div>
-          `;
+            statusSection = `
+                <div class="ed-status-card" style="background:rgba(139,92,246,0.1); border:1px solid rgba(139,92,246,0.2); border-radius:12px; padding:15px; margin-bottom:15px;">
+                    <div style="font-size:0.75rem; font-weight:700; color:#a78bfa; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">${t('Application Status')}</div>
+                    <div style="font-size:1.1rem; font-weight:800; color:#fff;">${statusText}</div>
+                    <div style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;">${statusDesc}</div>
+                    ${statusActions}
+                </div>
+            `;
         }
 
         content.innerHTML = `
@@ -424,10 +419,14 @@
               ${timeBadge(ev.time_status)}
             </div>
           </div>
+
+          ${statusSection}
+
           <div class="ed-section">
             <div class="ed-section-label">About this Event</div>
             <p class="ed-description">${ev.description || 'No description provided.'}</p>
           </div>
+
           <div class="ed-info-grid">
             <div class="ed-info-card ed-info-accent2">
               <div class="ed-info-icon">🏛️</div>
@@ -436,11 +435,55 @@
             <div class="ed-info-card ed-info-accent2">
               <div class="ed-info-icon">📍</div>
               <div><div class="ed-info-label">Location</div><div class="ed-info-value">
-                ${ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` 
-                : (ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` : '—')}
+                ${ev.location_link || (ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` 
+                : (ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` : '—'))}
               </div></div>
             </div>
-            ${(() => {
+          </div>
+
+          <!-- Document Links -->
+          ${ev.booking_proof ? `
+            <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(34,211,238,0.06); border:1px solid rgba(34,211,238,0.15);">
+                <div class="ed-info-icon">📎</div>
+                <div style="flex:1">
+                    <div class="ed-info-label" style="color:#22d3ee">Booking Proof</div>
+                    <a href="/storage/${ev.booking_proof}" target="_blank" class="ed-info-value" style="text-decoration:underline;">View Document ↗</a>
+                </div>
+            </div>
+          ` : ''}
+
+          ${ev.ministry_approval_doc ? `
+            <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(139,92,246,0.06); border:1px solid rgba(139,92,246,0.15);">
+                <div class="ed-info-icon">📄</div>
+                <div style="flex:1">
+                    <div class="ed-info-label" style="color:#a78bfa">Competent Authority Approval</div>
+                    <a href="/storage/${ev.ministry_approval_doc}" target="_blank" class="ed-info-value" style="text-decoration:underline;">View Document ↗</a>
+                </div>
+            </div>
+          ` : ''}
+
+          <!-- Project Info -->
+          ${ev.objective ? `
+            <div class="ed-info-card" style="grid-column: 1 / -1; flex-direction:column; align-items:flex-start; gap:5px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size:1.1rem;">🎯</span>
+                    <div class="ed-info-label" style="margin-bottom:0">Event Objective</div>
+                </div>
+                <div class="ed-info-value" style="font-weight:400; font-size:0.85rem; line-height:1.4; color:rgba(255,255,255,0.7)">${ev.objective}</div>
+            </div>
+          ` : ''}
+
+          ${ev.target_audience ? `
+            <div class="ed-info-card" style="grid-column: 1 / -1; flex-direction:column; align-items:flex-start; gap:5px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size:1.1rem;">👥</span>
+                    <div class="ed-info-label" style="margin-bottom:0">Target Audience</div>
+                </div>
+                <div class="ed-info-value" style="font-weight:400; font-size:0.85rem; line-height:1.4; color:rgba(255,255,255,0.7)">${ev.target_audience}</div>
+            </div>
+          ` : ''}
+          
+          ${(() => {
             const schedule = (ev.published_schedule && ev.published_schedule.length > 0) ? ev.published_schedule :
                              (ev.external_schedule && ev.external_schedule.length > 0 ? ev.external_schedule : 
                              (ev.internal_schedule && ev.internal_schedule.length > 0 ? ev.internal_schedule : null));
@@ -478,23 +521,39 @@
                        '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon">🕔</div><div><div class="ed-info-label">End</div><div class="ed-info-value">' + fmtDate(ev.end_time) + '</div></div></div>';
               }
             })()}
-            <div class="ed-info-card ed-info-warning">
-              <div class="ed-info-icon">👥</div>
-              <div><div class="ed-info-label">Capacity</div><div class="ed-info-value">${ev.capacity}</div></div>
-            </div>
-          </div>
-          
-          ${sponsorsHtml}
-          
-          ${(() => { let ag=ev.agenda; if(!ag||typeof ag!=='object') return ''; const isArr=Array.isArray(ag); if(isArr&&!ag.length) return ''; if(!isArr&&!Object.keys(ag).length) return ''; const pubDates=ev.published_schedule&&ev.published_schedule.length>0?ev.published_schedule.map(p=>p.date):null; if(pubDates&&!isArr){const f={};Object.keys(ag).forEach(ds=>{if(pubDates.includes(ds))f[ds]=ag[ds];});ag=f;if(!Object.keys(ag).length)return '';} let h='<div style="margin-top:16px;"><div style="font-size:0.72rem;font-weight:700;color:#22d3ee;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">📋 Event Agenda</div>'; const dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; const renderItem=a=>`<div style="display:flex;align-items:center;gap:10px;background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:10px;padding:8px 14px;margin-left:8px;"><div style="display:flex;align-items:center;gap:6px;min-width:110px;"><span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.start_time}</span><span style="color:#64748b;font-size:0.7rem;">→</span><span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.end_time}</span></div><div style="flex:1;font-size:0.85rem;color:#e2e8f0;font-weight:500;">${a.title}</div></div>`; if(!isArr){Object.keys(ag).sort().forEach(ds=>{const items=ag[ds];if(!items||!items.length)return;const d=new Date(ds+'T00:00:00');h+=`<div style="margin-bottom:10px;"><div style="font-size:0.68rem;font-weight:600;color:#a78bfa;margin-bottom:6px;padding:4px 10px;background:rgba(139,92,246,0.08);border-radius:6px;display:inline-block;">📅 ${dn[d.getDay()]} ${d.getDate()} ${mn[d.getMonth()]} ${d.getFullYear()}</div><div style="display:flex;flex-direction:column;gap:4px;">${items.map(renderItem).join('')}</div></div>`;});}else{h+=`<div style="display:flex;flex-direction:column;gap:4px;">${ag.map(renderItem).join('')}</div>`;} return h+'</div>'; })()}
 
-          <div class="ed-footer mt-2">
-            <span class="ed-footer-label">Event Manager</span>
-            <span class="ed-footer-name cursor-pointer" onclick="navigateToProfile(${ev.creator?.id})" style="color:var(--accent2);">${ev.creator?.name || '—'}</span>
+            <div class="ed-info-grid">
+                <div class="ed-info-card ed-info-warning">
+                <div class="ed-info-icon">👥</div>
+                <div><div class="ed-info-label">Capacity</div><div class="ed-info-value">${ev.capacity || 'N/A'}</div></div>
+                </div>
+                <div class="ed-info-card ed-info-warning">
+                <div class="ed-info-icon">🎫</div>
+                <div><div class="ed-info-label">Tickets Booked</div><div class="ed-info-value">${ev.tickets_count || 0}</div></div>
+                </div>
+            </div>
+
+          <div class="ed-footer mt-2" style="justify-content:space-between">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span class="ed-footer-label">Created by</span>
+                <span class="ed-footer-name cursor-pointer" onclick="navigateToProfile(${ev.creator?.id})" style="color:var(--accent2);">${ev.creator?.name || '—'}</span>
+            </div>
+            <div class="ed-footer-label">ID: #${ev.id}</div>
           </div>
         </div>
       `;
       });
+    }
+
+    async function respondRequest(id, status) {
+        if (!confirm(`Are you sure you want to ${status} this invitation?`)) return;
+        const res = await api.put(`/exhibition/${id}`, { status });
+        if (res.ok) {
+            showToast(status === 'accepted' ? 'Accepted! Proceed to management.' : 'Rejected.', 'success');
+            location.reload();
+        } else {
+            showToast(res.data?.message || 'Action failed', 'error');
+        }
     }
 
     function closeEventDetailsModal() {

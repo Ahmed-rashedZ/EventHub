@@ -102,7 +102,7 @@
       return;
     }
     tbody.innerHTML = users.map((u, i) => {
-      const isPartner = u.role === 'Event Manager' || u.role === 'Sponsor';
+      const isPartner = u.role === 'Event Manager' || u.role === 'Sponsor' || u.role === 'Company';
       const nameCell = isPartner
         ? `<a href="/user-profile?id=${u.id}" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--accent);transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">${u.name}</a>`
         : `<span style="font-weight:500;">${u.name}</span>`;
@@ -192,7 +192,7 @@
     const res = await api.get('/analytics/users');
     const userData = res.ok ? res.data.find(u => u.id === id) : null;
 
-    const docTypes = role === 'Sponsor'
+    const docTypes = (role === 'Sponsor' || role === 'Company')
       ? ALL_DOC_TYPES.filter(d => ['doc_commercial_register','doc_tax_number'].includes(d.key))
       : ALL_DOC_TYPES;
 

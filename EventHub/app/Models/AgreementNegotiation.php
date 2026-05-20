@@ -8,6 +8,7 @@ class AgreementNegotiation extends Model
 {
     protected $fillable = [
         'sponsorship_request_id',
+        'exhibition_application_id',
         'status',
         'last_submitted_by',
         'final_notes',
@@ -16,6 +17,11 @@ class AgreementNegotiation extends Model
     public function sponsorshipRequest()
     {
         return $this->belongsTo(SponsorshipRequest::class);
+    }
+
+    public function exhibitionApplication()
+    {
+        return $this->belongsTo(ExhibitionApplication::class);
     }
 
     public function versions()

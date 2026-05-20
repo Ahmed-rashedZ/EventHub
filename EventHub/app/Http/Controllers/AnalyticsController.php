@@ -58,6 +58,13 @@ class AnalyticsController extends Controller
             'users_by_role'    => $usersByRole,
             'monthly_registrations' => $monthlyRegs,
             'top_events'       => $topEvents,
+            'exhibition_stats' => [
+                'total_exhibitions'    => Event::where('is_exhibition', true)->count(),
+                'total_applications'   => \App\Models\ExhibitionApplication::count(),
+                'accepted_applications' => \App\Models\ExhibitionApplication::where('status', 'accepted')->orWhere('status', 'negotiating')->count(),
+                'total_booths'         => \App\Models\ExhibitionBooth::count(),
+                'total_companies'      => User::where('role', 'Company')->count(),
+            ],
         ]);
     }
 
@@ -118,6 +125,13 @@ class AnalyticsController extends Controller
             'events_by_status' => $eventsByStatus,
             'events_by_type'   => $eventsByType,
             'events' => $eventsData,
+            'exhibition_overview' => [
+                'total_exhibitions'    => $events->where('is_exhibition', true)->count(),
+                'total_applications'   => \App\Models\ExhibitionApplication::where('event_manager_id', $user->id)->count(),
+                'pending_applications' => \App\Models\ExhibitionApplication::where('event_manager_id', $user->id)->where('status', 'pending')->count(),
+                'accepted_applications' => \App\Models\ExhibitionApplication::where('event_manager_id', $user->id)->whereIn('status', ['accepted', 'negotiating'])->count(),
+                'total_booths'         => \App\Models\ExhibitionBooth::whereIn('event_id', $eventIds)->count(),
+            ],
         ]);
     }
 
@@ -162,7 +176,7 @@ class AnalyticsController extends Controller
             ->where(function ($q) {
                 $q->whereIn('role', ['Admin', 'User', 'Assistant'])
                   ->orWhere(function ($q2) {
-                      $q2->whereIn('role', ['Event Manager', 'Sponsor'])
+                      $q2->whereIn('role', ['Event Manager', 'Sponsor', 'Company'])
                          ->where('verification_status', 'verified');
                   });
             })

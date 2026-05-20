@@ -33,13 +33,16 @@ function formatDateTime(dt) {
   return d.toLocaleDateString('en-GB', { year:'numeric', month:'short', day:'numeric' }) + ' ' + d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
 }
 
-async function openAgreementModal(sponsorshipId) {
+let currentNegotiationType = 'sponsor';
+
+async function openAgreementModal(id, type = 'sponsor') {
+  currentNegotiationType = type;
   const modal = document.getElementById('agreement-modal');
   const content = document.getElementById('agreement-content');
   modal.classList.add('open');
   content.innerHTML = '<div class="spinner" style="margin:40px auto"></div>';
 
-  const res = await api.get(`/agreements/${sponsorshipId}`);
+  const res = await api.get(`/agreements/${id}?type=${type}`);
 
   if (!res.ok) {
     // No negotiation yet — offer to generate
@@ -48,7 +51,7 @@ async function openAgreementModal(sponsorshipId) {
         <div style="text-align:center; padding:30px 0;">
           <div style="font-size:3rem; margin-bottom:16px;">📋</div>
           <p style="color:var(--text-muted); margin-bottom:20px;">${t('No contract generated yet. Generate the initial agreement to start negotiation.')}</p>
-          <button class="btn btn-primary" onclick="generateAgreement(${sponsorshipId})" style="padding:10px 30px; font-weight:600;">
+          <button class="btn btn-primary" onclick="generateAgreement(${id}, '${type}')" style="padding:10px 30px; font-weight:600;">
             📄 ${t('Generate Contract')}
           </button>
         </div>`;
@@ -58,14 +61,14 @@ async function openAgreementModal(sponsorshipId) {
     return;
   }
 
-  renderAgreementContent(res.data, sponsorshipId);
+  renderAgreementContent(res.data, id, type);
 }
 
-function renderAgreementContent(data, sponsorshipId) {
+function renderAgreementContent(data, id, type) {
   const content = document.getElementById('agreement-content');
   const neg = data.negotiation;
   const versions = neg.versions || [];
-  const sreq = data.sponsorship_request;
+  const sreq = data.sponsorship_request || data.exhibition_application;
   const currentUser = JSON.parse(sessionStorage.getItem('user') || '{}');
   const isMySubmission = neg.last_submitted_by === currentUser.id;
   const canRespond = neg.status === 'pending_review' && !isMySubmission;
@@ -105,10 +108,10 @@ function renderAgreementContent(data, sponsorshipId) {
   // ── Download buttons — compact inline ──
   html += `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">`;
   if (!isFinalized) {
-    html += `<button onclick="downloadAgreement(${sponsorshipId})" style="display:inline-flex;align-items:center;gap:4px;padding:5px 12px;background:rgba(34,211,238,0.08);color:#22d3ee;border:1px solid rgba(34,211,238,0.2);border-radius:6px;font-size:0.72rem;font-weight:600;cursor:pointer;">📥 ${t('Download Contract')}</button>`;
+    html += `<button onclick="downloadAgreement(${id}, '${type}')" style="display:inline-flex;align-items:center;gap:4px;padding:5px 12px;background:rgba(34,211,238,0.08);color:#22d3ee;border:1px solid rgba(34,211,238,0.2);border-radius:6px;font-size:0.72rem;font-weight:600;cursor:pointer;">📥 ${t('Download Contract')}</button>`;
   }
   if (isFinalized) {
-    html += `<button onclick="downloadFinalPdf(${sponsorshipId})" style="display:inline-flex;align-items:center;gap:4px;padding:5px 12px;background:rgba(16,185,129,0.08);color:#10b981;border:1px solid rgba(16,185,129,0.2);border-radius:6px;font-size:0.72rem;font-weight:600;cursor:pointer;">📄 ${t('Download Final PDF')}</button>`;
+    html += `<button onclick="downloadFinalPdf(${id}, '${type}')" style="display:inline-flex;align-items:center;gap:4px;padding:5px 12px;background:rgba(16,185,129,0.08);color:#10b981;border:1px solid rgba(16,185,129,0.2);border-radius:6px;font-size:0.72rem;font-weight:600;cursor:pointer;">📄 ${t('Download Final PDF')}</button>`;
   }
   html += `</div>`;
 
@@ -127,10 +130,10 @@ function renderAgreementContent(data, sponsorshipId) {
       <div style="font-size:0.68rem;font-weight:700;color:#22d3ee;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">📤 ${t('Upload Modified Contract')}</div>
       <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,0.03);border:1px dashed rgba(255,255,255,0.12);border-radius:8px;cursor:pointer;margin-bottom:6px;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
         <span style="font-size:0.75rem;color:var(--text-muted);">📎 ${t('Choose file')}...</span>
-        <input type="file" id="agreement-file-${sponsorshipId}" accept=".docx,.doc,.pdf" style="display:none;" onchange="this.parentElement.querySelector('span').textContent = this.files[0]?.name || '📎 ${t('Choose file')}...'">
+        <input type="file" id="agreement-file-${id}" accept=".docx,.doc,.pdf" style="display:none;" onchange="this.parentElement.querySelector('span').textContent = this.files[0]?.name || '📎 ${t('Choose file')}...'">
       </label>
-      <textarea id="agreement-msg-${sponsorshipId}" placeholder="${t('Add a message describing your changes...')}" style="width:100%;min-height:44px;padding:8px 10px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);color:#fff;font-size:0.75rem;resize:vertical;margin-bottom:6px;"></textarea>
-      <button class="btn btn-primary" onclick="uploadAgreement(${sponsorshipId})" style="padding:6px 14px;font-size:0.72rem;font-weight:600;width:100%;border-radius:6px;">
+      <textarea id="agreement-msg-${id}" placeholder="${t('Add a message describing your changes...')}" style="width:100%;min-height:44px;padding:8px 10px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);color:#fff;font-size:0.75rem;resize:vertical;margin-bottom:6px;"></textarea>
+      <button class="btn btn-primary" onclick="uploadAgreement(${id}, '${type}')" style="padding:6px 14px;font-size:0.72rem;font-weight:600;width:100%;border-radius:6px;">
         ${t('Upload & Send for Review')}
       </button>
     </div>`;
@@ -141,11 +144,11 @@ function renderAgreementContent(data, sponsorshipId) {
     html += `
     <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:14px;margin-bottom:12px;">
       <div style="font-size:0.68rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">⚡ ${t('Respond to Contract')}</div>
-      <textarea id="respond-msg-${sponsorshipId}" placeholder="${t('Add feedback or comments...')}" style="width:100%;min-height:40px;padding:8px 10px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);color:#fff;font-size:0.75rem;resize:vertical;margin-bottom:8px;"></textarea>
+      <textarea id="respond-msg-${id}" placeholder="${t('Add feedback or comments...')}" style="width:100%;min-height:40px;padding:8px 10px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);color:#fff;font-size:0.75rem;resize:vertical;margin-bottom:8px;"></textarea>
       <div style="display:flex;gap:6px;flex-wrap:wrap;">
-        <button onclick="respondAgreement(${sponsorshipId}, 'accepted')" style="flex:1;padding:6px;font-size:0.72rem;font-weight:600;border-radius:6px;cursor:pointer;background:rgba(16,185,129,0.1);color:#10b981;border:1px solid rgba(16,185,129,0.25);">✅ ${t('Accept Contract')}</button>
-        <button onclick="respondAgreement(${sponsorshipId}, 'revision_requested')" style="flex:1;padding:6px;font-size:0.72rem;font-weight:600;border-radius:6px;cursor:pointer;background:rgba(249,115,22,0.08);color:#f97316;border:1px solid rgba(249,115,22,0.2);">🔄 ${t('Request Revision')}</button>
-        <button onclick="respondAgreement(${sponsorshipId}, 'rejected')" style="flex:1;padding:6px;font-size:0.72rem;font-weight:600;border-radius:6px;cursor:pointer;background:rgba(239,68,68,0.08);color:#ef4444;border:1px solid rgba(239,68,68,0.2);">❌ ${t('Reject Contract')}</button>
+        <button onclick="respondAgreement(${id}, 'accepted', '${type}')" style="flex:1;padding:6px;font-size:0.72rem;font-weight:600;border-radius:6px;cursor:pointer;background:rgba(16,185,129,0.1);color:#10b981;border:1px solid rgba(16,185,129,0.25);">✅ ${t('Accept Contract')}</button>
+        <button onclick="respondAgreement(${id}, 'revision_requested', '${type}')" style="flex:1;padding:6px;font-size:0.72rem;font-weight:600;border-radius:6px;cursor:pointer;background:rgba(249,115,22,0.08);color:#f97316;border:1px solid rgba(249,115,22,0.2);">🔄 ${t('Request Revision')}</button>
+        <button onclick="respondAgreement(${id}, 'rejected', '${type}')" style="flex:1;padding:6px;font-size:0.72rem;font-weight:600;border-radius:6px;cursor:pointer;background:rgba(239,68,68,0.08);color:#ef4444;border:1px solid rgba(239,68,68,0.2);">❌ ${t('Reject Contract')}</button>
       </div>
     </div>`;
   }
@@ -160,27 +163,27 @@ function renderAgreementContent(data, sponsorshipId) {
   content.innerHTML = html;
 }
 
-async function generateAgreement(sponsorshipId) {
+async function generateAgreement(id, type = 'sponsor') {
   const content = document.getElementById('agreement-content');
   content.innerHTML = '<div class="spinner" style="margin:40px auto"></div>';
-  const res = await api.post(`/agreements/${sponsorshipId}/generate`);
+  const res = await api.post(`/agreements/${id}/generate?type=${type}`);
   if (res.ok) {
     showToast(t('Contract generated successfully!') + ' 📋', 'success');
-    openAgreementModal(sponsorshipId);
+    openAgreementModal(id, type);
   } else {
     showToast(res.data?.message || 'Error', 'error');
-    openAgreementModal(sponsorshipId);
+    openAgreementModal(id, type);
   }
 }
 
-async function downloadAgreement(sponsorshipId) {
+async function downloadAgreement(id, type = 'sponsor') {
   const token = sessionStorage.getItem('token');
-  const res = await fetch(`/api/agreements/${sponsorshipId}/download`, {
+  const res = await fetch(`/api/agreements/${id}/download?type=${type}`, {
     headers: { 'Authorization': `Bearer ${token}` }
   });
   if (!res.ok) { showToast(t('Download failed'), 'error'); return; }
   
-  let filename = `agreement_${sponsorshipId}.docx`;
+  let filename = `agreement_${id}.docx`;
   const disposition = res.headers.get('content-disposition');
   if (disposition && disposition.indexOf('filename=') !== -1) {
       const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
@@ -200,14 +203,14 @@ async function downloadAgreement(sponsorshipId) {
   showToast(t('Download complete') + ' ✅', 'success');
 }
 
-async function downloadFinalPdf(sponsorshipId) {
+async function downloadFinalPdf(id, type = 'sponsor') {
   const token = sessionStorage.getItem('token');
-  const res = await fetch(`/api/agreements/${sponsorshipId}/download-final`, {
+  const res = await fetch(`/api/agreements/${id}/download-final?type=${type}`, {
     headers: { 'Authorization': `Bearer ${token}` }
   });
   if (!res.ok) { showToast(t('Download failed'), 'error'); return; }
   
-  let filename = `agreement_${sponsorshipId}_final.pdf`;
+  let filename = `agreement_${id}_final.pdf`;
   const disposition = res.headers.get('content-disposition');
   if (disposition && disposition.indexOf('filename=') !== -1) {
       const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
@@ -227,9 +230,9 @@ async function downloadFinalPdf(sponsorshipId) {
   showToast(t('Download complete') + ' ✅', 'success');
 }
 
-async function uploadAgreement(sponsorshipId) {
-  const fileInput = document.getElementById(`agreement-file-${sponsorshipId}`);
-  const msgInput = document.getElementById(`agreement-msg-${sponsorshipId}`);
+async function uploadAgreement(id, type = 'sponsor') {
+  const fileInput = document.getElementById(`agreement-file-${id}`);
+  const msgInput = document.getElementById(`agreement-msg-${id}`);
   if (!fileInput.files.length) { showToast(t('Please select a file'), 'error'); return; }
 
   const formData = new FormData();
@@ -237,7 +240,7 @@ async function uploadAgreement(sponsorshipId) {
   if (msgInput.value.trim()) formData.append('message', msgInput.value.trim());
 
   const token = sessionStorage.getItem('token');
-  const res = await fetch(`/api/agreements/${sponsorshipId}/upload`, {
+  const res = await fetch(`/api/agreements/${id}/upload?type=${type}`, {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' },
     body: formData,
@@ -246,14 +249,14 @@ async function uploadAgreement(sponsorshipId) {
   const data = await res.json();
   if (res.ok) {
     showToast(t('Contract uploaded and sent for review!') + ' 📤', 'success');
-    openAgreementModal(sponsorshipId);
+    openAgreementModal(id, type);
   } else {
     showToast(data?.message || 'Error', 'error');
   }
 }
 
-async function respondAgreement(sponsorshipId, action) {
-  const msgInput = document.getElementById(`respond-msg-${sponsorshipId}`);
+async function respondAgreement(id, action, type = 'sponsor') {
+  const msgInput = document.getElementById(`respond-msg-${id}`);
   const message = msgInput?.value?.trim() || '';
 
   if (action === 'revision_requested' && !message) {
@@ -267,13 +270,13 @@ async function respondAgreement(sponsorshipId, action) {
 
   if (!confirm(confirmMsg)) return;
 
-  const res = await api.put(`/agreements/${sponsorshipId}/respond`, { action, message });
+  const res = await api.put(`/agreements/${id}/respond?type=${type}`, { action, message });
   if (res.ok) {
     const successMsg = action === 'accepted' ? t('Contract accepted!') + ' ✅'
       : action === 'rejected' ? t('Contract rejected') + ' ❌'
       : t('Revision requested') + ' 🔄';
     showToast(successMsg, action === 'accepted' ? 'success' : 'info');
-    openAgreementModal(sponsorshipId);
+    openAgreementModal(id, type);
     if (typeof loadRequests === 'function') loadRequests();
   } else {
     showToast(res.data?.message || 'Error', 'error');
@@ -287,8 +290,9 @@ function closeAgreementModal() {
 // ── Cancel Agreement ──
 let cancelTargetId = null;
 
-function openCancelModal(sponsorshipId) {
-  cancelTargetId = sponsorshipId;
+function openCancelModal(id, type = 'sponsor') {
+  cancelTargetId = id;
+  currentNegotiationType = type;
   // Create modal dynamically if not exists
   let modal = document.getElementById('cancel-agreement-modal');
   if (!modal) {
@@ -338,7 +342,7 @@ async function cancelAgreement() {
     return;
   }
 
-  const res = await api.put(`/agreements/${cancelTargetId}/cancel`, { message: reason });
+  const res = await api.put(`/agreements/${cancelTargetId}/cancel?type=${currentNegotiationType}`, { message: reason });
   if (res.ok) {
     showToast(t('Agreement cancelled successfully') + ' 🚫', 'info');
     closeCancelModal();

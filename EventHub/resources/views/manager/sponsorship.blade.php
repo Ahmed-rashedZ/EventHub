@@ -31,17 +31,19 @@
       <div><h1 class="page-title">Sponsorship Requests</h1><p class="page-subtitle">Request sponsors for your events</p></div>
     </div>
 
-    <!-- Available Sponsors Section -->
-    <h2 class="page-title" style="font-size: 1.2rem; margin-top: 20px; font-weight: 600;">Available Sponsors</h2>
-    <div class="card" style="margin-bottom: 30px;">
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Sponsor</th><th>Company</th><th>Contact</th><th>Action</th></tr></thead>
-          <tbody id="sponsors-body">
-            <tr class="loading-row"><td colspan="4"><div class="spinner" style="margin:auto"></div></td></tr>
-          </tbody>
-        </table>
-      </div>
+    <!-- Discovery Section -->
+    <div class="discovery-section">
+        <h2 class="page-title" style="font-size: 1.1rem; font-weight: 600; margin-top:20px;">Available Sponsors</h2>
+        <div class="card" style="margin-bottom: 30px;">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Sponsor</th><th>Company</th><th>Contact</th><th>Action</th></tr></thead>
+              <tbody id="sponsors-body">
+                <tr class="loading-row"><td colspan="4"><div class="spinner" style="margin:auto"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
     </div>
 
     <h2 class="page-title" style="font-size: 1.2rem; font-weight: 600;">Your Sponsorship Requests</h2>
@@ -60,7 +62,7 @@
 
 <!-- New Request Modal -->
 <div class="modal-overlay" id="req-modal">
-  <div class="modal">
+  <div class="modal" style="max-width: 450px;">
     <div class="modal-header">
       <h3 class="modal-title">Request Sponsorship</h3>
       <button class="modal-close" onclick="closeModal()">✕</button>
@@ -72,14 +74,14 @@
           <option value="">Select your event…</option>
         </select>
       </div>
-      <div class="form-group" id="target-sponsor-group" style="display:none; background: #eef2f5; padding: 10px; border-radius: 6px;">
+      <div class="form-group" id="target-sponsor-group" style="display:none; background: rgba(16,185,129,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(16,185,129,0.1);">
         <label class="form-label">Target Sponsor</label>
-        <div id="r-sponsor-display" style="font-weight:600; margin-bottom: 5px;"></div>
+        <div id="r-sponsor-display" style="font-weight:700; color:var(--text); margin-bottom: 5px; font-size: 1.1rem;"></div>
         <input type="hidden" id="r-sponsor-id" value=""/>
       </div>
       <div class="form-group">
         <label class="form-label">Message to Sponsors</label>
-        <textarea id="r-message" class="form-control" placeholder="Describe sponsorship opportunity…"></textarea>
+        <textarea id="r-message" class="form-control" placeholder="Describe sponsorship opportunity…" style="min-height: 120px;"></textarea>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button>
@@ -163,7 +165,7 @@
 <div class="modal-overlay" id="agreement-modal">
   <div class="modal" style="max-width:520px; width:95%; padding:0; border-top:3px solid #22d3ee; max-height:85vh; display:flex; flex-direction:column; border-radius:16px;">
     <div style="padding:16px 20px 0; display:flex; justify-content:space-between; align-items:center;">
-      <div><h3 class="modal-title" style="margin:0;font-size:1rem;">Contract Negotiation</h3><p style="font-size:0.7rem;color:var(--text-muted);margin:2px 0 0">Negotiate terms with the other party</p></div>
+      <div><h3 class="modal-title" style="margin:0;font-size:1rem;">Contract Negotiation</h3><p style="font-size:0.7rem;color:var(--text-muted);margin:2px 0 0">Negotiate terms with the sponsor</p></div>
       <button class="modal-close" onclick="closeAgreementModal()">✕</button>
     </div>
     <div id="agreement-content" style="padding:12px 20px 20px; overflow-y:auto; flex:1;">
@@ -179,7 +181,7 @@
 <script src="/js/agreement-v2.js?v={{ time() }}"></script>
 <script>
   const user = requireRole('Event Manager');
-  if (user) { populateSidebar(user); setActiveNav(); loadRequests(); loadMyEvents(); }
+  if (user) { populateSidebar(user); setActiveNav(); loadRequests(); loadMyEvents(); loadAvailableSponsors(); }
 
   // Extract tier from event.sponsors pivot for a given sponsorship request
   function getSponsorTier(r) {
@@ -201,42 +203,69 @@
   async function loadRequests() {
     const res = await api.get('/sponsorship');
     const tbody = document.getElementById('req-body');
-    if (!res.ok || !res.data.length) { tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">💼</div><p>' + t('No sponsorship requests yet') + '</p></div></td></tr>'; return; }
-    tbody.innerHTML = res.data.map((r, i) => {
+    if (!res.ok || !res.data.length) { 
+        tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">💼</div><p>' + t('No sponsorship requests yet') + '</p></div></td></tr>'; 
+        return; 
+    }
+
+    // Sort by status (pending first) then latest
+    const sorted = res.data.sort((a, b) => {
+        if (a.status === 'pending' && b.status !== 'pending') return -1;
+        if (a.status !== 'pending' && b.status === 'pending') return 1;
+        return new Date(b.created_at) - new Date(a.created_at);
+    });
+
+    tbody.innerHTML = sorted.map((r, i) => {
       const canEdit = r.event?.start_time && new Date(r.event.start_time) > new Date();
+      let actionHtml = '';
+      if (r.status === 'pending') {
+          if (r.initiator === 'sponsor') {
+              actionHtml = `
+                <button class="btn btn-success" style="padding: 4px 12px; font-size: 12px; font-weight: 600;" onclick="respondReq(${r.id}, 'accepted')">✅ Accept</button>
+                <button class="btn btn-danger" style="padding: 4px 12px; font-size: 12px; font-weight: 600;" onclick="respondReq(${r.id}, 'rejected')">❌ Reject</button>
+              `;
+          } else {
+              actionHtml = `<div style="font-size: 11px; color: var(--text-muted);">${t('Awaiting Response')}</div>`;
+          }
+      } else if (r.status === 'negotiating') {
+          actionHtml = `
+            <button class="btn btn-sm" onclick="openAgreementModal(${r.id}, 'sponsor')" style="padding:4px 12px; font-size:11px; background:rgba(34,211,238,0.12); color:#22d3ee; border:1px solid rgba(34,211,238,0.25); font-weight:600;">📋 ${t('Contract Negotiation')}</button>
+          `;
+      } else if (r.status === 'accepted') {
+          actionHtml = `
+            ${canEdit ? `<button class="btn btn-ghost btn-sm" onclick="editRank(${r.id})" style="padding: 4px 12px; font-size: 11px;">✏️ Edit Tier</button>` : `<span style="font-size:11px; color:var(--text-muted)">Locked</span>`}
+            <button class="btn btn-sm" onclick="openAgreementModal(${r.id}, 'sponsor')" style="padding:4px 12px; font-size:11px; background:rgba(16,185,129,0.12); color:#10b981; border:1px solid rgba(16,185,129,0.25); font-weight:600;">📄 ${t('Agreement')}</button>
+          `;
+      } else {
+          actionHtml = `<span style="font-size:12px; color:var(--text-muted)">—</span>`;
+      }
+
       return `
       <tr>
-        <td style="color:var(--text-muted)">${i+1}</td>
+        <td style="color:var(--text-muted)">${i + 1}</td>
         <td><div style="font-weight:600">${r.event?.title || '—'}</div></td>
         <td style="color:var(--text-muted)">
             ${(r.negotiation?.final_notes || r.message) ? `<button class="btn btn-ghost btn-sm" onclick="showMsg('${(r.negotiation?.final_notes || r.message).replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n')}')" style="font-size:12px; padding: 4px 8px;">💬 Read Message</button>` : '—'}
         </td>
-        <td style="color:var(--accent2); font-weight:500; cursor:pointer;" onclick="${(r.sponsor_id || r.sponsor?.id) ? `navigateToProfile(${r.sponsor_id || r.sponsor.id})` : ''}">
+        <td style="color:var(--accent2); font-weight:500; cursor:pointer;" onclick="navigateToProfile(${r.sponsor_id})">
             <span class="i18n-skip">${r.sponsor?.name || 'Open'}</span>
         </td>
-        <td>
-          ${badge(r.status)}
-          ${r.status === 'pending' && r.initiator === 'event_manager' ? `<div style="font-size: 11px; margin-top: 4px; color: var(--text-muted);">Awaiting Sponsor</div>` : ''}
-        </td>
-        <td>
-          <div style="display: flex; gap: 8px; flex-wrap:wrap;">
-          ${r.status === 'pending' && r.initiator === 'sponsor' ? `
-              <button class="btn btn-success" style="padding: 4px 12px; font-size: 12px; font-weight: 600;" onclick="respond(${r.id}, 'accepted')">✅ Accept</button>
-              <button class="btn btn-danger" style="padding: 4px 12px; font-size: 12px; font-weight: 600;" onclick="respond(${r.id}, 'rejected')">❌ Reject</button>
-          ` : r.status === 'negotiating' ? `
-              <button class="btn btn-sm" onclick="openAgreementModal(${r.id})" style="padding:4px 12px; font-size:11px; background:rgba(34,211,238,0.12); color:#22d3ee; border:1px solid rgba(34,211,238,0.25); font-weight:600;">📋 ${t('Contract Negotiation')}</button>
-              <button class="btn btn-sm" onclick="openCancelModal(${r.id})" style="padding:4px 12px; font-size:11px; background:rgba(239,68,68,0.1); color:#ef4444; border:1px solid rgba(239,68,68,0.2); font-weight:600;">🚫 ${t('Cancel')}</button>
-          ` : r.status === 'accepted' ? `
-              ${canEdit ? `<button class="btn btn-ghost btn-sm" onclick="editRank(${r.id})" style="padding: 4px 12px; font-size: 11px;">✏️ Edit Tier</button>` : `<span style="font-size:11px; color:var(--text-muted)">Locked (Started)</span>`}
-              <button class="btn btn-sm" onclick="openAgreementModal(${r.id})" style="padding:4px 12px; font-size:11px; background:rgba(16,185,129,0.12); color:#10b981; border:1px solid rgba(16,185,129,0.25); font-weight:600;">📄 ${t('Final Agreement')}</button>
-          ` : `<span style="font-size:12px; color:var(--text-muted)">No Action</span>`}
-          </div>
-        </td>
+        <td>${badge(r.status)}</td>
+        <td><div style="display: flex; gap: 8px; flex-wrap:wrap;">${actionHtml}</div></td>
         <td>
           ${r.status === 'accepted' ? getTierBadge(getSponsorTier(r)) : '<span style="font-size:12px; color:var(--text-muted)">—</span>'}
         </td>
       </tr>`;
     }).join('');
+  }
+
+  async function respondReq(id, status) {
+    if (status === 'accepted') {
+        document.getElementById('accept-req-id').value = id;
+        document.getElementById('accept-modal').classList.add('open');
+    } else {
+        await processResponse(id, status);
+    }
   }
 
   async function loadAvailableSponsors() {
@@ -248,15 +277,7 @@
     }
     
     tbody.innerHTML = res.data.map(s => {
-        let logo = '/images/default-avatar.png';
-        if (s.image && s.image.trim() !== '') {
-            logo = (s.image.startsWith('http') || s.image.startsWith('/')) ? s.image : '/storage/' + s.image;
-        } else if (s.avatar && s.avatar.trim() !== '') {
-            logo = (s.avatar.startsWith('http') || s.avatar.startsWith('/')) ? s.avatar : '/storage/' + s.avatar;
-        } else if (s.profile && s.profile.logo) {
-            logo = (s.profile.logo.startsWith('http') || s.profile.logo.startsWith('/')) ? s.profile.logo : '/' + s.profile.logo;
-        }
-        
+        let logo = getLogo(s);
         return `
       <tr>
         <td>
@@ -280,6 +301,18 @@
     }).join('');
   }
 
+  function getLogo(u) {
+    let logo = '/images/default-avatar.png';
+    if (u.image && u.image.trim() !== '') {
+        logo = (u.image.startsWith('http') || u.image.startsWith('/')) ? u.image : '/storage/' + u.image;
+    } else if (u.avatar && u.avatar.trim() !== '') {
+        logo = (u.avatar.startsWith('http') || u.avatar.startsWith('/')) ? u.avatar : '/storage/' + u.avatar;
+    } else if (u.profile && u.profile.logo) {
+        logo = (u.profile.logo.startsWith('http') || u.profile.logo.startsWith('/')) ? u.profile.logo : '/' + u.profile.logo;
+    }
+    return logo;
+  }
+
   async function loadMyEvents() {
     const res = await api.get('/events/list/my');
     const sel = document.getElementById('r-event');
@@ -287,20 +320,16 @@
     sel.innerHTML = '<option value="">Select your event…</option>' + res.data.map(e => `<option value="${e.id}">${e.title}</option>`).join('');
   }
 
-  function openModal(sponsorId = null, sponsorName = null) { 
+  function openModal(targetId = null, targetName = null) { 
       document.getElementById('req-modal').classList.add('open'); 
-      if (sponsorId) {
+      if (targetId) {
           document.getElementById('target-sponsor-group').style.display = 'block';
-          document.getElementById('r-sponsor-id').value = sponsorId;
-          document.getElementById('r-sponsor-display').innerText = sponsorName;
+          document.getElementById('r-sponsor-id').value = targetId;
+          document.getElementById('r-sponsor-display').innerText = targetName;
       } else {
           document.getElementById('target-sponsor-group').style.display = 'none';
           document.getElementById('r-sponsor-id').value = '';
       }
-  }
-
-  function respond(id, status) {
-    processResponse(id, status);
   }
 
   async function processResponse(id, status, tier = null) {
@@ -373,28 +402,26 @@
 
   document.getElementById('req-form').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const payload = { 
-        event_id: +document.getElementById('r-event').value, 
-        message: document.getElementById('r-message').value 
-    };
-    
-    const sponsorId = document.getElementById('r-sponsor-id').value;
-    if (sponsorId) {
-        payload.sponsor_id = +sponsorId;
-    }
+    const targetId = document.getElementById('r-sponsor-id').value;
+    const eventId = +document.getElementById('r-event').value;
+    const message = document.getElementById('r-message').value;
+
+    if (!eventId) return showToast(t('Please select an event'), 'error');
+
+    const payload = { event_id: eventId, message: message };
+    if (targetId) payload.sponsor_id = +targetId;
 
     const res = await api.post('/sponsorship', payload);
-    if (res.ok) { showToast(t('Request submitted!'), 'success'); closeModal(); loadRequests(); }
-    else showToast(res.data?.message || t('Error'), 'error');
+    if (res.ok) { 
+        showToast(t('Sponsorship request submitted!'), 'success'); 
+        closeModal(); 
+        loadRequests(); 
+    } else {
+        showToast(res.data?.message || t('Error'), 'error');
+    }
   });
-
-  // Init
-  if (user) { loadAvailableSponsors(); }
 </script>
 </body>
-</html>
-
-
 
 
 

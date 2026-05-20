@@ -136,6 +136,13 @@ function timeBadge(time_status) {
 }
 
 function roleBadge(role) {
-    const map = { Admin: 'role-admin', 'Event Manager': 'role-manager', Sponsor: 'role-sponsor', User: 'role-user', Assistant: 'role-assistant' };
+    const map = { 
+        Admin: 'role-admin', 
+        'Event Manager': 'role-manager', 
+        Sponsor: 'role-sponsor', 
+        User: 'role-user', 
+        Assistant: 'role-assistant',
+        Company: 'role-company' 
+    };
     return `<span class="role-badge ${map[role] || ''}">${t(role)}</span>`;
 }
