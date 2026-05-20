@@ -617,10 +617,15 @@
           <td style="color:var(--text-muted)">${ev.capacity}</td>
           <td>
              <div style="display:flex; align-items:center;">
-               <input type="checkbox" id="spon-tog-${ev.id}" ${ev.is_sponsorship_open ? 'checked' : ''} onchange="toggleSponsorship(${ev.id}, this.checked)" style="width:16px; height:16px; margin-right:5px; ${ev.status !== 'approved' ? 'cursor:not-allowed;' : 'cursor:pointer;'}" ${ev.status !== 'approved' ? 'disabled title="Event must be approved first"' : ''}/>
-               <label for="spon-tog-${ev.id}" style="font-size:12px; ${ev.status !== 'approved' ? 'color:var(--text-muted); cursor:not-allowed;' : 'cursor:pointer;'}" ${ev.status !== 'approved' ? 'title="Event must be approved first"' : ''}>Open</label>
+               <input type="checkbox" id="spon-tog-${ev.id}" ${ev.is_sponsorship_open ? 'checked' : ''} onchange="toggleSponsorship(${ev.id}, this.checked)" 
+                 style="width:16px; height:16px; margin-right:5px; ${(ev.status !== 'approved' || ev.time_status === 'live' || ev.time_status === 'ended') ? 'cursor:not-allowed;' : 'cursor:pointer;'}" 
+                 ${(ev.status !== 'approved' || ev.time_status === 'live' || ev.time_status === 'ended') ? 'disabled' : ''}
+                 title="${ev.status !== 'approved' ? 'Event must be approved first' : (ev.time_status === 'live' || ev.time_status === 'ended' ? 'Cannot change sponsorship for live/ended events' : '')}"/>
+               <label for="spon-tog-${ev.id}" style="font-size:12px; ${(ev.status !== 'approved' || ev.time_status === 'live' || ev.time_status === 'ended') ? 'color:var(--text-muted); cursor:not-allowed;' : 'cursor:pointer;'}" 
+                 title="${ev.status !== 'approved' ? 'Event must be approved first' : (ev.time_status === 'live' || ev.time_status === 'ended' ? 'Cannot change sponsorship for live/ended events' : '')}">Open</label>
              </div>
              ${ev.status !== 'approved' ? '<div style="font-size:10px;color:#ef4444;margin-top:4px;">Needs Approval</div>' : ''}
+             ${ev.status === 'approved' && (ev.time_status === 'live' || ev.time_status === 'ended') ? `<div style="font-size:10px;color:var(--text-muted);margin-top:4px;">Event ${ev.time_status === 'live' ? 'is live' : 'has ended'}</div>` : ''}
           </td>
           <td>${badge(ev.status)} ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''} ${reviewBadge}</td>
           <td style="display:flex;gap:6px;padding:14px 16px;flex-wrap:wrap">

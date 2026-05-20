@@ -201,7 +201,7 @@
   async function loadRequests() {
     const res = await api.get('/sponsorship');
     const tbody = document.getElementById('req-body');
-    if (!res.ok || !res.data.length) { tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">💼</div><p>No sponsorship requests yet</p></div></td></tr>'; return; }
+    if (!res.ok || !res.data.length) { tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">💼</div><p>' + t('No sponsorship requests yet') + '</p></div></td></tr>'; return; }
     tbody.innerHTML = res.data.map((r, i) => {
       const canEdit = r.event?.start_time && new Date(r.event.start_time) > new Date();
       return `
@@ -243,7 +243,7 @@
     const res = await api.get('/sponsors/available');
     const tbody = document.getElementById('sponsors-body');
     if (!res.ok || !res.data.length) { 
-        tbody.innerHTML = '<tr><td colspan="4"><div class="empty-state"><p>No available sponsors right now.</p></div></td></tr>'; 
+        tbody.innerHTML = '<tr><td colspan="4"><div class="empty-state"><p>' + t('No available sponsors right now.') + '</p></div></td></tr>'; 
         return; 
     }
     
@@ -272,8 +272,8 @@
         <td style="color:var(--text-muted)">${s.email}</td>
         <td>
            <div style="display:flex; gap:8px;">
-               <button class="btn btn-ghost btn-sm" onclick="navigateToProfile(${s.id})">View Profile</button>
-               <button class="btn btn-primary btn-sm" onclick="openModal(${s.id}, '${s.name}')">Request</button>
+               <button class="btn btn-ghost btn-sm" onclick="navigateToProfile(${s.id})">${t('View Profile')}</button>
+               <button class="btn btn-primary btn-sm" onclick="openModal(${s.id}, '${s.name}')">${t('Request')}</button>
            </div>
         </td>
       </tr>`;
@@ -311,10 +311,10 @@
     
     const res = await api.put(`/sponsorship/${id}`, payload);
     if (res.ok) { 
-        showToast(status === 'accepted' ? 'Preliminary acceptance successful! Contract negotiation started. 📝' : 'Request rejected.', status === 'accepted' ? 'success' : 'info'); 
+        showToast(status === 'accepted' ? t('Preliminary acceptance successful! Contract negotiation started. 📝') : t('Request rejected.'), status === 'accepted' ? 'success' : 'info'); 
         loadRequests(); 
     }
-    else showToast(res.data?.message || 'Error', 'error');
+    else showToast(res.data?.message || t('Error'), 'error');
   }
 
   async function submitAccept(e) {
@@ -342,11 +342,11 @@
       
       const res = await api.patch(`/sponsorship/${id}/tier`, { tier });
       if (res.ok) {
-          showToast('Sponsor tier updated beautifully! ✨', 'success');
+          showToast(t('Sponsor tier updated beautifully! ✨'), 'success');
           closeEditRankModal();
           loadRequests();
       } else {
-          showToast(res.data?.message || 'Error updating tier', 'error');
+          showToast(res.data?.message || t('Error updating tier'), 'error');
       }
   }
 
@@ -384,8 +384,8 @@
     }
 
     const res = await api.post('/sponsorship', payload);
-    if (res.ok) { showToast('Request submitted!', 'success'); closeModal(); loadRequests(); }
-    else showToast(res.data?.message || 'Error', 'error');
+    if (res.ok) { showToast(t('Request submitted!'), 'success'); closeModal(); loadRequests(); }
+    else showToast(res.data?.message || t('Error'), 'error');
   });
 
   // Init

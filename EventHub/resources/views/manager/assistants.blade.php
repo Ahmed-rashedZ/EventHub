@@ -196,7 +196,7 @@ function loadAvailableAssistants() {
   var container = document.getElementById('available-list');
 
   if (!eventId) {
-    container.innerHTML = '<div class="empty-state" style="padding:30px;"><div class="icon">👆</div><p>Select an event first</p></div>';
+    container.innerHTML = '<div class="empty-state" style="padding:30px;"><div class="icon">👆</div><p>' + t('Select an event first to see available assistants') + '</p></div>';
     return;
   }
 
@@ -207,11 +207,11 @@ function loadAvailableAssistants() {
 
   api.get(url).then(function(res) {
     if (!res.ok) {
-      container.innerHTML = '<div class="empty-state" style="padding:20px;"><p style="color:var(--error);">Failed to load</p></div>';
+      container.innerHTML = '<div class="empty-state" style="padding:20px;"><p style="color:var(--error);">' + t('Failed to load') + '</p></div>';
       return;
     }
     if (res.data.length === 0) {
-      container.innerHTML = '<div class="empty-state" style="padding:30px;"><div class="icon">🔍</div><p>No available assistants found</p></div>';
+      container.innerHTML = '<div class="empty-state" style="padding:30px;"><div class="icon">🔍</div><p>' + t('No available assistants found') + '</p></div>';
       return;
     }
 
@@ -222,15 +222,15 @@ function loadAvailableAssistants() {
       var btnHtml = '';
       
       if (a.invitation_status === 'accepted') {
-        btnHtml = '<button class="invite-btn disabled" style="background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.2);">Joined</button>';
+        btnHtml = '<button class="invite-btn disabled" style="background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.2);">' + t('Joined') + '</button>';
       } else if (a.invitation_status === 'pending') {
-        btnHtml = '<button class="invite-btn disabled">⏳ Invited</button>';
+        btnHtml = '<button class="invite-btn disabled">⏳ ' + t('Invited') + '</button>';
       } else if (a.invitation_status === 'rejected') {
-        btnHtml = '<button class="invite-btn disabled" style="background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2);">Rejected</button>';
+        btnHtml = '<button class="invite-btn disabled" style="background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2);">' + t('Rejected') + '</button>';
       } else if (a.invitation_status === 'busy') {
-        btnHtml = '<button class="invite-btn disabled" style="background: rgba(245,158,11,0.1); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); cursor: not-allowed;" title="Assistant has another event at the same time">⚠️ ' + t('Busy') + '</button>';
+        btnHtml = '<button class="invite-btn disabled" style="background: rgba(245,158,11,0.1); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); cursor: not-allowed;" title="' + t('Assistant has another event at the same time') + '">⚠️ ' + t('Busy') + '</button>';
       } else {
-        btnHtml = '<button class="invite-btn primary" data-idx="' + idx + '">Invite</button>';
+        btnHtml = '<button class="invite-btn primary" data-idx="' + idx + '">' + t('Invite') + '</button>';
       }
 
       html += '<div class="avail-item">' +
@@ -263,17 +263,17 @@ function sendInvite(idx, btnElement) {
   var eventId = document.getElementById('invite-event').value;
 
   if (!assistant || !eventId) {
-    showToast('Please select an event first', 'error');
+    showToast(t('Please select an event first'), 'error');
     return;
   }
 
-  var eventName = eventsMap[eventId] || 'this event';
-  if (!confirm('Send invitation to "' + assistant.name + '" for "' + eventName + '"?')) {
+  var eventName = eventsMap[eventId] || t('this event');
+  if (!confirm(t('Send invitation to ') + '"' + assistant.name + '"' + t(' for ') + '"' + eventName + '"?')) {
     return;
   }
 
   // Visual feedback
-  btnElement.textContent = 'Sending...';
+  btnElement.textContent = t('Sending...');
   btnElement.className = 'invite-btn sending';
 
   var body = {
@@ -283,19 +283,19 @@ function sendInvite(idx, btnElement) {
 
   api.post('/manager/invite-assistant', body).then(function(res) {
     if (res.ok) {
-      showToast('✅ Invitation sent to ' + assistant.name + '!', 'success');
-      btnElement.textContent = '⏳ Invited';
+      showToast('✅ ' + t('Invitation sent to') + ' ' + assistant.name + '!', 'success');
+      btnElement.textContent = '⏳ ' + t('Invited');
       btnElement.className = 'invite-btn disabled';
       loadInvitations();
     } else {
-      var msg = (res.data && res.data.message) ? res.data.message : 'Failed to send invitation';
+      var msg = (res.data && res.data.message) ? res.data.message : t('Failed to send invitation');
       showToast('❌ ' + msg, 'error');
-      btnElement.textContent = 'Invite';
+      btnElement.textContent = t('Invite');
       btnElement.className = 'invite-btn primary';
     }
   }).catch(function(err) {
-    showToast('Network error', 'error');
-    btnElement.textContent = 'Invite';
+    showToast(t('Network error'), 'error');
+    btnElement.textContent = t('Invite');
     btnElement.className = 'invite-btn primary';
   });
 }
@@ -311,7 +311,7 @@ function loadInvitations() {
   api.get(url).then(function(res) {
     var container = document.getElementById('invitations-container');
     if (!res.ok) {
-      container.innerHTML = '<div class="empty-state"><p style="color:var(--error);">Failed to load invitations</p></div>';
+      container.innerHTML = '<div class="empty-state"><p style="color:var(--error);">' + t('Failed to load invitations') + '</p></div>';
       return;
     }
     allInvitations = res.data;
@@ -343,17 +343,17 @@ function renderInvitations() {
 
   if (data.length === 0) {
     var msgs = {
-      all: 'No invitations sent yet. Invite assistants from the left panel.',
-      pending: 'No pending invitations.',
-      accepted: 'No accepted invitations yet.',
-      rejected: 'No rejected invitations.'
+      all: t('No invitations sent yet. Invite assistants from the left panel.'),
+      pending: t('No pending invitations.'),
+      accepted: t('No accepted invitations yet.'),
+      rejected: t('No rejected invitations.')
     };
     container.innerHTML = '<div class="empty-state"><div class="icon">📬</div><p>' + (msgs[currentTab] || '') + '</p></div>';
     return;
   }
 
   var html = '<table class="inv-table"><thead><tr>' +
-    '<th>Assistant</th><th>Event</th><th>Status</th><th>Scans</th><th>Date</th><th style="text-align:right;">Actions</th>' +
+    '<th>' + t('Assistant') + '</th><th>' + t('Event') + '</th><th>' + t('Status') + '</th><th>' + t('Scans') + '</th><th>' + t('Date') + '</th><th style="text-align:right;">' + t('Actions') + '</th>' +
     '</tr></thead><tbody>';
 
   data.forEach(function(inv) {
@@ -369,7 +369,14 @@ function renderInvitations() {
 
     var actions = '';
     if (inv.status === 'pending') {
-      actions = '<button class="cancel-btn" data-inv-id="' + inv.id + '">✕ Cancel</button>';
+      actions = '<button class="cancel-btn" data-inv-id="' + inv.id + '" data-is-remove="false">✕ ' + t('Cancel') + '</button>';
+    } else if (inv.status === 'accepted') {
+      var timeStatus = inv.event ? inv.event.time_status : 'upcoming';
+      if (timeStatus !== 'ended') {
+        actions = '<button class="cancel-btn" data-inv-id="' + inv.id + '" data-is-remove="true" style="background:rgba(239,68,68,0.1); color:#ef4444; border:1px solid rgba(239,68,68,0.25);">🗑️ ' + t('Remove') + '</button>';
+      } else {
+        actions = '<span style="font-size:0.75rem; color:var(--text-muted);" title="' + t('Cannot remove from ended event') + '">' + t('Ended') + '</span>';
+      }
     }
 
     html += '<tr>' +
@@ -393,20 +400,21 @@ function renderInvitations() {
   container.querySelectorAll('.cancel-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
       var invId = this.getAttribute('data-inv-id');
-      cancelInvite(invId);
+      var isRemove = this.getAttribute('data-is-remove') === 'true';
+      cancelInvite(invId, isRemove);
     });
   });
 }
 
-function cancelInvite(id) {
-  if (!confirm('Cancel this invitation?')) return;
+function cancelInvite(id, isRemove = false) {
+  if (!confirm(isRemove ? t('Are you sure you want to remove this assistant from the event?') : t('Cancel this invitation?'))) return;
   api.delete('/manager/invitations/' + id).then(function(res) {
     if (res.ok) {
-      showToast('Invitation cancelled', 'success');
+      showToast(isRemove ? t('Assistant removed') : t('Invitation cancelled'), 'success');
       loadInvitations();
       loadAvailableAssistants();
     } else {
-      showToast((res.data && res.data.message) ? res.data.message : 'Failed to cancel', 'error');
+      showToast((res.data && res.data.message) ? res.data.message : t('Failed to cancel'), 'error');
     }
   });
 }

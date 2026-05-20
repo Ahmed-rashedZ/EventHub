@@ -612,17 +612,36 @@ class AssistantController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        $invitation = AssistanceRequest::where('id', $id)
+        $invitation = AssistanceRequest::with('event')->where('id', $id)
             ->where('manager_id', $user->id)
-            ->where('status', 'pending')
             ->first();
 
         if (!$invitation) {
             return response()->json(['message' => 'Invitation not found or cannot be cancelled'], 404);
         }
 
+        if ($invitation->status === 'accepted') {
+            $event = $invitation->event;
+            if ($event && $event->time_status === 'ended') {
+                return response()->json(['message' => 'Cannot remove an assistant from an ended event'], 422);
+            }
+
+            // Send notification to assistant
+            $assistant = \App\Models\User::find($invitation->assistant_id);
+            if ($assistant && $event) {
+                $assistant->notify(new \App\Notifications\SystemNotification(
+                    'تم إلغاء تعيينك',
+                    "لقد تم إلغاء تعيينك كمساعد في الحدث: {$event->title}",
+                    'system',
+                    '🚫'
+                ));
+            }
+        } elseif ($invitation->status !== 'pending') {
+            return response()->json(['message' => 'Cannot cancel this invitation'], 422);
+        }
+
         $invitation->delete();
 
-        return response()->json(['message' => 'Invitation cancelled']);
+        return response()->json(['message' => 'Invitation cancelled successfully']);
     }
 }
