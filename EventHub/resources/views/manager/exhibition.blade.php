@@ -493,8 +493,23 @@
         } else if (app.status === 'negotiating' || app.status === 'accepted') {
           actionHtml = `
             <button class="btn btn-sm" onclick="openAgreementModal(${app.id}, 'exhibition')" style="padding:3px 10px;font-size:11px;background:rgba(34,211,238,0.1);color:#22d3ee;border:1px solid rgba(34,211,238,0.2);font-weight:600;">📋 ${t('Contract')}</button>
-            <button class="btn btn-sm" onclick="openBoothModal(${app.id}, '${comp.name.replace(/'/g, "\\'")}', ${app.event_id})" style="padding:3px 10px;font-size:11px;background:rgba(16,185,129,0.1);color:#10b981;border:1px solid rgba(16,185,129,0.2);font-weight:600;">📍 ${t('Assign Booth')}</button>
           `;
+          if (app.status === 'accepted') {
+            const isWithin14Days = ev.start_time && (new Date(ev.start_time) - new Date()) / (1000 * 60 * 60 * 24) < 14;
+            const canChange = !app.booth || !isWithin14Days;
+
+            if (canChange) {
+              let boothBtnText = app.booth ? t('Change Booth') : t('Assign Booth');
+              let boothBtnIcon = app.booth ? '🔄' : '📍';
+              actionHtml += `
+                <button class="btn btn-sm" onclick="openBoothModal(${app.id}, '${comp.name.replace(/'/g, "\\'")}', ${app.event_id})" style="padding:3px 10px;font-size:11px;background:rgba(16,185,129,0.1);color:#10b981;border:1px solid rgba(16,185,129,0.2);font-weight:600;">${boothBtnIcon} ${boothBtnText}</button>
+              `;
+            } else {
+              actionHtml += `
+                <button class="btn btn-sm" disabled style="padding:3px 10px;font-size:11px;background:rgba(255,255,255,0.05);color:var(--text-muted);border:1px solid var(--border);cursor:not-allowed;opacity:0.6;">🔒 ${t('Booth Locked')}</button>
+              `;
+            }
+          }
         }
 
         return `
@@ -508,7 +523,15 @@
             <div>${app.booth ? (app.booth.zone?.name + ': ' + app.booth.booth_number) : (app.booth_number || '—')}</div>
             <div style="font-size:0.65rem; color:var(--text-muted); font-weight:400;">${app.booth ? (app.booth.size || '') : (app.booth_size || '')}</div>
           </td>
-          <td>${badge(app.status)}</td>
+          <td>
+            ${badge(app.status)}
+            ${app.status === 'accepted' && app.booth ? `
+              <div style="margin-top:5px; display: flex; align-items: center; gap: 4px; color: #10b981; font-size: 11px; font-weight: 600;">
+                <span style="background:#10b981; color:white; border-radius:50%; width:14px; height:14px; display:inline-flex; align-items:center; justify-content:center; font-size:9px;">✓</span>
+                ${t('Confirmed')}
+              </div>
+            ` : ''}
+          </td>
           <td><div style="display:flex;gap:6px;flex-wrap:wrap;">${actionHtml}</div></td>
         </tr>`;
       }).join('');
@@ -743,24 +766,37 @@
     const res = await api.get(`/exhibition/inventory/${eventId}`);
     if (!res.ok) return showToast('Failed to load layout', 'error');
 
+    const g = exhGroups.find(x => (x.event_id || (x.event && x.event.id)) == eventId);
+    const ev = g ? (g.event || {}) : {};
+    const isWithin14Days = ev.start_time && (new Date(ev.start_time) - new Date()) / (1000 * 60 * 60 * 24) < 14;
+
     const zones = res.data;
     if (zones.length === 0) {
       container.innerHTML = `<div style="text-align:center; padding:40px; color:var(--text-muted);">
         <p>${t('No zones defined yet.')}</p>
-        <button class="btn btn-ghost btn-sm" onclick="openZoneModalUI(${eventId})">➕ ${t('Create First Zone')}</button>
+        ${!isWithin14Days ? `<button class="btn btn-ghost btn-sm" onclick="openZoneModalUI(${eventId})">➕ ${t('Create First Zone')}</button>` : ''}
       </div>`;
       return;
     }
 
-    container.innerHTML = zones.map(z => `
+    let headerMsg = '';
+    if (isWithin14Days) {
+      headerMsg = `<div style="background:rgba(245,158,11,0.1); color:#f59e0b; border:1px solid rgba(245,158,11,0.2); padding:10px 15px; border-radius:12px; margin-bottom:20px; font-size:0.85rem; font-weight:600; display:flex; align-items:center; gap:10px;">
+        <span>🔒</span> ${t('Exhibition layout is locked (Less than 14 days remaining). You can no longer add, edit, or delete zones and booths.')}
+      </div>`;
+    }
+
+    container.innerHTML = headerMsg + zones.map(z => `
       <div class="zone-box">
         <div class="zone-header">
           <h5 style="margin:0; font-size:0.9rem;">${z.name}</h5>
-          <div style="display:flex; gap:8px;">
-            <button class="btn btn-ghost btn-sm" style="padding:2px 8px; font-size:0.7rem;" onclick="openBatchModalUI(${z.id}, ${eventId})">➕ ${t('Batch Add')}</button>
-            <button class="btn btn-ghost btn-sm" style="padding:2px 8px; font-size:0.7rem;" onclick="openBoothModalInZone(${z.id}, ${eventId})">➕ ${t('Booth')}</button>
-            <button class="btn-icon" style="color:#ef4444;" onclick="deleteZone(${z.id}, ${eventId})">✕</button>
-          </div>
+          ${!isWithin14Days ? `
+            <div style="display:flex; gap:8px;">
+              <button class="btn btn-ghost btn-sm" style="padding:2px 8px; font-size:0.7rem;" onclick="openBatchModalUI(${z.id}, ${eventId})">➕ ${t('Batch Add')}</button>
+              <button class="btn btn-ghost btn-sm" style="padding:2px 8px; font-size:0.7rem;" onclick="openBoothModalInZone(${z.id}, ${eventId})">➕ ${t('Booth')}</button>
+              <button class="btn-icon" style="color:#ef4444;" onclick="deleteZone(${z.id}, ${eventId})">✕</button>
+            </div>
+          ` : ''}
         </div>
         <div class="booth-list">
           ${z.booths.map(b => `
@@ -768,10 +804,12 @@
               <div class="booth-num">${b.booth_number}</div>
               <div class="booth-size">${b.size || '—'}</div>
               ${b.application ? `<div class="booth-comp" title="${b.application.company.name}">${b.application.company.name}</div>` : ''}
-              <div class="booth-actions">
-                <button class="btn-icon" onclick="editBooth(${b.id}, '${b.booth_number}', '${b.size || ''}', ${eventId})">✏️</button>
-                <button class="btn-icon" style="color:#f87171;" onclick="deleteBooth(${b.id}, ${eventId})">🗑</button>
-              </div>
+              ${!isWithin14Days ? `
+                <div class="booth-actions">
+                  <button class="btn-icon" onclick="editBooth(${b.id}, '${b.booth_number}', '${b.size || ''}', ${eventId})">✏️</button>
+                  <button class="btn-icon" style="color:#f87171;" onclick="deleteBooth(${b.id}, ${eventId})">🗑</button>
+                </div>
+              ` : ''}
             </div>
           `).join('')}
         </div>

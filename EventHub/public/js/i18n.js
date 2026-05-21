@@ -43,6 +43,11 @@ const I18N_EN = {
   'evening': 'evening',
   'afternoon': 'afternoon',
   'full day': 'full day',
+  'Change Booth': 'Change Booth',
+  'Confirmed': 'Confirmed',
+  'Booth': 'Booth',
+  'Booth Locked': 'Booth Locked',
+  'Exhibition layout is locked (Less than 14 days remaining). You can no longer add, edit, or delete zones and booths.': 'Exhibition layout is locked (Less than 14 days remaining). You can no longer add, edit, or delete zones and booths.',
 };
 
 const I18N_AR = {
@@ -498,8 +503,12 @@ const I18N_AR = {
   'ACCEPTED':              'مقبول',
   'Pending':               'قيد الانتظار',
   'PENDING':               'قيد الانتظار',
-  'Rejected':              'مرفوض',
   'REJECTED':              'مرفوض',
+  'Change Booth':          'تغيير الكشك',
+  'Confirmed':             'تم التأكيد',
+  'Booth':                 'الكشك',
+  'Booth Locked':          'تم قفل الكشك',
+  'Exhibition layout is locked (Less than 14 days remaining). You can no longer add, edit, or delete zones and booths.': 'تم قفل توزيع المعرض (بقي أقل من 14 يوماً). لم يعد بإمكانك إضافة أو تعديل أو حذف الأجنحة والزونات.',
 
   /* ── Empty States ─────────────────────────────────────── */
   'No events found':   'لا توجد أحداث',

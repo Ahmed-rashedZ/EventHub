@@ -243,10 +243,17 @@ async function loadEventStats() {
 
 
   // Stats
+  const hasCapacity = ev.capacity !== null && ev.capacity > 0;
   const remaining = s.registered_count - s.attended_count;
-  const fillRate = ev.capacity > 0 ? Math.round((s.registered_count / ev.capacity) * 1000) / 10 : 0;
+  const fillRate = hasCapacity ? Math.round((s.registered_count / ev.capacity) * 1000) / 10 : 0;
 
-  animVal(document.getElementById('s-capacity'), ev.capacity);
+  if (hasCapacity) {
+    animVal(document.getElementById('s-capacity'), ev.capacity);
+  } else {
+    document.getElementById('s-capacity').textContent = document.documentElement.lang === 'ar' ? 'مفتوح' : 'Unlimited';
+    document.getElementById('s-capacity').style.fontSize = '1.4rem';
+  }
+  
   animVal(document.getElementById('s-registered'), s.registered_count);
   animVal(document.getElementById('s-attended'), s.attended_count);
   animVal(document.getElementById('s-remaining'), remaining);
@@ -256,8 +263,10 @@ async function loadEventStats() {
 
   // Rings
   setRing('fill-ring', fillRate);
-  document.getElementById('fill-pct').textContent = fillRate + '%';
-  document.getElementById('fill-detail').textContent = `${s.registered_count} ${t('registered out of')} ${ev.capacity} ${t('capacity')}`;
+  document.getElementById('fill-pct').textContent = hasCapacity ? fillRate + '%' : '∞';
+  document.getElementById('fill-detail').textContent = hasCapacity 
+    ? `${s.registered_count} ${t('registered out of')} ${ev.capacity} ${t('capacity')}`
+    : `${s.registered_count} ${t('registered')} (${t('Unlimited Capacity')})`;
 
   setRing('att-ring', s.attendance_rate);
   document.getElementById('att-pct').textContent = s.attendance_rate + '%';
@@ -287,14 +296,24 @@ async function loadEventStats() {
   });
 
   // 2. Capacity donut
-  const emptySlots = Math.max(0, ev.capacity - s.registered_count);
+  const emptySlots = hasCapacity ? Math.max(0, ev.capacity - s.registered_count) : 0;
+  const capLabels = hasCapacity 
+    ? [t('Checked In'), t('Registered (Not Scanned)'), t('Available Slots')]
+    : [t('Checked In'), t('Registered (Not Scanned)')];
+  const capData = hasCapacity
+    ? [s.attended_count, remaining, emptySlots]
+    : [s.attended_count, remaining];
+  const capColors = hasCapacity
+    ? ['#22c55e', '#f59e0b', 'rgba(255,255,255,.08)']
+    : ['#22c55e', '#f59e0b'];
+
   new Chart(document.getElementById('capChart'), {
     type: 'doughnut',
     data: {
-      labels: [t('Checked In'), t('Registered (Not Scanned)'), t('Available Slots')],
+      labels: capLabels,
       datasets: [{
-        data: [s.attended_count, remaining, emptySlots],
-        backgroundColor: ['#22c55e', '#f59e0b', 'rgba(255,255,255,.08)'],
+        data: capData,
+        backgroundColor: capColors,
         borderWidth: 0,
         hoverOffset: 8
       }]

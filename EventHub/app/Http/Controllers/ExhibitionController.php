@@ -277,9 +277,19 @@ class ExhibitionController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        $app = ExhibitionApplication::findOrFail($id);
+        $app = ExhibitionApplication::with('event')->findOrFail($id);
         if ($app->event_manager_id !== $user->id) {
             return response()->json(['message' => 'Not your application'], 403);
+        }
+
+        // New Rule: If already has a booth and within 14 days, block changing/removing
+        $currentBoothId = \App\Models\ExhibitionBooth::where('exhibition_application_id', $app->id)->value('id');
+        if ($currentBoothId && $app->event->start_time && now()->diffInDays($app->event->start_time, false) < 14) {
+             return response()->json(['message' => 'Booth assignment cannot be changed with less than 14 days remaining before the event.'], 400);
+        }
+
+        if ($app->status !== 'accepted') {
+            return response()->json(['message' => 'Booth can only be assigned after the application is accepted (signed contract)'], 400);
         }
 
         $request->validate([

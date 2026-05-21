@@ -431,6 +431,7 @@
       loadVenues();
 
       fpInstance = initFlatpickr("#e-booking-date", {
+        minDate: new Date().fp_incr(60),
         showStats: true,
         disable: [
           function (date) {
@@ -530,7 +531,7 @@
           } else if (e.target.classList.contains('date-fully-booked')) {
             showToast(document.documentElement.lang === 'ar' ? 'هذا التاريخ محجوز بالكامل، يرجى اختيار تاريخ آخر.' : 'This date is fully booked, please choose another.', 'error');
           } else {
-            showToast(document.documentElement.lang === 'ar' ? 'لا يمكنك حجز هذا التاريخ. يجب أن يكون الحجز بعد 30 يوماً من اليوم على الأقل.' : 'You cannot book this date. Bookings must be made at least 30 days in advance.', 'info');
+            showToast(document.documentElement.lang === 'ar' ? 'لا يمكنك حجز هذا التاريخ. يجب أن يكون الحجز بعد 60 يوماً من اليوم على الأقل.' : 'You cannot book this date. Bookings must be made at least 60 days in advance.', 'info');
           }
         }
       }, true);
@@ -878,7 +879,7 @@
                 Capacity 
                 ${ev.status === 'approved' && ev.time_status !== 'ended' ? `<button class="btn-icon-sm" onclick="expandCapacity(${ev.id}, ${ev.capacity}, ${ev.venue?.capacity || 99999})" title="Expand Capacity" style="padding:2px;background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.2);border-radius:4px;cursor:pointer;">✏️</button>` : ''}
               </div>
-              <div class="ed-info-value" id="det-capacity-${ev.id}">${ev.capacity}</div>
+              <div class="ed-info-value" id="det-capacity-${ev.id}">${ev.capacity || (document.documentElement.lang === 'ar' ? 'مفتوح' : 'Unlimited')}</div>
             </div>
           </div>
           <div class="ed-info-card ed-info-warning">
@@ -1392,7 +1393,7 @@
             if (canAccept) {
                 showToast('Exhibitor registration is now OPEN.', 'success');
             } else {
-                showToast('Registration toggled ON, but it remains inactive due to the 30-day deadline.', 'info');
+                showToast('Registration toggled ON, but it remains inactive due to the 60-day deadline.', 'info');
             }
         } else {
             showToast('Exhibitor registration is now CLOSED.', 'success');
@@ -1428,7 +1429,7 @@
       intCalendarInstance = initFlatpickr("#e-int-calendar-input", {
         mode: 'multiple',
         dateFormat: 'Y-m-d',
-        minDate: new Date().fp_incr(30),
+        minDate: new Date().fp_incr(60),
         inline: true,
         animate: true,
         showStats: true,
@@ -1648,7 +1649,7 @@
       extCalendarInstance = initFlatpickr("#e-ext-calendar-input", {
         mode: 'multiple',
         dateFormat: 'Y-m-d',
-        minDate: new Date().fp_incr(30),
+        minDate: new Date().fp_incr(60),
         inline: true,
         animate: true,
         appendTo: wrap,

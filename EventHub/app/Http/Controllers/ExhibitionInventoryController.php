@@ -21,6 +21,7 @@ class ExhibitionInventoryController extends Controller
     // POST /api/exhibition/inventory/{eventId}/zones
     public function storeZone(Request $request, $eventId)
     {
+        if ($error = $this->blockIfDeadlinePassed($eventId)) return $error;
         $request->validate(['name' => 'required|string|max:100']);
         
         $zone = ExhibitionZone::create([
@@ -35,6 +36,7 @@ class ExhibitionInventoryController extends Controller
     public function destroyZone($id)
     {
         $zone = ExhibitionZone::findOrFail($id);
+        if ($error = $this->blockIfDeadlinePassed($zone->event_id)) return $error;
         $zone->delete();
         return response()->json(['message' => 'Zone deleted']);
     }
@@ -42,6 +44,8 @@ class ExhibitionInventoryController extends Controller
     // POST /api/exhibition/inventory/zones/{zoneId}/booths
     public function storeBooth(Request $request, $zoneId)
     {
+        $zone = ExhibitionZone::findOrFail($zoneId);
+        if ($error = $this->blockIfDeadlinePassed($zone->event_id)) return $error;
         $request->validate([
             'booth_number' => 'required|string|max:50',
             'size'         => 'nullable|string|max:50'
@@ -59,7 +63,8 @@ class ExhibitionInventoryController extends Controller
     // PUT /api/exhibition/inventory/booths/{id}
     public function updateBooth(Request $request, $id)
     {
-        $booth = ExhibitionBooth::findOrFail($id);
+        $booth = ExhibitionBooth::with('zone')->findOrFail($id);
+        if ($error = $this->blockIfDeadlinePassed($booth->zone->event_id)) return $error;
         $request->validate([
             'booth_number' => 'sometimes|required|string|max:50',
             'size'         => 'nullable|string|max:50'
@@ -72,7 +77,8 @@ class ExhibitionInventoryController extends Controller
     // DELETE /api/exhibition/inventory/booths/{id}
     public function destroyBooth($id)
     {
-        $booth = ExhibitionBooth::findOrFail($id);
+        $booth = ExhibitionBooth::with('zone')->findOrFail($id);
+        if ($error = $this->blockIfDeadlinePassed($booth->zone->event_id)) return $error;
         if ($booth->exhibition_application_id) {
             return response()->json(['message' => 'Cannot delete allocated booth'], 400);
         }
@@ -83,6 +89,8 @@ class ExhibitionInventoryController extends Controller
     // POST /api/exhibition/inventory/zones/{zoneId}/booths/batch
     public function batchGenerateBooths(Request $request, $zoneId)
     {
+        $zone = ExhibitionZone::findOrFail($zoneId);
+        if ($error = $this->blockIfDeadlinePassed($zone->event_id)) return $error;
         $request->validate([
             'prefix' => 'required|string|max:10',
             'start'  => 'required|integer|min:1',
@@ -101,5 +109,14 @@ class ExhibitionInventoryController extends Controller
         }
 
         return response()->json($booths, 201);
+    }
+
+    private function blockIfDeadlinePassed($eventId)
+    {
+        $event = Event::findOrFail($eventId);
+        if ($event->start_time && now()->diffInDays($event->start_time, false) < 14) {
+             return response()->json(['message' => 'Exhibition layout cannot be modified with less than 14 days remaining before the event.'], 400);
+        }
+        return null;
     }
 }

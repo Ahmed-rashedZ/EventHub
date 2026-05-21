@@ -42,7 +42,7 @@
         <tr><th>نوع الحدث:</th><td>{{ $event->event_type ?? '—' }}</td></tr>
         <tr><th>تاريخ الحدث:</th><td>{{ \Carbon\Carbon::parse($event->start_time)->format('Y/m/d - h:i A') }} — {{ \Carbon\Carbon::parse($event->end_time)->format('Y/m/d - h:i A') }}</td></tr>
         <tr><th>مكان الحدث:</th><td>{{ $event->venue->name ?? ($event->external_venue_name ?? '—') }}</td></tr>
-        <tr><th>السعة:</th><td>{{ $event->capacity ?? '—' }} شخص</td></tr>
+        <tr><th>السعة:</th><td>{{ $event->capacity ? $event->capacity . ' شخص' : 'مفتوح' }}</td></tr>
         <tr><th>هدف الحدث:</th><td>{{ $event->event_objective ?? '—' }}</td></tr>
         <tr><th>الجمهور المستهدف:</th><td>{{ $event->target_audience ?? '—' }}</td></tr>
     </table>

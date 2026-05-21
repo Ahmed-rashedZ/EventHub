@@ -287,7 +287,7 @@
         </td>
         <td style="color:var(--text-muted)">${e.venue?.name || 'TBA'}</td>
         <td style="color:var(--text-muted)">${fmtDateShort(e.start_time)} <div style="margin-top:4px;">${timeBadge(e.time_status)}</div></td>
-        <td style="color:var(--text-muted)">${e.capacity ? e.capacity.toLocaleString() : 'N/A'}</td>
+        <td style="color:var(--text-muted)">${e.capacity ? e.capacity.toLocaleString() : (document.documentElement.lang === 'ar' ? 'مفتوح' : 'Unlimited')}</td>
         <td style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
            <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${e.id})" title="View Details">ℹ️ Details</button>
            <div style="display:flex; align-items:center;">
@@ -515,7 +515,7 @@
             })()}
             <div class="ed-info-card ed-info-warning">
               <div class="ed-info-icon">👥</div>
-              <div><div class="ed-info-label">Capacity</div><div class="ed-info-value">${ev.capacity}</div></div>
+              <div><div class="ed-info-label">Capacity</div><div class="ed-info-value">${ev.capacity || (document.documentElement.lang === 'ar' ? 'مفتوح' : 'Unlimited')}</div></div>
             </div>
           </div>
           

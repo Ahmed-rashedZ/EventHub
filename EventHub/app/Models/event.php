@@ -207,8 +207,8 @@ class Event extends Model
             return false;
         }
 
-        // Must be at least 30 days before start_time
-        if (now()->diffInDays($this->start_time, false) < 30) {
+        // Must be at least 60 days before start_time
+        if (now()->diffInDays($this->start_time, false) < 60) {
             return false;
         }
 
