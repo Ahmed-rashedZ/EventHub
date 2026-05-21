@@ -123,18 +123,30 @@ class EventController extends Controller
                     return response()->json(['message' => 'Invalid schedule format.'], 422);
                 }
 
-                if ($slot['period'] === 'morning') {
-                    $slotStart = \Carbon\Carbon::parse("{$slot['date']} {$venue->morning_start}");
-                    $slotEnd   = \Carbon\Carbon::parse("{$slot['date']} {$venue->morning_end}");
-                } elseif ($slot['period'] === 'evening') {
-                    $slotStart = \Carbon\Carbon::parse("{$slot['date']} {$venue->evening_start}");
-                    $slotEnd   = \Carbon\Carbon::parse("{$slot['date']} {$venue->evening_end}");
+                $venueMorningStart = $venue->morning_start;
+                $venueEveningEnd   = $venue->evening_end;
+
+                if (isset($slot['start_time'], $slot['end_time'])) {
+                    $slotStart = \Carbon\Carbon::parse("{$slot['date']} {$slot['start_time']}");
+                    $slotEnd   = \Carbon\Carbon::parse("{$slot['date']} {$slot['end_time']}");
                 } else {
-                    $slotStart = \Carbon\Carbon::parse("{$slot['date']} {$venue->morning_start}");
-                    $slotEnd   = \Carbon\Carbon::parse("{$slot['date']} {$venue->evening_end}");
+                    if ($slot['period'] === 'morning') {
+                        $slotStart = \Carbon\Carbon::parse("{$slot['date']} {$venue->morning_start}");
+                        $slotEnd   = \Carbon\Carbon::parse("{$slot['date']} {$venue->morning_end}");
+                    } elseif ($slot['period'] === 'evening') {
+                        $slotStart = \Carbon\Carbon::parse("{$slot['date']} {$venue->evening_start}");
+                        $slotEnd   = \Carbon\Carbon::parse("{$slot['date']} {$venue->evening_end}");
+                    } else {
+                        $slotStart = \Carbon\Carbon::parse("{$slot['date']} {$venue->morning_start}");
+                        $slotEnd   = \Carbon\Carbon::parse("{$slot['date']} {$venue->evening_end}");
+                    }
                 }
 
-                // Attach start_time and end_time for easier processing later if needed
+                if ($slotStart >= $slotEnd) {
+                    return response()->json(['message' => "Invalid time range on {$slot['date']}. Start time must be before end time."], 422);
+                }
+
+                // Update slot for storage
                 $slot['start_time'] = $slotStart->format('H:i');
                 $slot['end_time'] = $slotEnd->format('H:i');
 
@@ -322,30 +334,13 @@ class EventController extends Controller
         $ministryPath = $request->file('ministry_document')->store('ministry_docs', 'public');
         $eventData['ministry_document_path'] = $ministryPath;
 
-        $agendaJson = null;
+        $agendaData = null;
         if ($request->has('agenda') && $request->agenda) {
             $agendaData = json_decode($request->agenda, true);
-            if (is_array($agendaData)) {
-                foreach ($agendaData as $day => $items) {
-                    if (is_array($items)) {
-                        usort($items, function($a, $b) {
-                            return strcmp($a['start_time'], $b['start_time']);
-                        });
-                        $prevEnd = null;
-                        foreach ($items as $item) {
-                            if ($item['start_time'] >= $item['end_time']) {
-                                return response()->json(['message' => "Invalid time in agenda for $day. Start time must be before end time."], 422);
-                            }
-                            if ($prevEnd !== null && $item['start_time'] < $prevEnd) {
-                                return response()->json(['message' => "Overlapping agenda items are not allowed on $day."], 422);
-                            }
-                            $prevEnd = $item['end_time'];
-                        }
-                    }
-                }
-            }
-            $agendaJson = $agendaData;
+            $validation = $this->validateAgenda($agendaData, $schedule);
+            if ($validation) return $validation;
         }
+        $eventData['agenda'] = $agendaData;
 
         $eventData = array_merge($eventData, [
             'title'           => $request->title,
@@ -357,7 +352,7 @@ class EventController extends Controller
             'status'          => 'pending',
             'created_by'      => $request->user()->id,
             'image'           => $imagePath,
-            'agenda'          => $agendaJson,
+            'agenda'          => $agendaData,
             'is_exhibition'   => ($request->event_type === 'معرض'),
         ]);
 
@@ -627,11 +622,22 @@ class EventController extends Controller
         return $event;
     }
 
-    private function validateAgenda($agenda)
+    private function validateAgenda($agenda, $schedule = null)
     {
         if (is_array($agenda)) {
             foreach ($agenda as $day => $items) {
                 if (is_array($items)) {
+                    // Find schedule bounds for this day
+                    $daySchedule = null;
+                    if ($schedule && is_array($schedule)) {
+                        foreach ($schedule as $slot) {
+                            if (isset($slot['date']) && $slot['date'] === $day) {
+                                $daySchedule = $slot;
+                                break;
+                            }
+                        }
+                    }
+
                     usort($items, function($a, $b) {
                         if (!isset($a['start_time'], $b['start_time'])) return 0;
                         return strcmp($a['start_time'], $b['start_time']);
@@ -642,6 +648,15 @@ class EventController extends Controller
                         if ($item['start_time'] >= $item['end_time']) {
                             return response()->json(['message' => "Invalid time in agenda for $day. Start time must be before end time."], 422);
                         }
+
+                        // Bounds check against daily schedule
+                        if ($daySchedule && isset($daySchedule['start_time'], $daySchedule['end_time'])) {
+                            if ($item['start_time'] < $daySchedule['start_time'] || $item['end_time'] > $daySchedule['end_time']) {
+                                $activityName = $item['title'] ?? 'Activity';
+                                return response()->json(['message' => "Agenda item \"{$activityName}\" on $day is outside exhibition hours ({$daySchedule['start_time']} - {$daySchedule['end_time']})."], 422);
+                            }
+                        }
+
                         if ($prevEnd !== null && $item['start_time'] < $prevEnd) {
                             return response()->json(['message' => "Overlapping agenda items are not allowed on $day."], 422);
                         }
@@ -835,7 +850,14 @@ class EventController extends Controller
             $updateData['booking_proof_path'] = $request->file('booking_proof')->store('proofs', 'public');
         }
         if (in_array('agenda', $allowedFields) && $request->has('agenda')) {
-            $updateData['agenda'] = $request->agenda ? json_decode($request->agenda, true) : null;
+            $agendaData = $request->agenda ? json_decode($request->agenda, true) : null;
+            $schedule = $event->location_type === 'internal' ? $event->internal_schedule : $event->external_schedule;
+            // Get merged schedule if some dates/times are being updated in the same request?
+            // Since updatePending only allows fields in review_fields, we trust the model's existing schedule 
+            // unless 'dates' was also requested (but 'dates' is not in current standard Event schema, it's schedule).
+            $validation = $this->validateAgenda($agendaData, $schedule);
+            if ($validation) return $validation;
+            $updateData['agenda'] = $agendaData;
         }
 
         if (empty($updateData)) {
@@ -917,7 +939,8 @@ class EventController extends Controller
 
         $agenda = $request->agenda;
 
-        $validation = $this->validateAgenda($agenda);
+        $schedule = $event->internal_schedule ?? $event->external_schedule;
+        $validation = $this->validateAgenda($agenda, $schedule);
         if ($validation) return $validation;
 
         // Normalize: if it's a flat array (legacy), wrap it

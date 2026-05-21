@@ -2,6 +2,7 @@
     <div class="sidebar-user">
         @if(Auth::check())
             <a href="{{ route('profile.show', Auth::user()) }}" style="text-decoration: none;" class="avatar" id="sidebar-avatar" title="View Profile">
+                <script>document.getElementById('sidebar-avatar').title = t('View Profile')</script>
                 @if(Auth::user()->image)
                     <img src="{{ asset('storage/' . Auth::user()->image) }}"
                         style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; aspect-ratio: 1/1;" alt="User Image">

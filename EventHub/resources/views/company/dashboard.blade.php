@@ -82,7 +82,7 @@
         <p class="page-subtitle">Manage your exhibition participation and booth bookings</p>
       </div>
       <div class="topbar-actions">
-        <a href="/manager/events" class="btn btn-primary">Browse Exhibitions</a>
+        <a href="/company/events" class="btn btn-primary">Browse Exhibitions</a>
       </div>
     </div>
 
@@ -120,11 +120,6 @@
         <div class="stat-label">Pending Apps</div>
         <div class="stat-value" id="stat-pending">—</div>
         <div class="stat-icon">⏳</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Profile Completion</div>
-        <div class="stat-value" id="stat-profile-val">0%</div>
-        <div class="completion-bar"><div class="completion-fill" id="stat-profile-bar" style="width:0%"></div></div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Acceptance Rate</div>
@@ -180,30 +175,28 @@
     document.getElementById('stat-accepted').textContent = data.accepted;
     document.getElementById('stat-pending').textContent = data.pending;
     document.getElementById('stat-rate').textContent = data.acceptance_rate + '%';
-    document.getElementById('stat-profile-val').textContent = data.profile_completion + '%';
-    document.getElementById('stat-profile-bar').style.width = data.profile_completion + '%';
 
     const tbody = document.getElementById('history-body');
     if (!data.application_history.length) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:40px; color:var(--text-muted)">No applications yet.</td></tr>';
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:40px; color:var(--text-muted)">${t('No applications yet.')}</td></tr>`;
         return;
     }
 
     tbody.innerHTML = data.application_history.map(app => `
       <tr>
-        <td style="font-weight:600">${app.event_title}</td>
+        <td style="font-weight:600" class="i18n-skip">${app.event_title}</td>
         <td style="color:var(--text-muted)">${app.submitted_at}</td>
         <td style="color:var(--text-muted)">
-            ${app.booth ? `Booth #${app.booth.number} (${app.booth.size})` : '<span style="font-size:0.8rem;opacity:0.6">Not assigned yet</span>'}
+            ${app.booth ? `${t('Booth')} #${app.booth.number} (${app.booth.size})` : `<span style="font-size:0.8rem;opacity:0.6">${t('Not assigned yet')}</span>`}
         </td>
         <td>
            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
             ${badge(app.status)}
             ${app.status === 'pending' && app.initiator === 'event_manager' ? `
-              <button class="btn btn-success btn-sm" style="padding:4px 10px;" onclick="respondRequest(${app.application_id}, 'accepted')">✅ Accept</button>
-              <button class="btn btn-danger btn-sm" style="padding:4px 10px;" onclick="respondRequest(${app.application_id}, 'rejected')">❌ Reject</button>
+              <button class="btn btn-success btn-sm" style="padding:4px 10px;" onclick="respondRequest(${app.application_id}, 'accepted')">✅ ${t('Accept')}</button>
+              <button class="btn btn-danger btn-sm" style="padding:4px 10px;" onclick="respondRequest(${app.application_id}, 'rejected')">❌ ${t('Reject')}</button>
             ` : ''}
-            ${app.status === 'negotiating' ? `<a href="/company/exhibitions" class="btn btn-sm btn-primary" style="padding:4px 10px;">Review Offer</a>` : ''}
+            ${app.status === 'negotiating' ? `<a href="/company/exhibitions" class="btn btn-sm btn-primary" style="padding:4px 10px;">${t('Review Offer')}</a>` : ''}
             <button class="btn btn-sm btn-ghost" style="padding:4px 10px;" onclick="showEventDetails(${app.event_id})" title="${t('View Details')}">ℹ️ ${t('Details')}</button>
            </div>
         </td>
@@ -212,13 +205,13 @@
   }
 
   async function respondRequest(id, status) {
-    if (!confirm('Are you sure you want to ' + status + ' this invitation?')) return;
+    if (!confirm(t('Are you sure you want to ') + t(status) + t(' this invitation?'))) return;
     const res = await api.put(`/exhibition/${id}`, { status });
     if (res.ok) {
-      showToast(status === 'accepted' ? 'Accepted! Contract negotiation started.' : 'Invitation rejected.', 'success');
+      showToast(status === 'accepted' ? t('Accepted! Contract negotiation started.') : t('Invitation rejected.'), 'success');
       loadDashboard(); // reload table
     } else {
-      showToast(res.data?.message || 'Error processing request', 'error');
+      showToast(res.data?.message || t('Error processing request'), 'error');
     }
   }
 
@@ -235,16 +228,16 @@
 
     if (isON) {
       card.classList.add('active-status');
-      title.innerText = 'Open to Invitations';
+      title.innerText = t('Open to Invitations');
       title.style.color = 'var(--success)';
-      badgeEl.innerText = 'Visible';
+      badgeEl.innerText = t('Visible');
       badgeEl.className = 'badge badge-approved';
       alertBox.style.display = 'none';
     } else {
       card.classList.remove('active-status');
-      title.innerText = 'Closed to Invitations';
+      title.innerText = t('Closed to Invitations');
       title.style.color = 'var(--text-muted)';
-      badgeEl.innerText = 'Hidden';
+      badgeEl.innerText = t('Hidden');
       badgeEl.className = 'badge badge-rejected';
       alertBox.style.display = 'block';
     }
@@ -257,7 +250,7 @@
     const res = await api.patch('/profile/availability', { is_available: !!isNowChecked });
     if (res.ok) {
         syncToggleUI(res.data.is_available);
-        showToast(isNowChecked ? 'You are now visible to managers.' : 'You are now hidden.', 'info');
+        showToast(isNowChecked ? t('You are now visible to managers.') : t('You are now hidden.'), 'info');
     }
     toggle.disabled = false;
   }
@@ -275,7 +268,7 @@
       api.get(`/company/exhibitions`)
     ]).then(([res, appRes]) => {
       if (!res.ok) {
-        content.innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><p>Could not fetch event details</p></div>';
+        content.innerHTML = `<div class="empty-state"><div class="empty-icon">❌</div><p>${t('Could not fetch event details')}</p></div>`;
         return;
       }
       const ev = res.data;
@@ -343,20 +336,20 @@
 
 
         <div class="ed-section">
-          <div class="ed-section-label">About this Event</div>
-          <p class="ed-description">${ev.description || 'No description provided.'}</p>
+          <div class="ed-section-label">${t('About this Event')}</div>
+          <p class="ed-description">${ev.description || t('No description provided.')}</p>
         </div>
 
         <div class="ed-info-grid">
           <div class="ed-info-card ed-info-accent2">
             <div class="ed-info-icon">🏛️</div>
-            <div><div class="ed-info-label">Venue</div><div class="ed-info-value">${ev.venue?.name || ev.external_venue_name || '—'}</div></div>
+            <div><div class="ed-info-label">${t('Venue')}</div><div class="ed-info-value">${ev.venue?.name || ev.external_venue_name || '—'}</div></div>
           </div>
           <div class="ed-info-card ed-info-accent2">
             <div class="ed-info-icon">📍</div>
-            <div><div class="ed-info-label">Location</div><div class="ed-info-value">
-              ${ev.location_link || (ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` 
-              : (ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` : '—'))}
+            <div><div class="ed-info-label">${t('Location')}</div><div class="ed-info-value i18n-skip">
+              ${ev.location_link || (ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">${ev.venue.location} ↗</a>` 
+              : (ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">${ev.external_venue_location} ↗</a>` : '—'))}
             </div></div>
           </div>
         </div>
@@ -365,8 +358,8 @@
           <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(34,211,238,0.06); border:1px solid rgba(34,211,238,0.15); margin-top:10px;">
               <div class="ed-info-icon">📎</div>
               <div style="flex:1">
-                  <div class="ed-info-label" style="color:#22d3ee">Booking Proof</div>
-                  <a href="/storage/${ev.booking_proof}" target="_blank" class="ed-info-value" style="text-decoration:underline;">View Document ↗</a>
+                  <div class="ed-info-label" style="color:#22d3ee">${t('Booking Proof')}</div>
+                  <a href="/storage/${ev.booking_proof}" target="_blank" class="ed-info-value" style="text-decoration:underline;">${t('View Document ↗')}</a>
               </div>
           </div>
         ` : ''}
@@ -375,8 +368,8 @@
           <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(139,92,246,0.06); border:1px solid rgba(139,92,246,0.15); margin-top:10px;">
               <div class="ed-info-icon">📄</div>
               <div style="flex:1">
-                  <div class="ed-info-label" style="color:#a78bfa">Competent Authority Approval</div>
-                  <a href="/storage/${ev.ministry_approval_doc}" target="_blank" class="ed-info-value" style="text-decoration:underline;">View Document ↗</a>
+                  <div class="ed-info-label" style="color:#a78bfa">${t('Competent Authority Approval')}</div>
+                  <a href="/storage/${ev.ministry_approval_doc}" target="_blank" class="ed-info-value" style="text-decoration:underline;">${t('View Document ↗')}</a>
               </div>
           </div>
         ` : ''}
@@ -385,7 +378,7 @@
           <div class="ed-info-card" style="grid-column: 1 / -1; flex-direction:column; align-items:flex-start; gap:5px; margin-top:10px;">
               <div style="display:flex; align-items:center; gap:8px;">
                   <span style="font-size:1.1rem;">🎯</span>
-                  <div class="ed-info-label" style="margin-bottom:0">Event Objective</div>
+                  <div class="ed-info-label" style="margin-bottom:0">${t('Event Objective')}</div>
               </div>
               <div class="ed-info-value" style="font-weight:400; font-size:0.85rem; line-height:1.4; color:rgba(255,255,255,0.7)">${ev.objective}</div>
           </div>
@@ -395,7 +388,7 @@
           <div class="ed-info-card" style="grid-column: 1 / -1; flex-direction:column; align-items:flex-start; gap:5px; margin-top:10px;">
               <div style="display:flex; align-items:center; gap:8px;">
                   <span style="font-size:1.1rem;">👥</span>
-                  <div class="ed-info-label" style="margin-bottom:0">Target Audience</div>
+                  <div class="ed-info-label" style="margin-bottom:0">${t('Target Audience')}</div>
               </div>
               <div class="ed-info-value" style="font-weight:400; font-size:0.85rem; line-height:1.4; color:rgba(255,255,255,0.7)">${ev.target_audience}</div>
           </div>
@@ -409,7 +402,7 @@
               const dn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
               const mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
               let scheduleHtml = '<div style="grid-column: 1 / -1; margin-top:15px;">';
-              scheduleHtml += '<div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">📅 Event Schedule (' + schedule.length + ' day' + (schedule.length > 1 ? 's' : '') + ')</div>';
+              scheduleHtml += '<div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">📅 ' + t('Event Schedule') + ' (' + schedule.length + ' ' + (schedule.length > 1 ? t('days') : t('day')) + ')</div>';
               scheduleHtml += '<div style="display:flex;flex-direction:column;gap:6px;">';
               schedule.forEach(function(slot) {
                 const d = new Date(slot.date + 'T00:00:00');
@@ -420,12 +413,12 @@
                 scheduleHtml += '<div style="font-size:0.5rem;color:#94a3b8;">' + mn[d.getMonth()] + '</div>';
                 scheduleHtml += '</div>';
                 scheduleHtml += '<div style="flex:1;display:flex;align-items:center;gap:8px;">';
-                if (slot.period) {
+                if (slot.period && !slot.start_time) {
                   scheduleHtml += '<span style="background:rgba(16,185,129,0.1);color:#10b981;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;text-transform:capitalize;">' + slot.period.replace('_', ' ') + '</span>';
                 }
                 if (slot.start_time) {
                   scheduleHtml += '<span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;">' + slot.start_time + '</span>';
-                  scheduleHtml += '<span style="color:#64748b;font-size:0.8rem;">→</span>';
+                  scheduleHtml += '<span style="color:#64748b;font-size:0.8rem;">←</span>';
                 }
                 if (slot.end_time) {
                   scheduleHtml += '<span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;">' + slot.end_time + '</span>';
@@ -435,19 +428,19 @@
               scheduleHtml += '</div></div>';
               return scheduleHtml;
             } else {
-              return '<div class="ed-info-card ed-info-accent" style="margin-top:10px;"><div class="ed-info-icon">🕐</div><div><div class="ed-info-label">Start</div><div class="ed-info-value">' + fmtDate(ev.start_time) + '</div></div></div>' +
-                     '<div class="ed-info-card ed-info-accent" style="margin-top:10px;"><div class="ed-info-icon">🕔</div><div><div class="ed-info-label">End</div><div class="ed-info-value">' + fmtDate(ev.end_time) + '</div></div></div>';
+              return '<div class="ed-info-card ed-info-accent" style="margin-top:10px;"><div class="ed-info-icon">🕐</div><div><div class="ed-info-label">' + t('Start') + '</div><div class="ed-info-value">' + fmtDate(ev.start_time) + '</div></div></div>' +
+                     '<div class="ed-info-card ed-info-accent" style="margin-top:10px;"><div class="ed-info-icon">🕔</div><div><div class="ed-info-label">' + t('End') + '</div><div class="ed-info-value">' + fmtDate(ev.end_time) + '</div></div></div>';
             }
           })()}
 
           <div class="ed-info-grid" style="margin-top:15px;">
             <div class="ed-info-card ed-info-warning">
               <div class="ed-info-icon">👥</div>
-              <div><div class="ed-info-label">Capacity</div><div class="ed-info-value">${ev.capacity || 'N/A'}</div></div>
+              <div><div class="ed-info-label">${t('Capacity')}</div><div class="ed-info-value">${ev.capacity ? ev.capacity : t('Unlimited')}</div></div>
             </div>
             <div class="ed-info-card ed-info-warning">
               <div class="ed-info-icon">🎫</div>
-              <div><div class="ed-info-label">Tickets Booked</div><div class="ed-info-value">${ev.tickets_count || 0}</div></div>
+              <div><div class="ed-info-label">${t('Tickets Booked')}</div><div class="ed-info-value">${ev.tickets_count || 0}</div></div>
             </div>
           </div>
 
@@ -457,7 +450,7 @@
         <div class="ed-footer mt-2" style="justify-content:space-between; margin-top:20px;">
 
           <div style="display:flex; align-items:center; gap:8px;">
-              <span class="ed-footer-label">Created by</span>
+              <span class="ed-footer-label">${t('Created by')}</span>
               <span class="ed-footer-name cursor-pointer" onclick="navigateToProfile(${ev.creator?.id})" style="color:var(--accent2);">${ev.creator?.name || '—'}</span>
           </div>
           <div class="ed-footer-label">ID: #${ev.id}</div>

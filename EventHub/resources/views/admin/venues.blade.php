@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -177,16 +177,16 @@
 
   <main class="main-content">
     <div class="topbar">
-      <div><h1 class="page-title">Venues</h1><p class="page-subtitle">Manage event locations</p></div>
+      <div><h1 class="page-title"><script>document.write(t('Venues'))</script></h1><p class="page-subtitle"><script>document.write(t('Manage event locations'))</script></p></div>
       <div class="topbar-actions">
-        <button class="btn btn-primary" onclick="openModal()">+ Add Venue</button>
+        <button class="btn btn-primary" onclick="openModal()">+ <script>document.write(t('Add Venue'))</script></button>
       </div>
     </div>
 
     <div class="card">
       <div class="table-wrap">
         <table>
-          <thead><tr><th>#</th><th>Name</th><th>Location</th><th>Capacity</th><th>Status</th><th>Maintenance</th><th>Actions</th></tr></thead>
+          <thead><tr><th>#</th><th><script>document.write(t('Name'))</script></th><th><script>document.write(t('Location'))</script></th><th><script>document.write(t('Capacity'))</script></th><th><script>document.write(t('Status'))</script></th><th><script>document.write(t('Maintenance'))</script></th><th><script>document.write(t('Actions'))</script></th></tr></thead>
           <tbody id="venues-body">
             <tr class="loading-row"><td colspan="7"><div class="spinner" style="margin:auto"></div></td></tr>
           </tbody>
@@ -200,62 +200,66 @@
 <div class="modal-overlay" id="venue-modal">
   <div class="modal">
     <div class="modal-header">
-      <h3 class="modal-title" id="modal-title">Add Venue</h3>
+      <h3 class="modal-title" id="modal-title"><script>document.write(t('Add Venue'))</script></h3>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <form id="venue-form">
       <input type="hidden" id="venue-id"/>
       <div class="form-group">
-        <label class="form-label">Venue Name</label>
-        <input id="v-name" type="text" class="form-control" placeholder="City Hall" required/>
+        <label class="form-label"><script>document.write(t('Venue Name'))</script></label>
+        <input id="v-name" type="text" class="form-control" placeholder="City Hall" 
+          data-placeholder="City Hall" required/>
+        <script>document.getElementById('v-name').placeholder = t(document.getElementById('v-name').getAttribute('data-placeholder'))</script>
       </div>
       <div class="form-grid">
         <div class="form-group">
-          <label class="form-label">Google Maps Link</label>
-          <input id="v-location" type="url" class="form-control" placeholder="https://maps.google.com/..." required/>
-          <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block">Open Google Maps → Select location → Copy share link and paste here</small>
+          <label class="form-label"><script>document.write(t('Google Maps Link'))</script></label>
+          <input id="v-location" type="url" class="form-control" placeholder="https://maps.google.com/..." 
+            data-placeholder="https://maps.google.com/..." required/>
+          <script>document.getElementById('v-location').placeholder = t(document.getElementById('v-location').getAttribute('data-placeholder'))</script>
+          <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block"><script>document.write(t('Open Google Maps → Select location → Copy share link and paste here'))</script></small>
         </div>
         <div class="form-group">
-          <label class="form-label">Capacity</label>
+          <label class="form-label"><script>document.write(t('Capacity'))</script></label>
           <input id="v-capacity" type="number" class="form-control" placeholder="500" min="1" required/>
         </div>
       </div>
 
       <!-- Period Settings -->
       <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:16px;margin-bottom:16px">
-        <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.35);margin-bottom:12px">⏰ Period Settings</div>
+        <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.35);margin-bottom:12px">⏰ <script>document.write(t('Period Settings'))</script></div>
         <div class="form-grid">
           <div class="form-group">
-            <label class="form-label">Morning Start</label>
+            <label class="form-label"><script>document.write(t('Morning Start'))</script></label>
             <input id="v-morning-start" type="time" class="form-control" value="09:00" required/>
           </div>
           <div class="form-group">
-            <label class="form-label">Morning End</label>
+            <label class="form-label"><script>document.write(t('Morning End'))</script></label>
             <input id="v-morning-end" type="time" class="form-control" value="13:00" required/>
           </div>
         </div>
         <div class="form-grid">
           <div class="form-group">
-            <label class="form-label">Evening Start</label>
+            <label class="form-label"><script>document.write(t('Evening Start'))</script></label>
             <input id="v-evening-start" type="time" class="form-control" value="15:00" required/>
           </div>
           <div class="form-group">
-            <label class="form-label">Evening End</label>
+            <label class="form-label"><script>document.write(t('Evening End'))</script></label>
             <input id="v-evening-end" type="time" class="form-control" value="19:00" required/>
           </div>
         </div>
       </div>
 
       <div class="form-group">
-        <label class="form-label">Status</label>
+        <label class="form-label"><script>document.write(t('Status'))</script></label>
         <select id="v-status" class="form-control">
-          <option value="available">Available</option>
-          <option value="maintenance">Maintenance (Full Lockdown)</option>
+          <option value="available"><script>document.write(t('Available'))</script></option>
+          <option value="maintenance"><script>document.write(t('Maintenance (Full Lockdown)'))</script></option>
         </select>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-        <button type="submit" class="btn btn-primary" id="save-btn">Save Venue</button>
+        <button type="button" class="btn btn-ghost" onclick="closeModal()"><script>document.write(t('Cancel'))</script></button>
+        <button type="submit" class="btn btn-primary" id="save-btn"><script>document.write(t('Save Venue'))</script></button>
       </div>
     </form>
   </div>
@@ -265,51 +269,57 @@
 <div class="modal-overlay" id="maintenance-modal">
   <div class="modal" style="max-width:560px; max-height:85vh; overflow-y:auto;">
     <div class="modal-header">
-      <h3 class="modal-title">🔧 Schedule Maintenance — <span id="maint-venue-name"></span></h3>
+      <h3 class="modal-title"><script>document.write(t('Schedule Maintenance'))</script> — <span id="maint-venue-name"></span></h3>
       <button class="modal-close" onclick="closeMaintenanceModal()">✕</button>
     </div>
     
     <!-- Add New Period -->
     <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:20px;margin-bottom:20px">
-      <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.35);margin-bottom:16px">📅 Add Maintenance Period</div>
+      <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.35);margin-bottom:16px">📅 <script>document.write(t('Add Maintenance Period'))</script></div>
       <div class="form-grid">
         <div class="form-group">
-          <label class="form-label">Start Date</label>
-          <input id="m-start" type="text" class="form-control" placeholder="Select start date..." readonly required/>
+          <label class="form-label"><script>document.write(t('Start Date'))</script></label>
+          <input id="m-start" type="text" class="form-control" placeholder="Select start date..." 
+            data-placeholder="Select start date..." readonly required/>
+          <script>document.getElementById('m-start').placeholder = t(document.getElementById('m-start').getAttribute('data-placeholder'))</script>
         </div>
         <div class="form-group">
-          <label class="form-label">End Date</label>
-          <input id="m-end" type="text" class="form-control" placeholder="Select end date..." readonly required/>
+          <label class="form-label"><script>document.write(t('End Date'))</script></label>
+          <input id="m-end" type="text" class="form-control" placeholder="Select end date..." 
+            data-placeholder="Select end date..." readonly required/>
+          <script>document.getElementById('m-end').placeholder = t(document.getElementById('m-end').getAttribute('data-placeholder'))</script>
         </div>
       </div>
       <div style="display: flex; gap: 14px; margin: 10px 0 14px; font-size: 12px; color: rgba(255,255,255,0.45); flex-wrap: wrap;">
         <div style="display: flex; align-items: center; gap: 5px;">
           <span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#ef4444;"></span>
-          Booked (Event)
+          <script>document.write(t('Booked (Event)'))</script>
         </div>
         <div style="display: flex; align-items: center; gap: 5px;">
           <span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:repeating-linear-gradient(45deg,rgba(245,158,11,0.6),rgba(245,158,11,0.6) 2px,rgba(239,68,68,0.6) 2px,rgba(239,68,68,0.6) 4px);border:1px solid #f59e0b;"></span>
-          Maintenance
+          <script>document.write(t('Maintenance'))</script>
         </div>
         <div style="display: flex; align-items: center; gap: 5px;">
           <span style="display:inline-block;width:10px;height:10px;border-radius:3px;border:2px solid #8b5cf6;"></span>
-          Today
+          <script>document.write(t('Today'))</script>
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">Reason (Optional)</label>
-        <input id="m-reason" type="text" class="form-control" placeholder="e.g. Annual renovation, Equipment upgrade..."/>
+        <label class="form-label"><script>document.write(t('Reason (Optional)'))</script></label>
+        <input id="m-reason" type="text" class="form-control" placeholder="e.g. Annual renovation, Equipment upgrade..." 
+          data-placeholder="e.g. Annual renovation, Equipment upgrade..."/>
+        <script>document.getElementById('m-reason').placeholder = t(document.getElementById('m-reason').getAttribute('data-placeholder'))</script>
       </div>
       <button type="button" class="btn btn-primary" onclick="addMaintenancePeriod()" style="width:100%;margin-top:8px">
-        + Add Maintenance Period
+        + <script>document.write(t('Add Maintenance Period'))</script>
       </button>
     </div>
 
     <!-- Existing Periods List -->
     <div>
-      <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.35);margin-bottom:12px">📋 Scheduled Maintenance Periods</div>
+      <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.35);margin-bottom:12px">📋 <script>document.write(t('Scheduled Maintenance Periods'))</script></div>
       <div id="maintenance-list">
-        <div style="text-align:center;color:var(--text-muted);padding:20px">Loading...</div>
+        <div style="text-align:center;color:var(--text-muted);padding:20px"><script>document.write(t('Loading...'))</script></div>
       </div>
     </div>
   </div>
@@ -396,7 +406,7 @@
   async function loadVenues() {
     const res = await api.get('/venues');
     const tbody = document.getElementById('venues-body');
-    if (!res.ok || !res.data.length) { tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">🏛️</div><p>No venues yet. Add one!</p></div></td></tr>'; return; }
+    if (!res.ok || !res.data.length) { tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">🏛️</div><p>${t('No venues yet. Add one!')}</p></div></td></tr>`; return; }
     tbody.innerHTML = res.data.map((v, i) => {
       // Count upcoming maintenance periods
       const now = new Date().toISOString().split('T')[0];
@@ -405,28 +415,28 @@
       
       let statusHtml;
       if (v.status === 'maintenance') {
-        statusHtml = '<span class="badge" style="background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3)">🔒 Full Lockdown</span>';
+        statusHtml = `<span class="badge" style="background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3)">🔒 ${t('Full Lockdown')}</span>`;
       } else if (activeMaint.length > 0) {
-        statusHtml = '<span class="badge" style="background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3)">🔧 Under Maintenance</span>';
+        statusHtml = `<span class="badge" style="background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3)">🔧 ${t('Under Maintenance')}</span>`;
       } else {
-        statusHtml = '<span class="badge" style="background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3)">✅ Available</span>';
+        statusHtml = `<span class="badge" style="background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3)">✅ ${t('Available')}</span>`;
       }
 
       const maintBadge = upcomingMaint.length > 0
-        ? `<span class="badge" style="background:rgba(245,158,11,0.12);color:#f59e0b;border:1px solid rgba(245,158,11,0.25);font-size:11px">${upcomingMaint.length} scheduled</span>`
-        : '<span style="color:var(--text-muted);font-size:12px">None</span>';
+        ? `<span class="badge" style="background:rgba(245,158,11,0.12);color:#f59e0b;border:1px solid rgba(245,158,11,0.25);font-size:11px">${upcomingMaint.length} ${t('scheduled')}</span>`
+        : `<span style="color:var(--text-muted);font-size:12px">${t('None')}</span>`;
 
       return `
       <tr>
         <td style="color:var(--text-muted)">${i+1}</td>
         <td><div style="font-weight:600">${v.name}</div></td>
-        <td>${v.location && v.location.startsWith('http') ? `<a href="${v.location}" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;display:inline-flex;align-items:center;gap:4px">📍 Open in Maps <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>` : `<span style="color:var(--text-muted)">📍 ${v.location || '—'}</span>`}</td>
+        <td><div style="font-size:0.9rem; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${v.location && v.location.startsWith('http') ? `<a href="${v.location}" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;display:inline-flex;align-items:center;gap:4px" class="i18n-skip">📍 ${v.location}</a>` : `<span style="color:var(--text-muted)" class="i18n-skip">📍 ${v.location || '—'}</span>`}</div></td>
         <td style="color:var(--text-muted)">${v.capacity.toLocaleString()}</td>
         <td>${statusHtml}</td>
         <td>${maintBadge}</td>
         <td style="display:flex;gap:6px;padding:14px 16px">
-          <button class="btn btn-ghost btn-sm" onclick='editVenue(${JSON.stringify(v)})'>✏️ Edit</button>
-          <button class="btn btn-sm" style="background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.25)" onclick='openMaintenanceModal(${v.id}, ${JSON.stringify(v.name)})'>🔧 Maintenance</button>
+          <button class="btn btn-ghost btn-sm" onclick='editVenue(${JSON.stringify(v)})'>✏️ ${t('Edit')}</button>
+          <button class="btn btn-sm" style="background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.25)" onclick='openMaintenanceModal(${v.id}, ${JSON.stringify(v.name)})'>🔧 ${t('Maintenance')}</button>
         </td>
       </tr>`;
     }).join('');
@@ -434,7 +444,7 @@
 
   function openModal(v = null) {
     editingId = v ? v.id : null;
-    document.getElementById('modal-title').textContent = v ? 'Edit Venue' : 'Add Venue';
+    document.getElementById('modal-title').textContent = v ? t('Edit Venue') : t('Add Venue');
     document.getElementById('v-name').value     = v ? v.name : '';
     document.getElementById('v-location').value = v ? (v.location || '') : '';
     document.getElementById('v-capacity').value = v ? v.capacity : '';
@@ -503,7 +513,7 @@
     
     const res = await api.get(`/venues/${currentMaintenanceVenueId}/maintenance`);
     if (!res.ok || !res.data.length) {
-      container.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:24px;background:rgba(255,255,255,0.02);border:1px dashed rgba(255,255,255,0.08);border-radius:10px"><div style="font-size:2rem;margin-bottom:8px">📋</div><p style="margin:0">No maintenance periods scheduled</p></div>';
+      container.innerHTML = `<div style="text-align:center;color:var(--text-muted);padding:24px;background:rgba(255,255,255,0.02);border:1px dashed rgba(255,255,255,0.08);border-radius:10px"><div style="font-size:2rem;margin-bottom:8px">📋</div><p style="margin:0">${t('No maintenance periods scheduled')}</p></div>`;
       return;
     }
 
@@ -514,9 +524,9 @@
       const isFuture = p.start_date > now;
       
       let statusBadge;
-      if (isActive) statusBadge = '<span style="background:rgba(245,158,11,0.15);color:#f59e0b;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700">🔧 ACTIVE NOW</span>';
-      else if (isPast) statusBadge = '<span style="background:rgba(107,114,128,0.15);color:#6b7280;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700">✓ COMPLETED</span>';
-      else statusBadge = '<span style="background:rgba(59,130,246,0.15);color:#3b82f6;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700">⏳ UPCOMING</span>';
+      if (isActive) statusBadge = `<span style="background:rgba(245,158,11,0.15);color:#f59e0b;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700">🔧 ${t('ACTIVE NOW')}</span>`;
+      else if (isPast) statusBadge = `<span style="background:rgba(107,114,128,0.15);color:#6b7280;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700">✓ ${t('COMPLETED')}</span>`;
+      else statusBadge = `<span style="background:rgba(59,130,246,0.15);color:#3b82f6;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700">⏳ ${t('UPCOMING')}</span>`;
 
       // Calculate duration
       const start = new Date(p.start_date);
@@ -533,7 +543,7 @@
           <div style="flex:1">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
               ${statusBadge}
-              <span style="color:var(--text-muted);font-size:11px">${days} day${days > 1 ? 's' : ''}</span>
+              <span style="color:var(--text-muted);font-size:11px">${days} ${t(days > 1 ? 'days' : 'day')}</span>
             </div>
             <div style="font-weight:600;font-size:0.9rem;color:#fff;margin-bottom:4px">
               📅 ${startFmt} → ${endFmt}
@@ -551,7 +561,7 @@
     const reason = document.getElementById('m-reason').value;
 
     if (!startDate || !endDate) {
-      showToast('Please select both start and end dates', 'error');
+      showToast(t('Please select both start and end dates'), 'error');
       return;
     }
 
@@ -562,7 +572,7 @@
     });
 
     if (res.ok) {
-      showToast('Maintenance period scheduled!', 'success');
+      showToast(t('Maintenance period scheduled!'), 'success');
       document.getElementById('m-reason').value = '';
       loadMaintenancePeriods();
       loadVenues();
@@ -583,10 +593,10 @@
           <div id="conflict-alert" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:16px;margin-bottom:12px;animation:fadeIn 0.3s ease">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
               <span style="font-size:1.3rem">⛔</span>
-              <span style="font-weight:700;color:#ef4444;font-size:0.9rem">Cannot Schedule Maintenance</span>
+              <span style="font-weight:700;color:#ef4444;font-size:0.9rem">${t('Cannot Schedule Maintenance')}</span>
             </div>
             <p style="color:rgba(255,255,255,0.8);font-size:0.82rem;margin:0 0 8px;line-height:1.6">
-              The following events are already booked in this date range:
+              ${t('The following events are already booked in this date range:')}
             </p>
             <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px">
               ${data.conflicting_events.map(name => `
@@ -597,7 +607,7 @@
               `).join('')}
             </div>
             <p style="color:rgba(255,255,255,0.5);font-size:0.75rem;margin:0;font-style:italic">
-              💡 Please choose dates that don't conflict with existing bookings.
+              💡 ${t('Please choose dates that don\'t conflict with existing bookings.')}
             </p>
           </div>
         `;
@@ -624,11 +634,11 @@
   }
 
   async function deleteMaintenancePeriod(periodId) {
-    if (!confirm('Are you sure you want to remove this maintenance period?')) return;
+    if (!confirm(t('Are you sure you want to remove this maintenance period?'))) return;
     
     const res = await api.delete(`/venues/${currentMaintenanceVenueId}/maintenance/${periodId}`);
     if (res.ok) {
-      showToast('Maintenance period removed', 'success');
+      showToast(t('Maintenance period removed'), 'success');
       loadMaintenancePeriods();
       loadVenues();
       // Refresh bookings and calendar

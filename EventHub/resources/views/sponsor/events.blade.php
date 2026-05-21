@@ -494,7 +494,7 @@
                   scheduleHtml += '<div style="font-size:0.5rem;color:#94a3b8;">' + mn[d.getMonth()] + '</div>';
                   scheduleHtml += '</div>';
                   scheduleHtml += '<div style="flex:1;display:flex;align-items:center;gap:8px;">';
-                  if (slot.period) {
+                  if (slot.period && !slot.start_time) {
                     scheduleHtml += '<span style="background:rgba(16,185,129,0.1);color:#10b981;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;text-transform:capitalize;">' + slot.period.replace('_', ' ') + '</span>';
                   }
                   if (slot.start_time) {

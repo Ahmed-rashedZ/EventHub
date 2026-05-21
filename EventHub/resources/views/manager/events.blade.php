@@ -852,7 +852,7 @@
                 scheduleHtml += '<div style="font-size:0.5rem;color:#94a3b8;">' + mn[d.getMonth()] + '</div>';
                 scheduleHtml += '</div>';
                 scheduleHtml += '<div style="flex:1;display:flex;align-items:center;gap:8px;">';
-                if (slot.period) {
+                if (slot.period && !slot.start_time) {
                   scheduleHtml += '<span style="background:rgba(16,185,129,0.1);color:#10b981;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;text-transform:capitalize;">' + slot.period.replace('_', ' ') + '</span>';
                 }
                 if (slot.start_time) {
@@ -962,7 +962,7 @@
           ${ev.time_status !== 'ended' ? `
           <div style="margin-top:12px;display:flex;justify-content:center;">
             <button class="btn btn-sm" style="background:rgba(34,211,238,0.1);color:#22d3ee;border:1px solid rgba(34,211,238,0.2);display:flex;align-items:center;gap:6px;" onclick="openAgendaEditor(${ev.id})">
-              📋 Edit Agenda
+              📋 ${t('Edit Agenda')}
             </button>
           </div>
           ` : ''}
@@ -1268,6 +1268,35 @@
     }
 
     // ── Create Event Agenda Days Logic ─────────────────────
+    function getExhibitionSchedule(dateStr) {
+      const locationType = document.getElementById('e-location-type').value;
+      if (locationType === 'internal') {
+        const card = document.querySelector(`.int-slot-card[data-date="${dateStr}"]`);
+        if (card) {
+          const startEl = card.querySelector('.int-slot-start');
+          const endEl = card.querySelector('.int-slot-end');
+          if (startEl && endEl) return { start: startEl.value, end: endEl.value };
+          
+          const period = card.querySelector('.int-slot-period')?.value;
+          const venueId = document.getElementById('e-venue').value;
+          const venue = globalVenues.find(v => v.id == venueId);
+          if (venue) {
+            if (period === 'morning') return { start: venue.morning_start, end: venue.morning_end };
+            if (period === 'evening') return { start: venue.evening_start, end: venue.evening_end };
+            return { start: venue.morning_start, end: venue.evening_end };
+          }
+        }
+      } else {
+        const card = document.querySelector(`.ext-slot-card[data-date="${dateStr}"]`);
+        if (card) {
+          const startEl = card.querySelector('.ext-slot-start');
+          const endEl = card.querySelector('.ext-slot-end');
+          if (startEl && endEl) return { start: startEl.value, end: endEl.value };
+        }
+      }
+      return { start: '09:00', end: '17:00' };
+    }
+
     let createAgendaDays = [];
 
     function updateCreateAgendaDays() {
@@ -1317,25 +1346,19 @@
           let endTime = '10:00';
 
           if (locationType === 'external') {
-            const card = document.querySelector(`.ext-slot-card[data-date="${dStr}"]`);
-            if (card) {
-              const sTime = card.querySelector('.ext-slot-start').value;
-              if (sTime) {
-                startTime = sTime;
-                let [h, m] = sTime.split(':').map(Number);
-                h = (h + 1) % 24;
-                endTime = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-              }
-            }
+            const sched = getExhibitionSchedule(dStr);
+            startTime = sched.start;
+            let [h, m] = startTime.split(':').map(Number);
+            h = (h + 1) % 24;
+            endTime = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+            if (endTime > sched.end) endTime = sched.end;
           } else {
-            const card = document.querySelector(`.int-slot-card[data-date="${dStr}"]`);
-            if (card) {
-              const period = card.querySelector('.int-slot-period').value;
-              if (period === 'evening') {
-                startTime = '15:00';
-                endTime = '16:00';
-              }
-            }
+            const sched = getExhibitionSchedule(dStr);
+            startTime = sched.start;
+            let [h, m] = startTime.split(':').map(Number);
+            h = (h + 1) % 24;
+            endTime = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+            if (endTime > sched.end) endTime = sched.end;
           }
 
           addAgendaItem('agenda-items-create', {
@@ -1492,6 +1515,8 @@
 
     function renderIntTimeSlots() {
       const container = document.getElementById('int-calendar-slots');
+      const eventType = document.getElementById('e-type').value;
+      const isExhibition = eventType === 'معرض';
 
       if (intSelectedDates.length === 0) {
         container.innerHTML = '';
@@ -1515,8 +1540,7 @@
         const dayNum = d.getDate();
         const venueId = document.getElementById('e-venue').value;
         const venue = globalVenues.find(v => v.id == venueId);
-        const isFair = venue && (venue.id == 24 || venue.name.toLowerCase().includes('معرض طرابلس'));
-        const forcedPeriod = isFair ? 'full_day' : (existingPeriods[dateStr] || '');
+        const forcedPeriod = existingPeriods[dateStr] || '';
 
         const bookings = window.currentVenueBookings ? window.currentVenueBookings.filter(b => b.booking_date === dateStr) : [];
         const bookedPeriods = bookings.filter(b => b.type !== 'maintenance').map(b => b.period);
@@ -1531,15 +1555,31 @@
             <div style="font-size:1.3rem;font-weight:800;color:#fff;line-height:1;">${dayNum}</div>
             <div style="font-size:0.6rem;color:#94a3b8;margin-top:1px;">${monthName}</div>
           </div>
-          <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
-            <label style="font-size:0.65rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;">${isFair ? (document.documentElement.lang === 'ar' ? 'تايب الحجز (محجوز بالكامل)' : 'Booking Type (Entire Fair)') : 'Select Period'}</label>
-            <select class="int-slot-period form-control" style="padding:6px 10px;font-size:0.85rem;" onchange="checkIntPeriodAvailability(this, '${dateStr}')" ${isFair ? 'disabled' : ''} required>
-              ${isFair ? '' : '<option value="">Select a period...</option>'}
-              <option value="morning" ${forcedPeriod === 'morning' ? 'selected' : ''} ${isFair || bookedPeriods.includes('morning') || bookedPeriods.includes('full_day') ? 'disabled' : ''}>Morning Period ☀</option>
-              <option value="evening" ${forcedPeriod === 'evening' ? 'selected' : ''} ${isFair || bookedPeriods.includes('evening') || bookedPeriods.includes('full_day') ? 'disabled' : ''}>Evening Period 🌙</option>
-              <option value="full_day" ${forcedPeriod === 'full_day' ? 'selected' : ''} ${bookedPeriods.includes('morning') || bookedPeriods.includes('evening') || bookedPeriods.includes('full_day') ? 'disabled' : ''}>Full Day 🗓️</option>
-            </select>
-            ${isFair ? `<input type="hidden" class="int-slot-period" value="full_day">` : ''}
+          <div style="flex:1; display:flex; gap:20px; align-items:flex-end; flex-wrap:wrap;">
+            ${isExhibition ? `
+            <input type="hidden" class="int-slot-period" value="full_day">
+            <div style="flex:1.5; display:flex; gap:14px; align-items:center; min-width:260px;">
+               <div style="flex:1;">
+                 <label style="font-size:0.65rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:4px;">Start</label>
+                 <input type="time" class="int-slot-start form-control" value="09:00" style="padding:7px 10px;font-size:0.85rem;height:38px;" onchange="updateAgendaBoundsForDate('${dateStr}')" required />
+               </div>
+               <div style="color:#64748b;font-size:1.1rem;margin-top:18px;">→</div>
+               <div style="flex:1;">
+                 <label style="font-size:0.65rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:4px;">End</label>
+                 <input type="time" class="int-slot-end form-control" value="17:00" style="padding:7px 10px;font-size:0.85rem;height:38px;" required />
+               </div>
+            </div>
+            ` : `
+            <div style="flex:1; min-width:200px;">
+              <label style="font-size:0.65rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:4px;">${document.documentElement.lang === 'ar' ? 'اختر الفترة' : 'Select Period'}</label>
+              <select class="int-slot-period form-control" style="padding:7px 10px;font-size:0.85rem;height:38px;" onchange="checkIntPeriodAvailability(this, '${dateStr}')" required>
+                <option value="">Select a period...</option>
+                <option value="morning" ${forcedPeriod === 'morning' ? 'selected' : ''} ${bookedPeriods.includes('morning') || bookedPeriods.includes('full_day') ? 'disabled' : ''}>Morning Period ☀</option>
+                <option value="evening" ${forcedPeriod === 'evening' ? 'selected' : ''} ${bookedPeriods.includes('evening') || bookedPeriods.includes('full_day') ? 'disabled' : ''}>Evening Period 🌙</option>
+                <option value="full_day" ${forcedPeriod === 'full_day' ? 'selected' : ''} ${bookedPeriods.includes('morning') || bookedPeriods.includes('evening') || bookedPeriods.includes('full_day') ? 'disabled' : ''}>Full Day 🗓️</option>
+              </select>
+            </div>
+            `}
           </div>
           <button type="button" onclick="removeIntDay('${dateStr}')" style="
             background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25);
@@ -1580,8 +1620,16 @@
         if (!periodEl) periodEl = card.querySelector('select.int-slot-period');
         
         const period = periodEl ? periodEl.value : '';
+        const startEl = card.querySelector('.int-slot-start');
+        const endEl = card.querySelector('.int-slot-end');
+
         if (date && period) {
-          schedule.push({ date, period });
+          const entry = { date, period };
+          if (startEl && endEl) {
+            entry.start_time = startEl.value;
+            entry.end_time = endEl.value;
+          }
+          schedule.push(entry);
         }
       });
       return schedule;
@@ -1688,12 +1736,12 @@
           <div style="flex:1;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
             <div style="flex:1;min-width:100px;">
               <label style="font-size:0.65rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:3px;">Start</label>
-              <input type="time" class="ext-slot-start form-control" value="${prev.start}" style="padding:6px 10px;font-size:0.85rem;" />
+              <input type="time" class="ext-slot-start form-control" value="${prev.start}" onchange="updateAgendaBoundsForDate('${dateStr}')" style="padding:6px 10px;font-size:0.85rem;" />
             </div>
             <div style="color:#64748b;font-size:1.1rem;margin-top:14px;">→</div>
             <div style="flex:1;min-width:100px;">
               <label style="font-size:0.65rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:3px;">End</label>
-              <input type="time" class="ext-slot-end form-control" value="${prev.end}" style="padding:6px 10px;font-size:0.85rem;" />
+              <input type="time" class="ext-slot-end form-control" value="${prev.end}" onchange="updateAgendaBoundsForDate('${dateStr}')" style="padding:6px 10px;font-size:0.85rem;" />
             </div>
           </div>
           <button type="button" onclick="removeExtDay('${dateStr}')" style="
@@ -1819,14 +1867,57 @@
       container.appendChild(item);
 
       // Add event listener to auto-hide if changed in the editor modal
+      // Helper to update bounds for a specific agenda item
+      window.updateAgendaItemBounds = function(agendaItem) {
+        const dateSelect = agendaItem.querySelector('.agenda-date');
+        const startInput = agendaItem.querySelector('.agenda-start');
+        const endInput = agendaItem.querySelector('.agenda-end');
+        if (!dateSelect.value) return;
+
+        const sched = getExhibitionSchedule(dateSelect.value);
+        startInput.min = sched.start;
+        startInput.max = sched.end;
+        endInput.min = sched.start;
+        endInput.max = sched.end;
+
+        // Validation on change
+        const validate = () => {
+          if (startInput.value && (startInput.value < sched.start || startInput.value > sched.end)) {
+            showToast(`${t('Start time must be between')} ${sched.start} ${t('and')} ${sched.end}`, 'error');
+            startInput.value = sched.start;
+          }
+          if (endInput.value && (endInput.value < sched.start || endInput.value > sched.end)) {
+            showToast(`${t('End time must be between')} ${sched.start} ${t('and')} ${sched.end}`, 'error');
+            endInput.value = sched.end;
+          }
+        };
+
+        startInput.onchange = validate;
+        endInput.onchange = validate;
+        validate(); // Initial check
+      };
+
+      // Helper to update all agenda items for a specific date
+      window.updateAgendaBoundsForDate = function(dateStr) {
+        document.querySelectorAll('.agenda-item').forEach(item => {
+          const dateSelect = item.querySelector('.agenda-date');
+          if (dateSelect && dateSelect.value === dateStr) {
+            updateAgendaItemBounds(item);
+          }
+        });
+      };
+
       const selectElem = item.querySelector('.agenda-date');
       selectElem.addEventListener('change', function () {
+        updateAgendaItemBounds(item);
         if (containerId === 'agenda-items-editor' && window.currentAgendaEditorDay) {
           if (this.value !== window.currentAgendaEditorDay) {
             item.style.display = 'none';
           }
         }
       });
+      // Initial bounds set
+      if (data && data.date) updateAgendaItemBounds(item);
     }
 
 
@@ -1846,19 +1937,19 @@
       const isExhibition = eventType === 'معرض';
       
       const filtered = globalVenues.filter(v => {
-        const isFair = v.name.includes('معرض طرابلس');
-        return isExhibition ? isFair : !isFair;
+        const isFairVenue = v.name.includes('معرض');
+        return isExhibition ? isFairVenue : !isFairVenue;
       });
 
       if (filtered.length === 0) {
-        sel.innerHTML = `<option value="">${document.documentElement.lang === 'ar' ? 'لا توجد قاعات متاحة لهدا التايب حاليا' : 'No halls available for this type currently'}</option>`;
+        sel.innerHTML = `<option value="">${document.documentElement.lang === 'ar' ? 'لا توجد قاعات متاحة لهذا النوع حالياً' : 'No halls available for this type currently'}</option>`;
       } else {
         const placeholder = isExhibition 
-          ? (document.documentElement.lang === 'ar' ? 'اختر المعرض...' : 'Select the exhibition fair...')
-          : (document.documentElement.lang === 'ar' ? 'اختر القاعة داخل المعرض...' : 'Select a hall inside the exhibition...');
+          ? (document.documentElement.lang === 'ar' ? 'اختر المعرض...' : 'Select the exhibition...')
+          : (document.documentElement.lang === 'ar' ? 'اختر القاعة...' : 'Select a hall...');
           
         sel.innerHTML = `<option value="">${placeholder}</option>` + 
-          filtered.map(v => `<option value="${v.id}">${v.name} (${v.location})</option>`).join('');
+          filtered.map(v => `<option value="${v.id}">${v.name}</option>`).join('');
       }
     }
 
@@ -2280,6 +2371,7 @@
           hint.style.display = 'none';
         }
         renderVenues(this.value);
+        renderIntTimeSlots();
       });
     }
 
@@ -3427,13 +3519,13 @@
         style="margin-top:24px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
         <button type="button" id="pub-unpublish-btn" class="btn btn-sm"
           style="background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.25);display:none;"
-          onclick="unpublishEvent()">🚫 Unpublish</button>
+          onclick="unpublishEvent()">🚫 ${t('Unpublish')}</button>
         <div style="display:flex; gap:10px; margin-left:auto;">
-          <button type="button" class="btn btn-ghost" onclick="closePublishedScheduleModal()">Cancel</button>
+          <button type="button" class="btn btn-ghost" onclick="closePublishedScheduleModal()">${t('Cancel')}</button>
           <button type="button" class="btn btn-sm"
             style="background:rgba(139,92,246,0.15);color:#a78bfa;border:1px solid rgba(139,92,246,0.3);"
-            onclick="savePublishedSchedule(false)">💾 Save Draft</button>
-          <button type="button" class="btn btn-primary" onclick="savePublishedSchedule(true)">🚀 Publish</button>
+            onclick="savePublishedSchedule(false)">💾 ${t('Save Draft')}</button>
+          <button type="button" class="btn btn-primary" onclick="savePublishedSchedule(true)">🚀 ${t('Publish')}</button>
         </div>
       </div>
     </div>
@@ -3450,7 +3542,7 @@
       // Set translations
       document.getElementById('pub-modal-title').innerText = '📅 ' + t('Publish Days');
       document.getElementById('pub-modal-desc').innerHTML = t('published_schedule_desc') +
-        `<div style="margin-top:10px;padding:8px 12px;border-radius:8px;font-size:0.8rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;${ev.is_published ? 'background:rgba(16,185,129,0.1);color:#10b981;border:1px solid rgba(16,185,129,0.2);' : 'background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.2);'}">${ev.is_published ? '✅ Published — Visible to public' : '⏳ Draft — Not visible to public yet'}</div>`;
+        `<div style="margin-top:10px;padding:8px 12px;border-radius:8px;font-size:0.8rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;${ev.is_published ? 'background:rgba(16,185,129,0.1);color:#10b981;border:1px solid rgba(16,185,129,0.2);' : 'background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.2);'}">${ev.is_published ? '✅ ' + t('Published — Visible to public') : '⏳ ' + t('Draft — Not visible to public yet')}</div>`;
 
       // Show/hide unpublish button
       const unpubBtn = document.getElementById('pub-unpublish-btn');
@@ -3487,7 +3579,7 @@
                         </div>
                         <div style="flex:1;">
                             <div style="font-weight:600; color:#fff; font-size:0.95rem;">${slot.date}</div>
-                            <div style="font-size:0.75rem; color:var(--text-muted); text-transform:capitalize;">${slot.period ? slot.period.replace('_', ' ') : (slot.start_time + ' - ' + slot.end_time)}</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted); text-transform:capitalize;">${slot.period ? t(slot.period.replace('_', ' ')) : (slot.start_time + ' - ' + slot.end_time)}</div>
                         </div>
                         <label class="switch">
                             <input type="checkbox" class="pub-toggle" data-date="${slot.date}" data-index="${index}" ${isPublished ? 'checked' : ''} onchange="this.parentElement.nextElementSibling.innerText = this.checked ? t('Public') : t('Setup'); this.parentElement.nextElementSibling.style.color = this.checked ? 'var(--accent2)' : 'var(--text-muted)';">

@@ -442,7 +442,7 @@
                                 ${noteHtml}
                             </div>
                             <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                ${doc.has_file ? `<button class="btn btn-ghost btn-sm" onclick="viewDocument(${userId}, '${doc.key}')">📄 ${t('View')}</button>` : ''}
+                                ${doc.has_file ? `<button class="btn btn-ghost btn-sm" onclick="viewDocument(${userId}, '${doc.key}')">📄 ${t('View Document')}</button>` : ''}
                                 <label class="btn btn-secondary btn-sm" style="cursor: pointer; margin:0;">
                                     📎 ${t('Upload New')}
                                     <input type="file" name="${doc.key}" style="display: none;" accept=".pdf,.png,.jpg,.jpeg" onchange="updateDocFileName(this, '${doc.key}')">

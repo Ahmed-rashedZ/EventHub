@@ -72,9 +72,9 @@
             </svg>
             <select id="sort-events" class="form-control" style="width:190px;padding-left:32px"
               onchange="applyFilter()">
-              <option value="soonest">Soonest First</option>
-              <option value="farthest">Farthest First</option>
-              <option value="alpha">Alphabetical</option>
+              <option value="soonest">${t('Soonest First')}</option>
+              <option value="farthest">${t('Farthest First')}</option>
+              <option value="alpha">${t('Alphabetical')}</option>
             </select>
           </div>
         </div>
@@ -272,16 +272,16 @@
 
         let reqBtnHtml = '';
         if (hasRequested) {
-          reqBtnHtml = `<span style="font-size:11px; color:var(--text-muted); margin-right:8px; font-style:italic;">Already Applied</span>
-                        <button class="btn btn-ghost btn-sm" style="opacity:0.4; cursor:not-allowed;" disabled>Apply</button>`;
+          reqBtnHtml = `<span style="font-size:11px; color:var(--text-muted); margin-right:8px; font-style:italic;">${t('Already Applied')}</span>
+                        <button class="btn btn-ghost btn-sm" style="opacity:0.4; cursor:not-allowed;" disabled>${t('Apply')}</button>`;
         } else {
-          reqBtnHtml = `<button class="btn btn-primary btn-sm req-btn" onclick="openModal(${e.id}, '${e.title.replace(/'/g, "\\'")}')" ${sponsorAvailability !== true ? 'disabled' : ''} title="${sponsorAvailability === true ? 'Apply for Exhibition' : (sponsorAvailability === false ? 'Turn on Open to Invitations on your dashboard' : 'Loading visibility…')}">Apply</button>`;
+          reqBtnHtml = `<button class="btn btn-primary btn-sm req-btn" onclick="openModal(${e.id}, '${e.title.replace(/'/g, "\\'")}')" ${sponsorAvailability !== true ? 'disabled' : ''} title="${sponsorAvailability === true ? t('Apply for Exhibition') : (sponsorAvailability === false ? t('Turn on Open to Invitations on your dashboard') : t('Loading visibility…'))}">${t('Apply')}</button>`;
         }
 
         return `
       <tr>
         <td>
-            <div style="font-weight:600">${e.title}</div>
+            <div style="font-weight:600" class="i18n-skip">${e.title}</div>
         </td>
         <td>
             <div style="font-size:13px; color:var(--accent2); cursor:pointer; display:inline-block;" onclick="navigateToProfile(${e.creator?.id})">
@@ -290,7 +290,7 @@
         </td>
         <td style="color:var(--text-muted)">${e.venue?.name || 'TBA'}</td>
         <td style="color:var(--text-muted)">${fmtDateShort(e.start_time)} <div style="margin-top:4px;">${timeBadge(e.time_status)}</div></td>
-        <td style="color:var(--text-muted)">${e.capacity ? e.capacity.toLocaleString() : 'N/A'}</td>
+        <td style="color:var(--text-muted)">${e.capacity ? e.capacity.toLocaleString() : t('Unlimited')}</td>
         <td style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
            <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${e.id})" title="${t('View Details')}">ℹ️ ${t('Details')}</button>
            <div style="display:flex; align-items:center;">
@@ -339,7 +339,7 @@
         showToast(res.data?.message || 'Error sending application', 'error');
       }
 
-      btn.textContent = 'Apply for Booth';
+      btn.textContent = t('Apply for Booth');
       btn.disabled = false;
     });
 
@@ -426,7 +426,7 @@
 
           <div class="ed-section">
             <div class="ed-section-label">About this Event</div>
-            <p class="ed-description">${ev.description || 'No description provided.'}</p>
+            <p class="ed-description i18n-skip">${ev.description || 'No description provided.'}</p>
           </div>
 
           <div class="ed-info-grid">
@@ -493,7 +493,7 @@
                 const dn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
                 const mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
                 let scheduleHtml = '<div style="grid-column: 1 / -1;">';
-                scheduleHtml += '<div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">📅 Event Schedule (' + schedule.length + ' day' + (schedule.length > 1 ? 's' : '') + ')</div>';
+                scheduleHtml += '<div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">📅 ' + t('Event Schedule') + ' (' + schedule.length + ' ' + (schedule.length > 1 ? t('days') : t('day')) + ')</div>';
                 scheduleHtml += '<div style="display:flex;flex-direction:column;gap:6px;">';
                 schedule.forEach(function(slot) {
                   const d = new Date(slot.date + 'T00:00:00');
@@ -504,7 +504,7 @@
                   scheduleHtml += '<div style="font-size:0.5rem;color:#94a3b8;">' + mn[d.getMonth()] + '</div>';
                   scheduleHtml += '</div>';
                   scheduleHtml += '<div style="flex:1;display:flex;align-items:center;gap:8px;">';
-                  if (slot.period) {
+                  if (slot.period && !slot.start_time) {
                     scheduleHtml += '<span style="background:rgba(16,185,129,0.1);color:#10b981;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;text-transform:capitalize;">' + slot.period.replace('_', ' ') + '</span>';
                   }
                   if (slot.start_time) {
@@ -519,15 +519,15 @@
                 scheduleHtml += '</div></div>';
                 return scheduleHtml;
               } else {
-                return '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon">🕐</div><div><div class="ed-info-label">Start</div><div class="ed-info-value">' + fmtDate(ev.start_time) + '</div></div></div>' +
-                       '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon">🕔</div><div><div class="ed-info-label">End</div><div class="ed-info-value">' + fmtDate(ev.end_time) + '</div></div></div>';
+                return '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon">🕐</div><div><div class="ed-info-label">' + t('Start') + '</div><div class="ed-info-value">' + fmtDate(ev.start_time) + '</div></div></div>' +
+                       '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon">🕔</div><div><div class="ed-info-label">' + t('End') + '</div><div class="ed-info-value">' + fmtDate(ev.end_time) + '</div></div></div>';
               }
             })()}
 
             <div class="ed-info-grid">
                 <div class="ed-info-card ed-info-warning">
                 <div class="ed-info-icon">👥</div>
-                <div><div class="ed-info-label">Capacity</div><div class="ed-info-value">${ev.capacity || 'N/A'}</div></div>
+                <div><div class="ed-info-label">${t('Capacity')}</div><div class="ed-info-value">${ev.capacity ? ev.capacity : t('Unlimited')}</div></div>
                 </div>
                 <div class="ed-info-card ed-info-warning">
                 <div class="ed-info-icon">🎫</div>
@@ -539,7 +539,7 @@
 
           <div class="ed-footer mt-2" style="justify-content:space-between">
             <div style="display:flex; align-items:center; gap:8px;">
-                <span class="ed-footer-label">Created by</span>
+                <span class="ed-footer-label">${t('Created by')}</span>
                 <span class="ed-footer-name cursor-pointer" onclick="navigateToProfile(${ev.creator?.id})" style="color:var(--accent2);">${ev.creator?.name || '—'}</span>
             </div>
             <div class="ed-footer-label">ID: #${ev.id}</div>

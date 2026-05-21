@@ -18,16 +18,16 @@
 
   <main class="main-content">
     <div class="topbar">
-      <div><h1 class="page-title">Sponsorship Requests</h1><p class="page-subtitle">Request sponsors for your events</p></div>
+      <div><h1 class="page-title"><script>document.write(t('Sponsorship Requests'))</script></h1><p class="page-subtitle"><script>document.write(t('Request sponsors for your events'))</script></p></div>
     </div>
 
     <!-- Discovery Section -->
     <div class="discovery-section">
-        <h2 class="page-title" style="font-size: 1.1rem; font-weight: 600; margin-top:20px;">Available Sponsors</h2>
+        <h2 class="page-title" style="font-size: 1.1rem; font-weight: 600; margin-top:20px;"><script>document.write(t('Available Sponsors'))</script></h2>
         <div class="card" style="margin-bottom: 30px;">
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Sponsor</th><th>Sector</th><th>Contact</th><th>Action</th></tr></thead>
+              <thead><tr><th><script>document.write(t('Sponsor'))</script></th><th><script>document.write(t('Sector'))</script></th><th><script>document.write(t('Contact'))</script></th><th><script>document.write(t('Actions'))</script></th></tr></thead>
               <tbody id="sponsors-body">
                 <tr class="loading-row"><td colspan="4"><div class="spinner" style="margin:auto"></div></td></tr>
               </tbody>
@@ -36,11 +36,11 @@
         </div>
     </div>
 
-    <h2 class="page-title" style="font-size: 1.2rem; font-weight: 600;">Your Sponsorship Requests</h2>
+    <h2 class="page-title" style="font-size: 1.2rem; font-weight: 600;"><script>document.write(t('Your Sponsorship Requests'))</script></h2>
     <div class="card">
       <div class="table-wrap">
         <table>
-          <thead><tr><th>#</th><th>Event</th><th>Sponsor (Sector)</th><th>Status</th><th>Action</th><th>Tier</th></tr></thead>
+          <thead><tr><th>#</th><th><script>document.write(t('Event'))</script></th><th><script>document.write(t('Sponsor (Sector)'))</script></th><th><script>document.write(t('Status'))</script></th><th><script>document.write(t('Actions'))</script></th><th><script>document.write(t('Tier'))</script></th></tr></thead>
           <tbody id="req-body">
             <tr class="loading-row"><td colspan="7"><div class="spinner" style="margin:auto"></div></td></tr>
           </tbody>
@@ -54,28 +54,29 @@
 <div class="modal-overlay" id="req-modal">
   <div class="modal" style="max-width: 450px;">
     <div class="modal-header">
-      <h3 class="modal-title">Request Sponsorship</h3>
+      <h3 class="modal-title"><script>document.write(t('Request Sponsorship'))</script></h3>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <form id="req-form">
       <div class="form-group">
-        <label class="form-label">Event</label>
+        <label class="form-label"><script>document.write(t('Event'))</script></label>
         <select id="r-event" class="form-control i18n-skip" required>
           <option value="">Select your event…</option>
         </select>
       </div>
       <div class="form-group" id="target-sponsor-group" style="display:none; background: rgba(16,185,129,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(16,185,129,0.1);">
-        <label class="form-label">Target Sponsor</label>
+        <label class="form-label"><script>document.write(t('Target Sponsor'))</script></label>
         <div id="r-sponsor-display" style="font-weight:700; color:var(--text); margin-bottom: 5px; font-size: 1.1rem;"></div>
         <input type="hidden" id="r-sponsor-id" value=""/>
       </div>
       <div class="form-group">
-        <label class="form-label">Message to Sponsors</label>
-        <textarea id="r-message" class="form-control" placeholder="Describe sponsorship opportunity…" style="min-height: 120px;"></textarea>
+        <label class="form-label"><script>document.write(t('Message to Sponsors'))</script></label>
+        <textarea id="r-message" class="form-control" placeholder="Describe sponsorship opportunity…" data-placeholder="Describe sponsorship opportunity…" style="min-height: 120px;"></textarea>
+        <script>document.querySelector('#r-message').placeholder = t('Describe sponsorship opportunity…')</script>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-        <button type="submit" class="btn btn-primary">Submit Request</button>
+        <button type="button" class="btn btn-ghost" onclick="closeModal()"><script>document.write(t('Cancel'))</script></button>
+        <button type="submit" class="btn btn-primary"><script>document.write(t('Submit Request'))</script></button>
       </div>
     </form>
   </div>
@@ -85,12 +86,12 @@
 <div class="modal-overlay" id="msg-modal">
   <div class="modal" style="max-width: 500px;">
     <div class="modal-header">
-      <h3 class="modal-title">Sponsorship Message</h3>
+      <h3 class="modal-title"><script>document.write(t('Sponsorship Message'))</script></h3>
       <button class="modal-close" onclick="closeMsgModal()">✕</button>
     </div>
     <div class="modal-body" id="msg-content" style="padding: 20px; font-size: 15px; line-height: 1.6; color: var(--text);"></div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-primary" onclick="closeMsgModal()" style="width: 100%;">Close</button>
+      <button type="button" class="btn btn-primary" onclick="closeMsgModal()" style="width: 100%;"><script>document.write(t('Close'))</script></button>
     </div>
   </div>
 </div>
@@ -99,25 +100,25 @@
 <div class="modal-overlay" id="accept-modal">
   <div class="modal" style="max-width: 400px;">
     <div class="modal-header">
-      <h3 class="modal-title">Accept Sponsorship</h3>
+      <h3 class="modal-title"><script>document.write(t('Accept Sponsorship'))</script></h3>
       <button class="modal-close" onclick="closeAcceptModal()">✕</button>
     </div>
     <form id="accept-form" onsubmit="submitAccept(event)">
       <input type="hidden" id="accept-req-id">
       <div class="form-group">
-        <label class="form-label" style="font-size: 0.8rem;">Select Sponsor Tier</label>
+        <label class="form-label" style="font-size: 0.8rem;"><script>document.write(t('Select Sponsor Tier'))</script></label>
         <select id="a-tier" class="form-control" style="cursor: pointer;">
-          <option value="" selected>🏷️ Unranked</option>
-          <option value="diamond">💎 Diamond Sponsor</option>
-          <option value="gold">🥇 Gold Sponsor</option>
-          <option value="silver">🥈 Silver Sponsor</option>
-          <option value="bronze">🥉 Bronze Sponsor</option>
+          <option value="">🏷️ <script>document.write(t('Unranked'))</script></option>
+          <option value="diamond">💎 <script>document.write(t('Diamond Sponsor'))</script></option>
+          <option value="gold">🥇 <script>document.write(t('Gold Sponsor'))</script></option>
+          <option value="silver">🥈 <script>document.write(t('Silver Sponsor'))</script></option>
+          <option value="bronze">🥉 <script>document.write(t('Bronze Sponsor'))</script></option>
         </select>
-        <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;">Choose a tier or leave unranked. Two sponsors cannot have the same tier.</p>
+        <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;"><script>document.write(t('Choose a tier or leave unranked. Two sponsors cannot have the same tier.'))</script></p>
       </div>
       <div class="modal-footer" style="margin-top: 20px;">
-        <button type="button" class="btn btn-ghost" onclick="closeAcceptModal()">Cancel</button>
-        <button type="submit" class="btn btn-success">✅ Confirm Acceptance</button>
+        <button type="button" class="btn btn-ghost" onclick="closeAcceptModal()"><script>document.write(t('Cancel'))</script></button>
+        <button type="submit" class="btn btn-success"><script>document.write(t('✅ Confirm Acceptance'))</script></button>
       </div>
     </form>
   </div>
@@ -127,25 +128,25 @@
 <div class="modal-overlay" id="edit-rank-modal">
   <div class="modal" style="max-width: 400px;">
     <div class="modal-header">
-      <h3 class="modal-title">Edit Sponsor Tier</h3>
+      <h3 class="modal-title"><script>document.write(t('Edit Sponsor Tier'))</script></h3>
       <button class="modal-close" onclick="closeEditRankModal()">✕</button>
     </div>
     <form id="edit-rank-form" onsubmit="submitEditRank(event)">
       <input type="hidden" id="edit-req-id">
       <div class="form-group">
-        <label class="form-label" style="font-size: 0.8rem;">Select New Sponsor Tier</label>
+        <label class="form-label" style="font-size: 0.8rem;"><script>document.write(t('Select New Sponsor Tier'))</script></label>
         <select id="e-tier" class="form-control" style="cursor: pointer;">
-          <option value="">🏷️ Unranked</option>
-          <option value="diamond">💎 Diamond Sponsor</option>
-          <option value="gold">🥇 Gold Sponsor</option>
-          <option value="silver">🥈 Silver Sponsor</option>
-          <option value="bronze">🥉 Bronze Sponsor</option>
+          <option value="">🏷️ <script>document.write(t('Unranked'))</script></option>
+          <option value="diamond">💎 <script>document.write(t('Diamond Sponsor'))</script></option>
+          <option value="gold">🥇 <script>document.write(t('Gold Sponsor'))</script></option>
+          <option value="silver">🥈 <script>document.write(t('Silver Sponsor'))</script></option>
+          <option value="bronze">🥉 <script>document.write(t('Bronze Sponsor'))</script></option>
         </select>
-        <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;">This tier will be updated immediately in all event details.</p>
+        <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;"><script>document.write(t('This tier will be updated immediately in all event details.'))</script></p>
       </div>
       <div class="modal-footer" style="margin-top: 20px;">
-        <button type="button" class="btn btn-ghost" onclick="closeEditRankModal()">Cancel</button>
-        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <button type="button" class="btn btn-ghost" onclick="closeEditRankModal()"><script>document.write(t('Cancel'))</script></button>
+        <button type="submit" class="btn btn-primary"><script>document.write(t('Save Changes'))</script></button>
       </div>
     </form>
   </div>
@@ -155,7 +156,7 @@
 <div class="modal-overlay" id="agreement-modal">
   <div class="modal" style="max-width:520px; width:95%; padding:0; border-top:3px solid #22d3ee; max-height:85vh; display:flex; flex-direction:column; border-radius:16px;">
     <div style="padding:16px 20px 0; display:flex; justify-content:space-between; align-items:center;">
-      <div><h3 class="modal-title" style="margin:0;font-size:1rem;">Contract Negotiation</h3><p style="font-size:0.7rem;color:var(--text-muted);margin:2px 0 0">Negotiate terms with the sponsor</p></div>
+      <div><h3 class="modal-title" style="margin:0;font-size:1rem;"><script>document.write(t('Contract Negotiation'))</script></h3><p style="font-size:0.7rem;color:var(--text-muted);margin:2px 0 0"><script>document.write(t('Negotiate terms with the sponsor'))</script></p></div>
       <button class="modal-close" onclick="closeAgreementModal()">✕</button>
     </div>
     <div id="agreement-content" style="padding:12px 20px 20px; overflow-y:auto; flex:1;">
@@ -211,8 +212,8 @@
       if (r.status === 'pending') {
           if (r.initiator === 'sponsor') {
               actionHtml = `
-                <button class="btn btn-success" style="padding: 4px 12px; font-size: 12px; font-weight: 600;" onclick="respondReq(${r.id}, 'accepted')">✅ Accept</button>
-                <button class="btn btn-danger" style="padding: 4px 12px; font-size: 12px; font-weight: 600;" onclick="respondReq(${r.id}, 'rejected')">❌ Reject</button>
+                <button class="btn btn-success" style="padding: 4px 12px; font-size: 12px; font-weight: 600;" onclick="respondReq(${r.id}, 'accepted')">✅ ${t('Accept')}</button>
+                <button class="btn btn-danger" style="padding: 4px 12px; font-size: 12px; font-weight: 600;" onclick="respondReq(${r.id}, 'rejected')">❌ ${t('Reject')}</button>
               `;
           } else {
               actionHtml = `<div style="font-size: 11px; color: var(--text-muted);">${t('Awaiting Response')}</div>`;
@@ -223,11 +224,11 @@
           `;
       } else if (r.status === 'accepted') {
           actionHtml = `
-            ${canEdit ? `<button class="btn btn-ghost btn-sm" onclick="editRank(${r.id})" style="padding: 4px 12px; font-size: 11px;">✏️ Edit Tier</button>` : `<span style="font-size:11px; color:var(--text-muted)">Locked</span>`}
+            ${canEdit ? `<button class="btn btn-ghost btn-sm" onclick="editRank(${r.id})" style="padding: 4px 12px; font-size: 11px;">✏️ ${t('Edit Tier')}</button>` : `<span style="font-size:11px; color:var(--text-muted)">${t('Locked')}</span>`}
             <button class="btn btn-sm" onclick="openAgreementModal(${r.id}, 'sponsor')" style="padding:4px 12px; font-size:11px; background:rgba(16,185,129,0.12); color:#10b981; border:1px solid rgba(16,185,129,0.25); font-weight:600;">📄 ${t('Agreement')}</button>
           `;
       } else {
-          actionHtml = `<span style="font-size:12px; color:var(--text-muted)">—</span>`;
+          actionHtml = `<span style="font-size:11px;color:var(--text-muted);">${t('Locked')}</span>`;
       }
 
       return `

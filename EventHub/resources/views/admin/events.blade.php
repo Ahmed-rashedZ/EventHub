@@ -33,13 +33,15 @@
     <main class="main-content">
       <div class="topbar">
         <div>
-          <h1 class="page-title">Events</h1>
-          <p class="page-subtitle">Approve, reject and monitor all events</p>
+          <h1 class="page-title"><script>document.write(t('Events'))</script></h1>
+          <p class="page-subtitle"><script>document.write(t('Approve, reject and monitor all events'))</script></p>
         </div>
         <div class="topbar-actions" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
           <div style="position:relative">
-            <input id="search-input" type="text" class="form-control" placeholder="Search by event or manager name..."
+            <input id="search-input" type="text" class="form-control" placeholder="Search"
+              data-placeholder="Search by event or manager name..."
               style="width:240px;padding-left:36px" oninput="applyFilter()">
+            <script>document.getElementById('search-input').placeholder = t(document.getElementById('search-input').getAttribute('data-placeholder'))</script>
             <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted)"
               width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="11" cy="11" r="8" />
@@ -47,12 +49,12 @@
             </svg>
           </div>
           <select id="filter-status" class="form-control" style="width:145px" onchange="applyFilter()">
-            <option value="" selected>All Status</option>
-            <option value="pending">Pending</option>
-            <option value="approved">Approved</option>
-            <option value="rejected">Rejected</option>
-            <option value="cancellation_requested">Cancellation Requests</option>
-            <option value="cancelled">Cancelled</option>
+            <option value="" selected><script>document.write(t('All Status'))</script></option>
+            <option value="pending"><script>document.write(t('Pending'))</script></option>
+            <option value="approved"><script>document.write(t('Approved'))</script></option>
+            <option value="rejected"><script>document.write(t('Rejected'))</script></option>
+            <option value="cancellation_requested"><script>document.write(t('Cancellation Requests'))</script></option>
+            <option value="cancelled"><script>document.write(t('Cancelled'))</script></option>
           </select>
           <div style="position:relative;display:flex;align-items:center">
             <svg
@@ -62,11 +64,11 @@
             </svg>
             <select id="sort-events" class="form-control" style="width:190px;padding-left:32px"
               onchange="applyFilter()">
-              <option value="soonest">Soonest First</option>
-              <option value="farthest">Farthest First</option>
-              <option value="alpha">Alphabetical</option>
-              <option value="live">Live Now</option>
-              <option value="ended">Ended</option>
+              <option value="soonest"><script>document.write(t('Soonest First'))</script></option>
+              <option value="farthest"><script>document.write(t('Farthest First'))</script></option>
+              <option value="alpha"><script>document.write(t('Alphabetical'))</script></option>
+              <option value="live"><script>document.write(t('Live Now'))</script></option>
+              <option value="ended"><script>document.write(t('Ended'))</script></option>
             </select>
           </div>
         </div>
@@ -78,13 +80,13 @@
             <thead>
               <tr>
                 <th>#</th>
-                <th>Title</th>
-                <th>Venue</th>
-                <th>Manager</th>
-                <th>Start</th>
-                <th>Capacity</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th><script>document.write(t('Title'))</script></th>
+                <th><script>document.write(t('Venue'))</script></th>
+                <th><script>document.write(t('Manager'))</script></th>
+                <th><script>document.write(t('Start Date'))</script></th>
+                <th><script>document.write(t('Capacity'))</script></th>
+                <th><script>document.write(t('Status'))</script></th>
+                <th><script>document.write(t('Actions'))</script></th>
               </tr>
             </thead>
             <tbody id="events-body">
@@ -169,28 +171,28 @@
 
     function renderEvents(events) {
       const tbody = document.getElementById('events-body');
-      if (!events.length) { tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">📅</div><p>No events found</p></div></td></tr>'; return; }
+      if (!events.length) { tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">📅</div><p>${t('No events found')}</p></div></td></tr>`; return; }
       tbody.innerHTML = events.map((ev, i) => {
         const reviewBadge = ev.review_status === 'needs_review' 
-          ? `<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(245,158,11,0.12);color:#f59e0b;padding:2px 8px;border-radius:8px;font-size:0.68rem;font-weight:600;border:1px solid rgba(245,158,11,0.25);margin-left:4px;">⏳ Awaiting Changes</span>`
+          ? `<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(245,158,11,0.12);color:#f59e0b;padding:2px 8px;border-radius:8px;font-size:0.68rem;font-weight:600;border:1px solid rgba(245,158,11,0.25);margin-left:4px;">⏳ ${t('Awaiting Changes')}</span>`
           : ev.review_status === 'reviewed'
-          ? `<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(59,130,246,0.12);color:#3b82f6;padding:2px 8px;border-radius:8px;font-size:0.68rem;font-weight:600;border:1px solid rgba(59,130,246,0.25);margin-left:4px;">🔄 Updated</span>`
+          ? `<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(59,130,246,0.12);color:#3b82f6;padding:2px 8px;border-radius:8px;font-size:0.68rem;font-weight:600;border:1px solid rgba(59,130,246,0.25);margin-left:4px;">🔄 ${t('Updated')}</span>`
           : '';
 
         return `
         <tr>
           <td style="color:var(--text-muted)">${i + 1}</td>
           <td><div style="font-weight:600; ${ev.status === 'cancelled' ? 'text-decoration:line-through; color:var(--danger)' : ''}" class="i18n-skip">${ev.title}</div></td>
-          <td style="color:var(--text-muted)">${ev.venue_id ? (ev.venue?.name || '—') : (ev.external_venue_name ? ev.external_venue_name + ' (External)' : '—')}</td>
+          <td style="color:var(--text-muted)">${ev.venue_id ? (ev.venue?.name || '—') : (ev.external_venue_name ? ev.external_venue_name + ' ' + t('External') : '—')}</td>
           <td style="color:var(--text-muted)">${ev.creator?.name || '—'}</td>
           <td style="color:var(--text-muted);white-space:nowrap">${fmtDateShort(ev.start_time)}</td>
           <td style="color:var(--text-muted)">${ev.capacity || 'Unlimited (مفتوح)'}</td>
           <td>${badge(ev.status)} ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''} ${reviewBadge}</td>
           <td style="display:flex;gap:6px;padding:14px 16px;flex-wrap:wrap">
-            <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${ev.id})" title="View Details">ℹ️ Details</button>
-            <button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='/admin/event-stats/${ev.id}'" title="View Statistics">📊 Stats</button>
-            ${ev.status === 'pending' ? `<button class="btn btn-sm" style="background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25)" onclick="openReviewModal(${ev.id})" title="Send Review">📝 Review</button><button class="btn btn-success btn-sm" onclick="approve(${ev.id})">✓ Approve</button><button class="btn btn-danger btn-sm" onclick="reject(${ev.id})">✕ Reject</button>` : ''}
-            ${ev.status === 'cancellation_requested' ? `<button class="btn btn-danger btn-sm" onclick="approveCancellation(${ev.id})">✓ Approve Cancellation</button><button class="btn btn-ghost btn-sm" onclick="openCancellationRejectionModal(${ev.id})">✕ Reject Cancellation</button>` : ''}
+            <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${ev.id})" title="${t('View Details')}">ℹ️ ${t('Details')}</button>
+            <button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='/admin/event-stats/${ev.id}'" title="${t('View Statistics')}">📊 ${t('Stats')}</button>
+            ${ev.status === 'pending' ? `<button class="btn btn-sm" style="background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25)" onclick="openReviewModal(${ev.id})" title="${t('Send Review')}">📝 ${t('Review')}</button><button class="btn btn-success btn-sm" onclick="approve(${ev.id})">✓ ${t('Approve')}</button><button class="btn btn-danger btn-sm" onclick="reject(${ev.id})">✕ ${t('Reject')}</button>` : ''}
+            ${ev.status === 'cancellation_requested' ? `<button class="btn btn-danger btn-sm" onclick="approveCancellation(${ev.id})">✓ ${t('Approve Cancellation')}</button><button class="btn btn-ghost btn-sm" onclick="openCancellationRejectionModal(${ev.id})">✕ ${t('Reject Cancellation')}</button>` : ''}
           </td>
         </tr>`;
       }).join('');
@@ -249,7 +251,7 @@
           : `<div class="ed-banner ed-banner-placeholder"><span class="ed-banner-emoji">${tIcon}</span><div class="ed-banner-fade"></div></div>`;
 
         const rejectionSection = (ev.status === 'rejected' && ev.rejection_reason)
-          ? `<div class="ed-rejection"><span class="ed-rej-label">⚠ Rejection Reason</span><p>${ev.rejection_reason}</p></div>`
+          ? `<div class="ed-rejection"><span class="ed-rej-label">⚠ ${t('Rejection Reason')}</span><p>${ev.rejection_reason}</p></div>`
           : '';
 
         let sponsorsHtml = '';
@@ -266,7 +268,7 @@
 
           sponsorsHtml = `
             <div class="ed-section mt-4" style="margin-top: 16px;">
-              <div class="ed-section-label">Current Sponsors</div>
+              <div class="ed-section-label">${t('Current Sponsors')}</div>
               <div style="display:flex; flex-direction:column; gap:8px;">
                 ${ev.sponsors.map(sp => `
                    <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.04); padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.05); cursor:pointer;" onclick="navigateToProfile(${sp.id})">
@@ -284,7 +286,7 @@
                           <div style="font-size:0.85rem; font-weight:600; color:#fff;">${sp.name}</div>
                           <div style="margin-top: 2px;">
                               ${getTierBadge(sp.pivot?.tier)}
-                              ${sp.sponsorship_request_id ? `<button style="background:rgba(34,211,238,0.1);color:#22d3ee;border:1px solid rgba(34,211,238,0.25);border-radius:6px;padding:2px 6px;font-size:0.65rem;margin-left:6px;cursor:pointer;" onclick="event.stopPropagation(); downloadAdminContract(${sp.sponsorship_request_id})">📄 Contract</button>` : ''}
+                              ${sp.sponsorship_request_id ? `<button style="background:rgba(34,211,238,0.1);color:#22d3ee;border:1px solid rgba(34,211,238,0.25);border-radius:6px;padding:2px 6px;font-size:0.65rem;margin-left:6px;cursor:pointer;" onclick="event.stopPropagation(); downloadAdminContract(${sp.sponsorship_request_id})">📄 ${t('Agreement')}</button>` : ''}
                           </div>
                       </div>
                    </div>
@@ -321,7 +323,7 @@
           exhibitorsHtml = `
             <div style="margin-top:20px;">
               <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent2);margin-bottom:12px;display:flex;align-items:center;gap:8px;">
-                <span style="font-size:1.1rem;">🏢</span> Participating Companies (${ev.exhibitors.length})
+                <span style="font-size:1.1rem;">🏢</span> ${t('Participating Companies')} (${ev.exhibitors.length})
               </div>
               <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));gap:10px;">
                 ${exItems}
@@ -346,15 +348,15 @@
 
           ${ev.status === 'cancelled' ? `
             <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 12px; padding: 14px; margin-bottom: 20px;">
-              <span style="display: block; font-size: 0.72rem; font-weight: 700; color: #ef4444; text-transform: uppercase; margin-bottom: 4px;">🚫 Event Cancelled</span>
-              <p style="margin: 0; color: #e2e8f0; font-size: 0.9rem; line-height: 1.5;">${ev.cancellation_reason || 'This event has been cancelled.'}</p>
+              <span style="display: block; font-size: 0.72rem; font-weight: 700; color: #ef4444; text-transform: uppercase; margin-bottom: 4px;">🚫 ${t('Event Cancelled')}</span>
+              <p style="margin: 0; color: #e2e8f0; font-size: 0.9rem; line-height: 1.5;">${ev.cancellation_reason || t('This event has been cancelled.')}</p>
             </div>
           ` : ''}
 
           ${ev.status === 'cancellation_requested' ? `
             <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 12px; padding: 14px; margin-bottom: 20px;">
-              <span style="display: block; font-size: 0.72rem; font-weight: 700; color: #f59e0b; text-transform: uppercase; margin-bottom: 4px;">⌛ Cancellation Pending</span>
-              <p style="margin: 0; color: #e2e8f0; font-size: 0.9rem; line-height: 1.5;">${ev.cancellation_reason || 'The manager has requested to cancel this event.'}</p>
+              <span style="display: block; font-size: 0.72rem; font-weight: 700; color: #f59e0b; text-transform: uppercase; margin-bottom: 4px;">⌛ ${t('Cancellation Pending')}</span>
+              <p style="margin: 0; color: #e2e8f0; font-size: 0.9rem; line-height: 1.5;">${ev.cancellation_reason || t('The manager has requested to cancel this event.')}</p>
             </div>
           ` : ''}
 
@@ -362,55 +364,55 @@
 
           ${ev.status === 'cancelled' && ev.cancellation_reason ? `
             <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 10px; padding: 12px 14px; margin-bottom: 16px;">
-              <span style="display: block; font-size: 0.72rem; font-weight: 700; color: #ef4444; text-transform: uppercase; margin-bottom: 4px;">❌ Cancellation Reason</span>
+              <span style="display: block; font-size: 0.72rem; font-weight: 700; color: #ef4444; text-transform: uppercase; margin-bottom: 4px;">❌ ${t('Cancellation Reason')}</span>
               <p style="margin: 0; color: #e2e8f0; font-size: 0.9rem; line-height: 1.5;">${ev.cancellation_reason}</p>
             </div>
           ` : ''}
 
           <div class="ed-section">
-            <div class="ed-section-label">About this Event</div>
-            <p class="ed-description">${ev.description || 'No description provided.'}</p>
+            <div class="ed-section-label">${t('About this Event')}</div>
+            <p class="ed-description i18n-skip">${ev.description || t('No description provided.')}</p>
           </div>
 
           <div class="ed-info-grid">
             <div class="ed-info-card ed-info-accent2">
               <div class="ed-info-icon">🏛️</div>
-              <div><div class="ed-info-label">Venue</div><div class="ed-info-value">${ev.venue?.name || ev.external_venue_name || '—'}</div></div>
+              <div><div class="ed-info-label">${t('Venue')}</div><div class="ed-info-value">${ev.venue?.name || ev.external_venue_name || '—'}</div></div>
             </div>
             <div class="ed-info-card ed-info-accent2">
               <div class="ed-info-icon">📍</div>
-              <div><div class="ed-info-label">Location</div><div class="ed-info-value">
-                ${ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` 
-                : (ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` : '—')}
+              <div><div class="ed-info-label">${t('Location')}</div><div class="ed-info-value i18n-skip">
+                ${ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">${ev.venue.location} ↗</a>` 
+                : (ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">${ev.external_venue_location} ↗</a>` : '—')}
               </div></div>
             </div>
             ${!ev.venue_id && ev.booking_proof_path ? `
             <div class="ed-info-card ed-info-accent2" style="grid-column: 1 / -1; background:rgba(34,211,238,0.05); border-color:rgba(34,211,238,0.2);">
               <div class="ed-info-icon">📎</div>
-              <div><div class="ed-info-label" style="color:#22d3ee">Booking Proof</div><div class="ed-info-value"><button onclick="downloadEventDoc(${ev.id}, 'booking_proof')" style="color:#22d3ee;text-decoration:underline;background:none;border:none;padding:0;font:inherit;cursor:pointer;">View Document ↗</button></div></div>
+              <div><div class="ed-info-label" style="color:#22d3ee">${t('Booking Proof')}</div><div class="ed-info-value"><button onclick="downloadEventDoc(${ev.id}, 'booking_proof')" style="color:#22d3ee;text-decoration:underline;background:none;border:none;padding:0;font:inherit;cursor:pointer;">${t('View Document ↗')}</button></div></div>
             </div>
             ` : ''}
             ${ev.ministry_document_path ? `
             <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(139,92,246,0.05); border-color:rgba(139,92,246,0.2); border: 1px solid rgba(139,92,246,0.2);">
               <div class="ed-info-icon">📄</div>
-              <div><div class="ed-info-label" style="color:#a78bfa">Competent Authority Approval</div><div class="ed-info-value"><button onclick="downloadEventDoc(${ev.id}, 'ministry_document')" style="color:#a78bfa;text-decoration:underline;background:none;border:none;padding:0;font:inherit;cursor:pointer;">View Document ↗</button></div></div>
+              <div><div class="ed-info-label" style="color:#a78bfa">${t('Competent Authority Approval')}</div><div class="ed-info-value"><button onclick="downloadEventDoc(${ev.id}, 'ministry_document')" style="color:#a78bfa;text-decoration:underline;background:none;border:none;padding:0;font:inherit;cursor:pointer;">${t('View Document ↗')}</button></div></div>
             </div>
             ` : `
             <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(239,68,68,0.05); border-color:rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.2);">
               <div class="ed-info-icon">⚠️</div>
-              <div><div class="ed-info-label" style="color:#ef4444">Competent Authority Approval</div><div class="ed-info-value" style="color:#ef4444;">Not uploaded</div></div>
+              <div><div class="ed-info-label" style="color:#ef4444">${t('Competent Authority Approval')}</div><div class="ed-info-value" style="color:#ef4444;">${t('Not uploaded')}</div></div>
             </div>
             `}
             ${ev.event_objective ? `
             <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
               <div class="ed-info-icon">🎯</div>
-              <div><div class="ed-info-label">Event Objective</div><div class="ed-info-value" style="font-size:0.9rem;">${ev.event_objective}</div></div>
+              <div><div class="ed-info-label">${t('Event Objective')}</div><div class="ed-info-value i18n-skip" style="font-size:0.9rem;">${ev.event_objective}</div></div>
             </div>
             ` : ''}
             ${ev.target_audience ? `
             <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
               <div class="ed-info-icon">👥</div>
-              <div><div class="ed-info-label">Target Audience</div><div class="ed-info-value" style="font-size:0.9rem;">${ev.target_audience}</div></div>
+              <div><div class="ed-info-label">${t('Target Audience')}</div><div class="ed-info-value i18n-skip" style="font-size:0.9rem;">${ev.target_audience}</div></div>
             </div>
             ` : ''}
             ${(() => {
@@ -421,7 +423,7 @@
                 const dn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
                 const mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
                 let scheduleHtml = '<div style="grid-column: 1 / -1;">';
-                scheduleHtml += '<div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">📅 Full Event Schedule (' + schedule.length + ' day' + (schedule.length > 1 ? 's' : '') + ')</div>';
+                scheduleHtml += '<div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">📅 ' + t('Full Event Schedule') + ' (' + schedule.length + ' day' + (schedule.length > 1 ? 's' : '') + ')</div>';
                 scheduleHtml += '<div style="display:flex;flex-direction:column;gap:6px;">';
                 schedule.forEach(function(slot) {
                   const d = new Date(slot.date + 'T00:00:00');
@@ -433,7 +435,7 @@
                   scheduleHtml += '<div style="font-size:0.5rem;color:#94a3b8;">' + mn[d.getMonth()] + '</div>';
                   scheduleHtml += '</div>';
                   scheduleHtml += '<div style="flex:1;display:flex;align-items:center;gap:8px;">';
-                  if (slot.period) {
+                  if (slot.period && !slot.start_time) {
                     scheduleHtml += '<span style="background:rgba(16,185,129,0.1);color:#10b981;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;text-transform:capitalize;">' + slot.period.replace('_', ' ') + '</span>';
                   }
                   if (slot.start_time) {
@@ -445,7 +447,7 @@
                   }
                   scheduleHtml += '</div>';
                   if (ev.published_schedule && ev.published_schedule.length > 0) {
-                     scheduleHtml += '<span style="font-size:0.65rem;background:' + (isPub ? 'rgba(16,185,129,0.15)' : 'rgba(245,158,11,0.15)') + ';color:' + (isPub ? '#10b981' : '#f59e0b') + ';padding:3px 8px;border-radius:6px;font-weight:700;border:1px solid ' + (isPub ? 'rgba(16,185,129,0.3)' : 'rgba(245,158,11,0.3)') + ';">' + (isPub ? '✅ Published' : '⏳ Setup Day') + '</span>';
+                     scheduleHtml += '<span style="font-size:0.65rem;background:' + (isPub ? 'rgba(16,185,129,0.15)' : 'rgba(245,158,11,0.15)') + ';color:' + (isPub ? '#10b981' : '#f59e0b') + ';padding:3px 8px;border-radius:6px;font-weight:700;border:1px solid ' + (isPub ? 'rgba(16,185,129,0.3)' : 'rgba(245,158,11,0.3)') + ';">' + (isPub ? '✅ ' + t('Published') : '⏳ ' + t('Setup Day')) + '</span>';
                   }
                   scheduleHtml += '</div>';
                 });
@@ -458,11 +460,11 @@
             })()}
             <div class="ed-info-card ed-info-warning">
               <div class="ed-info-icon">👥</div>
-              <div><div class="ed-info-label">Capacity</div><div class="ed-info-value">${ev.capacity || 'Unlimited (مفتوح)'}</div></div>
+              <div><div class="ed-info-label">${t('Capacity')}</div><div class="ed-info-value">${ev.capacity || 'Unlimited (مفتوح)'}</div></div>
             </div>
             <div class="ed-info-card ed-info-warning">
               <div class="ed-info-icon">🎟️</div>
-              <div><div class="ed-info-label">Tickets Booked</div><div class="ed-info-value">${ev.tickets_count ?? '—'}</div></div>
+              <div><div class="ed-info-label">${t('Tickets Booked')}</div><div class="ed-info-value">${ev.tickets_count ?? '—'}</div></div>
             </div>
           </div>
           
@@ -470,10 +472,10 @@
           
           ${exhibitorsHtml}
 
-          ${(() => { let ag=ev.agenda; if(!ag||typeof ag!=='object') return ''; const isArr=Array.isArray(ag); if(isArr&&!ag.length) return ''; if(!isArr&&!Object.keys(ag).length) return ''; const pubDates=(ev.published_schedule&&ev.published_schedule.length>0)?ev.published_schedule.map(p=>p.date):[]; let h='<div style="margin-top:16px;"><div style="font-size:0.72rem;font-weight:700;color:#22d3ee;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">📋 Full Event Agenda</div>'; const dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; const renderItem=a=>`<div style="display:flex;align-items:center;gap:10px;background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:10px;padding:8px 14px;margin-left:8px;"><div style="display:flex;align-items:center;gap:6px;min-width:110px;"><span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.start_time}</span><span style="color:#64748b;font-size:0.7rem;">→</span><span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.end_time}</span></div><div style="flex:1;font-size:0.85rem;color:#e2e8f0;font-weight:500;">${a.title}</div></div>`; if(!isArr){Object.keys(ag).sort().forEach(ds=>{const items=ag[ds];if(!items||!items.length)return;const d=new Date(ds+'T00:00:00');const isPub=pubDates.length===0||pubDates.includes(ds); const badge=(pubDates.length>0)?(isPub?'<span style="font-size:0.6rem;background:rgba(16,185,129,0.15);color:#10b981;padding:2px 6px;border-radius:4px;margin-left:6px;border:1px solid rgba(16,185,129,0.3);">✅ Published</span>':'<span style="font-size:0.6rem;background:rgba(245,158,11,0.15);color:#f59e0b;padding:2px 6px;border-radius:4px;margin-left:6px;border:1px solid rgba(245,158,11,0.3);">⏳ Setup Day</span>'):''; h+=`<div style="margin-bottom:10px;"><div style="font-size:0.68rem;font-weight:600;color:#a78bfa;margin-bottom:6px;padding:4px 10px;background:rgba(139,92,246,0.08);border-radius:6px;display:inline-flex;align-items:center;">📅 ${dn[d.getDay()]} ${d.getDate()} ${mn[d.getMonth()]} ${d.getFullYear()}${badge}</div><div style="display:flex;flex-direction:column;gap:4px;">${items.map(renderItem).join('')}</div></div>`;});}else{h+=`<div style="display:flex;flex-direction:column;gap:4px;">${ag.map(renderItem).join('')}</div>`;} return h+'</div>'; })()}
+          ${(() => { let ag=ev.agenda; if(!ag||typeof ag!=='object') return ''; const isArr=Array.isArray(ag); if(isArr&&!ag.length) return ''; if(!isArr&&!Object.keys(ag).length) return ''; const pubDates=(ev.published_schedule&&ev.published_schedule.length>0)?ev.published_schedule.map(p=>p.date):[]; let h='<div style="margin-top:16px;"><div style="font-size:0.72rem;font-weight:700;color:#22d3ee;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">📋 ' + t('Full Event Agenda') + '</div>'; const dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; const renderItem=a=>`<div style="display:flex;align-items:center;gap:10px;background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:10px;padding:8px 14px;margin-left:8px;"><div style="display:flex;align-items:center;gap:6px;min-width:110px;"><span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.start_time}</span><span style="color:#64748b;font-size:0.7rem;">→</span><span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.end_time}</span></div><div style="flex:1;font-size:0.85rem;color:#e2e8f0;font-weight:500;">${a.title}</div></div>`; if(!isArr){Object.keys(ag).sort().forEach(ds=>{const items=ag[ds];if(!items||!items.length)return;const d=new Date(ds+'T00:00:00');const isPub=pubDates.length===0||pubDates.includes(ds); const badge=(pubDates.length>0)?(isPub?'<span style="font-size:0.6rem;background:rgba(16,185,129,0.15);color:#10b981;padding:2px 6px;border-radius:4px;margin-left:6px;border:1px solid rgba(16,185,129,0.3);">✅ ' + t('Published') + '</span>':'<span style="font-size:0.6rem;background:rgba(245,158,11,0.15);color:#f59e0b;padding:2px 6px;border-radius:4px;margin-left:6px;border:1px solid rgba(245,158,11,0.3);">⏳ ' + t('Setup Day') + '</span>'):''; h+=`<div style="margin-bottom:10px;"><div style="font-size:0.68rem;font-weight:600;color:#a78bfa;margin-bottom:6px;padding:4px 10px;background:rgba(139,92,246,0.08);border-radius:6px;display:inline-flex;align-items:center;">📅 ${dn[d.getDay()]} ${d.getDate()} ${mn[d.getMonth()]} ${d.getFullYear()}${badge}</div><div style="display:flex;flex-direction:column;gap:4px;">${items.map(renderItem).join('')}</div></div>`;});}else{h+=`<div style="display:flex;flex-direction:column;gap:4px;">${ag.map(renderItem).join('')}</div>`;} return h+'</div>'; })()}
 
           <div class="ed-footer" style="margin-top: 8px;">
-            <span class="ed-footer-label">Created by</span>
+            <span class="ed-footer-label">${t('Created by')}</span>
             <span class="ed-footer-name">${ev.creator?.name || ev.manager?.name || '—'}</span>
           </div>
 
@@ -747,19 +749,22 @@
   <div class="modal-overlay" id="rejection-modal">
     <div class="modal" style="max-width:400px">
       <div class="modal-header">
-        <h3 class="modal-title">Reason for Rejection</h3>
+        <h3 class="modal-title"><script>document.write(t('Reason for Rejection'))</script></h3>
         <button class="modal-close" onclick="closeRejectionModal()">✕</button>
       </div>
       <form id="rejection-form" onsubmit="submitRejection(event)">
         <input type="hidden" id="reject-event-id">
         <div class="form-group">
-          <label class="form-label" style="font-size:0.75rem;">Explain why this event is being rejected</label>
+          <label class="form-label" style="font-size:0.75rem;"><script>document.write(t('Explain why this event is being rejected'))</script></label>
           <textarea id="r-reason" class="form-control" rows="4"
-            placeholder="e.g. Venue capacity mismatch, missing details..." required></textarea>
+            placeholder="e.g. Venue capacity mismatch, missing details..." 
+            data-placeholder="e.g. Venue capacity mismatch, missing details..."
+            required></textarea>
+          <script>document.getElementById('r-reason').placeholder = t(document.getElementById('r-reason').getAttribute('data-placeholder'))</script>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-ghost" onclick="closeRejectionModal()">Cancel</button>
-          <button type="submit" class="btn btn-danger">Confirm Rejection</button>
+          <button type="button" class="btn btn-ghost" onclick="closeRejectionModal()"><script>document.write(t('Cancel'))</script></button>
+          <button type="submit" class="btn btn-danger"><script>document.write(t('Confirm Rejection'))</script></button>
         </div>
       </form>
     </div>
@@ -769,53 +774,56 @@
   <div class="modal-overlay" id="review-modal">
     <div class="modal" style="max-width:480px">
       <div class="modal-header">
-        <h3 class="modal-title">📝 Send Review</h3>
+        <h3 class="modal-title">📝 <script>document.write(t('Send Review'))</script></h3>
         <button class="modal-close" onclick="closeReviewModal()">✕</button>
       </div>
       <form id="review-form" onsubmit="submitReview(event)">
         <input type="hidden" id="review-event-id">
         
         <div class="form-group">
-          <label class="form-label" style="font-size:0.75rem;margin-bottom:10px;">Select fields that need changes</label>
+          <label class="form-label" style="font-size:0.75rem;margin-bottom:10px;"><script>document.write(t('Select fields that need changes'))</script></label>
           <div id="review-fields-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
             <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:0.82rem;color:#e2e8f0;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
-              <input type="checkbox" name="review_fields" value="title" style="width:15px;height:15px;cursor:pointer;"> 📝 Title
+              <input type="checkbox" name="review_fields" value="title" style="width:15px;height:15px;cursor:pointer;"> 📝 <script>document.write(t('Title'))</script>
             </label>
             <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:0.82rem;color:#e2e8f0;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
-              <input type="checkbox" name="review_fields" value="description" style="width:15px;height:15px;cursor:pointer;"> 📄 Description
+              <input type="checkbox" name="review_fields" value="description" style="width:15px;height:15px;cursor:pointer;"> 📄 <script>document.write(t('Description'))</script>
             </label>
             <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:0.82rem;color:#e2e8f0;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
-              <input type="checkbox" name="review_fields" value="event_type" style="width:15px;height:15px;cursor:pointer;"> 🏷️ Type
+              <input type="checkbox" name="review_fields" value="event_type" style="width:15px;height:15px;cursor:pointer;"> 🏷️ <script>document.write(t('Type'))</script>
             </label>
             <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:0.82rem;color:#e2e8f0;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
-              <input type="checkbox" name="review_fields" value="capacity" style="width:15px;height:15px;cursor:pointer;"> 👥 Capacity
+              <input type="checkbox" name="review_fields" value="capacity" style="width:15px;height:15px;cursor:pointer;"> 👥 <script>document.write(t('Capacity'))</script>
             </label>
             <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:0.82rem;color:#e2e8f0;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
-              <input type="checkbox" name="review_fields" value="image" style="width:15px;height:15px;cursor:pointer;"> 🖼️ Banner
+              <input type="checkbox" name="review_fields" value="image" style="width:15px;height:15px;cursor:pointer;"> 🖼️ <script>document.write(t('Banner'))</script>
             </label>
             <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:0.82rem;color:#e2e8f0;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
-              <input type="checkbox" name="review_fields" value="ministry_document" style="width:15px;height:15px;cursor:pointer;"> 📄 Ministry Doc
+              <input type="checkbox" name="review_fields" value="ministry_document" style="width:15px;height:15px;cursor:pointer;"> 📄 <script>document.write(t('Ministry Doc'))</script>
             </label>
             <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:0.82rem;color:#e2e8f0;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
-              <input type="checkbox" name="review_fields" value="booking_proof" style="width:15px;height:15px;cursor:pointer;"> 📎 Booking Proof
+              <input type="checkbox" name="review_fields" value="booking_proof" style="width:15px;height:15px;cursor:pointer;"> 📎 <script>document.write(t('Booking Proof'))</script>
             </label>
             <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:0.82rem;color:#e2e8f0;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
-              <input type="checkbox" name="review_fields" value="event_objective" style="width:15px;height:15px;cursor:pointer;"> 🎯 Event Objective
+              <input type="checkbox" name="review_fields" value="event_objective" style="width:15px;height:15px;cursor:pointer;"> 🎯 <script>document.write(t('Event Objective'))</script>
             </label>
             <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:0.82rem;color:#e2e8f0;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
-              <input type="checkbox" name="review_fields" value="target_audience" style="width:15px;height:15px;cursor:pointer;"> 👥 Target Audience
+              <input type="checkbox" name="review_fields" value="target_audience" style="width:15px;height:15px;cursor:pointer;"> 👥 <script>document.write(t('Target Audience'))</script>
             </label>
           </div>
         </div>
 
         <div class="form-group" style="margin-top:16px;">
-          <label class="form-label" style="font-size:0.75rem;">Review Message</label>
+          <label class="form-label" style="font-size:0.75rem;"><script>document.write(t('Review Message'))</script></label>
           <textarea id="review-message" class="form-control" rows="3"
-            placeholder="e.g. Please upload a clearer competent authority document and increase the capacity..." required></textarea>
+            placeholder="e.g. Please upload a clearer competent authority document and increase the capacity..." 
+            data-placeholder="e.g. Please upload a clearer competent authority document and increase the capacity..."
+            required></textarea>
+          <script>document.getElementById('review-message').placeholder = t(document.getElementById('review-message').getAttribute('data-placeholder'))</script>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-ghost" onclick="closeReviewModal()">Cancel</button>
-          <button type="submit" class="btn" style="background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);">📝 Send Review</button>
+          <button type="button" class="btn btn-ghost" onclick="closeReviewModal()"><script>document.write(t('Cancel'))</script></button>
+          <button type="submit" class="btn" style="background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);">📝 <script>document.write(t('Send Review'))</script></button>
         </div>
       </form>
     </div>
@@ -825,19 +833,22 @@
   <div class="modal-overlay" id="cancellation-rejection-modal">
     <div class="modal" style="max-width:400px">
       <div class="modal-header">
-        <h3 class="modal-title">Reason for Rejecting Cancellation</h3>
+        <h3 class="modal-title"><script>document.write(t('Reason for Rejecting Cancellation'))</script></h3>
         <button class="modal-close" onclick="closeCancellationRejectionModal()">✕</button>
       </div>
       <form id="cancellation-rejection-form" onsubmit="submitCancellationRejection(event)">
         <input type="hidden" id="cancellation-reject-event-id">
         <div class="form-group">
-          <label class="form-label" style="font-size:0.75rem;">Explain why you are rejecting this cancellation request</label>
+          <label class="form-label" style="font-size:0.75rem;"><script>document.write(t('Explain why you are rejecting this cancellation request'))</script></label>
           <textarea id="cr-reason" class="form-control" rows="4"
-            placeholder="e.g. The event is already sold out and cannot be cancelled at this stage..." required></textarea>
+            placeholder="e.g. The event is already sold out and cannot be cancelled at this stage..." 
+            data-placeholder="e.g. The event is already sold out and cannot be cancelled at this stage..."
+            required></textarea>
+          <script>document.getElementById('cr-reason').placeholder = t(document.getElementById('cr-reason').getAttribute('data-placeholder'))</script>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-ghost" onclick="closeCancellationRejectionModal()">Cancel</button>
-          <button type="submit" class="btn btn-danger">Confirm Rejection</button>
+          <button type="button" class="btn btn-ghost" onclick="closeCancellationRejectionModal()"><script>document.write(t('Cancel'))</script></button>
+          <button type="submit" class="btn btn-danger"><script>document.write(t('Confirm Rejection'))</script></button>
         </div>
       </form>
     </div>

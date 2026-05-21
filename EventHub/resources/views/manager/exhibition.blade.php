@@ -193,7 +193,7 @@
 
   <main class="main-content">
     <div class="topbar">
-      <div><h1 class="page-title">Exhibition Management</h1><p class="page-subtitle">Manage exhibitions, companies, booths & rankings</p></div>
+      <div><h1 class="page-title"><script>document.write(t('Exhibition Management'))</script></h1><p class="page-subtitle"><script>document.write(t('Manage exhibitions, companies, booths & rankings'))</script></p></div>
       <div style="display:flex; gap:10px; align-items:center;">
         <div id="notification-bell"></div>
       </div>
@@ -201,11 +201,11 @@
 
     <!-- Discovery Section: Available Companies -->
     <div class="discovery-section">
-      <h2 class="page-title" style="font-size: 1.1rem; font-weight: 600; margin-top:20px;">Available Companies</h2>
+      <h2 class="page-title" style="font-size: 1.1rem; font-weight: 600; margin-top:20px;"><script>document.write(t('Available Companies'))</script></h2>
       <div class="card" style="margin-bottom: 30px;">
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Company</th><th>Sector</th><th>Contact</th><th>Action</th></tr></thead>
+            <thead><tr><th><script>document.write(t('Company'))</script></th><th><script>document.write(t('Sector'))</script></th><th><script>document.write(t('Contact'))</script></th><th><script>document.write(t('Actions'))</script></th></tr></thead>
             <tbody id="companies-body">
               <tr class="loading-row"><td colspan="4"><div class="spinner" style="margin:auto"></div></td></tr>
             </tbody>
@@ -215,7 +215,7 @@
     </div>
 
     <!-- Exhibition Groups -->
-    <h2 class="page-title" style="font-size: 1.2rem; font-weight: 600;">Exhibitions</h2>
+    <h2 class="page-title" style="font-size: 1.2rem; font-weight: 600;"><script>document.write(t('Exhibitions'))</script></h2>
     <div id="exhibition-groups">
       <div class="card" style="padding:40px; text-align:center;"><div class="spinner" style="margin:auto"></div></div>
     </div>
@@ -226,28 +226,29 @@
 <div class="modal-overlay" id="req-modal">
   <div class="modal" style="max-width: 450px;">
     <div class="modal-header">
-      <h3 class="modal-title">Invite to Exhibition</h3>
+      <h3 class="modal-title"><script>document.write(t('Invite to Exhibition'))</script></h3>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <form id="req-form">
       <div class="form-group">
-        <label class="form-label">Event</label>
+        <label class="form-label"><script>document.write(t('Event'))</script></label>
         <select id="r-event" class="form-control i18n-skip" required title="Select Exhibition Event">
           <option value="">Select an exhibition event…</option>
         </select>
       </div>
       <div class="form-group" id="target-company-group" style="display:none; background: rgba(34,211,238,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(34,211,238,0.1);">
-        <label class="form-label">Target Company</label>
+        <label class="form-label"><script>document.write(t('Target Company'))</script></label>
         <div id="r-company-display" style="font-weight:700; color:var(--text); margin-bottom: 5px; font-size: 1.1rem;"></div>
         <input type="hidden" id="r-company-id" value=""/>
       </div>
       <div class="form-group">
-        <label class="form-label">Invitation Message</label>
-        <textarea id="r-message" class="form-control" placeholder="Tell the company why they should exhibit..." style="min-height: 120px;"></textarea>
+        <label class="form-label"><script>document.write(t('Invitation Message'))</script></label>
+        <textarea id="r-message" class="form-control" placeholder="Tell the company why they should exhibit..." data-placeholder="Tell the company why they should exhibit..." style="min-height: 120px;"></textarea>
+        <script>document.querySelector('#r-message').placeholder = t('Tell the company why they should exhibit...')</script>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-        <button type="submit" class="btn btn-primary">Send Invitation</button>
+        <button type="button" class="btn btn-ghost" onclick="closeModal()"><script>document.write(t('Cancel'))</script></button>
+        <button type="submit" class="btn btn-primary"><script>document.write(t('Send Invitation'))</script></button>
       </div>
     </form>
   </div>
@@ -258,12 +259,12 @@
 <div class="modal-overlay" id="msg-modal">
   <div class="modal" style="max-width: 500px;">
     <div class="modal-header">
-      <h3 class="modal-title">Invitation Message</h3>
+      <h3 class="modal-title"><script>document.write(t('Invitation Message'))</script></h3>
       <button class="modal-close" onclick="closeMsgModal()">✕</button>
     </div>
     <div class="modal-body" id="msg-content" style="padding: 20px; font-size: 15px; line-height: 1.6; color: var(--text);"></div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-primary" onclick="closeMsgModal()" style="width: 100%;">Close</button>
+      <button type="button" class="btn btn-primary" onclick="closeMsgModal()" style="width: 100%;"><script>document.write(t('Close'))</script></button>
     </div>
   </div>
 </div>
@@ -275,7 +276,7 @@
 <div class="modal-overlay" id="agreement-modal">
   <div class="modal" style="max-width:520px; width:95%; padding:0; border-top:3px solid #0ea5e9; max-height:85vh; display:flex; flex-direction:column; border-radius:16px;">
     <div style="padding:16px 20px 0; display:flex; justify-content:space-between; align-items:center;">
-      <div><h3 class="modal-title" style="margin:0;font-size:1rem;">Contract Negotiation</h3><p style="font-size:0.7rem;color:var(--text-muted);margin:2px 0 0">Negotiate terms with the company</p></div>
+      <div><h3 class="modal-title" style="margin:0;font-size:1rem;"><script>document.write(t('Contract Negotiation'))</script></h3><p style="font-size:0.7rem;color:var(--text-muted);margin:2px 0 0"><script>document.write(t('Negotiate terms with the company'))</script></p></div>
       <button class="modal-close" onclick="closeAgreementModal()">✕</button>
     </div>
     <div id="agreement-content" style="padding:12px 20px 20px; overflow-y:auto; flex:1;">
@@ -288,21 +289,21 @@
 <div class="modal-overlay" id="booth-modal">
   <div class="modal" style="max-width: 400px;">
     <div class="modal-header">
-      <h3 class="modal-title">Assign Booth Location</h3>
+      <h3 class="modal-title"><script>document.write(t('Assign Booth Location'))</script></h3>
       <button class="modal-close" onclick="closeBoothModal()">✕</button>
     </div>
     <form id="booth-form">
       <input type="hidden" id="b-app-id" />
       <div style="margin-bottom:15px; color:var(--text-muted); font-size:0.9rem;">
-        Assigning for: <span id="b-comp-name" style="font-weight:700; color:var(--text);"></span>
+        <script>document.write(t('Assigning for:'))</script> <span id="b-comp-name" style="font-weight:700; color:var(--text);"></span>
       </div>
       <div class="form-group">
-        <label class="form-label">Select Booth</label>
+        <label class="form-label"><script>document.write(t('Select Booth'))</script></label>
         <select id="b-id-select" class="form-control" required></select>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-ghost" onclick="closeBoothModal()">Cancel</button>
-        <button type="submit" class="btn btn-primary">Save Assignment</button>
+        <button type="button" class="btn btn-ghost" onclick="closeBoothModal()"><script>document.write(t('Cancel'))</script></button>
+        <button type="submit" class="btn btn-primary"><script>document.write(t('Save Assignment'))</script></button>
       </div>
     </form>
   </div>
@@ -312,18 +313,18 @@
 <div class="modal-overlay" id="zone-modal">
   <div class="modal" style="max-width: 400px;">
     <div class="modal-header">
-      <h3 class="modal-title">Add New Zone</h3>
+      <h3 class="modal-title"><script>document.write(t('Add New Zone'))</script></h3>
       <button class="modal-close" onclick="closeZoneModalUI()">✕</button>
     </div>
     <form id="zone-form">
       <input type="hidden" id="z-event-id" />
       <div class="form-group">
-        <label class="form-label">Zone Name</label>
+        <label class="form-label"><script>document.write(t('Zone Name'))</script></label>
         <input type="text" id="z-name" class="form-control" placeholder="e.g. Zone A, Hall 1" required>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-ghost" onclick="closeZoneModalUI()">Cancel</button>
-        <button type="submit" class="btn btn-primary">Create Zone</button>
+        <button type="button" class="btn btn-ghost" onclick="closeZoneModalUI()"><script>document.write(t('Cancel'))</script></button>
+        <button type="submit" class="btn btn-primary"><script>document.write(t('Create Zone'))</script></button>
       </div>
     </form>
   </div>
@@ -333,7 +334,7 @@
 <div class="modal-overlay" id="booth-item-modal">
   <div class="modal" style="max-width: 400px;">
     <div class="modal-header">
-      <h3 class="modal-title" id="booth-item-title">Add Booth</h3>
+      <h3 class="modal-title" id="booth-item-title"><script>document.write(t('Add Booth'))</script></h3>
       <button class="modal-close" onclick="closeBoothItemModal()">✕</button>
     </div>
     <form id="booth-item-form">
@@ -341,16 +342,16 @@
       <input type="hidden" id="bi-zone-id" />
       <input type="hidden" id="bi-event-id" />
       <div class="form-group">
-        <label class="form-label">Booth Number</label>
+        <label class="form-label"><script>document.write(t('Booth Number'))</script></label>
         <input type="text" id="bi-number" class="form-control" placeholder="e.g. A-1" required>
       </div>
       <div class="form-group">
-        <label class="form-label">Size</label>
+        <label class="form-label"><script>document.write(t('Size'))</script></label>
         <input type="text" id="bi-size" class="form-control" placeholder="e.g. 9 or 3x3">
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-ghost" onclick="closeBoothItemModal()">Cancel</button>
-        <button type="submit" class="btn btn-primary">Save Booth</button>
+        <button type="button" class="btn btn-ghost" onclick="closeBoothItemModal()"><script>document.write(t('Cancel'))</script></button>
+        <button type="submit" class="btn btn-primary"><script>document.write(t('Save Booth'))</script></button>
       </div>
     </form>
   </div>
@@ -360,7 +361,7 @@
 <div class="modal-overlay" id="batch-modal">
   <div class="modal" style="max-width: 450px;">
     <div class="modal-header">
-      <h3 class="modal-title">Batch Generate Booths</h3>
+      <h3 class="modal-title"><script>document.write(t('Batch Generate Booths'))</script></h3>
       <button class="modal-close" onclick="closeBatchModalUI()">✕</button>
     </div>
     <form id="batch-form-ui">
@@ -368,27 +369,27 @@
       <input type="hidden" id="batch-event-id" />
       <div class="booth-form-row">
         <div class="form-group">
-          <label class="form-label">Prefix</label>
+          <label class="form-label"><script>document.write(t('Prefix'))</script></label>
           <input type="text" id="batch-prefix" class="form-control" placeholder="e.g. A-" value="A-" required>
         </div>
         <div class="form-group">
-          <label class="form-label">Start Number</label>
+          <label class="form-label"><script>document.write(t('Start Number'))</script></label>
           <input type="number" id="batch-start" class="form-control" placeholder="e.g. 1" value="1" min="1" required>
         </div>
       </div>
       <div class="booth-form-row">
         <div class="form-group">
-          <label class="form-label">How many?</label>
+          <label class="form-label"><script>document.write(t('How many?'))</script></label>
           <input type="number" id="batch-count" class="form-control" placeholder="e.g. 10" value="8" min="1" max="100" required>
         </div>
         <div class="form-group">
-          <label class="form-label">Default Size</label>
+          <label class="form-label"><script>document.write(t('Default Size'))</script></label>
           <input type="text" id="batch-size" class="form-control" placeholder="e.g. 9 or 3x3">
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-ghost" onclick="closeBatchModalUI()">Cancel</button>
-        <button type="submit" class="btn btn-primary">Generate Batch</button>
+        <button type="button" class="btn btn-ghost" onclick="closeBatchModalUI()"><script>document.write(t('Cancel'))</script></button>
+        <button type="submit" class="btn btn-primary"><script>document.write(t('Generate Batch'))</script></button>
       </div>
     </form>
   </div>

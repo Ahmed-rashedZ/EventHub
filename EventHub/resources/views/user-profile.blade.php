@@ -325,6 +325,8 @@
       loadProfile(userId);
     }
 
+    let profileUserId = null;
+
     async function loadProfile(id) {
       try {
         const res = await api.get('/profile/' + id);
@@ -364,9 +366,11 @@
         const statusBadge = document.getElementById('u-status-badge');
         if (u.role === 'Sponsor' || u.role === 'Company') {
           if (p.is_available) {
-            statusBadge.innerHTML = '<span class="badge badge-approved">Available for Sponsorship</span>';
+            const label = u.role === 'Company' ? t('Available for Exhibitions') : t('Available for Sponsorship');
+            statusBadge.innerHTML = `<span class="badge badge-approved">${label}</span>`;
           } else {
-            statusBadge.innerHTML = '<span class="badge badge-rejected">Currently Not Available</span>';
+            const label = u.role === 'Company' ? t('Not Available for Exhibitions') : t('Currently Not Available');
+            statusBadge.innerHTML = `<span class="badge badge-rejected">${label}</span>`;
           }
         } else if (u.role === 'Event Manager') {
           if (u.manager_average_rating !== undefined && u.manager_average_rating !== null && statusBadge) {
@@ -476,6 +480,7 @@
         document.getElementById('profile-content').style.display = 'block';
 
         if (u.role === 'Event Manager' || u.role === 'Sponsor') {
+          profileUserId = u.id;
           loadManagerEvents(u.id, u.role);
         }
       } catch (err) {
@@ -563,11 +568,11 @@
             </td>
             <td style="color:var(--text-muted)">${ev.venue?.name || '—'}</td>
             <td style="color:var(--text-muted);white-space:nowrap">${fmtDateShort(ev.start_time)}</td>
-            <td style="color:var(--text-muted)">${ev.capacity || '—'}</td>
+            <td style="color:var(--text-muted)">${ev.capacity ? ev.capacity : t('Unlimited')}</td>
             <td>${badge(ev.status)} ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''}</td>
             <td style="display:flex;gap:6px;flex-wrap:wrap">
-              <button class="btn btn-ghost btn-sm" onclick="showMgrEventDetails(${ev.id})">ℹ️ Details</button>
-              ${(me && me.role !== 'Sponsor') ? `<button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='${me.role === 'Admin' ? '/admin' : '/manager'}/event-stats/${ev.id}'">📊 Stats</button>` : ''}
+              <button class="btn btn-ghost btn-sm" onclick="showMgrEventDetails(${ev.id})">ℹ️ ${t('Details')}</button>
+              ${(me && (me.role === 'Admin' || me.id == profileUserId)) ? `<button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='${me.role === 'Admin' ? '/admin' : '/manager'}/event-stats/${ev.id}'">📊 ${t('Stats')}</button>` : ''}
             </td>
           </tr>`;
       }).join('');
@@ -598,7 +603,7 @@
           : `<div class="ed-banner ed-banner-placeholder"><span class="ed-banner-emoji">${tIcon}</span><div class="ed-banner-fade"></div></div>`;
 
         const rejectionSection = (ev.status === 'rejected' && ev.rejection_reason)
-          ? `<div class="ed-rejection"><span class="ed-rej-label">⚠ Rejection Reason</span><p>${ev.rejection_reason}</p></div>`
+          ? `<div class="ed-rejection"><span class="ed-rej-label">⚠ ${t('Rejection Reason')}</span><p>${ev.rejection_reason}</p></div>`
           : '';
 
         let sponsorsHtml = '';
@@ -615,7 +620,7 @@
 
           sponsorsHtml = `
             <div class="ed-section mt-4" style="margin-top: 16px;">
-              <div class="ed-section-label">Current Sponsors</div>
+              <div class="ed-section-label">${t('Current Sponsors')}</div>
               <div style="display:flex; flex-direction:column; gap:8px;">
                 ${ev.sponsors.map(sp => `
                    <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.04); padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.05); cursor:pointer;" onclick="window.location.href='/user-profile?id=${sp.id}'">
@@ -672,38 +677,38 @@
           ${rejectionSection}
 
           <div class="ed-section">
-            <div class="ed-section-label">About this Event</div>
-            <p class="ed-description">${ev.description || 'No description provided.'}</p>
+            <div class="ed-section-label">${t('About this Event')}</div>
+            <p class="ed-description">${ev.description || t('No description provided.')}</p>
           </div>
 
           <div class="ed-info-grid">
             <div class="ed-info-card ed-info-accent2">
               <div class="ed-info-icon">🏛️</div>
-              <div><div class="ed-info-label">Venue</div><div class="ed-info-value">${ev.venue?.name || ev.external_venue_name || '—'}</div></div>
+              <div><div class="ed-info-label">${t('Venue')}</div><div class="ed-info-value">${ev.venue?.name || ev.external_venue_name || '—'}</div></div>
             </div>
             <div class="ed-info-card ed-info-accent2">
               <div class="ed-info-icon">📍</div>
-              <div><div class="ed-info-label">Location</div><div class="ed-info-value">
+              <div><div class="ed-info-label">${t('Location')}</div><div class="ed-info-value">
                 ${ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>`
             : (ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` : '—')}
               </div></div>
             </div>
-            ${(me && me.role !== 'Sponsor') ? `
+            ${(me && (me.role === 'Admin' || me.id == ev.creator_id || me.id == ev.manager_id)) ? `
               ${!ev.venue_id && ev.booking_proof_path ? `
               <div class="ed-info-card ed-info-accent2" style="grid-column: 1 / -1; background:rgba(34,211,238,0.05); border-color:rgba(34,211,238,0.2);">
                 <div class="ed-info-icon">📎</div>
-                <div><div class="ed-info-label" style="color:#22d3ee">Booking Proof</div><div class="ed-info-value"><a href="/storage/${ev.booking_proof_path}" target="_blank" style="color:#22d3ee;text-decoration:underline;">View Document ↗</a></div></div>
+                <div><div class="ed-info-label" style="color:#22d3ee">${t('Booking Proof')}</div><div class="ed-info-value"><a href="/storage/${ev.booking_proof_path}" target="_blank" style="color:#22d3ee;text-decoration:underline;">${t('View Document ↗')}</a></div></div>
               </div>
               ` : ''}
               ${ev.ministry_document_path ? `
               <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(139,92,246,0.05); border-color:rgba(139,92,246,0.2); border: 1px solid rgba(139,92,246,0.2);">
                 <div class="ed-info-icon">📄</div>
-                <div><div class="ed-info-label" style="color:#a78bfa">Competent Authority Approval</div><div class="ed-info-value"><a href="/storage/${ev.ministry_document_path}" target="_blank" style="color:#a78bfa;text-decoration:underline;">View Document ↗</a></div></div>
+                <div><div class="ed-info-label" style="color:#a78bfa">${t('Competent Authority Approval')}</div><div class="ed-info-value"><a href="/storage/${ev.ministry_document_path}" target="_blank" style="color:#a78bfa;text-decoration:underline;">${t('View Document ↗')}</a></div></div>
               </div>
               ` : `
               <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(239,68,68,0.05); border-color:rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.2);">
                 <div class="ed-info-icon">⚠️</div>
-                <div><div class="ed-info-label" style="color:#ef4444">Competent Authority Approval</div><div class="ed-info-value" style="color:#ef4444;">Not uploaded</div></div>
+                <div><div class="ed-info-label" style="color:#ef4444">${t('Competent Authority Approval')}</div><div class="ed-info-value" style="color:#ef4444;">${t('Not uploaded')}</div></div>
               </div>
               `}
             ` : ''}
@@ -715,7 +720,7 @@
               const dn = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
               const mn = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
               let scheduleHtml = '<div style="grid-column: 1 / -1;">';
-              scheduleHtml += '<div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">📅 Event Schedule (' + schedule.length + ' day' + (schedule.length > 1 ? 's' : '') + ')</div>';
+              scheduleHtml += '<div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">📅 ' + t('Event Schedule') + ' (' + schedule.length + ' ' + (schedule.length > 1 ? t('days') : t('day')) + ')</div>';
               scheduleHtml += '<div style="display:flex;flex-direction:column;gap:6px;">';
               schedule.forEach(function (slot) {
                 const d = new Date(slot.date + 'T00:00:00');
@@ -726,7 +731,7 @@
                 scheduleHtml += '<div style="font-size:0.5rem;color:#94a3b8;">' + mn[d.getMonth()] + '</div>';
                 scheduleHtml += '</div>';
                 scheduleHtml += '<div style="flex:1;display:flex;align-items:center;gap:8px;">';
-                if (slot.period) {
+                if (slot.period && !slot.start_time) {
                   scheduleHtml += '<span style="background:rgba(16,185,129,0.1);color:#10b981;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;text-transform:capitalize;">' + slot.period.replace('_', ' ') + '</span>';
                 }
                 if (slot.start_time) {
@@ -741,13 +746,13 @@
               scheduleHtml += '</div></div>';
               return scheduleHtml;
             } else {
-              return '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon">🕐</div><div><div class="ed-info-label">Start</div><div class="ed-info-value">' + fmtDate(ev.start_time) + '</div></div></div>' +
-                '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon">🕔</div><div><div class="ed-info-label">End</div><div class="ed-info-value">' + fmtDate(ev.end_time) + '</div></div></div>';
+              return '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon">🕐</div><div><div class="ed-info-label">' + t('Start') + '</div><div class="ed-info-value">' + fmtDate(ev.start_time) + '</div></div></div>' +
+                '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon">🕔</div><div><div class="ed-info-label">' + t('End') + '</div><div class="ed-info-value">' + fmtDate(ev.end_time) + '</div></div></div>';
             }
           })()}
             <div class="ed-info-card ed-info-warning">
               <div class="ed-info-icon">👥</div>
-              <div><div class="ed-info-label">Capacity</div><div class="ed-info-value">${ev.capacity}</div></div>
+              <div><div class="ed-info-label">${t('Capacity')}</div><div class="ed-info-value">${ev.capacity ? ev.capacity : t('Unlimited')}</div></div>
             </div>
             <div class="ed-info-card ed-info-warning">
               <div class="ed-info-icon">🎟️</div>
@@ -760,7 +765,7 @@
           ${(() => { let ag = ev.agenda; if (!ag || typeof ag !== 'object') return ''; const isArr = Array.isArray(ag); if (isArr && !ag.length) return ''; if (!isArr && !Object.keys(ag).length) return ''; const pubDates = ev.published_schedule && ev.published_schedule.length > 0 ? ev.published_schedule.map(p => p.date) : null; if (pubDates && !isArr) { const f = {}; Object.keys(ag).forEach(ds => { if (pubDates.includes(ds)) f[ds] = ag[ds]; }); ag = f; if (!Object.keys(ag).length) return ''; } let h = '<div style="margin-top:16px;"><div style="font-size:0.72rem;font-weight:700;color:#22d3ee;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">📋 Event Agenda</div>'; const dn = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], mn = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']; const renderItem = a => `<div style="display:flex;align-items:center;gap:10px;background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:10px;padding:8px 14px;margin-left:8px;"><div style="display:flex;align-items:center;gap:6px;min-width:110px;"><span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.start_time}</span><span style="color:#64748b;font-size:0.7rem;">→</span><span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.end_time}</span></div><div style="flex:1;font-size:0.85rem;color:#e2e8f0;font-weight:500;">${a.title}</div></div>`; if (!isArr) { Object.keys(ag).sort().forEach(ds => { const items = ag[ds]; if (!items || !items.length) return; const d = new Date(ds + 'T00:00:00'); h += `<div style="margin-bottom:10px;"><div style="font-size:0.68rem;font-weight:600;color:#a78bfa;margin-bottom:6px;padding:4px 10px;background:rgba(139,92,246,0.08);border-radius:6px;display:inline-block;">📅 ${dn[d.getDay()]} ${d.getDate()} ${mn[d.getMonth()]} ${d.getFullYear()}</div><div style="display:flex;flex-direction:column;gap:4px;">${items.map(renderItem).join('')}</div></div>`; }); } else { h += `<div style="display:flex;flex-direction:column;gap:4px;">${ag.map(renderItem).join('')}</div>`; } return h + '</div>'; })()}
 
           <div class="ed-footer" style="margin-top: 8px;">
-            <span class="ed-footer-label">Created by</span>
+            <span class="ed-footer-label">${t('Created by')}</span>
             <span class="ed-footer-name">${ev.creator?.name || ev.manager?.name || '—'}</span>
           </div>
 

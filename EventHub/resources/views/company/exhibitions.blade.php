@@ -25,7 +25,7 @@
         <p class="page-subtitle">Track your requests and participate in confirmed exhibitions</p>
       </div>
       <div class="topbar-actions">
-        <a href="/manager/events" class="btn btn-primary">Discover exhibitions</a>
+        <a href="/company/events" class="btn btn-primary">Discover exhibitions</a>
       </div>
     </div>
 
@@ -96,7 +96,7 @@
       <tr>
         <td>${badge(app.status)}</td>
         <td>
-            <div style="font-weight:600">${app.event?.title || '—'}</div>
+            <div style="font-weight:600" class="i18n-skip">${app.event?.title || '—'}</div>
             <div style="font-size:0.75rem; color:var(--text-muted)">Applied: ${new Date(app.created_at).toLocaleDateString()}</div>
         </td>
         <td style="color:var(--text-muted)">${app.event?.venue?.name || '—'}</td>
@@ -107,10 +107,10 @@
         <td>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
                 ${app.status === 'pending' && app.initiator === 'event_manager' ? `
-                    <button class="btn btn-success btn-sm" onclick="respondRequest(${app.id}, 'accepted')">✅ Accept</button>
-                    <button class="btn btn-danger btn-sm" onclick="respondRequest(${app.id}, 'rejected')">❌ Reject</button>
+                    <button class="btn btn-success btn-sm" onclick="respondRequest(${app.id}, 'accepted')">✅ ${t('Accept')}</button>
+                    <button class="btn btn-danger btn-sm" onclick="respondRequest(${app.id}, 'rejected')">❌ ${t('Reject')}</button>
                 ` : ''}
-                ${app.status === 'negotiating' ? `<button class="btn btn-sm btn-primary" onclick="openAgreementModal(${app.id}, 'exhibition')">Review Offer</button>` : ''}
+                ${app.status === 'negotiating' ? `<button class="btn btn-sm btn-primary" onclick="openAgreementModal(${app.id}, 'exhibition')">${t('Review Offer')}</button>` : ''}
                 ${app.status === 'accepted' ? `<button class="btn btn-sm btn-ghost" onclick="openAgreementModal(${app.id}, 'exhibition')">📄 ${t('Agreement')}</button>` : ''}
                 <button class="btn btn-sm btn-ghost" onclick="showEventDetails(${app.event_id})">ℹ️ ${t('Details')}</button>
             </div>
@@ -212,7 +212,7 @@
 
         <div class="ed-section">
           <div class="ed-section-label">About this Event</div>
-          <p class="ed-description">${ev.description || 'No description provided.'}</p>
+          <p class="ed-description i18n-skip">${ev.description || 'No description provided.'}</p>
         </div>
 
         <div class="ed-info-grid">
@@ -233,8 +233,8 @@
           <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(34,211,238,0.06); border:1px solid rgba(34,211,238,0.15); margin-top:10px;">
               <div class="ed-info-icon">📎</div>
               <div style="flex:1">
-                  <div class="ed-info-label" style="color:#22d3ee">Booking Proof</div>
-                  <a href="/storage/${ev.booking_proof}" target="_blank" class="ed-info-value" style="text-decoration:underline;">View Document ↗</a>
+                  <div class="ed-info-label" style="color:#22d3ee">${t('Booking Proof')}</div>
+                  <a href="/storage/${ev.booking_proof}" target="_blank" class="ed-info-value" style="text-decoration:underline;">${t('View Document ↗')}</a>
               </div>
           </div>
         ` : ''}
@@ -243,8 +243,8 @@
           <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(139,92,246,0.06); border:1px solid rgba(139,92,246,0.15); margin-top:10px;">
               <div class="ed-info-icon">📄</div>
               <div style="flex:1">
-                  <div class="ed-info-label" style="color:#a78bfa">Competent Authority Approval</div>
-                  <a href="/storage/${ev.ministry_approval_doc}" target="_blank" class="ed-info-value" style="text-decoration:underline;">View Document ↗</a>
+                  <div class="ed-info-label" style="color:#a78bfa">${t('Competent Authority Approval')}</div>
+                  <a href="/storage/${ev.ministry_approval_doc}" target="_blank" class="ed-info-value" style="text-decoration:underline;">${t('View Document ↗')}</a>
               </div>
           </div>
         ` : ''}
@@ -277,7 +277,7 @@
               const dn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
               const mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
               let scheduleHtml = '<div style="grid-column: 1 / -1; margin-top:15px;">';
-              scheduleHtml += '<div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">📅 Event Schedule (' + schedule.length + ' day' + (schedule.length > 1 ? 's' : '') + ')</div>';
+              scheduleHtml += '<div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">📅 ' + t('Event Schedule') + ' (' + schedule.length + ' ' + (schedule.length > 1 ? t('days') : t('day')) + ')</div>';
               scheduleHtml += '<div style="display:flex;flex-direction:column;gap:6px;">';
               schedule.forEach(function(slot) {
                 const d = new Date(slot.date + 'T00:00:00');
@@ -288,7 +288,7 @@
                 scheduleHtml += '<div style="font-size:0.5rem;color:#94a3b8;">' + mn[d.getMonth()] + '</div>';
                 scheduleHtml += '</div>';
                 scheduleHtml += '<div style="flex:1;display:flex;align-items:center;gap:8px;">';
-                if (slot.period) {
+                if (slot.period && !slot.start_time) {
                   scheduleHtml += '<span style="background:rgba(16,185,129,0.1);color:#10b981;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;text-transform:capitalize;">' + slot.period.replace('_', ' ') + '</span>';
                 }
                 if (slot.start_time) {
@@ -303,15 +303,15 @@
               scheduleHtml += '</div></div>';
               return scheduleHtml;
             } else {
-              return '<div class="ed-info-card ed-info-accent" style="margin-top:10px;"><div class="ed-info-icon">🕐</div><div><div class="ed-info-label">Start</div><div class="ed-info-value">' + fmtDate(ev.start_time) + '</div></div></div>' +
-                     '<div class="ed-info-card ed-info-accent" style="margin-top:10px;"><div class="ed-info-icon">🕔</div><div><div class="ed-info-label">End</div><div class="ed-info-value">' + fmtDate(ev.end_time) + '</div></div></div>';
+              return '<div class="ed-info-card ed-info-accent" style="margin-top:10px;"><div class="ed-info-icon">🕐</div><div><div class="ed-info-label">' + t('Start') + '</div><div class="ed-info-value">' + fmtDate(ev.start_time) + '</div></div></div>' +
+                     '<div class="ed-info-card ed-info-accent" style="margin-top:10px;"><div class="ed-info-icon">🕔</div><div><div class="ed-info-label">' + t('End') + '</div><div class="ed-info-value">' + fmtDate(ev.end_time) + '</div></div></div>';
             }
           })()}
 
           <div class="ed-info-grid" style="margin-top:15px;">
             <div class="ed-info-card ed-info-warning">
               <div class="ed-info-icon">👥</div>
-              <div><div class="ed-info-label">Capacity</div><div class="ed-info-value">${ev.capacity || 'N/A'}</div></div>
+              <div><div class="ed-info-label">${t('Capacity')}</div><div class="ed-info-value">${ev.capacity ? ev.capacity : t('Unlimited')}</div></div>
             </div>
             <div class="ed-info-card ed-info-warning">
               <div class="ed-info-icon">🎫</div>
@@ -325,7 +325,7 @@
         <div class="ed-footer mt-2" style="justify-content:space-between; margin-top:20px;">
 
           <div style="display:flex; align-items:center; gap:8px;">
-              <span class="ed-footer-label">Created by</span>
+              <span class="ed-footer-label">${t('Created by')}</span>
               <span class="ed-footer-name cursor-pointer" onclick="navigateToProfile(${ev.creator?.id})" style="color:var(--accent2);">${ev.creator?.name || '—'}</span>
           </div>
           <div class="ed-footer-label">ID: #${ev.id}</div>
