@@ -16,7 +16,9 @@
     }
 
     @media (max-width: 540px) {
-      .pr-docs-grid { grid-template-columns: 1fr; }
+      .pr-docs-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .pr-doc-card {
@@ -79,7 +81,7 @@
       margin-top: 4px;
     }
   </style>
-<link rel="icon" href="/images/logo.jpg" type="image/jpeg">
+  <link rel="icon" href="/images/logo.jpg" type="image/jpeg">
 </head>
 
 <body>
@@ -89,21 +91,38 @@
 
     <div class="auth-card" style="max-width: 560px;">
       <div class="auth-logo">
-        <div style="display:flex; justify-content:center; align-items:center; width: 100%;"><img src="/images/logo.jpg" alt="EventHub Logo" style="width: 85px; height: 85px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
+        <div style="display:flex; justify-content:center; align-items:center; width: 100%;"><img src="/images/logo.jpg"
+            alt="EventHub Logo"
+            style="width: 85px; height: 85px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+        </div>
         <h1>EventHub Partner</h1>
       </div>
 
-      <h2 class="auth-heading" style="margin-bottom:8px;"><script>document.write(t('Partner Registration'))</script></h2>
-      <p class="auth-subheading"><script>document.write(t('Apply as an Event Manager, Sponsor, or Company.'))</script></p>
+      <h2 class="auth-heading" style="margin-bottom:8px;">
+        <script>document.write(t('Partner Registration'))</script>
+      </h2>
+      <p class="auth-subheading">
+        <script>document.write(t('Apply as an Event Manager, Sponsor, or Company.'))</script>
+      </p>
 
       <form id="partner-form" style="text-align:left; margin-top: 24px;">
         <div class="form-group">
-          <label class="form-label"><script>document.write(t('Role / Account Type'))</script></label>
+          <label class="form-label">
+            <script>document.write(t('Role / Account Type'))</script>
+          </label>
           <select id="pr-role" class="form-control" required style="cursor:pointer;">
-            <option value="" disabled selected><script>document.write(t('Select Role'))</script></option>
-            <option value="Event Manager"><script>document.write(t('Event Manager'))</script></option>
-            <option value="Sponsor"><script>document.write(t('Sponsor'))</script></option>
-            <option value="Company"><script>document.write(t('Company'))</script></option>
+            <option value="" disabled selected>
+              <script>document.write(t('Select Role'))</script>
+            </option>
+            <option value="Event Manager">
+              <script>document.write(t('Event Manager'))</script>
+            </option>
+            <option value="Sponsor">
+              <script>document.write(t('Sponsor'))</script>
+            </option>
+            <option value="Company">
+              <script>document.write(t('Company'))</script>
+            </option>
           </select>
         </div>
 
@@ -121,36 +140,51 @@
             <option value="construction">مقاولات</option>
             <option value="other">أخرى</option>
           </select>
-          <input id="pr-company_type_other" class="form-control" type="text" placeholder="حدد الفئة الأخرى" style="margin-top:8px; display:none;" />
+          <input id="pr-company_type_other" class="form-control" type="text" placeholder="حدد الفئة الأخرى"
+            style="margin-top:8px; display:none;" />
           <input id="pr-company_type_slug" type="hidden" />
         </div>
 
         <div class="form-group">
-          <label class="form-label" id="lbl-name"><script>document.write(t('Company / Individual Name'))</script></label>
+          <label class="form-label" id="lbl-name">
+            <script>document.write(t('Company / Individual Name'))</script>
+          </label>
           <input id="pr-name" type="text" class="form-control" required />
         </div>
 
         <div class="form-group">
-          <label class="form-label"><script>document.write(t('Business Email Address'))</script></label>
+          <label class="form-label">
+            <script>document.write(t('Business Email Address'))</script>
+          </label>
           <input id="pr-email" type="email" class="form-control" required />
         </div>
 
         <div class="form-group">
-          <label class="form-label"><script>document.write(t('Password'))</script></label>
+          <label class="form-label">
+            <script>document.write(t('Password'))</script>
+          </label>
           <input id="pr-pass" type="password" class="form-control" required minlength="8" />
         </div>
 
         <!-- ── Verification Documents ── -->
         <div class="form-group">
-          <label class="form-label" style="margin-bottom: 4px;"><script>document.write(t('Verification Documents (KYB)'))</script></label>
-          <p style="font-size:0.73rem; color:var(--text-muted); margin:0 0 12px 0;"><script>document.write(t('Upload all required documents below (PDF/JPG/PNG, max 5 MB each).'))</script></p>
+          <label class="form-label" style="margin-bottom: 4px;">
+            <script>document.write(t('Verification Documents (KYB)'))</script>
+          </label>
+          <p style="font-size:0.73rem; color:var(--text-muted); margin:0 0 12px 0;">
+            <script>document.write(t('Upload all required documents below (PDF/JPG/PNG, max 5 MB each).'))</script>
+          </p>
 
           <div class="pr-docs-grid" id="pr-docs-grid">
             <!-- Commercial Register (all roles) -->
             <label class="pr-doc-card" id="card-doc_commercial_register" data-roles="Event Manager,Sponsor,Company">
               <div class="doc-icon">📋</div>
-              <div class="doc-label"><script>document.write(t('Commercial Register'))</script></div>
-              <div class="doc-file-name" id="fname-doc_commercial_register"><script>document.write(t('Click to select file...'))</script></div>
+              <div class="doc-label">
+                <script>document.write(t('Commercial Register'))</script>
+              </div>
+              <div class="doc-file-name" id="fname-doc_commercial_register">
+                <script>document.write(t('Click to select file...'))</script>
+              </div>
               <input type="file" accept=".pdf,.png,.jpg,.jpeg" required
                 onchange="onDocSelected(this, 'doc_commercial_register')" />
             </label>
@@ -158,17 +192,26 @@
             <!-- Tax Number (all roles) -->
             <label class="pr-doc-card" id="card-doc_tax_number" data-roles="Event Manager,Sponsor,Company">
               <div class="doc-icon">🔢</div>
-              <div class="doc-label"><script>document.write(t('Tax Number Certificate'))</script></div>
-              <div class="doc-file-name" id="fname-doc_tax_number"><script>document.write(t('Click to select file...'))</script></div>
+              <div class="doc-label">
+                <script>document.write(t('Tax Number Certificate'))</script>
+              </div>
+              <div class="doc-file-name" id="fname-doc_tax_number">
+                <script>document.write(t('Click to select file...'))</script>
+              </div>
               <input type="file" accept=".pdf,.png,.jpg,.jpeg" required
                 onchange="onDocSelected(this, 'doc_tax_number')" />
             </label>
 
             <!-- Articles of Association (Manager only) -->
-            <label class="pr-doc-card" id="card-doc_articles_of_association" data-roles="Event Manager" style="display:none;">
+            <label class="pr-doc-card" id="card-doc_articles_of_association" data-roles="Event Manager"
+              style="display:none;">
               <div class="doc-icon">📝</div>
-              <div class="doc-label"><script>document.write(t('Articles of Association'))</script></div>
-              <div class="doc-file-name" id="fname-doc_articles_of_association"><script>document.write(t('Click to select file...'))</script></div>
+              <div class="doc-label">
+                <script>document.write(t('Articles of Association'))</script>
+              </div>
+              <div class="doc-file-name" id="fname-doc_articles_of_association">
+                <script>document.write(t('Click to select file...'))</script>
+              </div>
               <input type="file" accept=".pdf,.png,.jpg,.jpeg"
                 onchange="onDocSelected(this, 'doc_articles_of_association')" />
             </label>
@@ -176,10 +219,13 @@
             <!-- Practice License (Manager only) -->
             <label class="pr-doc-card" id="card-doc_practice_license" data-roles="Event Manager" style="display:none;">
               <div class="doc-icon">🏢</div>
-              <div class="doc-label"><script>document.write(t('Practice License'))</script></div>
-              <div class="doc-file-name" id="fname-doc_practice_license"><script>document.write(t('Click to select file...'))</script></div>
-              <input type="file" accept=".pdf,.png,.jpg,.jpeg"
-                onchange="onDocSelected(this, 'doc_practice_license')" />
+              <div class="doc-label">
+                <script>document.write(t('Practice License'))</script>
+              </div>
+              <div class="doc-file-name" id="fname-doc_practice_license">
+                <script>document.write(t('Click to select file...'))</script>
+              </div>
+              <input type="file" accept=".pdf,.png,.jpg,.jpeg" onchange="onDocSelected(this, 'doc_practice_license')" />
             </label>
           </div>
         </div>
@@ -187,16 +233,22 @@
         <div class="form-group" style="margin-top:20px; font-size:0.8rem; color:var(--text-muted);">
           <label style="display:flex; gap:10px; align-items:flex-start; cursor:pointer;">
             <input type="checkbox" required style="margin-top:3px;">
-            <span><script>document.write(t("I declare that all the information and documents provided are authentic, and I agree to EventHub's Partner Terms of Service."))</script></span>
+            <span>
+              <script>document.write(t("I declare that all the information and documents provided are authentic, and I agree to EventHub's Partner Terms of Service."))</script>
+            </span>
           </label>
         </div>
 
         <button type="submit" class="btn btn-primary" id="pr-btn"
-          style="width: 100%; margin-top:10px; padding: 14px; font-size:1rem; justify-content: center;"><script>document.write(t('Submit Application'))</script></button>
+          style="width: 100%; margin-top:10px; padding: 14px; font-size:1rem; justify-content: center;">
+          <script>document.write(t('Submit Application'))</script>
+        </button>
       </form>
 
       <div class="auth-footer" style="margin-top: 24px;">
-        <script>document.write(t('Already confirmed?'))</script> <a href="/login"><script>document.write(t('Sign in'))</script></a>
+        <script>document.write(t('Already confirmed?'))</script> <a href="/login">
+          <script>document.write(t('Sign in'))</script>
+        </a>
       </div>
     </div>
   </div>
@@ -360,8 +412,3 @@
 </body>
 
 </html>
-
-
-
-
-
