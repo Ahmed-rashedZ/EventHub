@@ -106,12 +106,28 @@ class FcmService
                 ],
                 'data' => array_map('strval', $data), // FCM V1 requires string values
                 'android' => [
+                    'priority' => 'high',
                     'notification' => [
                         'channel_id'   => 'eventhub_high_importance',
                         'click_action' => 'FLUTTER_NOTIFICATION_CLICK',
+                        'sound'        => 'default',
                     ],
                 ],
-            ]
+                'apns' => [
+                    'headers' => [
+                        'apns-priority' => '10',
+                    ],
+                    'payload' => [
+                        'aps' => [
+                            'alert' => [
+                                'title' => $title,
+                                'body'  => $body,
+                            ],
+                            'sound' => 'default',
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         try {

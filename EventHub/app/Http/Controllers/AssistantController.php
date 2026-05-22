@@ -536,13 +536,20 @@ class AssistantController extends Controller
             'status' => 'pending',
         ]);
 
-        // Send Email Invitation
+        // Send In-App & FCM Push Notification (No Email)
         try {
-            \Illuminate\Support\Facades\Mail::to($assistant->email)
-                ->send(new \App\Mail\AssistantInvitation($assistant, $event, $user, $request->message));
+            $assistant->notify(new \App\Notifications\SystemNotification(
+                'طلب مساعدة جديد',
+                "دعاك {$user->name} لتعمل كمساعد في الحدث: {$event->title}",
+                'assistant_request',
+                '📩',
+                null,
+                $event->id,
+                $invitation->id
+            ));
         } catch (\Exception $e) {
             // Log error but don't fail the request
-            \Illuminate\Support\Facades\Log::error('Failed to send assistant invitation email: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::error('Failed to send assistant invitation notification: ' . $e->getMessage());
         }
 
         return response()->json([

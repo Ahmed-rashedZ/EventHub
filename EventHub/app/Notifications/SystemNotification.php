@@ -16,16 +16,18 @@ class SystemNotification extends Notification
     protected string $icon;
     protected ?string $actionUrl;
     protected ?int $relatedId;
+    protected ?int $requestId;
 
     /**
      * Create a new notification instance.
      *
      * @param string      $title     Short title (e.g. "Event Approved")
      * @param string      $message   Descriptive message
-     * @param string      $type      Category: event|sponsorship|ticket|verification|system
+     * @param string      $type      Category: event|assistant_request|sponsorship|ticket|verification|system
      * @param string      $icon      Emoji icon for display
      * @param string|null $actionUrl URL to navigate to when clicked
      * @param int|null    $relatedId Related model ID (event_id, etc.)
+     * @param int|null    $requestId Assistance request ID (for assistant invitations)
      */
     public function __construct(
         string $title,
@@ -33,7 +35,8 @@ class SystemNotification extends Notification
         string $type = 'system',
         string $icon = '🔔',
         ?string $actionUrl = null,
-        ?int $relatedId = null
+        ?int $relatedId = null,
+        ?int $requestId = null
     ) {
         $this->title     = $title;
         $this->message   = $message;
@@ -41,6 +44,7 @@ class SystemNotification extends Notification
         $this->icon      = $icon;
         $this->actionUrl = $actionUrl;
         $this->relatedId = $relatedId;
+        $this->requestId = $requestId;
     }
 
     /**
@@ -68,9 +72,12 @@ class SystemNotification extends Notification
                 title: $this->icon . ' ' . $this->title,
                 body: $this->message,
                 data: [
-                    'type'       => $this->type,
-                    'related_id' => (string) ($this->relatedId ?? ''),
-                    'action_url' => $this->actionUrl ?? '',
+                    'type'        => $this->type,
+                    'related_id'  => (string) ($this->relatedId ?? ''),
+                    'request_id'  => (string) ($this->requestId ?? ''),
+                    'action_url'  => $this->actionUrl ?? '',
+                    'title'       => $this->title,
+                    'body'        => $this->message,
                 ]
             );
         }
