@@ -112,6 +112,7 @@ public function registerPartner(Request $request)
             'user_id' => $user->id,
             'profile_type' => 'company',
             'company_type' => $request->company_type,
+            'company_type_slug' => $request->input('company_type_slug') ?? null,
             'is_available' => true,
         ]);
     }
@@ -239,6 +240,7 @@ public function updateProfile(Request $request)
         'bio' => $request->bio,
         'company_description' => $request->company_description,
         'company_type' => $request->company_type,
+        'company_type_slug' => $request->input('company_type_slug') ?? null,
     ];
     
     // Sponsors and Companies can toggle their availability

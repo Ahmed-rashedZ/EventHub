@@ -29,12 +29,12 @@
         </div>
 
         <div class="card" style="padding: 20px; background: rgba(139,92,246,0.08); border: 1px solid var(--accent); border-radius: 16px;">
-          <h4 style="margin: 0 0 10px 0; color: var(--accent2); font-size: 1.1rem;">🤝 <script>document.write(t('Partners & Exhibitors'))</script></h4>
+          <h4 style="margin: 0 0 10px 0; color: var(--accent2); font-size: 1.1rem;">🤝 الشركاء والعارضون</h4>
           <p style="margin: 0 0 16px 0; font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;">
-            <script>document.write(t('Join as an Event Manager, Sponsor, or Exhibitor. Your account will be reviewed and verified by our team.'))</script>
+            انضم كمدير فعاليات أو راعٍ أو شركة عارضة. سيتم مراجعة حسابك والتحقق منه من قِبل فريقنا.
           </p>
           <a href="/register/partner" class="btn btn-primary" style="display:block; text-align:center; text-decoration:none; font-weight:700;">
-            <script>document.write(t('Apply as Partner →'))</script>
+            التقديم كشريك →
           </a>
         </div>
       </div>

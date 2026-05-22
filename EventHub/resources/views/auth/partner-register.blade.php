@@ -108,21 +108,21 @@
         </div>
 
         <div class="form-group" id="grp-company_type" style="display:none;">
-          <label class="form-label"><script>document.write(t('Company Sector / Category'))</script></label>
+          <label class="form-label">قطاع الشركة / الفئة</label>
           <select id="pr-company_type" class="form-control" style="cursor:pointer;">
-            <option value="" disabled selected><script>document.write(t('Select Sector'))</script></option>
-            <option value="Technology"><script>document.write(t('Technology'))</script></option>
-            <option value="Healthcare"><script>document.write(t('Healthcare'))</script></option>
-            <option value="Telecommunications"><script>document.write(t('Telecommunications'))</script></option>
-            <option value="Sports"><script>document.write(t('Sports'))</script></option>
-            <option value="Marketing & Media"><script>document.write(t('Marketing & Media'))</script></option>
-            <option value="Education"><script>document.write(t('Education'))</script></option>
-            <option value="Construction & Real Estate"><script>document.write(t('Construction & Real Estate'))</script></option>
-            <option value="Food & Beverage"><script>document.write(t('Food & Beverage'))</script></option>
-            <option value="Logistics"><script>document.write(t('Logistics'))</script></option>
-            <option value="Finance & Banking"><script>document.write(t('Finance & Banking'))</script></option>
-            <option value="Other"><script>document.write(t('Other'))</script></option>
+            <option value="" disabled selected>اختر الفئة</option>
+            <option value="sports">رياضة</option>
+            <option value="tech">تقنية</option>
+            <option value="aviation">طيران</option>
+            <option value="telecom">اتصالات</option>
+            <option value="arts">فنون</option>
+            <option value="entertainment">ترفيه</option>
+            <option value="food">غداء</option>
+            <option value="construction">مقاولات</option>
+            <option value="other">أخرى</option>
           </select>
+          <input id="pr-company_type_other" class="form-control" type="text" placeholder="حدد الفئة الأخرى" style="margin-top:8px; display:none;" />
+          <input id="pr-company_type_slug" type="hidden" />
         </div>
 
         <div class="form-group">
@@ -255,8 +255,38 @@
         document.getElementById('lbl-name').textContent = t('Manager Full Name');
         document.getElementById('pr-company_type').required = false;
         document.getElementById('pr-company_type').value = '';
+        document.getElementById('pr-company_type_other').style.display = 'none';
+        document.getElementById('pr-company_type_other').required = false;
       }
       updateDocsForRole(role);
+    });
+
+    // ── Company type 'Other' handling ──
+    document.getElementById('pr-company_type').addEventListener('change', (e) => {
+      const val = e.target.value;
+      const otherInput = document.getElementById('pr-company_type_other');
+      const slugInput = document.getElementById('pr-company_type_slug');
+      if (val === 'other') {
+        otherInput.style.display = '';
+        otherInput.required = true;
+        otherInput.focus();
+        // generate a safe slug from the other input when user types (fallback empty for now)
+        slugInput.value = '';
+      } else {
+        otherInput.style.display = 'none';
+        otherInput.required = false;
+        otherInput.value = '';
+        // set slug to the option value for known options
+        slugInput.value = val;
+      }
+    });
+
+    // update slug when user types in the 'other' text box
+    document.getElementById('pr-company_type_other').addEventListener('input', (e) => {
+      const raw = e.target.value || '';
+      // simple slugify: trim, replace spaces with hyphens, remove non-url-safe chars, lowercase
+      const slug = raw.trim().replace(/\s+/g, '-').replace(/[^\u0000-\u007F\w-]/g, '').toLowerCase();
+      document.getElementById('pr-company_type_slug').value = slug;
     });
 
     document.getElementById('partner-form').addEventListener('submit', async (e) => {
@@ -271,7 +301,24 @@
       fd.append('email', document.getElementById('pr-email').value);
       fd.append('password', document.getElementById('pr-pass').value);
       if (role === 'Sponsor' || role === 'Company') {
-        fd.append('company_type', document.getElementById('pr-company_type').value);
+        const select = document.getElementById('pr-company_type');
+        const ct = select.value;
+        const slug = document.getElementById('pr-company_type_slug').value || '';
+        if (ct === 'other') {
+          const other = document.getElementById('pr-company_type_other').value.trim();
+          if (!other) {
+            showToast('يرجى كتابة الفئة الأخرى', 'error');
+            btn.textContent = t('Submit Application'); btn.disabled = false;
+            return;
+          }
+          fd.append('company_type', other);
+          fd.append('company_type_slug', slug);
+        } else {
+          // Append the displayed label text so the server stores exactly what the user sees
+          const selectedLabel = (select.options[select.selectedIndex] && select.options[select.selectedIndex].text) || ct;
+          fd.append('company_type', selectedLabel);
+          fd.append('company_type_slug', slug || ct);
+        }
       }
 
       // Append only visible documents based on role

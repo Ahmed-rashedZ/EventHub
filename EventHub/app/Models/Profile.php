@@ -13,6 +13,7 @@ class Profile extends Model
         'user_id',
         'profile_type',
         'company_type',
+        'company_type_slug',
         // Basic info
         'logo',
         'bio',

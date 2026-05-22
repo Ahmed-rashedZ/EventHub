@@ -75,6 +75,7 @@ class ProfileController extends Controller
                 [
                     'profile_type' => 'company',
                     'company_type' => $request->input('company_type'),
+                    'company_type_slug' => $request->input('company_type_slug') ?? null,
                     'bio' => $request->input('bio'),
                 ]
             );
