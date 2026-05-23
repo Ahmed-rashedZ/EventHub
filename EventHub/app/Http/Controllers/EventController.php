@@ -1279,4 +1279,78 @@ class EventController extends Controller
             ));
         }
     }
+
+    /**
+     * Map Arabic event types (used in Laravel) to English types (used in the AI model).
+     */
+    private function mapEventTypeToAI(string $arabicType): string
+    {
+        $map = [
+            'مؤتمر'        => 'Conference',
+            'ندوة'          => 'Seminar',
+            'ورشة عمل'     => 'Workshop',
+            'دورة تدريبية' => 'Course',
+            'ترفيه'         => 'Entertainment',
+            'معرض'          => 'Exhibition',
+            'ملتقى علمي'   => 'Conference',   // closest match
+            'رياضة'         => 'Entertainment', // closest match
+            'تقنية'         => 'Conference',    // closest match
+            'اجتماعية'      => 'Meeting',       // closest match
+        ];
+
+        return $map[$arabicType] ?? 'Conference';
+    }
+
+    /**
+     * POST /api/events/predict-attendance
+     * 
+     * Calls the Python AI microservice to predict attendance based on
+     * event type, total days, weekend inclusion, time period, and capacity.
+     */
+    public function predictAttendance(Request $request)
+    {
+        $request->validate([
+            'event_type'       => 'required|string',
+            'total_days'       => 'required|integer|min:1',
+            'includes_weekend' => 'required|integer|in:0,1',
+            'time_period'      => 'required|string|in:Morning,Evening',
+        ]);
+
+        $aiUrl = env('EVENTHUB_AI_URL', 'http://127.0.0.1:8001');
+
+        // Map Arabic event type to English for the AI model
+        $eventTypeEN = $this->mapEventTypeToAI($request->event_type);
+
+        $payload = [
+            'Event_Type'       => $eventTypeEN,
+            'Total_Days'       => $request->total_days,
+            'Includes_Weekend' => $request->includes_weekend,
+            'Time_Period'      => $request->time_period,
+        ];
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::timeout(10)
+                ->post("{$aiUrl}/predict", $payload);
+
+            if ($response->successful()) {
+                return response()->json([
+                    'status'               => 'success',
+                    'predicted_attendance'  => $response->json('predicted_attendance'),
+                    'event_type_mapped'    => $eventTypeEN,
+                ]);
+            }
+
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'AI service returned an error.',
+                'details' => $response->json(),
+            ], 502);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Could not connect to AI service. Make sure it is running.',
+                'error'   => $e->getMessage(),
+            ], 503);
+        }
+    }
 }

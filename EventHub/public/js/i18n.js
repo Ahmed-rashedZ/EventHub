@@ -400,7 +400,11 @@ const I18N_AR = {
   'Event Schedule': 'برنامج الحدث',
   'Unlimited': 'غير محدود',
 
-
+  /* ── AI Attendance Prediction ───────────────────────────── */
+  'AI Attendance Prediction': 'توقع الحضور بالذكاء الاصطناعي',
+  'Analyzing event data...': 'جاري تحليل بيانات الفعالية...',
+  'Expected Attendance:': 'الحضور المتوقع:',
+  'Fixed Number': 'عدد محدد',
 
   /* ── Profile Page Form Labels ─────────────────────────── */
   'Profile Information':    'معلومات الملف الشخصي',
@@ -1855,9 +1859,17 @@ function translateNode(node) {
   const trimmed  = original.trim();
   if (!trimmed) return;
 
-  const translated = translateText(trimmed);
-  if (translated !== trimmed) {
+  // Normalize whitespace (replace newlines and multiple spaces with a single space) for key matching
+  const normalized = trimmed.replace(/\s+/g, ' ');
+  const translated = translateText(normalized);
+  if (translated !== normalized) {
     node.textContent = original.replace(trimmed, translated);
+  } else {
+    // Fallback to exact match on trimmed text if normalized lookup fails
+    const translatedTrimmed = translateText(trimmed);
+    if (translatedTrimmed !== trimmed) {
+      node.textContent = original.replace(trimmed, translatedTrimmed);
+    }
   }
 }
 

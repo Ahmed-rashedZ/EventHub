@@ -80,6 +80,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/events/{id}/toggle-tickets', [EventController::class, 'toggleTickets']);
     Route::put('/events/{id}/published-schedule', [EventController::class, 'updatePublishedSchedule']);
     Route::patch('/events/{id}/capacity', [EventController::class, 'updateCapacity']);
+    Route::post('/events/predict-attendance', [EventController::class, 'predictAttendance']);
 
     // ── Venues (Admin) ──
     Route::post('/venues',        [VenueController::class, 'store']);

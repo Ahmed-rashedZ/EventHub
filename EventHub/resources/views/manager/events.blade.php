@@ -125,8 +125,7 @@
             </div>
           </div>
           <span id="wiz-label-1"
-            style="font-size: 0.7rem; font-weight: 600; color: #c4b5fd; letter-spacing: 0.03em; transition: color 0.3s;">Event
-            Details</span>
+            style="font-size: 0.7rem; font-weight: 600; color: #c4b5fd; letter-spacing: 0.03em; transition: color 0.3s;">Event Details</span>
         </div>
         <div class="wiz-step" id="wiz-dot-2"
           style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer;"
@@ -138,8 +137,7 @@
             <div style="flex: 1;"></div>
           </div>
           <span id="wiz-label-2"
-            style="font-size: 0.7rem; font-weight: 600; color: #64748b; letter-spacing: 0.03em; transition: color 0.3s;">Booking
-            & Settings</span>
+            style="font-size: 0.7rem; font-weight: 600; color: #64748b; letter-spacing: 0.03em; transition: color 0.3s;">Booking & Settings</span>
         </div>
       </div>
 
@@ -276,8 +274,7 @@
             <div id="internal-fields">
               <div class="form-group" style="margin-top: 16px;">
                 <label class="form-label">📅 Select Event Days</label>
-                <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:8px;">Click on days to
-                  select them. Max span: 14 days between first and last day.</small>
+                <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:8px;">Click on days to select them. Max span: 14 days between first and last day.</small>
                 <div id="e-int-calendar-wrap"
                   style="border:1px solid rgba(139,92,246,0.15);border-radius:16px;overflow:hidden;"></div>
                 <input id="e-booking-date" type="text" style="display:none;" />
@@ -294,15 +291,13 @@
                 <label class="form-label">Proof of Booking (PDF/Image)</label>
                 <input id="e-booking-proof" type="file" accept=".pdf,image/*" class="form-control"
                   style="padding: 7px 10px;" />
-                <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block">Required. Upload
-                  official confirmation of the external booking.</small>
+                <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block">Required. Upload official confirmation of the external booking.</small>
               </div>
 
               <!-- Multi-day Calendar -->
               <div class="form-group">
                 <label class="form-label">📅 Select Event Days</label>
-                <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:8px;">Click on days to
-                  select them. Max span: 14 days between first and last day.</small>
+                <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:8px;">Click on days to select them. Max span: 14 days between first and last day.</small>
                 <div id="e-ext-calendar-wrap"
                   style="border:1px solid rgba(139,92,246,0.15);border-radius:16px;overflow:hidden;"></div>
               </div>
@@ -327,6 +322,31 @@
               <input id="e-audience" type="text" class="form-control"
                 placeholder="e.g. Students, Professionals, General Public" required />
             </div>
+            <!-- 🤖 AI Attendance Prediction Card -->
+            <div id="ai-prediction-card" style="display:none; margin-bottom:16px; padding:16px 18px; background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(6,182,212,0.06)); border:1px solid rgba(16,185,129,0.25); border-radius:14px; position:relative; overflow:hidden;">
+              <div style="position:absolute; top:-20px; right:-20px; width:80px; height:80px; background:radial-gradient(circle, rgba(16,185,129,0.15), transparent); border-radius:50%;"></div>
+              <div style="display:flex; align-items:flex-start; gap:12px;">
+                <div style="width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg, #10b981, #06b6d4); display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0; box-shadow: 0 4px 12px rgba(16,185,129,0.3);">🤖</div>
+                <div style="flex:1; min-width:0;">
+                  <div style="font-size:0.7rem; font-weight:700; color:#10b981; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px;">
+                    <script>document.write(t('AI Attendance Prediction'))</script>
+                  </div>
+                  <div id="ai-prediction-loading" style="display:none;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                      <div class="spinner" style="width:18px; height:18px; border-width:2px;"></div>
+                      <span style="font-size:0.8rem; color:#94a3b8;"><script>document.write(t('Analyzing event data...'))</script></span>
+                    </div>
+                  </div>
+                  <div id="ai-prediction-result" style="display:none;">
+                    <div style="font-size:1.4rem; font-weight:800; color:#fff; line-height:1.2;">
+                      <script>document.write(t('Expected Attendance:'))</script> <span id="ai-predicted-number" style="color:#10b981;"></span>
+                    </div>
+                    <div id="ai-prediction-hint" style="font-size:0.78rem; color:#94a3b8; margin-top:6px; line-height:1.4;"></div>
+                  </div>
+                  <div id="ai-prediction-error" style="display:none; font-size:0.8rem; color:#f59e0b;"></div>
+                </div>
+              </div>
+            </div>
             <div class="form-group">
               <label class="form-label">Capacity</label>
               <div style="display:flex; gap:15px; margin-bottom:10px; background:rgba(255,255,255,0.03); padding:8px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.05);">
@@ -345,8 +365,7 @@
               <label class="form-label">📄 Competent Authority Approval</label>
               <input id="e-ministry-doc" type="file" accept=".pdf,image/*" class="form-control"
                 style="padding: 7px 10px;" required />
-              <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block">Required. Upload the
-                official approval from the relevant competent authority for this event.</small>
+              <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block">Required. Upload the official approval from the relevant competent authority for this event.</small>
             </div>
           </div>
 
@@ -354,8 +373,7 @@
           <div class="form-section" style="margin-bottom: 0;">
             <div class="form-section-title"><span>📋</span> Event Agenda <small
                 style="font-weight:400;color:var(--danger);font-size:0.75rem;">(Required)</small></div>
-            <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:12px;">Define the
-              schedule/program for your event. You must add at least one agenda item.</small>
+            <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:12px;">Define the schedule/program for your event. You must add at least one agenda item.</small>
 
             <div id="agenda-items-create" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
             <button type="button" class="btn btn-ghost btn-sm" onclick="addAgendaItem('agenda-items-create')"
@@ -2596,6 +2614,130 @@
         showToast('Error downloading document', 'error');
       }
     }
+
+    // ══════════════════════════════════════════════════════════════
+    //  🤖 AI Attendance Prediction
+    // ══════════════════════════════════════════════════════════════
+    let aiPredictionTimer = null;
+
+    /**
+     * Determine if the selected schedule includes a weekend day (Friday or Saturday — Libya).
+     */
+    function selectedDaysIncludeWeekend() {
+      const locationType = document.getElementById('e-location-type').value;
+      const dates = locationType === 'internal' ? intSelectedDates : extSelectedDates;
+      for (const dateStr of dates) {
+        const d = new Date(dateStr + 'T00:00:00');
+        const day = d.getDay(); // 0=Sun, 5=Fri, 6=Sat
+        if (day === 5 || day === 6) return 1;
+      }
+      return 0;
+    }
+
+    /**
+     * Determine the dominant time period from the schedule (Morning or Evening).
+     */
+    function getTimePeriod() {
+      const locationType = document.getElementById('e-location-type').value;
+      if (locationType === 'internal') {
+        const slots = document.querySelectorAll('.int-slot-card');
+        let eveningCount = 0;
+        slots.forEach(card => {
+          const periodEl = card.querySelector('.int-slot-period') || card.querySelector('select.int-slot-period');
+          if (periodEl && periodEl.value === 'evening') eveningCount++;
+        });
+        return eveningCount > slots.length / 2 ? 'Evening' : 'Morning';
+      } else {
+        // External — check if average start time is after 15:00 (3 PM)
+        const slots = document.querySelectorAll('.ext-slot-card');
+        let eveningCount = 0;
+        slots.forEach(card => {
+          const startEl = card.querySelector('.ext-slot-start');
+          if (startEl && startEl.value >= '15:00') eveningCount++;
+        });
+        return eveningCount > slots.length / 2 ? 'Evening' : 'Morning';
+      }
+    }
+
+    /**
+     * Trigger the AI prediction (debounced — waits 800ms after last change).
+     */
+    function triggerAIPrediction() {
+      if (aiPredictionTimer) clearTimeout(aiPredictionTimer);
+      aiPredictionTimer = setTimeout(fetchAIPrediction, 800);
+    }
+
+    async function fetchAIPrediction() {
+      const eventType = document.getElementById('e-type').value;
+      const locationType = document.getElementById('e-location-type').value;
+      const dates = locationType === 'internal' ? intSelectedDates : extSelectedDates;
+
+      // Need: event type + at least 1 day selected
+      if (!eventType || dates.length === 0) {
+        document.getElementById('ai-prediction-card').style.display = 'none';
+        return;
+      }
+
+      const card = document.getElementById('ai-prediction-card');
+      const loadingEl = document.getElementById('ai-prediction-loading');
+      const resultEl = document.getElementById('ai-prediction-result');
+      const errorEl = document.getElementById('ai-prediction-error');
+
+      // Show card with loading state
+      card.style.display = 'block';
+      loadingEl.style.display = 'block';
+      resultEl.style.display = 'none';
+      errorEl.style.display = 'none';
+
+      const payload = {
+        event_type: eventType,
+        total_days: dates.length,
+        includes_weekend: selectedDaysIncludeWeekend(),
+        time_period: getTimePeriod(),
+      };
+
+      try {
+        const res = await api.post('/events/predict-attendance', payload);
+        loadingEl.style.display = 'none';
+
+        if (res.ok && res.data.status === 'success') {
+          const predicted = res.data.predicted_attendance;
+
+          document.getElementById('ai-predicted-number').textContent = predicted.toLocaleString();
+
+          // Hint: recommend setting capacity based on prediction
+          const isAr = document.documentElement.lang === 'ar';
+          const hint = isAr
+            ? `💡 بناءً على بيانات الفعاليات السابقة، ننصحك بتحديد السعة بحوالي ${predicted.toLocaleString()} شخص أو أكثر.`
+            : `💡 Based on historical event data, we recommend setting the capacity to around ${predicted.toLocaleString()} or more.`;
+          document.getElementById('ai-prediction-hint').textContent = hint;
+          resultEl.style.display = 'block';
+        } else {
+          errorEl.textContent = res.data?.message || (document.documentElement.lang === 'ar' ? 'تعذر الحصول على التوقع' : 'Could not get prediction');
+          errorEl.style.display = 'block';
+        }
+      } catch (err) {
+        loadingEl.style.display = 'none';
+        errorEl.textContent = document.documentElement.lang === 'ar' ? 'خدمة الذكاء الاصطناعي غير متاحة حالياً' : 'AI service is currently unavailable';
+        errorEl.style.display = 'block';
+      }
+    }
+
+    // ── Wire up AI prediction triggers ──
+    // Trigger on event type change
+    document.getElementById('e-type').addEventListener('change', triggerAIPrediction);
+
+    // Patch the calendar onChange handlers to also trigger AI prediction
+    const _origRenderIntTimeSlots = renderIntTimeSlots;
+    renderIntTimeSlots = function() {
+      _origRenderIntTimeSlots();
+      triggerAIPrediction();
+    };
+    const _origRenderExtTimeSlots = renderExtTimeSlots;
+    renderExtTimeSlots = function() {
+      _origRenderExtTimeSlots();
+      triggerAIPrediction();
+    };
   </script>
 
   <!-- Event Details Modal -->
