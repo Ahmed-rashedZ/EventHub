@@ -72,9 +72,9 @@
             </svg>
             <select id="sort-events" class="form-control" style="width:190px;padding-left:32px"
               onchange="applyFilter()">
-              <option value="soonest">${t('Soonest First')}</option>
-              <option value="farthest">${t('Farthest First')}</option>
-              <option value="alpha">${t('Alphabetical')}</option>
+              <option value="soonest"><script>document.write(t('Soonest First'))</script></option>
+              <option value="farthest"><script>document.write(t('Farthest First'))</script></option>
+              <option value="alpha"><script>document.write(t('Alphabetical'))</script></option>
             </select>
           </div>
         </div>

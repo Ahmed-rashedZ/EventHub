@@ -381,9 +381,9 @@
             </div>
             <div class="ed-info-card ed-info-accent2">
               <div class="ed-info-icon">📍</div>
-              <div><div class="ed-info-label">${t('Location')}</div><div class="ed-info-value i18n-skip">
-                ${ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">${ev.venue.location} ↗</a>` 
-                : (ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">${ev.external_venue_location} ↗</a>` : '—')}
+              <div><div class="ed-info-label">${t('Location')}</div><div class="ed-info-value">
+                ${ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">${t('Open in Maps')} ↗</a>` 
+                : (ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">${t('Open in Maps')} ↗</a>` : '—')}
               </div></div>
             </div>
             ${!ev.venue_id && ev.booking_proof_path ? `

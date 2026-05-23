@@ -71,7 +71,7 @@ public function registerPartner(Request $request)
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8',
         'role' => 'required|string|in:Event Manager,Sponsor,Company',
-        'company_type' => 'nullable|required_if:role,Sponsor,Company|string|max:100',
+        'company_type' => 'nullable|required_if:role,Company|string|max:100',
         'doc_commercial_register' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
         'doc_tax_number' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
     ];
@@ -178,6 +178,10 @@ public function registerPartner(Request $request)
     }
 
     // ── Partner Verification Check ──
+    // Unverified partners (Event Manager, Sponsor, Company) are allowed to log in 
+    // so they can access the /pending-verification page and re-upload their documents.
+    // Their access to the dashboards is secured and blocked by EnsurePartnerVerified middleware.
+    /*
     $partnerRoles = ['Event Manager', 'Sponsor', 'Company'];
     if (in_array($user->role, $partnerRoles) && $user->verification_status !== 'verified') {
         $status = $user->verification_status;
@@ -193,6 +197,7 @@ public function registerPartner(Request $request)
             'verification_status' => $status
         ], 403);
     }
+    */
 
     $token = $user->createToken('auth_token')->plainTextToken;
 

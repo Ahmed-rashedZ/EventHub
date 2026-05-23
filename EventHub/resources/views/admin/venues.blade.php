@@ -430,7 +430,7 @@
       <tr>
         <td style="color:var(--text-muted)">${i+1}</td>
         <td><div style="font-weight:600">${v.name}</div></td>
-        <td><div style="font-size:0.9rem; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${v.location && v.location.startsWith('http') ? `<a href="${v.location}" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;display:inline-flex;align-items:center;gap:4px" class="i18n-skip">📍 ${v.location}</a>` : `<span style="color:var(--text-muted)" class="i18n-skip">📍 ${v.location || '—'}</span>`}</div></td>
+        <td><div style="font-size:0.9rem; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${v.location && v.location.startsWith('http') ? `<a href="${v.location}" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;display:inline-flex;align-items:center;gap:4px">📍 ${t('Open in Maps')}</a>` : `<span style="color:var(--text-muted)">📍 ${v.location || '—'}</span>`}</div></td>
         <td style="color:var(--text-muted)">${v.capacity.toLocaleString()}</td>
         <td>${statusHtml}</td>
         <td>${maintBadge}</td>

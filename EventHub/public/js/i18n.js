@@ -1524,6 +1524,30 @@ const I18N_AR = {
   'Football Tournaments\nMarathons\nE-Sports\nYoga Classes\nMartial Arts': 'بطولات كرة قدم\nماراثون\nرياضات إلكترونية\nجلسات يوغا\nفنون قتالية',
   'Hackathons\nTech Expos\nCloud Computing\nCybersecurity\nDeveloper Meetups': 'هاكاثون\nمعارض تقنية\nحوسبة سحابية\nأمن سيبراني\nملتقيات المطورين',
   'Networking Events\nCharity Events\nCommunity Gatherings\nAlumni Meetings\nGala Dinners': 'لقاءات تعارف\nفعاليات خيرية\nتجمعات مجتمعية\nاجتماعات خريجين\nحفلات عشاء',
+
+  /* ── Review Modal & Buttons ─────────────────────────────── */
+  'Review': 'مراجعة',
+  'Send Review': 'إرسال مراجعة',
+  'Select fields that need changes': 'حدد الحقول التي تحتاج إلى تعديل',
+  'Review Message': 'رسالة المراجعة',
+  'e.g. Please upload a clearer competent authority document and increase the capacity...': 'مثال: يرجى رفع مستند موافقة الجهة المختصة بشكل أكثر وضوحاً وزيادة السعة القصوى...',
+  'Failed to load dashboard data': 'فشل في تحميل بيانات لوحة التحكم',
+  'Banner': 'الغلاف',
+  'Ministry Doc': 'مستند الوزارة',
+  'Sponsored': 'المدعومة',
+  'Sponsored Events History': 'سجل الأحداث المدعومة',
+
+  /* ── Notification Translations ───────────────────────────── */
+  'New Partner Registration 🎉': 'طلب تسجيل شريك جديد 🎉',
+  'A new Company ': 'تم تسجيل شركة جديدة ',
+  'A new Sponsor ': 'تم تسجيل راعٍ جديد ',
+  'A new Event Manager ': 'تم تسجيل مدير فعاليات جديد ',
+  ' has registered and is waiting for verification.': ' وبانتظار التحقق.',
+  'Verification Document Updated': 'تم تحديث وثائق التحقق',
+  'Document Update Request 📄': 'طلب تحديث الوثائق 📄',
+  'Partner ': 'الشريك ',
+  ' has resubmitted verification documents and requires review.': ' قام بإعادة تقديم وثائق التحقق وهي بانتظار المراجعة.',
+  ' has submitted updated documents for review: ': ' قام بتقديم وثائق محدثة للمراجعة: ',
 };
 
 /* ─────────────────────────────────────────────────────────────────
@@ -1599,6 +1623,18 @@ function translateText(text) {
   let updated = text;
   let changed = false;
 
+  // Protect email addresses from translation
+  const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+  const emails = [];
+  const updatedWithNoEmails = updated.replace(emailRegex, (match) => {
+    emails.push(match);
+    return `__EMAIL_TOKEN_${emails.length - 1}__`;
+  });
+  const hasEmails = emails.length > 0;
+  if (hasEmails) {
+    updated = updatedWithNoEmails;
+  }
+
   const hasEventHub = updated.includes('EventHub');
   if (hasEventHub) {
     updated = updated.split('EventHub').join('__EHUB_TOKEN__');
@@ -1624,6 +1660,13 @@ function translateText(text) {
 
   if (hasEventHub) {
     updated = updated.split('__EHUB_TOKEN__').join('EventHub');
+  }
+
+  // Restore protected email addresses
+  if (hasEmails) {
+    for (let i = 0; i < emails.length; i++) {
+      updated = updated.split(`__EMAIL_TOKEN_${i}__`).join(emails[i]);
+    }
   }
 
   return changed ? updated : text;

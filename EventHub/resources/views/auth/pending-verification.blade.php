@@ -143,7 +143,12 @@
       try {
         const u = JSON.parse(uStr);
         if (u.verification_status === 'verified') {
-          window.location.href = u.role === 'Event Manager' ? '/manager/dashboard' : '/sponsor/dashboard';
+          const map = {
+            'Event Manager': '/manager/dashboard',
+            'Sponsor': '/sponsor/dashboard',
+            'Company': '/company/dashboard'
+          };
+          window.location.href = map[u.role] || '/login';
         }
         else if (u.verification_status === 'rejected') {
           document.getElementById('main-icon').textContent = '🚫';

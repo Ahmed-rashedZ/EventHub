@@ -500,10 +500,10 @@
 
         if (role === 'Sponsor' || role === 'Company') {
           const title = document.querySelector('.mgr-section-title');
-          if (title) title.innerHTML = '<span>💼</span> Sponsored Events History';
+          if (title) title.innerHTML = `<span>💼</span> ${t('Sponsored Events History')}`;
 
           const msTotalLabel = document.querySelector('#ms-total').previousElementSibling;
-          if (msTotalLabel) msTotalLabel.textContent = 'Sponsored';
+          if (msTotalLabel) msTotalLabel.textContent = t('Sponsored');
 
           const ratingStat = document.querySelector('#ms-rating').parentElement;
           if (ratingStat) ratingStat.style.display = 'none';

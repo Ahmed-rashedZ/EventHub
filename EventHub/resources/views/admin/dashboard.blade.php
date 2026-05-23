@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -126,6 +126,11 @@ Chart.defaults.color = '#7d8590';
 Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
 Chart.defaults.font.family = 'Inter';
 
+let statusChartInstance = null;
+let typeChartInstance = null;
+let trendChartInstance = null;
+let rolesChartInstance = null;
+
 function animVal(el, end) {
   let s = 0; const st = performance.now();
   (function step(t) { const p = Math.min((t-st)/800,1); el.textContent = Math.round(s+(end-s)*(1-Math.pow(1-p,3))); if(p<1) requestAnimationFrame(step); })(st);
@@ -161,7 +166,8 @@ async function loadDashboard() {
 
   // Status donut
   const statusLabels = Object.keys(d.events_by_status);
-  new Chart(document.getElementById('statusChart'), {
+  if (statusChartInstance) statusChartInstance.destroy();
+  statusChartInstance = new Chart(document.getElementById('statusChart'), {
     type: 'doughnut',
     data: { labels: statusLabels.map(s=>t(s.charAt(0).toUpperCase()+s.slice(1))), datasets: [{ data: Object.values(d.events_by_status), backgroundColor: statusLabels.map(s=>COLORS[s]||'#6b7280'), borderWidth: 0, hoverOffset: 8 }] },
     options: { cutout: '68%', plugins: { legend: { position:'bottom', labels:{ padding:14, usePointStyle:true, pointStyleWidth:10 } } }, responsive:true, maintainAspectRatio:false }
@@ -169,7 +175,8 @@ async function loadDashboard() {
 
   // Type bar
   const typeLabels = Object.keys(d.events_by_type);
-  new Chart(document.getElementById('typeChart'), {
+  if (typeChartInstance) typeChartInstance.destroy();
+  typeChartInstance = new Chart(document.getElementById('typeChart'), {
     type: 'bar',
     data: { labels: typeLabels.map(tv=>t(tv)), datasets: [{ data: Object.values(d.events_by_type), backgroundColor: typeLabels.map(t=>TYPE_COLORS[t]||'#6b7280'), borderRadius: 6, maxBarThickness: 36 }] },
     options: { indexAxis:'y', plugins:{ legend:{display:false} }, scales:{ x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{stepSize:1}}, y:{grid:{display:false}} }, responsive:true, maintainAspectRatio:false }
@@ -177,7 +184,8 @@ async function loadDashboard() {
 
   // Trend line
   const mLabels = Object.keys(d.monthly_registrations);
-  new Chart(document.getElementById('trendChart'), {
+  if (trendChartInstance) trendChartInstance.destroy();
+  trendChartInstance = new Chart(document.getElementById('trendChart'), {
     type: 'line',
     data: { labels: mLabels.length ? mLabels : [t('No data')], datasets: [{ data: mLabels.length ? Object.values(d.monthly_registrations) : [0], borderColor:'#6e40f2', backgroundColor:'rgba(110,64,242,.12)', fill:true, tension:.4, pointRadius:5, pointHoverRadius:7, pointBackgroundColor:'#6e40f2' }] },
     options: { plugins:{legend:{display:false}}, scales:{ x:{grid:{color:'rgba(255,255,255,.04)'}}, y:{grid:{color:'rgba(255,255,255,.04)'},beginAtZero:true,ticks:{stepSize:1}} }, responsive:true, maintainAspectRatio:false }
@@ -187,12 +195,16 @@ async function loadDashboard() {
   const tbody = document.getElementById('top-events-body');
   if (!d.top_events || !d.top_events.length) { tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state" style="padding:20px"><p>No approved events yet</p></div></td></tr>'; }
   else { tbody.innerHTML = d.top_events.map((ev,i) => {
-    const c = TYPE_COLORS[ev.event_type]||'#6b7280'; const fr = ev.fill_rate||0;
-    return `<tr><td style="color:var(--text-muted);font-weight:700">${i+1}</td><td><div style="font-weight:600">${ev.title}</div><div style="font-size:.72rem;color:var(--text-muted)">${fmtDateShort(ev.start_time)}</div></td><td><span class="an-ev-type" style="background:${c}18;color:${c}">${ev.event_type}</span></td><td style="font-weight:600">${ev.tickets_count}/${ev.capacity}</td><td><div class="an-fill-row"><div class="an-bar"><div class="an-bar-fill" style="width:${fr}%;background:${fr>80?'#22c55e':fr>50?'#f59e0b':'#ef4444'}"></div></div><span class="an-fill-pct">${fr}%</span></div></td></tr>`; }).join(''); }
+    const c = TYPE_COLORS[ev.event_type]||'#6b7280';
+    const fr = ev.fill_rate||0;
+    const cap = ev.capacity ? ev.capacity : t('Unlimited');
+    const tcnt = ev.tickets_count || 0;
+    return `<tr><td style="color:var(--text-muted);font-weight:700">${i+1}</td><td><div style="font-weight:600">${ev.title}</div><div style="font-size:.72rem;color:var(--text-muted)">${fmtDateShort(ev.start_time)}</div></td><td><span class="an-ev-type" style="background:${c}18;color:${c}">${ev.event_type}</span></td><td style="font-weight:600">${tcnt}/${cap}</td><td><div class="an-fill-row"><div class="an-bar"><div class="an-bar-fill" style="width:${fr || 3}%;background:${fr>80?'#22c55e':fr>50?'#f59e0b':'#ef4444'}"></div></div><span class="an-fill-pct">${fr}%</span></div></td></tr>`; }).join(''); }
 
   // Users by role
   const roleLabels = Object.keys(d.users_by_role);
-  new Chart(document.getElementById('rolesChart'), {
+  if (rolesChartInstance) rolesChartInstance.destroy();
+  rolesChartInstance = new Chart(document.getElementById('rolesChart'), {
     type: 'doughnut',
     data: { labels: roleLabels.map(rl=>t(rl)), datasets: [{ data: Object.values(d.users_by_role), backgroundColor: roleLabels.map(r=>ROLE_COLORS[r]||'#6b7280'), borderWidth: 0, hoverOffset: 8 }] },
     options: { cutout:'65%', plugins:{ legend:{ position:'bottom', labels:{padding:12,usePointStyle:true,pointStyleWidth:10} } }, responsive:true, maintainAspectRatio:false }

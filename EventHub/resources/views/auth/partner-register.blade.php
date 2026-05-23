@@ -299,16 +299,21 @@
 
     document.getElementById('pr-role').addEventListener('change', (e) => {
       const role = e.target.value;
-      document.getElementById('grp-company_type').style.display = (role === 'Sponsor' || role === 'Company') ? '' : 'none';
+      document.getElementById('grp-company_type').style.display = (role === 'Company') ? '' : 'none';
       if (role === 'Sponsor' || role === 'Company') {
         document.getElementById('lbl-name').textContent = t('Company Name / Entity Name');
-        document.getElementById('pr-company_type').required = true;
       } else {
         document.getElementById('lbl-name').textContent = t('Manager Full Name');
+      }
+      
+      if (role === 'Company') {
+        document.getElementById('pr-company_type').required = true;
+      } else {
         document.getElementById('pr-company_type').required = false;
         document.getElementById('pr-company_type').value = '';
         document.getElementById('pr-company_type_other').style.display = 'none';
         document.getElementById('pr-company_type_other').required = false;
+        document.getElementById('pr-company_type_slug').value = '';
       }
       updateDocsForRole(role);
     });
@@ -352,7 +357,7 @@
       fd.append('name', document.getElementById('pr-name').value);
       fd.append('email', document.getElementById('pr-email').value);
       fd.append('password', document.getElementById('pr-pass').value);
-      if (role === 'Sponsor' || role === 'Company') {
+      if (role === 'Company') {
         const select = document.getElementById('pr-company_type');
         const ct = select.value;
         const slug = document.getElementById('pr-company_type_slug').value || '';
@@ -394,8 +399,8 @@
 
         const data = await res.json();
         if (res.ok) {
-          localStorage.setItem('token', data.token);
-          localStorage.setItem('user', JSON.stringify(data.user));
+          sessionStorage.setItem('token', data.token);
+          sessionStorage.setItem('user', JSON.stringify(data.user));
           document.cookie = "auth_token=" + data.token + "; path=/; max-age=86400;";
           showToast('Registration successful! Redirecting...', 'success');
           setTimeout(() => { window.location.href = '/pending-verification'; }, 1500);
