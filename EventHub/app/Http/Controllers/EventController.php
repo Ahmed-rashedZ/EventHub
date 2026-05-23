@@ -1336,6 +1336,8 @@ class EventController extends Controller
                 return response()->json([
                     'status'               => 'success',
                     'predicted_attendance'  => $response->json('predicted_attendance'),
+                    'predicted_lower'      => $response->json('predicted_lower'),
+                    'predicted_upper'      => $response->json('predicted_upper'),
                     'event_type_mapped'    => $eventTypeEN,
                 ]);
             }

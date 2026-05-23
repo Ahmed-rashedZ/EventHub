@@ -2702,14 +2702,20 @@
 
         if (res.ok && res.data.status === 'success') {
           const predicted = res.data.predicted_attendance;
+          const lower = res.data.predicted_lower || predicted;
+          const upper = res.data.predicted_upper || predicted;
 
-          document.getElementById('ai-predicted-number').textContent = predicted.toLocaleString();
+          // Show point estimate with range
+          const rangeText = (lower !== upper && lower > 0 && upper > 0)
+            ? ` (${lower.toLocaleString()} – ${upper.toLocaleString()})`
+            : '';
+          document.getElementById('ai-predicted-number').textContent = predicted.toLocaleString() + rangeText;
 
-          // Hint: recommend setting capacity based on prediction
+          // Hint: recommend setting capacity based on prediction range
           const isAr = document.documentElement.lang === 'ar';
           const hint = isAr
-            ? `💡 بناءً على بيانات الفعاليات السابقة، ننصحك بتحديد السعة بحوالي ${predicted.toLocaleString()} شخص أو أكثر.`
-            : `💡 Based on historical event data, we recommend setting the capacity to around ${predicted.toLocaleString()} or more.`;
+            ? `💡 بناءً على بيانات الفعاليات السابقة، ننصحك بتحديد السعة بحوالي ${upper.toLocaleString()} شخص أو أكثر لتغطية الطلب المتوقع.`
+            : `💡 Based on historical data, we recommend setting the capacity to around ${upper.toLocaleString()} or more to cover expected demand.`;
           document.getElementById('ai-prediction-hint').textContent = hint;
           resultEl.style.display = 'block';
         } else {
@@ -2833,6 +2839,9 @@
       border-radius: 20px !important;
       padding: 28px !important;
       font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+      height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
     }
 
     /* Only popup (non-inline) calendars get the dark overlay + fixed centering */
@@ -2996,6 +3005,7 @@
       width: 100% !important;
       max-width: 100% !important;
       min-width: 100% !important;
+      overflow: visible !important;
     }
 
     .flatpickr-weekdays {
@@ -3662,13 +3672,13 @@
         style="margin-top:24px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
         <button type="button" id="pub-unpublish-btn" class="btn btn-sm"
           style="background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.25);display:none;"
-          onclick="unpublishEvent()">🚫 ${t('Unpublish')}</button>
+          onclick="unpublishEvent()">🚫 Unpublish</button>
         <div style="display:flex; gap:10px; margin-left:auto;">
-          <button type="button" class="btn btn-ghost" onclick="closePublishedScheduleModal()">${t('Cancel')}</button>
+          <button type="button" class="btn btn-ghost" onclick="closePublishedScheduleModal()">Cancel</button>
           <button type="button" class="btn btn-sm"
             style="background:rgba(139,92,246,0.15);color:#a78bfa;border:1px solid rgba(139,92,246,0.3);"
-            onclick="savePublishedSchedule(false)">💾 ${t('Save Draft')}</button>
-          <button type="button" class="btn btn-primary" onclick="savePublishedSchedule(true)">🚀 ${t('Publish')}</button>
+            onclick="savePublishedSchedule(false)">💾 Save Draft</button>
+          <button type="button" class="btn btn-primary" onclick="savePublishedSchedule(true)">🚀 Publish</button>
         </div>
       </div>
     </div>
