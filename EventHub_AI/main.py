@@ -3,9 +3,10 @@
  EventHub AI Microservice — FastAPI Application (v2 — Gradient Boosting)
 ==========================================================================
  Endpoints:
-   1. POST /predict   – Predict attendance + confidence range
-   2. POST /retrain   – Append event data & retrain model
-   3. GET  /health    – Health-check
+   1. POST /predict                – Predict attendance + confidence range
+   2. POST /retrain                – Append event data & retrain model
+   3. POST /generate-description   – AI-generated event description (Groq/Llama)
+   4. GET  /health                 – Health-check
 
  Run: uvicorn main:app --host 0.0.0.0 --port 8001 --reload
 ==========================================================================
@@ -13,13 +14,18 @@
 
 import os
 import threading
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 import pandas as pd
 import joblib
 import numpy as np
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
-from typing import Literal
+from typing import Literal, Optional
+from groq import Groq
 
 
 # ---------------------------------------------------------------------------
@@ -128,6 +134,12 @@ class RetrainRequest(BaseModel):
     actual_attendance: int = Field(..., alias="Actual_Attendance", ge=0, description="Real attendance count")
 
     model_config = {"populate_by_name": True}
+
+
+class GenerateDescriptionRequest(BaseModel):
+    """Schema for the /generate-description endpoint."""
+    title: str = Field(..., min_length=2, max_length=200, description="Event title")
+    event_type: Optional[str] = Field(None, description="Event type (optional, for context)")
 
 
 # ---------------------------------------------------------------------------
@@ -303,3 +315,85 @@ def retrain_model(payload: RetrainRequest):
         "dataset_rows": info["rows"],
         "model_features": info["features"],
     }
+
+
+@app.post("/generate-description", tags=["AI Description"])
+def generate_description(payload: GenerateDescriptionRequest):
+    """
+    Generate an AI-powered event description based on the title.
+    Uses Groq API (free tier — 14,400 req/day) with Llama 3.3 70B.
+
+    **Example JSON body:**
+    ```json
+    {
+        "title": "معرض التقنية الحديثة",
+        "event_type": "معرض"
+    }
+    ```
+    """
+    groq_key = os.getenv("GROQ_API_KEY", "")
+    if not groq_key:
+        raise HTTPException(
+            status_code=503,
+            detail="Groq API key not configured. Set GROQ_API_KEY in .env",
+        )
+
+    # Build a context-aware prompt
+    type_context = ""
+    if payload.event_type:
+        type_context = f" (نوع الفعالية: {payload.event_type})"
+
+    system_prompt = (
+        "أنت مساعد ذكي لمنصة إدارة الفعاليات EventHub. "
+        "مهمتك كتابة أوصاف احترافية وجذابة للفعاليات بالعربية الفصحى. "
+        "اكتب الوصف فقط بدون أي مقدمة أو عنوان أو رموز تعبيرية."
+    )
+
+    user_prompt = (
+        f"اكتب وصفاً احترافياً وجذاباً لفعالية بعنوان: \"{payload.title}\"{type_context}. "
+        f"الوصف يجب أن يكون من 2 إلى 4 جمل فقط، "
+        f"يوضح الهدف من الفعالية والفئة المستهدفة، بأسلوب تسويقي محفّز."
+    )
+
+    try:
+        client = Groq(api_key=groq_key)
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=0.7,
+            max_tokens=300,
+        )
+
+        description = response.choices[0].message.content.strip()
+
+        # Clean up any unwanted prefixes the model might add
+        for prefix in ["الوصف:", "وصف:", "وصف الفعالية:"]:
+            if description.startswith(prefix):
+                description = description[len(prefix):].strip()
+        # Remove surrounding quotes if present
+        if description.startswith('"') and description.endswith('"'):
+            description = description[1:-1].strip()
+
+        return {
+            "status": "success",
+            "description": description,
+            "title": payload.title,
+        }
+
+    except Exception as e:
+        error_msg = str(e)
+
+        # Check for rate limit / quota errors
+        if "429" in error_msg or "rate_limit" in error_msg.lower() or "quota" in error_msg.lower():
+            raise HTTPException(
+                status_code=429,
+                detail="Rate limit exceeded. Please wait a moment and try again.",
+            )
+
+        raise HTTPException(
+            status_code=502,
+            detail=f"Failed to generate description: {error_msg}",
+        )

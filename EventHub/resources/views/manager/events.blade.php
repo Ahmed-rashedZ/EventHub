@@ -151,11 +151,6 @@
               <input id="e-title" type="text" class="form-control" placeholder="e.g. Tech Summit 2026" required />
             </div>
             <div class="form-group">
-              <label class="form-label">Description</label>
-              <textarea id="e-desc" class="form-control" placeholder="Briefly describe your event…" required
-                rows="3"></textarea>
-            </div>
-            <div class="form-group">
               <label class="form-label">Event Type</label>
               <select id="e-type" class="form-control" required>
                 <option value="مؤتمر">
@@ -195,6 +190,59 @@
                   <p style="margin:0;"><script>document.write(t('Exhibition features (booths, company applications, and contracts) will be enabled for this event.'))</script></p>
                 </div>
               </div>
+            </div>
+
+            <!-- 🤖 AI Description Suggestion Card -->
+            <div id="ai-desc-card" style="display:none; margin-bottom:16px; padding:14px 16px; background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(6,182,212,0.06)); border:1px solid rgba(139,92,246,0.25); border-radius:14px; position:relative; overflow:hidden; transition: all 0.3s ease;">
+              <div style="position:absolute; top:-20px; right:-20px; width:80px; height:80px; background:radial-gradient(circle, rgba(139,92,246,0.15), transparent); border-radius:50%;"></div>
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div style="width:38px; height:38px; border-radius:12px; background:linear-gradient(135deg, #8b5cf6, #06b6d4); display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; box-shadow: 0 4px 12px rgba(139,92,246,0.3);">✨</div>
+                <div style="flex:1; min-width:0;">
+                  <!-- Prompt State -->
+                  <div id="ai-desc-prompt">
+                    <div style="font-size:0.72rem; font-weight:700; color:#a78bfa; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:3px;">
+                      <script>document.write(t('AI Assistant'))</script>
+                    </div>
+                    <div style="font-size:0.85rem; color:#e2e8f0; margin-bottom:8px;">
+                      <script>document.write(t('Want AI to generate a description based on your title?'))</script>
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                      <button type="button" id="ai-desc-generate-btn" onclick="generateAIDescription()" style="padding:6px 16px; background:linear-gradient(135deg, #8b5cf6, #7c3aed); color:#fff; border:none; border-radius:8px; font-size:0.8rem; font-weight:600; cursor:pointer; transition:all 0.2s; box-shadow:0 2px 8px rgba(139,92,246,0.3);">
+                        <script>document.write(t('✨ Generate'))</script>
+                      </button>
+                      <button type="button" onclick="dismissAIDesc()" style="padding:6px 12px; background:rgba(255,255,255,0.06); color:#94a3b8; border:1px solid rgba(255,255,255,0.1); border-radius:8px; font-size:0.8rem; cursor:pointer; transition:all 0.2s;">
+                        <script>document.write(t('No thanks'))</script>
+                      </button>
+                    </div>
+                  </div>
+                  <!-- Loading State -->
+                  <div id="ai-desc-loading" style="display:none;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                      <div class="spinner" style="width:18px; height:18px; border-width:2px;"></div>
+                      <span style="font-size:0.82rem; color:#94a3b8;">
+                        <script>document.write(t('Generating description...'))</script>
+                      </span>
+                    </div>
+                  </div>
+                  <!-- Success State -->
+                  <div id="ai-desc-success" style="display:none;">
+                    <div style="font-size:0.72rem; font-weight:700; color:#10b981; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:3px;">
+                      <script>document.write(t('Description Generated!'))</script>
+                    </div>
+                    <div style="font-size:0.82rem; color:#94a3b8;">
+                      <script>document.write(t('The description has been filled in below. Feel free to edit it.'))</script>
+                    </div>
+                  </div>
+                  <!-- Error State -->
+                  <div id="ai-desc-error" style="display:none; font-size:0.8rem; color:#f59e0b;"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description</label>
+              <textarea id="e-desc" class="form-control" placeholder="Briefly describe your event…" required
+                rows="3"></textarea>
             </div>
             <div class="form-group">
               <label class="form-label">Event Banner Image</label>
@@ -2092,6 +2140,11 @@
       const agendaCreate = document.getElementById('agenda-items-create');
       if (agendaCreate) agendaCreate.innerHTML = '';
 
+      // Reset AI description card
+      aiDescDismissed = false;
+      const aiDescCard = document.getElementById('ai-desc-card');
+      if (aiDescCard) { aiDescCard.style.display = 'none'; aiDescCard.style.opacity = '1'; aiDescCard.style.transform = 'translateY(0)'; }
+
       createAgendaDays = [];
     }
 
@@ -2183,6 +2236,129 @@
         preview.style.display = 'none';
       }
     });
+
+    // ── AI Description Generator ─────────────────────────────────
+    let aiDescDismissed = false;
+
+    // Show AI suggestion card when user finishes typing the title
+    document.getElementById('e-title').addEventListener('blur', function () {
+      const title = this.value.trim();
+      const desc = document.getElementById('e-desc').value.trim();
+      const card = document.getElementById('ai-desc-card');
+
+      // Only show if: title has 3+ chars, description is empty, not dismissed
+      if (title.length >= 3 && !desc && !aiDescDismissed) {
+        card.style.display = 'block';
+        card.style.animation = 'wizSlideIn 0.3s ease';
+        resetAIDescState();
+      }
+    });
+
+    // Also listen for title input changes to re-enable if title changes
+    document.getElementById('e-title').addEventListener('input', function () {
+      // If title changes after generation, reset dismissed state
+      aiDescDismissed = false;
+    });
+
+    function resetAIDescState() {
+      document.getElementById('ai-desc-prompt').style.display = 'block';
+      document.getElementById('ai-desc-loading').style.display = 'none';
+      document.getElementById('ai-desc-success').style.display = 'none';
+      document.getElementById('ai-desc-error').style.display = 'none';
+    }
+
+    function dismissAIDesc() {
+      aiDescDismissed = true;
+      const card = document.getElementById('ai-desc-card');
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(-10px)';
+      setTimeout(() => {
+        card.style.display = 'none';
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+      }, 250);
+    }
+
+    async function generateAIDescription() {
+      const title = document.getElementById('e-title').value.trim();
+      if (!title) {
+        showToast(document.documentElement.lang === 'ar' ? 'الرجاء إدخال عنوان الحدث أولاً' : 'Please enter an event title first', 'error');
+        return;
+      }
+
+      const eventType = document.getElementById('e-type').value;
+
+      // Switch to loading state
+      document.getElementById('ai-desc-prompt').style.display = 'none';
+      document.getElementById('ai-desc-loading').style.display = 'block';
+      document.getElementById('ai-desc-success').style.display = 'none';
+      document.getElementById('ai-desc-error').style.display = 'none';
+
+      try {
+        const res = await api.post('/events/generate-description', {
+          title: title,
+          event_type: eventType || null,
+        });
+
+        if (res.ok && res.data?.description) {
+          // Fill description
+          document.getElementById('e-desc').value = res.data.description;
+
+          // Switch to success state
+          document.getElementById('ai-desc-loading').style.display = 'none';
+          document.getElementById('ai-desc-success').style.display = 'block';
+
+          // Highlight the description textarea briefly
+          const descEl = document.getElementById('e-desc');
+          descEl.style.borderColor = '#10b981';
+          descEl.style.boxShadow = '0 0 0 3px rgba(16,185,129,0.15)';
+          setTimeout(() => {
+            descEl.style.borderColor = '';
+            descEl.style.boxShadow = '';
+          }, 2000);
+
+          // Auto-hide success after 3 seconds
+          setTimeout(() => {
+            const card = document.getElementById('ai-desc-card');
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(-10px)';
+            setTimeout(() => {
+              card.style.display = 'none';
+              card.style.opacity = '1';
+              card.style.transform = 'translateY(0)';
+            }, 250);
+          }, 3000);
+        } else {
+          // Show error state
+          document.getElementById('ai-desc-loading').style.display = 'none';
+          const errEl = document.getElementById('ai-desc-error');
+          errEl.style.display = 'block';
+          
+          // Check for rate limit error
+          const detail = res.data?.detail || res.data?.message || '';
+          const isRateLimit = detail.toLowerCase().includes('rate limit') || detail.toLowerCase().includes('quota') || res.status === 429;
+          
+          if (isRateLimit) {
+            errEl.textContent = document.documentElement.lang === 'ar' ? '⏳ تم تجاوز الحد المسموح. انتظر دقيقة وحاول مرة أخرى.' : '⏳ Rate limit reached. Please wait a minute and try again.';
+          } else {
+            errEl.textContent = detail || (document.documentElement.lang === 'ar' ? 'حدث خطأ أثناء توليد الوصف. حاول مرة أخرى.' : 'Failed to generate description. Please try again.');
+          }
+          // Show prompt again after 4 seconds
+          setTimeout(() => {
+            resetAIDescState();
+          }, 4000);
+        }
+      } catch (err) {
+        console.error('AI description error:', err);
+        document.getElementById('ai-desc-loading').style.display = 'none';
+        const errEl = document.getElementById('ai-desc-error');
+        errEl.style.display = 'block';
+        errEl.textContent = document.documentElement.lang === 'ar' ? 'تعذر الاتصال بخدمة الذكاء الاصطناعي.' : 'Could not connect to AI service.';
+        setTimeout(() => {
+          resetAIDescState();
+        }, 3000);
+      }
+    }
 
     // ── Edit Pending Event ───────────────────────────────────────
     function openEditModal(eventId) {

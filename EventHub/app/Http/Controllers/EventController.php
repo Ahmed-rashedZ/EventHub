@@ -1359,4 +1359,57 @@ class EventController extends Controller
             ], 503);
         }
     }
+
+    /**
+     * POST /api/events/generate-description
+     * 
+     * Calls the Python AI microservice to generate an event description
+     * based on the title using Groq/Llama API.
+     */
+    public function generateDescription(Request $request)
+    {
+        $request->validate([
+            'title'      => 'required|string|min:2|max:200',
+            'event_type' => 'nullable|string|max:50',
+        ]);
+
+        $aiUrl = env('EVENTHUB_AI_URL', 'http://127.0.0.1:8001');
+
+        $payload = [
+            'title' => $request->title,
+        ];
+
+        if ($request->event_type) {
+            $payload['event_type'] = $request->event_type;
+        }
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::timeout(15)
+                ->post("{$aiUrl}/generate-description", $payload);
+
+            if ($response->successful()) {
+                return response()->json([
+                    'status'      => 'success',
+                    'description' => $response->json('description'),
+                    'title'       => $request->title,
+                ]);
+            }
+
+            // Pass through rate limit errors from AI service
+            $statusCode = $response->status() === 429 ? 429 : 502;
+            $detail = $response->json('detail') ?? 'AI service returned an error.';
+
+            return response()->json([
+                'status'  => 'error',
+                'message' => $detail,
+                'detail'  => $detail,
+            ], $statusCode);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Could not connect to AI service. Make sure it is running.',
+                'error'   => $e->getMessage(),
+            ], 503);
+        }
+    }
 }

@@ -1577,6 +1577,15 @@ const I18N_AR = {
   'Scanned Today': 'تم المسح اليوم',
   'Not Scanned Today': 'لم يمسح اليوم',
   'Days Attended': 'أيام الحضور',
+
+  /* ── AI Description Suggestion ──────────────────────────── */
+  'AI Assistant': 'مساعد ذكي',
+  'Want AI to generate a description based on your title?': 'هل تريد أن يكتب الذكاء الاصطناعي وصفاً بناءً على العنوان؟',
+  '✨ Generate': '✨ توليد',
+  'No thanks': 'لا شكراً',
+  'Generating description...': 'جاري توليد الوصف...',
+  'Description Generated!': 'تم توليد الوصف!',
+  'The description has been filled in below. Feel free to edit it.': 'تم تعبئة الوصف أدناه. يمكنك تعديله كما تشاء.',
 };
 
 /* ─────────────────────────────────────────────────────────────────
