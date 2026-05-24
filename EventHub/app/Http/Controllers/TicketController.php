@@ -81,14 +81,16 @@ class TicketController extends Controller
         ], 201);
     }
 
-    // GET /api/my-tickets – User views their tickets
+    // GET /api/my-tickets – User views their tickets (with multi-day attendance info)
     public function myTickets(Request $request)
     {
-        $tickets = Ticket::with(['event.venue'])
+        $today = now()->toDateString();
+
+        $tickets = Ticket::with(['event.venue', 'attendanceLogs'])
             ->where('user_id', $request->user()->id)
             ->latest()
             ->get()
-            ->map(function ($ticket) {
+            ->map(function ($ticket) use ($today) {
                 // If ticket_number is null, fallback to calculating it based on creation order for this event
                 if (is_null($ticket->ticket_number)) {
                     $ticket->ticket_number = Ticket::where('event_id', $ticket->event_id)
@@ -96,6 +98,15 @@ class TicketController extends Controller
                         ->count();
                 }
                 $ticket->qr_url = "https://api.qrserver.com/v1/create-qr-code/?data={$ticket->qr_code}&size=200x200";
+                $ticket->scanned_today = $ticket->attendanceLogs
+                    ->contains(fn($log) => $log->scanned_at->toDateString() === $today);
+                $ticket->total_days_attended = $ticket->attendanceLogs
+                    ->pluck('scanned_at')
+                    ->map(fn($d) => $d->toDateString())
+                    ->unique()
+                    ->count();
+                // Clean up the attendanceLogs from the response (optional: keep it lean)
+                unset($ticket->attendanceLogs);
                 return $ticket;
             });
 

@@ -48,6 +48,12 @@ const I18N_EN = {
   'Booth': 'Booth',
   'Booth Locked': 'Booth Locked',
   'Exhibition layout is locked (Less than 14 days remaining). You can no longer add, edit, or delete zones and booths.': 'Exhibition layout is locked (Less than 14 days remaining). You can no longer add, edit, or delete zones and booths.',
+  'scanned_today': 'Scanned Today',
+  'not_scanned_today': 'Not Scanned Today',
+  'days_attended': 'Days Attended',
+  'Scanned Today': 'Scanned Today',
+  'Not Scanned Today': 'Not Scanned Today',
+  'Days Attended': 'Days Attended',
 };
 
 const I18N_AR = {
@@ -1565,6 +1571,12 @@ const I18N_AR = {
   'Partner ': 'الشريك ',
   ' has resubmitted verification documents and requires review.': ' قام بإعادة تقديم وثائق التحقق وهي بانتظار المراجعة.',
   ' has submitted updated documents for review: ': ' قام بتقديم وثائق محدثة للمراجعة: ',
+  'scanned_today': 'تم المسح اليوم',
+  'not_scanned_today': 'لم يمسح اليوم',
+  'days_attended': 'أيام الحضور',
+  'Scanned Today': 'تم المسح اليوم',
+  'Not Scanned Today': 'لم يمسح اليوم',
+  'Days Attended': 'أيام الحضور',
 };
 
 /* ─────────────────────────────────────────────────────────────────

@@ -159,10 +159,14 @@ class AnalyticsController extends Controller
         }
         $registered = Ticket::where('event_id', $id)->count();
         $attended   = Ticket::where('event_id', $id)->where('status', 'used')->count();
+        $totalAttendanceLogs = AttendanceLog::whereHas('ticket', function ($q) use ($id) {
+            $q->where('event_id', $id);
+        })->count();
 
         return response()->json([
             'event' => $event, 'registered_count' => $registered,
             'attended_count' => $attended,
+            'total_attendance_logs' => $totalAttendanceLogs,
             'attendance_rate' => $registered > 0 ? round(($attended / $registered) * 100, 1) : 0,
         ]);
     }

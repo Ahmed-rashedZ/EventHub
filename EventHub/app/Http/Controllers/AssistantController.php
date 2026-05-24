@@ -196,26 +196,42 @@ class AssistantController extends Controller
         // Fetch event
         $event = \App\Models\Event::with(['venue:id,name,location', 'exhibitors'])->findOrFail($id);
 
-        // Fetch participants (tickets with user + attendance log)
-        $tickets = \App\Models\Ticket::with(['user:id,name,email', 'attendanceLog.scanner:id,name'])
+        $today = now()->toDateString();
+
+        // Fetch participants (tickets with user + all attendance logs for multi-day)
+        $tickets = \App\Models\Ticket::with(['user:id,name,email', 'attendanceLogs.scanner:id,name'])
             ->where('event_id', $id)
             ->get()
-            ->map(function ($ticket) {
-                $log = $ticket->attendanceLog;
+            ->map(function ($ticket) use ($today) {
+                $latestLog = $ticket->attendanceLogs->sortByDesc('scanned_at')->first();
                 return [
                     'user_name' => $ticket->user->name ?? 'Unknown',
                     'user_email' => $ticket->user->email ?? '',
                     'qr_code' => $ticket->qr_code,
-                    'ticket_status' => $ticket->status, // 'valid' or 'used'
-                    'scanned_by' => $log ? ($log->scanner->name ?? 'Unknown') : null,
-                    'scanned_at' => $log ? $log->scanned_at?->toIso8601String() : null,
+                    'ticket_status' => $ticket->status,
+                    'scanned_today' => $ticket->attendanceLogs
+                        ->contains(fn($log) => $log->scanned_at->toDateString() === $today),
+                    'total_days_attended' => $ticket->attendanceLogs
+                        ->pluck('scanned_at')
+                        ->map(fn($d) => $d->toDateString())
+                        ->unique()
+                        ->count(),
+                    'scanned_by' => $latestLog ? ($latestLog->scanner->name ?? 'Unknown') : null,
+                    'scanned_at' => $latestLog ? $latestLog->scanned_at?->toIso8601String() : null,
                 ];
             });
 
         // Stats
         $totalTickets = $tickets->count();
         $totalScanned = $tickets->where('ticket_status', 'used')->count();
+        $scannedToday = $tickets->where('scanned_today', true)->count();
         $myScans = AttendanceLog::where('scanned_by', $user->id)
+            ->whereHas('ticket', function ($q) use ($id) {
+                $q->where('event_id', $id);
+            })
+            ->count();
+        $myScansToday = AttendanceLog::where('scanned_by', $user->id)
+            ->whereDate('scanned_at', $today)
             ->whereHas('ticket', function ($q) use ($id) {
                 $q->where('event_id', $id);
             })
@@ -227,7 +243,9 @@ class AssistantController extends Controller
             'stats' => [
                 'total_tickets' => $totalTickets,
                 'total_scanned' => $totalScanned,
+                'scanned_today' => $scannedToday,
                 'my_scans' => $myScans,
+                'my_scans_today' => $myScansToday,
             ],
         ]);
     }

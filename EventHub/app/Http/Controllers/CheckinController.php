@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class CheckinController extends Controller
 {
-    // POST /api/checkin  – Assistant scans QR code
+    // POST /api/checkin  – Assistant scans QR code (supports multi-day events)
     public function checkin(Request $request)
     {
         $assistant = $request->user();
@@ -37,24 +37,31 @@ class CheckinController extends Controller
             return response()->json(['message' => 'Unauthorized: You are not assigned to this event'], 403);
         }
 
-        if ($ticket->status === 'used') {
-            return response()->json([
-                'message' => 'Ticket already used',
-                'ticket'  => $ticket,
-            ], 422);
-        }
-
         if ($ticket->event->time_status !== 'live') {
             return response()->json([
                 'message' => 'Cannot scan tickets: The event is not live.',
             ], 422);
         }
 
-        // Mark ticket as used
-        $ticket->status = 'used';
-        $ticket->save();
+        // ── Multi-day support: check if ticket was already scanned TODAY ──
+        $alreadyScannedToday = AttendanceLog::where('ticket_id', $ticket->id)
+            ->whereDate('scanned_at', now()->toDateString())
+            ->exists();
 
-        // Log the attendance
+        if ($alreadyScannedToday) {
+            return response()->json([
+                'message' => 'تم تسجيل حضور هذه التذكرة اليوم بالفعل',
+                'ticket'  => $ticket,
+            ], 422);
+        }
+
+        // Mark ticket as used (stays used once first scanned — for analytics/ratings)
+        if ($ticket->status !== 'used') {
+            $ticket->status = 'used';
+            $ticket->save();
+        }
+
+        // Log the attendance for today
         $log = AttendanceLog::create([
             'ticket_id'  => $ticket->id,
             'scanned_by' => $assistant->id,
@@ -76,9 +83,21 @@ class CheckinController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        $tickets = Ticket::with(['user', 'attendanceLog'])
+        $today = now()->toDateString();
+
+        $tickets = Ticket::with(['user', 'attendanceLogs.scanner:id,name'])
             ->where('event_id', $eventId)
-            ->get();
+            ->get()
+            ->map(function ($ticket) use ($today) {
+                $ticket->scanned_today = $ticket->attendanceLogs
+                    ->contains(fn($log) => $log->scanned_at->toDateString() === $today);
+                $ticket->total_days_attended = $ticket->attendanceLogs
+                    ->pluck('scanned_at')
+                    ->map(fn($d) => $d->toDateString())
+                    ->unique()
+                    ->count();
+                return $ticket;
+            });
 
         return response()->json($tickets);
     }

@@ -239,23 +239,38 @@
         <table class="att-table">
           <thead><tr><th>#</th><th>Attendee</th><th>Ticket Code</th><th>Status</th><th>Scanned At</th></tr></thead>
           <tbody>
-            ${participants.map((t, i) => `
-              <tr>
-                <td style="color:var(--text-muted)">${i+1}</td>
-                <td>
-                  <div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="navigateToProfile(${t.user?.id})">
-                    <div class="avatar" style="width:26px;height:26px;font-size:.7rem">${t.user?.name?.charAt(0) || '?'}</div>
-                    <div>
-                      <div style="font-weight:600;color:var(--accent2)">${t.user?.name || '—'}</div>
-                      <div style="font-size:.72rem;color:var(--text-muted)">${t.user?.email || ''}</div>
+            ${participants.map((t, i) => {
+              const latestLog = (t.attendance_logs && t.attendance_logs.length) 
+                ? t.attendance_logs.reduce((latest, current) => new Date(current.scanned_at) > new Date(latest.scanned_at) ? current : latest, t.attendance_logs[0])
+                : t.attendance_log;
+              const scanTime = latestLog ? fmtDate(latestLog.scanned_at) : '—';
+              const scannerName = latestLog && latestLog.scanner ? `<div style="font-size:.7rem;color:var(--text-muted);margin-top:2px">👤 by ${latestLog.scanner.name}</div>` : '';
+              const daysAttendedStr = t.total_days_attended ? `<div style="font-size:.7rem;color:var(--text-muted);margin-top:4px">📅 ${t.total_days_attended} day(s)</div>` : '';
+              
+              return `
+                <tr>
+                  <td style="color:var(--text-muted)">${i+1}</td>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="navigateToProfile(${t.user?.id})">
+                      <div class="avatar" style="width:26px;height:26px;font-size:.7rem">${t.user?.name?.charAt(0) || '?'}</div>
+                      <div>
+                        <div style="font-weight:600;color:var(--accent2)">${t.user?.name || '—'}</div>
+                        <div style="font-size:.72rem;color:var(--text-muted)">${t.user?.email || ''}</div>
+                      </div>
                     </div>
-                  </div>
-                </td>
-                <td style="font-family:monospace;color:var(--accent2)">${t.qr_code}</td>
-                <td>${badge(t.status)}</td>
-                <td style="color:var(--text-muted)">${t.attendance_log ? fmtDate(t.attendance_log.scanned_at) : '—'}</td>
-              </tr>
-            `).join('')}
+                  </td>
+                  <td style="font-family:monospace;color:var(--accent2)">${t.qr_code}</td>
+                  <td>
+                    ${badge(t.scanned_today ? 'used' : 'unused')}
+                    ${daysAttendedStr}
+                  </td>
+                  <td style="color:var(--text-muted)">
+                    ${scanTime}
+                    ${scannerName}
+                  </td>
+                </tr>
+              `;
+            }).join('')}
           </tbody>
         </table>
       </div>

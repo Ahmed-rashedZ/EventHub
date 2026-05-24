@@ -22,4 +22,13 @@ class Ticket extends Model
     {
         return $this->hasOne(AttendanceLog::class);
     }
+
+    /**
+     * All attendance logs (for multi-day events).
+     * Each day the ticket is scanned creates a new log entry.
+     */
+    public function attendanceLogs()
+    {
+        return $this->hasMany(AttendanceLog::class);
+    }
 }

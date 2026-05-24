@@ -678,13 +678,17 @@ class EventController extends Controller
         $event = Event::findOrFail($id);
         $user = $request->user();
 
-        // Check if user has attended (ticket status must be 'used')
-        $attendance = \App\Models\Ticket::where('event_id', $event->id)
+        // Check if user has attended (ticket must have been scanned at least once)
+        $ticket = \App\Models\Ticket::where('event_id', $event->id)
             ->where('user_id', $user->id)
-            ->where('status', 'used')
-            ->exists();
+            ->first();
 
-        if (!$attendance) {
+        $hasAttended = $ticket && (
+            $ticket->status === 'used' ||
+            \App\Models\AttendanceLog::where('ticket_id', $ticket->id)->exists()
+        );
+
+        if (!$hasAttended) {
             return response()->json(['message' => 'You cannot review an event unless you have attended and your ticket has been scanned.'], 403);
         }
 
