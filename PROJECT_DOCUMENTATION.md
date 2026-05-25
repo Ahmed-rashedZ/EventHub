@@ -433,12 +433,6 @@
 | reminder_type | string | نوع التذكير |
 | sent_at | datetime (nullable) | وقت الإرسال |
 
-#### 22. `reports` - التقارير
-| العمود | النوع | الوصف |
-|--------|-------|-------|
-| id | bigint | المعرف |
-| timestamps | - | أوقات الإنشاء/التعديل |
-
 #### جداول النظام الأساسية
 - `cache` - ذاكرة التخزين المؤقت
 - `jobs` - الأعمال المجدولة
@@ -593,11 +587,6 @@ EventReminder ─→ belongsTo Event
 ### EventNotification Model (Legacy)
 ```
 EventNotification ─→ belongsTo User
-```
-
-### Report Model
-```
-Report (empty - placeholder)
 ```
 
 ---
@@ -1657,7 +1646,6 @@ EventHub/
 │       ├── Profile.php                        # بروفايلات موحدة
 │       ├── ProfileContact.php                 # جهات اتصال
 │       ├── Rating.php                         # تقييمات الفعاليات
-│       ├── Report.php                         # تقارير (placeholder)
 │       ├── SponsorshipRequest.php             # طلبات الرعاية
 │       ├── Ticket.php                         # التذاكر
 │       ├── User.php                           # المستخدمين (6 أدوار)
@@ -1757,7 +1745,7 @@ EventHub_Mobile/eventhub/
 | العنصر | العدد |
 |--------|-------|
 | **Controllers** | 16 |
-| **Models** | 21 |
+| **Models** | 20 |
 | **Notification Classes** | 1 (SystemNotification) |
 | **Mail Classes** | 4 |
 | **Services** | 3 |
@@ -1770,7 +1758,7 @@ EventHub_Mobile/eventhub/
 | **PDF Templates** | 2 |
 | **Email Templates** | 4 |
 | **أدوار** | 6 (Admin, Event Manager, Sponsor, Company, User, Assistant) |
-| **جداول قاعدة البيانات** | 22 جدول رئيسي |
+| **جداول قاعدة البيانات** | 21 جدول رئيسي |
 | **Flutter Screens** | 23 شاشة |
 | **Flutter Providers** | 6 |
 | **Flutter Widgets** | 3 |
