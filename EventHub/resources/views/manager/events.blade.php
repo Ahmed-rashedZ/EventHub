@@ -19,12 +19,7 @@
 <body>
   <div class="app-layout">
     <aside class="sidebar">
-      <div class="sidebar-logo">
-        <div style="display:flex; justify-content:center; align-items:center; width: 100%;"><img src="/images/logo.png"
-            alt="EventHub Logo"
-            style="width: 85px; height: 85px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-        </div>
-      </div>
+      <div class="sidebar-logo" style="display:flex; justify-content:center; align-items:center; padding: 8px 0;"><img src="/images/logo.png" alt="EventHub Logo" style="width: 85px; height: 85px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
       <nav class="sidebar-nav" id="sidebar-links"></nav>
       @include('partials._sidebar-footer')
     </aside>
@@ -458,9 +453,9 @@
       <div id="edit-review-banner"
         style="margin: 16px 0; padding: 12px 16px; background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.15); border-radius: 10px;">
         <div
-          style="font-size:0.7rem;font-weight:700;color:#f59e0b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">
-          📝 Admin's Review</div>
-        <div id="edit-review-msg" style="font-size:0.85rem;color:#e2e8f0;line-height:1.4;"></div>
+          style="font-size:0.65rem;font-weight:700;color:#f59e0b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">
+          📝 <script>document.write(t("Admin's Review"))</script></div>
+        <div id="edit-review-msg" style="font-size:0.75rem;color:#e2e8f0;line-height:1.4;"></div>
       </div>
 
       <form id="edit-form" onsubmit="submitEdit(event)">
@@ -675,9 +670,9 @@
               <div style="margin:0 16px 12px; padding:12px 16px; background:rgba(245,158,11,0.06); border:1px solid rgba(245,158,11,0.15); border-radius:10px; display:flex; align-items:center; gap:12px;">
                 <span style="font-size:1.3rem;">📝</span>
                 <div style="flex:1;">
-                  <div style="font-size:0.7rem;font-weight:700;color:#f59e0b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px;">Admin Review</div>
-                  <div style="font-size:0.85rem;color:#e2e8f0;line-height:1.4;">${ev.review_message}</div>
-                  <div style="font-size:0.72rem;color:#94a3b8;margin-top:4px;">Fields to update: ${(ev.review_fields || []).map(f => `<span style="background:rgba(255,255,255,0.06);padding:1px 6px;border-radius:4px;margin-right:4px;">${f}</span>`).join('')}</div>
+                  <div style="font-size:0.65rem;font-weight:700;color:#f59e0b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px;">${t('Admin Review')}</div>
+                  <div style="font-size:0.75rem;color:#e2e8f0;line-height:1.4;">${ev.review_message}</div>
+                  <div style="font-size:0.65rem;color:#94a3b8;margin-top:4px;">${t('Fields to update:')} ${(ev.review_fields || []).map(f => `<span style="background:rgba(255,255,255,0.06);padding:1px 6px;border-radius:4px;margin-right:4px;">${t(f) || f}</span>`).join('')}</div>
                 </div>
                 <button class="btn btn-sm" style="background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);white-space:nowrap;" onclick="openEditModal(${ev.id})">✏️ Edit</button>
               </div>
