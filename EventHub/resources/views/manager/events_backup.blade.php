@@ -1,31 +1,31 @@
-ï»¿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Events â€“ EventHub Manager</title>
+  <title>My Events – EventHub Manager</title>
   <link rel="stylesheet" href="/css/style.css" />
   <script src="/js/i18n.js"></script>
-<link rel="icon" href="/images/logo.jpg" type="image/jpeg">
+<link rel="icon" href="/images/logo.png" type="image/png">
 </head>
 
 <body>
   <div class="app-layout">
     <aside class="sidebar">
       <div class="sidebar-logo">
-        <div style="display:flex; justify-content:center; align-items:center; width: 100%;"><img src="/images/logo.jpg" alt="EventHub Logo" style="width: 85px; height: 85px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
+        <div style="display:flex; justify-content:center; align-items:center; width: 100%;"><img src="/images/logo.png" alt="EventHub Logo" style="width: 85px; height: 85px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
       </div>
       <nav class="sidebar-nav">
         <span class="nav-section-label">Overview</span>
-        <a class="nav-item" href="/manager/dashboard"><span class="nav-icon">ğŸ“Š</span> Dashboard</a>
+        <a class="nav-item" href="/manager/dashboard"><span class="nav-icon">??</span> Dashboard</a>
         <span class="nav-section-label">Events</span>
-        <a class="nav-item active" href="/manager/events"><span class="nav-icon">ğŸ“…</span> My Events</a>
-        <a class="nav-item" href="/manager/assistants"><span class="nav-icon">ğŸ‘¥</span> Assistants</a>
-        <a class="nav-item" href="/manager/attendance"><span class="nav-icon">ğŸ“</span> Attendance</a>
-        <a class="nav-item" href="/manager/sponsorship"><span class="nav-icon">ğŸ’¼</span> Sponsorship</a>
+        <a class="nav-item active" href="/manager/events"><span class="nav-icon">??</span> My Events</a>
+        <a class="nav-item" href="/manager/assistants"><span class="nav-icon">??</span> Assistants</a>
+        <a class="nav-item" href="/manager/attendance"><span class="nav-icon">??</span> Attendance</a>
+        <a class="nav-item" href="/manager/sponsorship"><span class="nav-icon">??</span> Sponsorship</a>
         <span class="nav-section-label">Settings</span>
-        <a class="nav-item" href="/profile"><span class="nav-icon">âš™ï¸</span> My Profile</a>
+        <a class="nav-item" href="/profile"><span class="nav-icon">??</span> My Profile</a>
       </nav>
       @include('partials._sidebar-footer')
     </aside>
@@ -105,7 +105,7 @@
       <div class="modal-header"
         style="position: sticky; top: 0; background: rgba(30,33,45,0.95); backdrop-filter: blur(12px); z-index: 10; padding: 24px 0 16px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05);">
         <h3 class="modal-title">Create New Event</h3>
-        <button class="modal-close" onclick="closeModal()">âœ•</button>
+        <button class="modal-close" onclick="closeModal()">?</button>
       </div>
       <form id="event-form">
         <div class="form-group">
@@ -114,45 +114,45 @@
         </div>
         <div class="form-group">
           <label class="form-label">Description</label>
-          <textarea id="e-desc" class="form-control" placeholder="Describe your eventâ€¦" required rows="3"></textarea>
+          <textarea id="e-desc" class="form-control" placeholder="Describe your event…" required rows="3"></textarea>
         </div>
         <div class="form-grid">
           <div class="form-group">
             <label class="form-label">Event Type</label>
             <select id="e-type" class="form-control" required>
-              <option value="Ù…Ø¤ØªÙ…Ø±"
+              <option value="ãÄÊãÑ"
                 title="Business Conference&#10;Tech Conference&#10;Medical Conference&#10;Academic Conference&#10;Startup Conference">
                 <script>document.write(t('Conference'))</script>
               </option>
-              <option value="Ù†Ø¯ÙˆØ©"
+              <option value="äÏæÉ"
                 title="Educational Seminar&#10;Scientific Seminar&#10;Cultural Seminar&#10;Financial Seminar&#10;Management Seminar">
                 <script>document.write(t('Seminar'))</script>
               </option>
-              <option value="ÙˆØ±Ø´Ø© Ø¹Ù…Ù„"
+              <option value="æÑÔÉ Úãá"
                 title="Programming Workshop&#10;Design Workshop&#10;Writing Workshop&#10;Art Workshop&#10;Strategy Workshop">
                 <script>document.write(t('Workshop'))</script>
               </option>
-              <option value="Ø¯ÙˆØ±Ø© ØªØ¯Ø±ÙŠØ¨ÙŠØ©"
+              <option value="ÏæÑÉ ÊÏÑíÈíÉ"
                 title="Language Course&#10;Leadership Course&#10;Marketing Course&#10;HR Course&#10;IT Course">
                 <script>document.write(t('Training Course'))</script>
               </option>
-              <option value="ØªØ±ÙÙŠÙ‡"
+              <option value="ÊÑİíå"
                 title="Music Concerts&#10;Festivals&#10;Stand-up Comedy&#10;Magic Shows&#10;Gaming Events">
                 <script>document.write(t('Entertainment'))</script>
               </option>
-              <option value="Ù…Ù„ØªÙ‚Ù‰ Ø¹Ù„Ù…ÙŠ"
+              <option value="ãáÊŞì Úáãí"
                 title="Research Forum&#10;Physics Forum&#10;Medical Forum&#10;Engineering Forum&#10;AI Forum">
                 <script>document.write(t('Scientific Forum'))</script>
               </option>
-              <option value="Ø±ÙŠØ§Ø¶Ø©"
+              <option value="ÑíÇÖÉ"
                 title="Football Tournaments&#10;Marathons&#10;E-Sports&#10;Yoga Classes&#10;Martial Arts">
                 <script>document.write(t('Sports'))</script>
               </option>
-              <option value="ØªÙ‚Ù†ÙŠØ©"
+              <option value="ÊŞäíÉ"
                 title="Hackathons&#10;Tech Expos&#10;Cloud Computing&#10;Cybersecurity&#10;Developer Meetups">
                 <script>document.write(t('Technology'))</script>
               </option>
-              <option value="Ø§Ø¬ØªÙ…Ø§Ø¹ÙŠØ©"
+              <option value="ÇÌÊãÇÚíÉ"
                 title="Networking Events&#10;Charity Events&#10;Community Gatherings&#10;Alumni Meetings&#10;Gala Dinners">
                 <script>document.write(t('Social'))</script>
               </option>
@@ -164,13 +164,13 @@
               <label class="period-card">
                 <input type="radio" name="location_type" value="internal" onchange="toggleLocationFields()" checked>
                 <div class="period-card-content" style="justify-content: center;">
-                  <span class="period-title" style="margin: 0;">Ø¯Ø§Ø®Ù„ Ù…Ø¹Ø±Ø¶ Ø·Ø±Ø§Ø¨Ù„Ø³ (Internal Hall)</span>
+                  <span class="period-title" style="margin: 0;">ÏÇÎá ãÚÑÖ ØÑÇÈáÓ (Internal Hall)</span>
                 </div>
               </label>
               <label class="period-card">
                 <input type="radio" name="location_type" value="external" onchange="toggleLocationFields()">
                 <div class="period-card-content" style="justify-content: center;">
-                  <span class="period-title" style="margin: 0;">Ù‚Ø§Ø¹Ø© Ø®Ø§Ø±Ø¬ÙŠØ© (External Hall)</span>
+                  <span class="period-title" style="margin: 0;">ŞÇÚÉ ÎÇÑÌíÉ (External Hall)</span>
                 </div>
               </label>
             </div>
@@ -181,7 +181,7 @@
           <div class="form-group">
             <label class="form-label">Select Hall</label>
             <select id="e-venue" class="form-control" onchange="updatePeriodTimes()" required>
-              <option value="">Loading hallsâ€¦</option>
+              <option value="">Loading halls…</option>
             </select>
           </div>
           <div class="form-grid">
@@ -192,11 +192,11 @@
             <div class="form-group">
               <label class="form-label">Period</label>
               <select id="e-period" class="form-control" onchange="updatePeriodTimes()" required>
-                <option value="morning">Morning Period â˜€</option>
-                <option value="evening">Evening Period ğŸŒ™</option>
-                <option value="full_day">Full Day ğŸ—“ï¸</option>
+                <option value="morning">Morning Period ?</option>
+                <option value="evening">Evening Period ??</option>
+                <option value="full_day">Full Day ???</option>
               </select>
-              <small id="selected-period-time" style="color:var(--text-muted);font-size:12px;margin-top:6px;display:block">â€”</small>
+              <small id="selected-period-time" style="color:var(--text-muted);font-size:12px;margin-top:6px;display:block">—</small>
             </div>
           </div>
         </div>
@@ -312,12 +312,12 @@
 
     function renderEvents(events) {
       const tbody = document.getElementById('events-body');
-      if (!events.length) { tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">ğŸ“…</div><p>No events found</p></div></td></tr>'; return; }
+      if (!events.length) { tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">??</div><p>No events found</p></div></td></tr>'; return; }
       tbody.innerHTML = events.map((ev, i) => `
       <tr>
         <td style="color:var(--text-muted)">${i + 1}</td>
         <td><div style="font-weight:600">${ev.title}</div></td>
-        <td style="color:var(--text-muted)">${ev.venue_id ? (ev.venue?.name || 'â€”') : (ev.external_venue_name ? ev.external_venue_name + ' (External)' : 'â€”')}</td>
+        <td style="color:var(--text-muted)">${ev.venue_id ? (ev.venue?.name || '—') : (ev.external_venue_name ? ev.external_venue_name + ' (External)' : '—')}</td>
         <td style="color:var(--text-muted);white-space:nowrap">${fmtDateShort(ev.start_time)}</td>
         <td style="color:var(--text-muted)">${ev.capacity}</td>
         <td>
@@ -328,15 +328,15 @@
         </td>
         <td>${badge(ev.status)} ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''}</td>
         <td style="display:flex;gap:6px;padding:14px 16px;flex-wrap:wrap">
-          <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${ev.id})" title="View Details">â„¹ï¸ Details</button>
-          <button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='/manager/event-stats/${ev.id}'" title="View Statistics">ğŸ“Š Stats</button>
+          <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${ev.id})" title="View Details">?? Details</button>
+          <button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='/manager/event-stats/${ev.id}'" title="View Statistics">?? Stats</button>
         </td>
       </tr>`).join('');
     }
 
     // Modal for event details
-    const typeIcons = { 'Ù…Ø¤ØªÙ…Ø±': 'ğŸ™ï¸', 'Ù†Ø¯ÙˆØ©': 'ğŸ“–', 'ÙˆØ±Ø´Ø© Ø¹Ù…Ù„': 'ğŸ”§', 'Ø¯ÙˆØ±Ø© ØªØ¯Ø±ÙŠØ¨ÙŠØ©': 'ğŸ“', 'ØªØ±ÙÙŠÙ‡': 'ğŸ­', 'Ù…Ù„ØªÙ‚Ù‰ Ø¹Ù„Ù…ÙŠ': 'ğŸ”¬', 'Ø±ÙŠØ§Ø¶Ø©': 'âš½', 'ØªÙ‚Ù†ÙŠØ©': 'ğŸ’»', 'Ø§Ø¬ØªÙ…Ø§Ø¹ÙŠØ©': 'ğŸ¤' };
-    const typeColors = { 'Ù…Ø¤ØªÙ…Ø±': '#3b82f6', 'Ù†Ø¯ÙˆØ©': '#8b5cf6', 'ÙˆØ±Ø´Ø© Ø¹Ù…Ù„': '#10b981', 'Ø¯ÙˆØ±Ø© ØªØ¯Ø±ÙŠØ¨ÙŠØ©': '#06b6d4', 'ØªØ±ÙÙŠÙ‡': '#ec4899', 'Ù…Ù„ØªÙ‚Ù‰ Ø¹Ù„Ù…ÙŠ': '#f59e0b', 'Ø±ÙŠØ§Ø¶Ø©': '#22c55e', 'ØªÙ‚Ù†ÙŠØ©': '#6366f1', 'Ø§Ø¬ØªÙ…Ø§Ø¹ÙŠØ©': '#f97316' };
+    const typeIcons = { 'ãÄÊãÑ': '???', 'äÏæÉ': '??', 'æÑÔÉ Úãá': '??', 'ÏæÑÉ ÊÏÑíÈíÉ': '??', 'ÊÑİíå': '??', 'ãáÊŞì Úáãí': '??', 'ÑíÇÖÉ': '?', 'ÊŞäíÉ': '??', 'ÇÌÊãÇÚíÉ': '??' };
+    const typeColors = { 'ãÄÊãÑ': '#3b82f6', 'äÏæÉ': '#8b5cf6', 'æÑÔÉ Úãá': '#10b981', 'ÏæÑÉ ÊÏÑíÈíÉ': '#06b6d4', 'ÊÑİíå': '#ec4899', 'ãáÊŞì Úáãí': '#f59e0b', 'ÑíÇÖÉ': '#22c55e', 'ÊŞäíÉ': '#6366f1', 'ÇÌÊãÇÚíÉ': '#f97316' };
 
     function showEventDetails(eventId) {
       const modal = document.getElementById('event-details-modal');
@@ -349,31 +349,31 @@
         api.get(`/events/${eventId}/reviews`)
       ]).then(([res, revRes]) => {
         if (!res.ok) {
-          content.innerHTML = '<div class="empty-state"><div class="empty-icon">âŒ</div><p>Could not fetch event details</p></div>';
+          content.innerHTML = '<div class="empty-state"><div class="empty-icon">?</div><p>Could not fetch event details</p></div>';
           return;
         }
         const ev = res.data;
         const reviewData = revRes.ok ? revRes.data : { average_rating: 0, reviews: [] };
         const eType = ev.event_type || 'Other';
         const tColor = typeColors[eType] || typeColors.Other;
-        const tIcon = typeIcons[eType] || 'ğŸ“Œ';
+        const tIcon = typeIcons[eType] || '??';
 
         const bannerSection = ev.image
           ? `<div class="ed-banner" style="background-image:url('/storage/${ev.image}')"><div class="ed-banner-fade"></div></div>`
           : `<div class="ed-banner ed-banner-placeholder"><span class="ed-banner-emoji">${tIcon}</span><div class="ed-banner-fade"></div></div>`;
 
         const rejectionSection = (ev.status === 'rejected' && ev.rejection_reason)
-          ? `<div class="ed-rejection"><span class="ed-rej-label">âš  Rejection Reason</span><p>${ev.rejection_reason}</p></div>`
+          ? `<div class="ed-rejection"><span class="ed-rej-label">? Rejection Reason</span><p>${ev.rejection_reason}</p></div>`
           : '';
 
         let sponsorsHtml = '';
         if (ev.sponsors && ev.sponsors.length > 0) {
           const getTierBadge = (tier) => {
             switch (tier) {
-              case 'diamond': return '<span style="background:rgba(6,182,212,0.15); color:#06b6d4; padding:3px 8px; border-radius:12px; border:1px solid rgba(6,182,212,0.3); font-size:10px;">ğŸ’ Diamond</span>';
-              case 'gold': return '<span style="background:rgba(234,179,8,0.15); color:#eab308; padding:3px 8px; border-radius:12px; border:1px solid rgba(234,179,8,0.3); font-size:10px;">ğŸ¥‡ Gold</span>';
-              case 'silver': return '<span style="background:rgba(156,163,175,0.15); color:#9ca3af; padding:3px 8px; border-radius:12px; border:1px solid rgba(156,163,175,0.3); font-size:10px;">ğŸ¥ˆ Silver</span>';
-              case 'bronze': return '<span style="background:rgba(217,119,6,0.15); color:#d97706; padding:3px 8px; border-radius:12px; border:1px solid rgba(217,119,6,0.3); font-size:10px;">ğŸ¥‰ Bronze</span>';
+              case 'diamond': return '<span style="background:rgba(6,182,212,0.15); color:#06b6d4; padding:3px 8px; border-radius:12px; border:1px solid rgba(6,182,212,0.3); font-size:10px;">?? Diamond</span>';
+              case 'gold': return '<span style="background:rgba(234,179,8,0.15); color:#eab308; padding:3px 8px; border-radius:12px; border:1px solid rgba(234,179,8,0.3); font-size:10px;">?? Gold</span>';
+              case 'silver': return '<span style="background:rgba(156,163,175,0.15); color:#9ca3af; padding:3px 8px; border-radius:12px; border:1px solid rgba(156,163,175,0.3); font-size:10px;">?? Silver</span>';
+              case 'bronze': return '<span style="background:rgba(217,119,6,0.15); color:#d97706; padding:3px 8px; border-radius:12px; border:1px solid rgba(217,119,6,0.3); font-size:10px;">?? Bronze</span>';
               default: return `<span style="background:rgba(255,255,255,0.1); color:#fff; padding:3px 8px; border-radius:12px; border:1px solid rgba(255,255,255,0.2); font-size:10px;">${tier || 'Sponsor'}</span>`;
             }
           };
@@ -410,8 +410,8 @@
           reviewsHtml = `
           <div class="ed-section" style="margin-top: 16px;">
             <div class="ed-section-label" style="display:flex;justify-content:space-between;align-items:center;">
-               <span>ğŸ‘¥ Attendee Reviews</span>
-               <span style="color:#eab308;font-weight:700;font-size:0.8rem">â­ ${Number(reviewData.average_rating).toFixed(1)}</span>
+               <span>?? Attendee Reviews</span>
+               <span style="color:#eab308;font-weight:700;font-size:0.8rem">? ${Number(reviewData.average_rating).toFixed(1)}</span>
             </div>
             <div style="display:flex; flex-direction:column; gap:12px; max-height:250px; overflow-y:auto; padding-right:4px;">
               ${reviewData.reviews.map(r => `
@@ -430,7 +430,7 @@
                       </div>
                       <span style="font-size:0.8rem; font-weight:600; color:#fff">${r.user?.name || 'Anonymous'}</span>
                     </div>
-                    <div style="color:#eab308; font-size:0.8rem;">${'â­'.repeat(r.rating)}</div>
+                    <div style="color:#eab308; font-size:0.8rem;">${'?'.repeat(r.rating)}</div>
                   </div>
                   ${r.review_text ? `<p style="font-size:0.85rem; color:rgba(255,255,255,0.7); margin:0;">"${r.review_text}"</p>` : '<p style="font-size:0.85rem; color:rgba(255,255,255,0.3); margin:0; font-style:italic">No written comment</p>'}
                 </div>
@@ -467,54 +467,54 @@
         <!-- Info Grid -->
         <div class="ed-info-grid">
           <div class="ed-info-card ed-info-accent2">
-            <div class="ed-info-icon">ğŸ›ï¸</div>
+            <div class="ed-info-icon">???</div>
             <div>
               <div class="ed-info-label">Venue</div>
-              <div class="ed-info-value">${ev.venue_id ? (ev.venue?.name || 'â€”') : (ev.external_venue_name || 'â€”')}</div>
+              <div class="ed-info-value">${ev.venue_id ? (ev.venue?.name || '—') : (ev.external_venue_name || '—')}</div>
             </div>
           </div>
           <div class="ed-info-card ed-info-accent2">
-            <div class="ed-info-icon">ğŸ“</div>
+            <div class="ed-info-icon">??</div>
             <div>
               <div class="ed-info-label">Location</div>
               <div class="ed-info-value">
-                ${ev.venue_id && ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps â†—</a>` 
-                : (!ev.venue_id && ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps â†—</a>` : 'â€”')}
+                ${ev.venue_id && ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ?</a>` 
+                : (!ev.venue_id && ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ?</a>` : '—')}
               </div>
             </div>
           </div>
           ${!ev.venue_id && ev.booking_proof_path ? `
           <div class="ed-info-card ed-info-accent2" style="grid-column: 1 / -1; background:rgba(34,211,238,0.05); border-color:rgba(34,211,238,0.2);">
-            <div class="ed-info-icon">ğŸ“</div>
-            <div><div class="ed-info-label" style="color:#22d3ee">Booking Proof</div><div class="ed-info-value"><a href="/storage/${ev.booking_proof_path}" target="_blank" style="color:#22d3ee;text-decoration:underline;">View Document â†—</a></div></div>
+            <div class="ed-info-icon">??</div>
+            <div><div class="ed-info-label" style="color:#22d3ee">Booking Proof</div><div class="ed-info-value"><a href="/storage/${ev.booking_proof_path}" target="_blank" style="color:#22d3ee;text-decoration:underline;">View Document ?</a></div></div>
           </div>
           ` : ''}
           <div class="ed-info-card ed-info-accent">
-            <div class="ed-info-icon">ğŸ•</div>
+            <div class="ed-info-icon">??</div>
             <div>
               <div class="ed-info-label">Start</div>
               <div class="ed-info-value">${fmtDate(ev.start_time)}</div>
             </div>
           </div>
           <div class="ed-info-card ed-info-accent">
-            <div class="ed-info-icon">ğŸ•”</div>
+            <div class="ed-info-icon">??</div>
             <div>
               <div class="ed-info-label">End</div>
               <div class="ed-info-value">${fmtDate(ev.end_time)}</div>
             </div>
           </div>
           <div class="ed-info-card ed-info-warning">
-            <div class="ed-info-icon">ğŸ‘¥</div>
+            <div class="ed-info-icon">??</div>
             <div>
               <div class="ed-info-label">Capacity</div>
               <div class="ed-info-value">${ev.capacity}</div>
             </div>
           </div>
           <div class="ed-info-card ed-info-warning">
-            <div class="ed-info-icon">ğŸŸï¸</div>
+            <div class="ed-info-icon">???</div>
             <div>
               <div class="ed-info-label">Tickets Booked</div>
-              <div class="ed-info-value">${ev.tickets_count ?? 'â€”'}</div>
+              <div class="ed-info-value">${ev.tickets_count ?? '—'}</div>
             </div>
           </div>
           </div>
@@ -525,7 +525,7 @@
           <!-- Footer -->
           <div class="ed-footer" style="margin-top: 8px;">
           <span class="ed-footer-label">Created by</span>
-          <span class="ed-footer-name">${ev.creator?.name || ev.manager?.name || 'â€”'}</span>
+          <span class="ed-footer-name">${ev.creator?.name || ev.manager?.name || '—'}</span>
         </div>
 
       </div>
@@ -678,13 +678,13 @@
   <!-- Event Details Modal -->
   <div class="modal-overlay" id="event-details-modal">
     <div class="modal ed-modal">
-      <button class="ed-close-btn" onclick="closeEventDetailsModal()">âœ•</button>
+      <button class="ed-close-btn" onclick="closeEventDetailsModal()">?</button>
       <div id="event-details-content" class="ed-content"></div>
     </div>
   </div>
 
   <style>
-    /* â”€â”€ Period Cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    /* ?? Period Cards ????????????????????????????? */
     .period-cards {
       display: flex;
       flex-direction: column;
@@ -724,7 +724,7 @@
       color: var(--text-muted);
     }
 
-    /* â”€â”€ Event Details Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    /* ?? Event Details Modal ????????????????????????????? */
     .ed-modal {
       max-width: 560px;
       width: 95%;

@@ -106,6 +106,10 @@ a:hover { color: var(--accent-hover); }
   -webkit-text-fill-color: transparent;
 }
 
+img[src*="logo.png"] {
+  background: var(--bg-dark);
+}
+
 .sidebar-nav {
   flex: 1;
   padding: 16px 12px;

@@ -7,7 +7,7 @@
   <title>Register – EventHub</title>
   <link rel="stylesheet" href="/css/style.css" />
   <script src="/js/i18n.js"></script>
-  <link rel="icon" href="/images/logo.jpg" type="image/jpeg">
+  <link rel="icon" href="/images/logo.png" type="image/png">
 </head>
 
 <body>
@@ -17,7 +17,7 @@
 
     <div class="auth-card">
       <div class="auth-logo" style="display:flex; justify-content:center; align-items:center; margin-bottom: 20px;"><img
-          src="/images/logo.jpg" alt="EventHub Logo"
+          src="/images/logo.png" alt="EventHub Logo"
           style="width: 95px; height: 95px; object-fit: contain; border-radius: 50%; box-shadow: 0 8px 24px rgba(0,0,0,0.1);">
       </div>
 

@@ -33,14 +33,14 @@
       display: none;
     }
   </style>
-<link rel="icon" href="/images/logo.jpg" type="image/jpeg">
+<link rel="icon" href="/images/logo.png" type="image/png">
 </head>
 
 <body>
   <div class="app-layout">
     <aside class="sidebar">
       <div class="sidebar-logo">
-        <div style="display:flex; justify-content:center; align-items:center; width: 100%;"><img src="/images/logo.jpg" alt="EventHub Logo" style="width: 85px; height: 85px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
+        <div style="display:flex; justify-content:center; align-items:center; width: 100%;"><img src="/images/logo.png" alt="EventHub Logo" style="width: 85px; height: 85px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
       </div>
       <nav class="sidebar-nav" id="sidebar-links" style="display:flex; flex-direction:column; gap:4px; padding-top:10px;">
         <!-- Filled by auth.js -->

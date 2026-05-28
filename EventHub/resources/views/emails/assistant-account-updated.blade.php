@@ -12,7 +12,7 @@
                     <!-- Header -->
                     <tr>
                         <td style="background:linear-gradient(135deg,#f59e0b,#ea580c);padding:28px;text-align:center;">
-                            <img src="{{ url('/images/logo.jpg') }}" alt="EventHub Logo" style="width: 56px; height: 56px; object-fit: contain; border-radius: 8px; background: white; padding: 4px; margin-bottom: 8px;">
+                            <img src="{{ url('/images/logo.png') }}" alt="EventHub Logo" style="width: 56px; height: 56px; object-fit: contain; border-radius: 8px; background: white; padding: 4px; margin-bottom: 8px;">
                             <h1 style="margin:0;color:#fff;font-size:22px;font-weight:800;">تحديث حساب المساعد</h1>
                         </td>
                     </tr>

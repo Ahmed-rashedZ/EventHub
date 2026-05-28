@@ -93,7 +93,7 @@
       font-weight: 500;
     }
   </style>
-<link rel="icon" href="/images/logo.jpg" type="image/jpeg">
+<link rel="icon" href="/images/logo.png" type="image/png">
 </head>
 <body>
   <div class="auth-page">

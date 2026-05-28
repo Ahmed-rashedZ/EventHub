@@ -6,12 +6,12 @@
   <title>Users – EventHub Admin</title>
   <link rel="stylesheet" href="/css/style.css"/>
   <script src="/js/i18n.js"></script>
-<link rel="icon" href="/images/logo.jpg" type="image/jpeg">
+<link rel="icon" href="/images/logo.png" type="image/png">
 </head>
 <body>
 <div class="app-layout">
   <aside class="sidebar">
-    <div class="sidebar-logo" style="display:flex; justify-content:center; align-items:center; padding: 8px 0;"><img src="/images/logo.jpg" alt="EventHub Logo" style="width: 85px; height: 85px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
+    <div class="sidebar-logo" style="display:flex; justify-content:center; align-items:center; padding: 8px 0;"><img src="/images/logo.png" alt="EventHub Logo" style="width: 85px; height: 85px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
     <nav class="sidebar-nav">
       <span class="nav-section-label">Overview</span>
       <a class="nav-item" href="/admin/dashboard"><span class="nav-icon">📊</span> Dashboard</a>

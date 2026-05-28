@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Forgot Password – EventHub</title>
+  <title>Forgot Password � EventHub</title>
   <meta name="description" content="Reset your EventHub account password"/>
   <link rel="stylesheet" href="/css/style.css"/>
   <script src="/js/i18n.js"></script>
@@ -76,7 +76,7 @@
       animation: fadeSlideIn 0.4s ease;
     }
   </style>
-<link rel="icon" href="/images/logo.jpg" type="image/jpeg">
+<link rel="icon" href="/images/logo.png" type="image/png">
 </head>
 <body>
 <div class="auth-page">
@@ -84,9 +84,9 @@
   <div class="auth-bg-glow auth-bg-glow-2"></div>
 
   <div class="auth-card">
-    <div class="auth-logo" style="display:flex; justify-content:center; align-items:center; margin-bottom: 20px;"><img src="/images/logo.jpg" alt="EventHub Logo" style="width: 95px; height: 95px; object-fit: contain; border-radius: 50%; box-shadow: 0 8px 24px rgba(0,0,0,0.1);"></div>
+    <div class="auth-logo" style="display:flex; justify-content:center; align-items:center; margin-bottom: 20px;"><img src="/images/logo.png" alt="EventHub Logo" style="width: 95px; height: 95px; object-fit: contain; border-radius: 50%; box-shadow: 0 8px 24px rgba(0,0,0,0.1);"></div>
 
-    <!-- ═══ STEP 1: Enter Email ═══ -->
+    <!-- ??? STEP 1: Enter Email ??? -->
     <div id="step-1" class="step active">
       <div class="step-indicator">
         <div class="step-dot active"></div>
@@ -111,14 +111,14 @@
       </div>
     </div>
 
-    <!-- ═══ STEP 2: Enter OTP Code ONLY ═══ -->
+    <!-- ??? STEP 2: Enter OTP Code ONLY ??? -->
     <div id="step-2" class="step">
       <div class="step-indicator">
         <div class="step-dot done"></div>
         <div class="step-dot active"></div>
         <div class="step-dot"></div>
       </div>
-      <div class="lock-icon">🔐</div>
+      <div class="lock-icon">??</div>
       <h2 class="auth-heading"><script>document.write(t('Enter Verification Code'))</script></h2>
       <p class="auth-subheading" id="step2-subtitle"></p>
 
@@ -133,7 +133,7 @@
         </div>
 
         <div style="text-align:center;">
-          <div class="timer-badge" id="timer-badge">⏱ <span id="timer">5:00</span></div>
+          <div class="timer-badge" id="timer-badge">? <span id="timer">5:00</span></div>
         </div>
 
         <button type="submit" class="btn btn-primary btn-block" id="btn-verify" style="margin-top: 20px;">
@@ -148,29 +148,29 @@
       </div>
 
       <div class="auth-footer">
-        <a href="#" onclick="goToStep(1)" style="color:var(--text-muted);"><script>document.write(t('← Back'))</script></a>
+        <a href="#" onclick="goToStep(1)" style="color:var(--text-muted);"><script>document.write(t('? Back'))</script></a>
       </div>
     </div>
 
-    <!-- ═══ STEP 3: Set New Password ═══ -->
+    <!-- ??? STEP 3: Set New Password ??? -->
     <div id="step-3" class="step">
       <div class="step-indicator">
         <div class="step-dot done"></div>
         <div class="step-dot done"></div>
         <div class="step-dot active"></div>
       </div>
-      <div class="lock-icon">🔑</div>
+      <div class="lock-icon">??</div>
       <h2 class="auth-heading"><script>document.write(t('Set New Password'))</script></h2>
       <p class="auth-subheading"><script>document.write(t('Your code was verified. Now set a new password for your account.'))</script></p>
 
       <form id="reset-form">
         <div class="form-group">
           <label class="form-label" for="new-password"><script>document.write(t('New Password'))</script></label>
-          <input id="new-password" type="password" class="form-control" placeholder="••••••••" required minlength="8"/>
+          <input id="new-password" type="password" class="form-control" placeholder="��������" required minlength="8"/>
         </div>
         <div class="form-group">
           <label class="form-label" for="confirm-password"><script>document.write(t('Confirm Password'))</script></label>
-          <input id="confirm-password" type="password" class="form-control" placeholder="••••••••" required minlength="8"/>
+          <input id="confirm-password" type="password" class="form-control" placeholder="��������" required minlength="8"/>
         </div>
 
         <button type="submit" class="btn btn-primary btn-block" id="btn-reset">
@@ -179,9 +179,9 @@
       </form>
     </div>
 
-    <!-- ═══ STEP 4: Success ═══ -->
+    <!-- ??? STEP 4: Success ??? -->
     <div id="step-4" class="step" style="text-align:center;">
-      <div class="success-icon">✅</div>
+      <div class="success-icon">?</div>
       <h2 class="auth-heading"><script>document.write(t('Password Changed!'))</script></h2>
       <p class="auth-subheading" style="margin-bottom:24px;"><script>document.write(t('Your password has been reset successfully. You can now sign in with your new password.'))</script></p>
       <a href="/login" class="btn btn-primary btn-block" style="text-decoration:none;"><script>document.write(t('Go to Sign In'))</script></a>
@@ -197,7 +197,7 @@
   let timerInterval = null;
   let timerSeconds = 300; // 5 minutes
 
-  // ── OTP Input Logic ──
+  // ?? OTP Input Logic ??
   const otpInputs = document.querySelectorAll('.otp-input input');
   otpInputs.forEach((inp, i) => {
     inp.addEventListener('input', (e) => {
@@ -222,14 +222,14 @@
     return Array.from(otpInputs).map(i => i.value).join('');
   }
 
-  // ── Step Navigation ──
+  // ?? Step Navigation ??
   function goToStep(n) {
     clearInterval(timerInterval);
     document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
     document.getElementById('step-' + n).classList.add('active');
   }
 
-  // ── Timer ──
+  // ?? Timer ??
   function startTimer() {
     timerSeconds = 300;
     updateTimerDisplay();
@@ -254,7 +254,7 @@
     badge.style.background = timerSeconds <= 60 ? 'rgba(239,68,68,0.1)' : 'rgba(245,158,11,0.1)';
   }
 
-  // ── Step 1: Send Code ──
+  // ?? Step 1: Send Code ??
   document.getElementById('email-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     userEmail = document.getElementById('email').value;
@@ -281,7 +281,7 @@
     btn.disabled = false;
   });
 
-  // ── Step 2: Verify Code Only ──
+  // ?? Step 2: Verify Code Only ??
   document.getElementById('verify-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const code = getOtpValue();
@@ -316,7 +316,7 @@
     btn.disabled = false;
   });
 
-  // ── Step 3: Reset Password ──
+  // ?? Step 3: Reset Password ??
   document.getElementById('reset-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const pwd = document.getElementById('new-password').value;
@@ -352,7 +352,7 @@
     btn.disabled = false;
   });
 
-  // ── Resend Code ──
+  // ?? Resend Code ??
   async function resendCode() {
     const link = document.getElementById('resend-link');
     link.classList.add('disabled');
