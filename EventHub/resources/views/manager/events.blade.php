@@ -660,13 +660,13 @@
       if (!events.length) { tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">📅</div><p>No events found</p></div></td></tr>'; return; }
       tbody.innerHTML = events.map((ev, i) => {
         const reviewBadge = ev.review_status === 'needs_review'
-          ? `<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(245,158,11,0.12);color:#f59e0b;padding:2px 8px;border-radius:8px;font-size:0.7rem;font-weight:600;border:1px solid rgba(245,158,11,0.25);margin-left:6px;">📝 Review Required</span>`
+          ? `<button onclick="toggleReviewRow(${ev.id})" style="display:inline-flex;align-items:center;gap:4px;background:rgba(245,158,11,0.12);color:#f59e0b;padding:2px 8px;border-radius:8px;font-size:0.7rem;font-weight:600;border:1px solid rgba(245,158,11,0.25);margin-left:6px;cursor:pointer;outline:none;">📝 Review Required</button>`
           : ev.review_status === 'reviewed'
             ? `<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(59,130,246,0.12);color:#3b82f6;padding:2px 8px;border-radius:8px;font-size:0.7rem;font-weight:600;border:1px solid rgba(59,130,246,0.25);margin-left:6px;">🔄 Updated</span>`
             : '';
 
         const reviewRow = ev.review_status === 'needs_review' && ev.review_message
-          ? `<tr><td colspan="8" style="padding:0;border:none;">
+          ? `<tr id="review-row-${ev.id}" style="display:none;"><td colspan="8" style="padding:0;border:none;">
               <div style="margin:0 16px 12px; padding:12px 16px; background:rgba(245,158,11,0.06); border:1px solid rgba(245,158,11,0.15); border-radius:10px; display:flex; align-items:center; gap:12px;">
                 <span style="font-size:1.3rem;">📝</span>
                 <div style="flex:1;">
@@ -719,6 +719,13 @@
     }
 
     // Modal for event details
+    function toggleReviewRow(id) {
+      const row = document.getElementById('review-row-' + id);
+      if (row) {
+        row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
+      }
+    }
+
     const typeIcons = { 'مؤتمر': '🎙️', 'ندوة': '📖', 'ورشة عمل': '🔧', 'دورة تدريبية': '🎓', 'ترفيه': '🎭', 'ملتقى علمي': '🔬', 'رياضة': '⚽', 'تقنية': '💻', 'اجتماعية': '🤝' };
     const typeColors = { 'مؤتمر': '#3b82f6', 'ندوة': '#8b5cf6', 'ورشة عمل': '#10b981', 'دورة تدريبية': '#06b6d4', 'ترفيه': '#ec4899', 'ملتقى علمي': '#f59e0b', 'رياضة': '#22c55e', 'تقنية': '#6366f1', 'اجتماعية': '#f97316' };
 
