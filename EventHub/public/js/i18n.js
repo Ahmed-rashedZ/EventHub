@@ -54,9 +54,15 @@ const I18N_EN = {
   'Scanned Today': 'Scanned Today',
   'Not Scanned Today': 'Not Scanned Today',
   'Days Attended': 'Days Attended',
+  'Partners & Exhibitors': 'Partners & Exhibitors',
+  'Join as an Event Manager, Sponsor, or Exhibiting Company. Your account will be reviewed and verified by our team.': 'Join as an Event Manager, Sponsor, or Exhibiting Company. Your account will be reviewed and verified by our team.',
+  'Apply as Partner →': 'Apply as Partner →',
 };
 
 const I18N_AR = {
+  'Partners & Exhibitors': 'الشركاء والعارضون',
+  'Join as an Event Manager, Sponsor, or Exhibiting Company. Your account will be reviewed and verified by our team.': 'انضم كمدير فعاليات أو راعٍ أو شركة عارضة. سيتم مراجعة حسابك والتحقق منه من قِبل فريقنا.',
+  'Apply as Partner →': 'التقديم كشريك →',
   /* ── Page Titles ──────────────────────────────────────── */
   'My Events – EventHub Manager':          'أحداثي – EventHub',
   'My Analytics – EventHub Manager':       'تحليلاتي – EventHub',
