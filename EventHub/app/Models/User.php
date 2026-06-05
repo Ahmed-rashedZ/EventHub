@@ -31,6 +31,17 @@ class User extends Authenticatable
         'social_links',
         'verification_status',
         'verification_notes',
+        'fcm_token',
+        'interests',
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    // Backward-compat: include old doc_* column names in JSON for frontend views
+    protected $appends = [
         'doc_commercial_register',
         'doc_tax_number',
         'doc_articles_of_association',
@@ -43,13 +54,6 @@ class User extends Authenticatable
         'doc_tax_number_note',
         'doc_articles_of_association_note',
         'doc_practice_license_note',
-        'fcm_token',
-        'interests',
-    ];
-
-    protected $hidden = [
-        'password',
-        'remember_token',
     ];
 
     protected function casts(): array
@@ -63,6 +67,8 @@ class User extends Authenticatable
         ];
     }
 
+    // ─── Relationships ────────────────────────────────────────────────────────
+
     public function event()
     {
         return $this->belongsTo(Event::class);
@@ -75,6 +81,15 @@ class User extends Authenticatable
     public function profile()
     {
         return $this->hasOne(Profile::class);
+    }
+
+    /**
+     * Verification documents for this user (partners only).
+     * Each row = one document type (commercial_register, tax_number, etc.)
+     */
+    public function documents()
+    {
+        return $this->hasMany(UserDocument::class);
     }
 
     /**
@@ -158,5 +173,76 @@ class User extends Authenticatable
         if ($this->event_id && $this->event_id == $eventId) return true;
 
         return false;
+    }
+
+    // ─── Backward-Compatible Accessors (Safety Net) ──────────────────────────
+    // These ensure any code referencing old doc_* columns still works via
+    // transparent delegation to the user_documents relationship.
+
+    /**
+     * Get a specific document by type.
+     * Used internally by the backward-compat accessors.
+     */
+    public function getDocument(string $type): ?UserDocument
+    {
+        // Use loaded relation if available to avoid N+1
+        if ($this->relationLoaded('documents')) {
+            return $this->documents->firstWhere('document_type', $type);
+        }
+        return $this->documents()->where('document_type', $type)->first();
+    }
+
+    // ── File path accessors ──
+    public function getDocCommercialRegisterAttribute()
+    {
+        return $this->getDocument('commercial_register')?->file_path;
+    }
+    public function getDocTaxNumberAttribute()
+    {
+        return $this->getDocument('tax_number')?->file_path;
+    }
+    public function getDocArticlesOfAssociationAttribute()
+    {
+        return $this->getDocument('articles_of_association')?->file_path;
+    }
+    public function getDocPracticeLicenseAttribute()
+    {
+        return $this->getDocument('practice_license')?->file_path;
+    }
+
+    // ── Status accessors ──
+    public function getDocCommercialRegisterStatusAttribute()
+    {
+        return $this->getDocument('commercial_register')?->status ?? 'pending';
+    }
+    public function getDocTaxNumberStatusAttribute()
+    {
+        return $this->getDocument('tax_number')?->status ?? 'pending';
+    }
+    public function getDocArticlesOfAssociationStatusAttribute()
+    {
+        return $this->getDocument('articles_of_association')?->status ?? 'pending';
+    }
+    public function getDocPracticeLicenseStatusAttribute()
+    {
+        return $this->getDocument('practice_license')?->status ?? 'pending';
+    }
+
+    // ── Note accessors ──
+    public function getDocCommercialRegisterNoteAttribute()
+    {
+        return $this->getDocument('commercial_register')?->note;
+    }
+    public function getDocTaxNumberNoteAttribute()
+    {
+        return $this->getDocument('tax_number')?->note;
+    }
+    public function getDocArticlesOfAssociationNoteAttribute()
+    {
+        return $this->getDocument('articles_of_association')?->note;
+    }
+    public function getDocPracticeLicenseNoteAttribute()
+    {
+        return $this->getDocument('practice_license')?->note;
     }
 }

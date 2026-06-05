@@ -13,42 +13,49 @@ class Event extends Model
         'title',
         'description',
         'event_type',
+        'location',
         'venue_id',
-        'external_venue_name',
-        'external_venue_location',
-        'booking_proof_path',
-        'ministry_document_path',
-        'period',
-        'booking_date',
         'start_time',
         'end_time',
         'capacity',
         'image',
         'status',
-        'rejection_reason',
-        'cancellation_reason',
-        'cancellation_rejection_reason',
-        'review_message',
-        'review_fields',
-        'review_status',
         'is_sponsorship_open',
         'is_tickets_open',
         'is_exhibition',
         'is_applications_open',
         'is_published',
         'created_by',
-        'external_schedule',
-        'internal_schedule',
-        'agenda',
         'event_objective',
         'target_audience',
-        'published_schedule',
         'is_exhibitor_registration_open',
     ];
 
     protected $appends = [
         'time_status',
         'average_rating',
+        // Backward-compat: include old column names in JSON for frontend views
+        'external_venue_name',
+        'external_venue_location',
+        'booking_proof_path',
+        'booking_proof',
+        'booking_date',
+        'period',
+        'ministry_document_path',
+        'ministry_document',
+        'ministry_approval_doc',
+        'external_schedule',
+        'internal_schedule',
+        'agenda',
+        'published_schedule',
+        'rejection_reason',
+        'review_message',
+        'review_fields',
+        'review_status',
+        'cancellation_reason',
+        'cancellation_rejection_reason',
+        'objective',
+        'location_link',
     ];
 
     protected $casts = [
@@ -59,11 +66,6 @@ class Event extends Model
         'is_exhibition' => 'boolean',
         'is_applications_open' => 'boolean',
         'is_published' => 'boolean',
-        'review_fields' => 'array',
-        'external_schedule' => 'array',
-        'internal_schedule' => 'array',
-        'agenda' => 'array',
-        'published_schedule' => 'array',
         'is_exhibitor_registration_open' => 'boolean',
     ];
 
@@ -71,6 +73,8 @@ class Event extends Model
     {
         return $date->format('Y-m-d H:i:s');
     }
+
+    // ─── Core Relationships ────────────────────────────────────────────────────
 
     public function venue()
     {
@@ -91,6 +95,34 @@ class Event extends Model
     {
         return $this->hasMany(Rating::class);
     }
+
+    // ─── New Normalized Relationships ──────────────────────────────────────────
+
+    /**
+     * External venue info (only exists when venue_id is null).
+     */
+    public function externalVenue()
+    {
+        return $this->hasOne(EventExternalVenue::class);
+    }
+
+    /**
+     * Schedule data: ministry doc, internal/external schedules, agenda, published schedule.
+     */
+    public function schedule()
+    {
+        return $this->hasOne(EventSchedule::class);
+    }
+
+    /**
+     * Review/cancellation workflow data.
+     */
+    public function review()
+    {
+        return $this->hasOne(EventReview::class);
+    }
+
+    // ─── Computed Attributes ──────────────────────────────────────────────────
 
     public function getAverageRatingAttribute()
     {
@@ -134,6 +166,8 @@ class Event extends Model
     {
         return $query->where('end_time', '<', now());
     }
+
+    // ─── Sponsorship Relationships ────────────────────────────────────────────
 
     /**
      * All users (sponsors) attached to this event.
@@ -213,5 +247,101 @@ class Event extends Model
         }
 
         return true;
+    }
+
+    // ─── Backward-Compatible Accessors (Safety Net) ──────────────────────────
+    // These ensure any code or Blade views referencing old columns still work
+    // via transparent delegation to the child relationships.
+
+    // ── External Venue Accessors ──
+    public function getExternalVenueNameAttribute()
+    {
+        return $this->externalVenue?->venue_name;
+    }
+    public function getExternalVenueLocationAttribute()
+    {
+        return $this->externalVenue?->venue_location;
+    }
+    public function getBookingProofPathAttribute()
+    {
+        return $this->externalVenue?->booking_proof_path;
+    }
+    public function getBookingDateAttribute()
+    {
+        return $this->externalVenue?->booking_date;
+    }
+    public function getPeriodAttribute()
+    {
+        return $this->externalVenue?->period;
+    }
+
+    // ── Schedule Accessors ──
+    public function getMinistryDocumentPathAttribute()
+    {
+        return $this->schedule?->ministry_document_path;
+    }
+    public function getExternalScheduleAttribute()
+    {
+        return $this->schedule?->external_schedule;
+    }
+    public function getInternalScheduleAttribute()
+    {
+        return $this->schedule?->internal_schedule;
+    }
+    public function getAgendaAttribute()
+    {
+        return $this->schedule?->agenda;
+    }
+    public function getPublishedScheduleAttribute()
+    {
+        return $this->schedule?->published_schedule;
+    }
+
+    // ── Review Accessors ──
+    public function getRejectionReasonAttribute()
+    {
+        return $this->review?->rejection_reason;
+    }
+    public function getReviewMessageAttribute()
+    {
+        return $this->review?->review_message;
+    }
+    public function getReviewFieldsAttribute()
+    {
+        return $this->review?->review_fields;
+    }
+    public function getReviewStatusAttribute()
+    {
+        return $this->review?->review_status ?? 'none';
+    }
+    public function getCancellationReasonAttribute()
+    {
+        return $this->review?->cancellation_reason;
+    }
+    public function getCancellationRejectionReasonAttribute()
+    {
+        return $this->review?->cancellation_rejection_reason;
+    }
+
+    // ── Backward-compatible accessors for company/sponsor dashboards ──
+    public function getBookingProofAttribute()
+    {
+        return $this->externalVenue?->booking_proof_path;
+    }
+    public function getMinistryApprovalDocAttribute()
+    {
+        return $this->schedule?->ministry_document_path;
+    }
+    public function getMinistryDocumentAttribute()
+    {
+        return $this->schedule?->ministry_document_path;
+    }
+    public function getObjectiveAttribute()
+    {
+        return $this->event_objective;
+    }
+    public function getLocationLinkAttribute()
+    {
+        return $this->externalVenue?->venue_location ?? $this->venue?->location;
     }
 }

@@ -58,7 +58,7 @@ public function register(Request $request)
     $token = $user->createToken('auth_token')->plainTextToken;
 
     return response()->json([
-        'user' => $user->load(['profile.contacts']),
+        'user' => $user->load(['profile.contacts', 'documents']),
         'token' => $token
     ]);
 }
@@ -84,28 +84,36 @@ public function registerPartner(Request $request)
 
     $request->validate($rules);
 
-    // Build user data
+    // Build user data (core auth only — documents go to user_documents table)
     $userData = [
         'name' => $request->name,
         'email' => $request->email,
         'password' => Hash::make($request->password),
         'role' => $request->role,
         'verification_status' => 'pending',
-        'doc_commercial_register' => $request->file('doc_commercial_register')->store('verifications'),
-        'doc_tax_number' => $request->file('doc_tax_number')->store('verifications'),
-        'doc_commercial_register_status' => 'pending',
-        'doc_tax_number_status' => 'pending',
     ];
 
-    // Add Manager-only documents
+    $user = User::create($userData);
+
+    // Store documents in normalized user_documents table
+    $docEntries = [
+        'commercial_register' => $request->file('doc_commercial_register')->store('verifications'),
+        'tax_number'          => $request->file('doc_tax_number')->store('verifications'),
+    ];
+
     if ($request->role === 'Event Manager') {
-        $userData['doc_articles_of_association'] = $request->file('doc_articles_of_association')->store('verifications');
-        $userData['doc_practice_license'] = $request->file('doc_practice_license')->store('verifications');
-        $userData['doc_articles_of_association_status'] = 'pending';
-        $userData['doc_practice_license_status'] = 'pending';
+        $docEntries['articles_of_association'] = $request->file('doc_articles_of_association')->store('verifications');
+        $docEntries['practice_license']        = $request->file('doc_practice_license')->store('verifications');
     }
 
-    $user = User::create($userData);
+    foreach ($docEntries as $docType => $filePath) {
+        \App\Models\UserDocument::create([
+            'user_id'       => $user->id,
+            'document_type' => $docType,
+            'file_path'     => $filePath,
+            'status'        => 'pending',
+        ]);
+    }
 
     if (in_array($request->role, ['Sponsor', 'Company'])) {
         Profile::create([
@@ -136,7 +144,7 @@ public function registerPartner(Request $request)
     }
 
     return response()->json([
-        'user' => $user->load(['profile']),
+        'user' => $user->load(['profile', 'documents']),
         'message' => 'Registration successful. Your account is pending verification and review by the administration.'
     ]);
 }
@@ -206,7 +214,7 @@ public function registerPartner(Request $request)
     }
 
     return response()->json([
-        'user' => $user->load(['profile.contacts']),
+        'user' => $user->load(['profile.contacts', 'documents']),
         'token' => $token,
     ]);
 }
@@ -280,7 +288,7 @@ public function updateProfile(Request $request)
     }
 
     // Reload the user with their profile so the frontend gets the latest data
-    $query = User::with(['profile.contacts']);
+    $query = User::with(['profile.contacts', 'documents']);
     if ($user->role === 'Assistant') {
         $query->withCount('attendanceLogs');
     }
@@ -300,9 +308,9 @@ public function getProfile(Request $request)
             'profile_type' => 'company',
             'is_available' => true
         ]);
-        $user->load('profile');
+        $user->load(['profile', 'documents']);
     } else {
-        $user->load(['profile.contacts']);
+        $user->load(['profile.contacts', 'documents']);
     }
 
     if ($user->role === 'Assistant') {
@@ -340,13 +348,13 @@ public function updateAvailability(Request $request)
     return response()->json([
         'message' => 'Availability updated',
         'is_available' => (bool) $profile->is_available,
-        'user' => $user->fresh(['profile.contacts'])
+        'user' => $user->fresh(['profile.contacts', 'documents'])
     ]);
 }
 
 public function getPublicProfile($id)
 {
-    $user = User::with(['profile.contacts'])->findOrFail($id);
+    $user = User::with(['profile.contacts', 'documents'])->findOrFail($id);
     
     if ($user->role === 'Event Manager') {
         $avg = \App\Models\Rating::whereHas('event', function ($q) use ($user) {
@@ -491,7 +499,7 @@ public function createUser(Request $request)
         }
     }
 
-    return response()->json(['message' => 'User created successfully', 'user' => $user->load('profile')], 201);
+    return response()->json(['message' => 'User created successfully', 'user' => $user->load(['profile', 'documents'])], 201);
 }
 
 public function getAssistants(Request $request)

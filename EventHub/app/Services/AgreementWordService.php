@@ -571,7 +571,7 @@ class AgreementWordService
 
     private static function generateGenericFinalPdf($target, $negotiation, $type): string
     {
-        $target->load(['event.venue', 'manager', ($type === 'exhibition' ? 'company' : 'sponsor')]);
+        $target->load(['event.venue', 'event.externalVenue', 'manager', ($type === 'exhibition' ? 'company' : 'sponsor')]);
 
         $lastVersion = $negotiation->versions()
             ->where('action', 'uploaded')

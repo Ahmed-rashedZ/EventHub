@@ -254,8 +254,8 @@
     }
     toggle.disabled = false;
   }
-  const typeIcons = { 'مؤتمر': '🎙️', 'ندوة': '📖', 'ورشة عمل': '🔧', 'دورة تدريبية': '🎓', 'ترفيه': '🎭', 'ملتقى علمي': '🔬', 'رياضة': '⚽', 'تقنية': '💻', 'اجتماعية': '🤝' };
-  const typeColors = { 'مؤتمر': '#3b82f6', 'ندوة': '#8b5cf6', 'ورشة عمل': '#10b981', 'دورة تدريبية': '#06b6d4', 'ترفيه': '#ec4899', 'ملتقى علمي': '#f59e0b', 'رياضة': '#22c55e', 'تقنية': '#6366f1', 'اجتماعية': '#f97316' };
+  const typeIcons = { 'مؤتمر': '🎙️', 'ندوة': '📖', 'ورشة عمل': '🔧', 'دورة تدريبية': '🎓', 'ترفيه': '🎭', 'ملتقى علمي': '🔬', 'رياضة': '⚽', 'تقنية': '💻', 'اجتماعية': '🤝', 'معرض': '🎪', 'Other': '📌' };
+  const typeColors = { 'مؤتمر': '#3b82f6', 'ندوة': '#8b5cf6', 'ورشة عمل': '#10b981', 'دورة تدريبية': '#06b6d4', 'ترفيه': '#ec4899', 'ملتقى علمي': '#f59e0b', 'رياضة': '#22c55e', 'تقنية': '#6366f1', 'اجتماعية': '#f97316', 'معرض': '#f43f5e', 'Other': '#64748b' };
 
   function showEventDetails(eventId) {
     const modal = document.getElementById('event-details-modal');
@@ -275,9 +275,9 @@
       const apps = appRes.ok ? appRes.data : [];
       const myApp = apps.find(a => a.event_id == eventId);
 
-      const eType = ev.event_type || 'Exhibition';
-      const tColor = typeColors[eType] || typeColors.Other || '#8b5cf6';
-      const tIcon = typeIcons[eType] || '🏢';
+      const eType = ev.event_type || 'Other';
+      const tColor = typeColors[eType] || typeColors.Other || '#64748b';
+      const tIcon = typeIcons[eType] || typeIcons.Other || '📌';
 
       const bannerSection = ev.image
         ? `<div class="ed-banner" style="background-image:url('/storage/${ev.image}')"><div class="ed-banner-fade"></div></div>`
@@ -287,7 +287,7 @@
       // Build Exhibitors section
       let exhibitorsHtml = '';
       if (ev.exhibitors && ev.exhibitors.length > 0) {
-        const exItems = ev.exhibitors.map(ex => {
+        const exItems = ev.exhibitors.filter(ex => ex).map(ex => {
           const user = ex.company || {};
           const profile = user.profile || {};
           const name = profile.company_name || user.name || '—';
@@ -458,6 +458,10 @@
         </div>
       </div>
     `;
+    }).catch(err => {
+      console.error('Error loading event details:', err);
+      if(typeof showToast !== 'undefined') showToast(t('Error loading event details'), 'error');
+      closeEventDetailsModal();
     });
   }
 

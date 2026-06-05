@@ -726,8 +726,8 @@
       }
     }
 
-    const typeIcons = { 'مؤتمر': '🎙️', 'ندوة': '📖', 'ورشة عمل': '🔧', 'دورة تدريبية': '🎓', 'ترفيه': '🎭', 'ملتقى علمي': '🔬', 'رياضة': '⚽', 'تقنية': '💻', 'اجتماعية': '🤝' };
-    const typeColors = { 'مؤتمر': '#3b82f6', 'ندوة': '#8b5cf6', 'ورشة عمل': '#10b981', 'دورة تدريبية': '#06b6d4', 'ترفيه': '#ec4899', 'ملتقى علمي': '#f59e0b', 'رياضة': '#22c55e', 'تقنية': '#6366f1', 'اجتماعية': '#f97316' };
+    const typeIcons = { 'مؤتمر': '🎙️', 'ندوة': '📖', 'ورشة عمل': '🔧', 'دورة تدريبية': '🎓', 'ترفيه': '🎭', 'ملتقى علمي': '🔬', 'رياضة': '⚽', 'تقنية': '💻', 'اجتماعية': '🤝', 'معرض': '🎪', 'Other': '📌' };
+    const typeColors = { 'مؤتمر': '#3b82f6', 'ندوة': '#8b5cf6', 'ورشة عمل': '#10b981', 'دورة تدريبية': '#06b6d4', 'ترفيه': '#ec4899', 'ملتقى علمي': '#f59e0b', 'رياضة': '#22c55e', 'تقنية': '#6366f1', 'اجتماعية': '#f97316', 'معرض': '#f43f5e', 'Other': '#64748b' };
 
     function showEventDetails(eventId) {
       const modal = document.getElementById('event-details-modal');
@@ -746,8 +746,8 @@
         const ev = res.data;
         const reviewData = revRes.ok ? revRes.data : { average_rating: 0, reviews: [] };
         const eType = ev.event_type || 'Other';
-        const tColor = typeColors[eType] || typeColors.Other;
-        const tIcon = typeIcons[eType] || '📌';
+        const tColor = typeColors[eType] || typeColors.Other || '#64748b';
+        const tIcon = typeIcons[eType] || typeIcons.Other || '📌';
 
         const bannerSection = ev.image
           ? `<div class="ed-banner" style="background-image:url('/storage/${ev.image}')"><div class="ed-banner-fade"></div></div>`
@@ -773,7 +773,7 @@
           <div class="ed-section mt-4" style="margin-top: 16px;">
             <div class="ed-section-label">Current Sponsors</div>
             <div style="display:flex; flex-direction:column; gap:8px;">
-              ${ev.sponsors.map(sp => `
+              ${ev.sponsors.filter(sp => sp).map(sp => `
                  <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.04); padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.05); cursor:pointer;" onclick="navigateToProfile(${sp.id})">
                     <div class="avatar" style="width:36px; height:36px; font-size:14px; display:inline-flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:50%; overflow:hidden;">
                         ${(() => {
@@ -799,7 +799,7 @@
         // Build Exhibitors section
         let exhibitorsHtml = '';
         if (ev.exhibitors && ev.exhibitors.length > 0) {
-          const exItems = ev.exhibitors.map(ex => {
+          const exItems = ev.exhibitors.filter(ex => ex).map(ex => {
             const user = ex.company || {};
             const profile = user.profile || {};
             const name = profile.company_name || user.name || '—';
@@ -1084,6 +1084,10 @@
 
       </div>
     `;
+      }).catch(err => {
+        console.error('Error loading event details:', err);
+        showToast(t('Error loading event details'), 'error');
+        closeEventDetailsModal();
       });
     }
 
@@ -3879,10 +3883,10 @@
       const unpubBtn = document.getElementById('pub-unpublish-btn');
       unpubBtn.style.display = ev.is_published ? 'inline-flex' : 'none';
 
-      const schedule = (ev.external_schedule && ev.external_schedule.length > 0) ? ev.external_schedule :
-        ((ev.internal_schedule && ev.internal_schedule.length > 0) ? ev.internal_schedule : []);
+      const schedule = Array.isArray(ev.external_schedule) ? ev.external_schedule :
+        (Array.isArray(ev.internal_schedule) ? ev.internal_schedule : []);
 
-      const publishedDays = ev.published_schedule || [];
+      const publishedDays = Array.isArray(ev.published_schedule) ? ev.published_schedule : [];
       const container = document.getElementById('published-days-list');
 
       if (schedule.length === 0) {
@@ -4015,7 +4019,7 @@
               if (capValEl) capValEl.textContent = capInt;
               
               // Refresh list to update capacity column
-              renderEvents();
+              applyFilter();
           } else {
               showToast(res.data.message || 'Failed to update capacity.', 'error');
           }

@@ -79,28 +79,24 @@ class VenueController extends Controller
         $venue = Venue::findOrFail($id);
         $events = Event::where('venue_id', $id)
             ->whereIn('status', ['approved', 'pending'])
-            ->select('booking_date', 'period', 'start_time', 'end_time', 'internal_schedule')
+            ->with('schedule')
+            ->select('id', 'venue_id', 'start_time', 'end_time', 'status')
             ->get();
             
         $bookings = collect();
 
         foreach ($events as $event) {
-            if ($event->internal_schedule && is_array($event->internal_schedule)) {
-                foreach ($event->internal_schedule as $slot) {
+            $internalSchedule = $event->schedule?->internal_schedule;
+            if ($internalSchedule && is_array($internalSchedule)) {
+                foreach ($internalSchedule as $slot) {
                     $bookings->push([
                         'booking_date' => Carbon::parse($slot['date'])->format('Y-m-d'),
                         'period' => $slot['period'],
                         'type'   => 'booking',
                     ]);
                 }
-            } elseif ($event->booking_date && $event->period) {
-                $bookings->push([
-                    'booking_date' => Carbon::parse($event->booking_date)->format('Y-m-d'),
-                    'period' => $event->period,
-                    'type'   => 'booking',
-                ]);
             } elseif ($event->start_time && $event->end_time) {
-                // Old system compatibility
+                // Fallback: use overall start/end times
                 $start = Carbon::parse($event->start_time)->startOfDay();
                 $end = Carbon::parse($event->end_time)->startOfDay();
                 
@@ -165,25 +161,15 @@ class VenueController extends Controller
         $conflictingEvents = Event::where('venue_id', $venue->id)
             ->whereIn('status', ['approved', 'pending'])
             ->where(function ($query) use ($request) {
-                $query->where(function ($q) use ($request) {
-                    $q->whereNotNull('booking_date')
-                      ->where('booking_date', '>=', $request->start_date)
-                      ->where('booking_date', '<=', $request->end_date);
-                })
-                ->orWhere(function ($q) use ($request) {
-                    $q->whereNull('booking_date')
-                      ->whereNotNull('start_time')
+                $query->whereNotNull('start_time')
                       ->where('start_time', '<=', Carbon::parse($request->end_date)->endOfDay())
                       ->where('end_time', '>=', Carbon::parse($request->start_date)->startOfDay());
-                });
             })
             ->get();
 
         if ($conflictingEvents->isNotEmpty()) {
             $conflictDates = $conflictingEvents->map(function ($e) {
-                return $e->booking_date
-                    ? Carbon::parse($e->booking_date)->format('M d, Y')
-                    : Carbon::parse($e->start_time)->format('M d, Y');
+                return Carbon::parse($e->start_time)->format('M d, Y');
             })->unique()->values()->toArray();
 
             $eventTitles = $conflictingEvents->pluck('title')->unique()->values()->toArray();
@@ -227,19 +213,9 @@ class VenueController extends Controller
         $conflictingEvents = Event::where('venue_id', $venue->id)
             ->whereIn('status', ['approved', 'pending'])
             ->where(function ($query) use ($period) {
-                // Events with booking_date system
-                $query->where(function ($q) use ($period) {
-                    $q->whereNotNull('booking_date')
-                      ->where('booking_date', '>=', $period->start_date)
-                      ->where('booking_date', '<=', $period->end_date);
-                })
-                // Events with start_time/end_time system (legacy)
-                ->orWhere(function ($q) use ($period) {
-                    $q->whereNull('booking_date')
-                      ->whereNotNull('start_time')
+                $query->whereNotNull('start_time')
                       ->where('start_time', '<=', $period->end_date->endOfDay())
                       ->where('end_time', '>=', $period->start_date->startOfDay());
-                });
             })
             ->with('creator')
             ->get();

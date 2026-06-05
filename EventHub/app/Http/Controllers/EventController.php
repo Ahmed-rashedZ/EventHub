@@ -13,7 +13,7 @@ class EventController extends Controller
     // GET /api/events  – public approved+published events
     public function index(Request $request)
     {
-        $events = Event::with('venue', 'creator:id,name', 'sponsors.profile')
+        $events = Event::with('venue', 'creator:id,name', 'sponsors.profile', 'schedule', 'externalVenue', 'review')
             ->withCount('tickets')
             ->withAvg('ratings', 'rating')
             ->where('status', 'approved')
@@ -48,7 +48,7 @@ class EventController extends Controller
         }
 
         return response()->json(
-            Event::with('venue', 'creator:id,name')
+            Event::with('venue', 'creator:id,name', 'schedule', 'externalVenue', 'review')
                 ->withAvg('ratings', 'rating')
                 ->where('status', 'pending')
                 ->orderBy('created_at', 'desc')
@@ -64,7 +64,7 @@ class EventController extends Controller
         }
 
         return response()->json(
-            Event::with('venue', 'sponsors.profile')
+            Event::with('venue', 'sponsors.profile', 'schedule', 'externalVenue', 'review')
                 ->withCount('tickets')
                 ->withAvg('ratings', 'rating')
                 ->where('created_by', $request->user()->id)
@@ -154,28 +154,30 @@ class EventController extends Controller
                 $overlapping = Event::where('venue_id', $request->venue_id)
                     ->whereIn('status', ['pending', 'approved'])
                     ->where(function ($query) use ($slotStart, $slotEnd) {
-                        // For old events
+                        // For old events (no schedule child) or simple bounds check
                         $query->where(function ($q) use ($slotStart, $slotEnd) {
-                            $q->whereNull('internal_schedule')
+                            $q->whereDoesntHave('schedule', function ($sq) {
+                                  $sq->whereNotNull('internal_schedule');
+                              })
                               ->where('start_time', '<', $slotEnd)
                               ->where('end_time', '>', $slotStart);
                         })
-                        // For new events (JSON search would be complex, so we check start_time and end_time overall first)
-                        // Then we could check individual slots. Since MySQL JSON overlapping is tricky, 
-                        // we can rely on overall bounds filtering, then in PHP loop.
-                        // Actually, Event currently stores overall start_time and end_time.
-                        // If there is an overlap in overall times, we must load them and check the JSON.
+                        // For events with internal_schedule in child table
                         ->orWhere(function ($q) use ($slotStart, $slotEnd) {
-                            $q->whereNotNull('internal_schedule')
+                            $q->whereHas('schedule', function ($sq) {
+                                  $sq->whereNotNull('internal_schedule');
+                              })
                               ->where('start_time', '<=', $slotEnd)
                               ->where('end_time', '>=', $slotStart);
                         });
                     })
+                    ->with('schedule')
                     ->get();
 
                 foreach ($overlapping as $overlapEvent) {
-                    if ($overlapEvent->internal_schedule) {
-                        foreach ($overlapEvent->internal_schedule as $exSlot) {
+                    $overlapSchedule = $overlapEvent->schedule?->internal_schedule;
+                    if ($overlapSchedule && is_array($overlapSchedule)) {
+                        foreach ($overlapSchedule as $exSlot) {
                             if ($exSlot['date'] === $slot['date']) {
                                 // Same day, check overlap
                                 $exStart = \Carbon\Carbon::parse("{$exSlot['date']} {$exSlot['start_time']}");
@@ -183,7 +185,7 @@ class EventController extends Controller
                                 if ($slotStart < $exEnd && $slotEnd > $exStart) {
                                     return response()->json([
                                         'message' => 'The selected venue is already booked or requested for another event during this time period.',
-                                        'errors' => ['venue_id' => ["Venue is unavailable on {$slot['date']} ({$slot['period']})."]]
+                                        'errors' => ['venue_id' => ["Venue is unavailable on {$slot['date']} ({$slot['period']})"]]
                                     ], 422);
                                 }
                             }
@@ -214,16 +216,14 @@ class EventController extends Controller
 
             $eventData = [
                 'venue_id'     => $request->venue_id,
-                'booking_date' => null, // Legacy field
-                'period'       => null, // Legacy field
                 'start_time'   => $overallStart,
                 'end_time'     => $overallEnd,
-                'internal_schedule' => $schedule,
-                'external_venue_name' => null,
-                'external_venue_location' => null,
-                'booking_proof_path' => null,
-                'ministry_document_path' => null,
             ];
+
+            $scheduleData = [
+                'internal_schedule' => $schedule,
+            ];
+            $externalVenueData = null;
 
         } else {
             // External Venue
@@ -269,16 +269,20 @@ class EventController extends Controller
                 return response()->json(['message' => 'Events must be booked at least 60 days in advance.', 'errors' => ['external_schedule' => ['Cannot book earlier than 60 days from today.']]], 422);
             }
 
-            // External venue overlap conflict check (Detailed)
-            $overlappingEvents = Event::where('external_venue_name', $request->external_venue_name)
+            // External venue overlap conflict check (via child table)
+            $overlappingEvents = Event::whereHas('externalVenue', function ($q) use ($request) {
+                    $q->where('venue_name', $request->external_venue_name);
+                })
                 ->whereIn('status', ['pending', 'approved'])
                 ->where('start_time', '<', $overallEnd)
                 ->where('end_time', '>', $overallStart)
+                ->with(['schedule', 'externalVenue'])
                 ->get();
 
             foreach ($overlappingEvents as $overlapEvent) {
-                if ($overlapEvent->external_schedule) {
-                    foreach ($overlapEvent->external_schedule as $exSlot) {
+                $overlapExtSchedule = $overlapEvent->schedule?->external_schedule;
+                if ($overlapExtSchedule) {
+                    foreach ($overlapExtSchedule as $exSlot) {
                         $exStart = \Carbon\Carbon::parse("{$exSlot['date']} {$exSlot['start_time']}");
                         $exEnd = \Carbon\Carbon::parse("{$exSlot['date']} {$exSlot['end_time']}");
                         
@@ -313,15 +317,18 @@ class EventController extends Controller
 
             $eventData = [
                 'venue_id'     => null,
-                'booking_date' => null,
-                'period'       => null,
-                'external_venue_name'     => $request->external_venue_name,
-                'external_venue_location' => $request->external_venue_location,
-                'booking_proof_path'      => $proofPath,
-                'ministry_document_path'  => null,
                 'start_time'   => $overallStart,
                 'end_time'     => $overallEnd,
+            ];
+
+            $scheduleData = [
                 'external_schedule' => $schedule,
+            ];
+
+            $externalVenueData = [
+                'venue_name'        => $request->external_venue_name,
+                'venue_location'    => $request->external_venue_location,
+                'booking_proof_path' => $proofPath,
             ];
         }
 
@@ -332,7 +339,7 @@ class EventController extends Controller
 
         // Ministry document (required for all events)
         $ministryPath = $request->file('ministry_document')->store('ministry_docs', 'public');
-        $eventData['ministry_document_path'] = $ministryPath;
+        $scheduleData['ministry_document_path'] = $ministryPath;
 
         $agendaData = null;
         if ($request->has('agenda') && $request->agenda) {
@@ -340,7 +347,7 @@ class EventController extends Controller
             $validation = $this->validateAgenda($agendaData, $schedule);
             if ($validation) return $validation;
         }
-        $eventData['agenda'] = $agendaData;
+        $scheduleData['agenda'] = $agendaData;
 
         $eventData = array_merge($eventData, [
             'title'           => $request->title,
@@ -352,11 +359,17 @@ class EventController extends Controller
             'status'          => 'pending',
             'created_by'      => $request->user()->id,
             'image'           => $imagePath,
-            'agenda'          => $agendaData,
             'is_exhibition'   => ($request->event_type === 'معرض'),
         ]);
 
         $event = Event::create($eventData);
+
+        // Create child records in normalized tables
+        $event->schedule()->create($scheduleData);
+
+        if ($externalVenueData) {
+            $event->externalVenue()->create($externalVenueData);
+        }
 
         // ── Notify all Admins about new pending event ──
         $admins = User::where('role', 'Admin')->get();
@@ -371,7 +384,7 @@ class EventController extends Controller
             ));
         }
 
-        return response()->json($event->load('venue'), 201);
+        return response()->json($event->load('venue', 'schedule', 'externalVenue'), 201);
     }
 
     // PUT /api/events/{id}/approve  – Admin approves
@@ -414,13 +427,18 @@ class EventController extends Controller
 
         $event = Event::findOrFail($id);
         $event->status = 'rejected';
-        $event->rejection_reason = $request->input('rejection_reason');
         $event->save();
+
+        // Store rejection reason in event_reviews table
+        $event->review()->updateOrCreate(
+            ['event_id' => $event->id],
+            ['rejection_reason' => $request->input('rejection_reason')]
+        );
 
         // ── Notify the Event Manager ──
         $manager = User::find($event->created_by);
         if ($manager) {
-            $reason = $event->rejection_reason ? ": {$event->rejection_reason}" : '.';
+            $reason = $request->input('rejection_reason') ? ": {$request->input('rejection_reason')}" : '.';
             $manager->notify(new SystemNotification(
                 'Event Rejected ❌',
                 "Your event \"{$event->title}\" has been rejected{$reason}",
@@ -437,7 +455,7 @@ class EventController extends Controller
     // GET /api/events/{id}  – single event details
     public function show($id)
     {
-        $event = Event::with('venue', 'creator:id,name', 'sponsors.profile', 'exhibitors')
+        $event = Event::with('venue', 'creator:id,name', 'sponsors.profile', 'exhibitors', 'schedule', 'externalVenue', 'review')
             ->withCount('tickets')
             ->withAvg('ratings', 'rating')
             ->findOrFail($id);
@@ -489,7 +507,7 @@ class EventController extends Controller
         }
 
         return response()->json(
-            Event::with('venue', 'creator:id,name')
+            Event::with('venue', 'creator:id,name', 'schedule', 'externalVenue', 'review')
                 ->withAvg('ratings', 'rating')
                 ->orderBy('created_at', 'desc')
                 ->get()
@@ -779,11 +797,15 @@ class EventController extends Controller
             return response()->json(['message' => 'Only pending events can be reviewed.'], 422);
         }
 
-        $event->update([
-            'review_message' => $request->review_message,
-            'review_fields'  => $request->review_fields,
-            'review_status'  => 'needs_review',
-        ]);
+        // Store review data in event_reviews table
+        $event->review()->updateOrCreate(
+            ['event_id' => $event->id],
+            [
+                'review_message' => $request->review_message,
+                'review_fields'  => $request->review_fields,
+                'review_status'  => 'needs_review',
+            ]
+        );
 
         // Notify Event Manager
         $manager = User::find($event->created_by);
@@ -818,11 +840,12 @@ class EventController extends Controller
             return response()->json(['message' => 'Only pending events can be updated.'], 422);
         }
 
-        if ($event->review_status !== 'needs_review') {
+        $eventReview = $event->review;
+        if (!$eventReview || $eventReview->review_status !== 'needs_review') {
             return response()->json(['message' => 'No review changes requested for this event.'], 422);
         }
 
-        $allowedFields = $event->review_fields ?? [];
+        $allowedFields = $eventReview->review_fields ?? [];
         $updateData = [];
 
         // Process each allowed field
@@ -847,29 +870,51 @@ class EventController extends Controller
         if (in_array('image', $allowedFields) && $request->hasFile('image')) {
             $updateData['image'] = $request->file('image')->store('events', 'public');
         }
+        $hasChildUpdates = false;
         if (in_array('ministry_document', $allowedFields) && $request->hasFile('ministry_document')) {
-            $updateData['ministry_document_path'] = $request->file('ministry_document')->store('ministry_docs', 'public');
+            $ministryPath = $request->file('ministry_document')->store('ministry_docs', 'public');
+            if ($event->schedule) {
+                $event->schedule->update(['ministry_document_path' => $ministryPath]);
+            } else {
+                $event->schedule()->create(['ministry_document_path' => $ministryPath]);
+            }
+            $hasChildUpdates = true;
         }
         if (in_array('booking_proof', $allowedFields) && $request->hasFile('booking_proof')) {
-            $updateData['booking_proof_path'] = $request->file('booking_proof')->store('proofs', 'public');
+            $proofPath = $request->file('booking_proof')->store('proofs', 'public');
+            if ($event->externalVenue) {
+                $event->externalVenue->update(['booking_proof_path' => $proofPath]);
+            } else {
+                $event->externalVenue()->create(['booking_proof_path' => $proofPath]);
+            }
+            $hasChildUpdates = true;
         }
         if (in_array('agenda', $allowedFields) && $request->has('agenda')) {
             $agendaData = $request->agenda ? json_decode($request->agenda, true) : null;
-            $schedule = $event->location_type === 'internal' ? $event->internal_schedule : $event->external_schedule;
-            // Get merged schedule if some dates/times are being updated in the same request?
-            // Since updatePending only allows fields in review_fields, we trust the model's existing schedule 
-            // unless 'dates' was also requested (but 'dates' is not in current standard Event schema, it's schedule).
+            $eventSchedule = $event->schedule;
+            $schedule = $eventSchedule ? ($eventSchedule->internal_schedule ?? $eventSchedule->external_schedule) : null;
             $validation = $this->validateAgenda($agendaData, $schedule);
             if ($validation) return $validation;
-            $updateData['agenda'] = $agendaData;
+            if ($event->schedule) {
+                $event->schedule->update(['agenda' => $agendaData]);
+            } else {
+                $event->schedule()->create(['agenda' => $agendaData]);
+            }
+            $hasChildUpdates = true;
         }
 
-        if (empty($updateData)) {
+        if (empty($updateData) && !$hasChildUpdates) {
             return response()->json(['message' => 'No valid updates provided.'], 422);
         }
 
-        $updateData['review_status'] = 'reviewed';
-        $event->update($updateData);
+        if (!empty($updateData)) {
+            $event->update($updateData);
+        }
+
+        // Mark review as completed
+        if ($eventReview) {
+            $eventReview->update(['review_status' => 'reviewed']);
+        }
 
         // Notify Admins
         $admins = User::where('role', 'Admin')->get();
@@ -908,11 +953,11 @@ class EventController extends Controller
         if ($event->image) {
             \Illuminate\Support\Facades\Storage::disk('public')->delete($event->image);
         }
-        if ($event->ministry_document_path) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($event->ministry_document_path);
+        if ($event->schedule?->ministry_document_path) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($event->schedule->ministry_document_path);
         }
-        if ($event->booking_proof_path) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($event->booking_proof_path);
+        if ($event->externalVenue?->booking_proof_path) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($event->externalVenue->booking_proof_path);
         }
 
         $event->delete();
@@ -943,7 +988,8 @@ class EventController extends Controller
 
         $agenda = $request->agenda;
 
-        $schedule = $event->internal_schedule ?? $event->external_schedule;
+        $eventSchedule = $event->schedule;
+        $schedule = $eventSchedule ? ($eventSchedule->internal_schedule ?? $eventSchedule->external_schedule) : null;
         $validation = $this->validateAgenda($agenda, $schedule);
         if ($validation) return $validation;
 
@@ -952,14 +998,18 @@ class EventController extends Controller
             // Legacy flat format — keep as-is for backward compat
         }
 
-        $event->update(['agenda' => $agenda]);
+        if ($eventSchedule) {
+            $eventSchedule->update(['agenda' => $agenda]);
+        } else {
+            $event->schedule()->create(['agenda' => $agenda]);
+        }
 
-        return response()->json(['message' => 'Agenda updated successfully', 'event' => $event->fresh()->load('venue')]);
+        return response()->json(['message' => 'Agenda updated successfully', 'event' => $event->fresh()->load('venue', 'schedule', 'externalVenue')]);
     }
 
     public function downloadDocument($id, $type, Request $request)
     {
-        $event = Event::findOrFail($id);
+        $event = Event::with(['schedule', 'externalVenue'])->findOrFail($id);
         $user = $request->user();
 
         // Security check: Only Admin, or the Manager who created the event, or a Sponsor of this event can download
@@ -973,9 +1023,9 @@ class EventController extends Controller
 
         $path = null;
         if ($type === 'ministry_document') {
-            $path = $event->ministry_document_path;
+            $path = $event->schedule?->ministry_document_path;
         } elseif ($type === 'booking_proof') {
-            $path = $event->booking_proof_path;
+            $path = $event->externalVenue?->booking_proof_path;
         }
 
         if (!$path || !\Illuminate\Support\Facades\Storage::disk('public')->exists($path)) {
@@ -1018,10 +1068,15 @@ class EventController extends Controller
 
         $event->update([
             'status' => 'cancellation_requested',
-            'cancellation_reason' => $request->cancellation_reason,
             'is_tickets_open' => false, // Suspend ticket sales immediately
             'is_sponsorship_open' => false, // Suspend sponsorship too
         ]);
+
+        // Store cancellation reason in event_reviews table
+        $event->review()->updateOrCreate(
+            ['event_id' => $event->id],
+            ['cancellation_reason' => $request->cancellation_reason]
+        );
 
         // Notify Admins
         $admins = User::where('role', 'Admin')->get();
@@ -1133,9 +1188,14 @@ class EventController extends Controller
 
         $event->update([
             'status' => 'approved', // Return to approved
-            'cancellation_rejection_reason' => $request->rejection_reason,
             // is_tickets_open stays false!
         ]);
+
+        // Store rejection reason in event_reviews table
+        $event->review()->updateOrCreate(
+            ['event_id' => $event->id],
+            ['cancellation_rejection_reason' => $request->rejection_reason]
+        );
 
         // Notify Manager
         $manager = User::find($event->created_by);
@@ -1200,11 +1260,18 @@ class EventController extends Controller
         $updateData = ['published_schedule' => $request->published_schedule];
         $wasPublished = $event->is_published;
 
-        if ($request->has('publish')) {
-            $updateData['is_published'] = $request->publish;
+        // Update published_schedule in the schedule child table
+        $eventSchedule = $event->schedule;
+        if ($eventSchedule) {
+            $eventSchedule->update(['published_schedule' => $request->published_schedule]);
+        } else {
+            $event->schedule()->create(['published_schedule' => $request->published_schedule]);
         }
 
-        $event->update($updateData);
+        // is_published stays on the parent event
+        if ($request->has('publish')) {
+            $event->update(['is_published' => $request->publish]);
+        }
 
         if ($request->has('publish') && $request->publish && !$wasPublished && $event->status === 'approved') {
             $this->notifyInterestedUsers($event);
@@ -1212,7 +1279,7 @@ class EventController extends Controller
 
         return response()->json([
             'message' => 'Published schedule updated successfully.',
-            'event' => $event
+            'event' => $event->fresh()->load('schedule')
         ]);
     }
 

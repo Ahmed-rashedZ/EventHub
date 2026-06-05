@@ -24,7 +24,8 @@ class AssistantController extends Controller
         $requests = AssistanceRequest::where('assistant_id', $user->id)
             ->where('status', 'pending')
             ->with([
-                'event:id,title,description,image,start_time,end_time,capacity,venue_id,external_venue_name,external_venue_location',
+                'event:id,title,description,image,start_time,end_time,capacity,venue_id',
+                'event.externalVenue',
                 'event.venue:id,name,location',
                 'manager:id,name,email',
             ])
@@ -130,7 +131,8 @@ class AssistantController extends Controller
                 });
             })
             ->with([
-                'event:id,title,description,image,start_time,end_time,capacity,created_by,venue_id,external_venue_name,external_venue_location',
+                'event:id,title,description,image,start_time,end_time,capacity,created_by,venue_id',
+                'event.externalVenue',
                 'event.venue:id,name,location',
                 'event.creator:id,name',
             ])
@@ -271,7 +273,8 @@ class AssistantController extends Controller
                 $q->where('end_time', '<', $now);
             })
             ->with([
-                'event:id,title,description,image,start_time,end_time,capacity,venue_id,external_venue_name,external_venue_location',
+                'event:id,title,description,image,start_time,end_time,capacity,venue_id',
+                'event.externalVenue',
                 'event.venue:id,name,location',
             ]);
 
@@ -572,7 +575,7 @@ class AssistantController extends Controller
 
         return response()->json([
             'message' => 'Invitation sent successfully',
-            'invitation' => $invitation->load(['assistant:id,name,email', 'event:id,title,external_venue_name,external_venue_location']),
+            'invitation' => $invitation->load(['assistant:id,name,email', 'event:id,title', 'event.externalVenue']),
         ], 201);
     }
 
@@ -591,7 +594,8 @@ class AssistantController extends Controller
             ->with([
                 'assistant:id,name,email',
                 'assistant.profile:id,user_id,logo',
-                'event:id,title,start_time,end_time,image,venue_id,external_venue_name,external_venue_location',
+                'event:id,title,start_time,end_time,image,venue_id',
+                'event.externalVenue',
                 'event.venue:id,name',
             ])
             ->orderBy('created_at', 'desc');
