@@ -119,12 +119,16 @@ function badge(status) {
 
 function timeBadge(status) {
   const map = {
-    past:      { bg:'rgba(156,163,175,0.1)', color:'#9ca3af', label:'Past' },
-    ongoing:   { bg:'rgba(16,185,129,0.15)', color:'#10b981', label:'Live' },
-    upcoming:  { bg:'rgba(59,130,246,0.15)', color:'#3b82f6', label:'Soon' },
+    past:      { bg:'rgba(156,163,175,0.1)', color:'#9ca3af', label:'ended' },
+    ongoing:   { bg:'rgba(16,185,129,0.15)', color:'#10b981', label:'live' },
+    upcoming:  { bg:'rgba(59,130,246,0.15)', color:'#3b82f6', label:'upcoming' },
   };
   const s = map[status] || { bg:'rgba(156,163,175,0.05)', color:'#9ca3af', label: status };
-  return `<span style="padding:2px 8px;border-radius:6px;font-size:0.62rem;font-weight:700;background:${s.bg};color:${s.color};margin-left:4px">${t(s.label)}</span>`;
+  let labelText = t(s.label);
+  if (getLang() === 'en' && labelText) {
+    labelText = labelText.charAt(0).toUpperCase() + labelText.slice(1);
+  }
+  return `<span style="padding:2px 8px;border-radius:6px;font-size:0.62rem;font-weight:700;background:${s.bg};color:${s.color};margin-left:4px">${labelText}</span>`;
 }
 
 function fmtDateShort(d) {
@@ -179,11 +183,11 @@ async function loadAnalytics() {
     const ti = TYPE_ICONS[ev.event_type]||'📌';
     const fr = ev.fill_rate||0;
     const ar = ev.attendance_rate||0;
-    const frColor = fr>80?'#22c55e':fr>50?'#f59e0b':'#ef4444';
+    const frColor = ev.capacity ? (fr>80?'#22c55e':fr>50?'#f59e0b':'#ef4444') : '#8b5cf6';
     const arColor = ar>80?'#22c55e':ar>50?'#f59e0b':'#3b82f6';
     const evRating = Number(ev.average_rating || 0).toFixed(1);
-    const fillLabel = ev.capacity ? `${ev.tickets_count}/${ev.capacity} (${fr}%)` : `${ev.tickets_count} / —`;
-    const fillWidth = ev.capacity ? fr : 100;
+    const fillLabel = ev.capacity ? `${ev.tickets_count}/${ev.capacity} (${fr}%)` : `${ev.tickets_count} / ${t('Unlimited')}`;
+    const fillWidth = ev.capacity ? fr : 0;
 
     return `<div class="an-ev-card">
       <div class="an-ev-header">

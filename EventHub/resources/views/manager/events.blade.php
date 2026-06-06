@@ -2245,28 +2245,65 @@
 
     // ── AI Description Generator ─────────────────────────────────
     let aiDescDismissed = false;
+    let aiDescSuccessTimeout = null;
+    let aiDescSuccessHideTimeout = null;
+    let aiDescErrorTimeout = null;
 
-    // Show AI suggestion card when user finishes typing the title
-    document.getElementById('e-title').addEventListener('blur', function () {
-      const title = this.value.trim();
+    function checkShowAIDescCard() {
+      const title = document.getElementById('e-title').value.trim();
       const desc = document.getElementById('e-desc').value.trim();
       const card = document.getElementById('ai-desc-card');
 
       // Only show if: title has 3+ chars, description is empty, not dismissed
       if (title.length >= 3 && !desc && !aiDescDismissed) {
-        card.style.display = 'block';
-        card.style.animation = 'wizSlideIn 0.3s ease';
-        resetAIDescState();
+        if (card.style.display !== 'block' || document.getElementById('ai-desc-prompt').style.display !== 'block') {
+          card.style.display = 'block';
+          card.style.animation = 'wizSlideIn 0.3s ease';
+          resetAIDescState();
+        }
+      } else {
+        const isLoading = document.getElementById('ai-desc-loading').style.display === 'block';
+        if (!isLoading && (desc || title.length < 3)) {
+          card.style.display = 'none';
+        }
       }
+    }
+
+    // Show AI suggestion card dynamically on input
+    document.getElementById('e-title').addEventListener('input', function () {
+      aiDescDismissed = false;
+      document.getElementById('e-desc').value = ''; // Clear old description
+      checkShowAIDescCard();
     });
 
-    // Also listen for title input changes to re-enable if title changes
-    document.getElementById('e-title').addEventListener('input', function () {
-      // If title changes after generation, reset dismissed state
+    // Show AI suggestion card dynamically when event type changes
+    document.getElementById('e-type').addEventListener('change', function () {
       aiDescDismissed = false;
+      document.getElementById('e-desc').value = ''; // Clear old description
+      checkShowAIDescCard();
+    });
+
+    // Also listen for description changes (to show suggestion if cleared/deleted)
+    document.getElementById('e-desc').addEventListener('input', function () {
+      if (!this.value.trim()) {
+        aiDescDismissed = false;
+      }
+      checkShowAIDescCard();
     });
 
     function resetAIDescState() {
+      // Clear pending state-change timeouts
+      if (aiDescSuccessTimeout) { clearTimeout(aiDescSuccessTimeout); aiDescSuccessTimeout = null; }
+      if (aiDescSuccessHideTimeout) { clearTimeout(aiDescSuccessHideTimeout); aiDescSuccessHideTimeout = null; }
+      if (aiDescErrorTimeout) { clearTimeout(aiDescErrorTimeout); aiDescErrorTimeout = null; }
+
+      // Make sure card's opacity and transform are reset
+      const card = document.getElementById('ai-desc-card');
+      if (card) {
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+      }
+
       document.getElementById('ai-desc-prompt').style.display = 'block';
       document.getElementById('ai-desc-loading').style.display = 'none';
       document.getElementById('ai-desc-success').style.display = 'none';
@@ -2278,7 +2315,7 @@
       const card = document.getElementById('ai-desc-card');
       card.style.opacity = '0';
       card.style.transform = 'translateY(-10px)';
-      setTimeout(() => {
+      aiDescSuccessHideTimeout = setTimeout(() => {
         card.style.display = 'none';
         card.style.opacity = '1';
         card.style.transform = 'translateY(0)';
@@ -2324,11 +2361,11 @@
           }, 2000);
 
           // Auto-hide success after 3 seconds
-          setTimeout(() => {
+          aiDescSuccessTimeout = setTimeout(() => {
             const card = document.getElementById('ai-desc-card');
             card.style.opacity = '0';
             card.style.transform = 'translateY(-10px)';
-            setTimeout(() => {
+            aiDescSuccessHideTimeout = setTimeout(() => {
               card.style.display = 'none';
               card.style.opacity = '1';
               card.style.transform = 'translateY(0)';
@@ -2350,7 +2387,7 @@
             errEl.textContent = detail || (document.documentElement.lang === 'ar' ? 'حدث خطأ أثناء توليد الوصف. حاول مرة أخرى.' : 'Failed to generate description. Please try again.');
           }
           // Show prompt again after 4 seconds
-          setTimeout(() => {
+          aiDescErrorTimeout = setTimeout(() => {
             resetAIDescState();
           }, 4000);
         }
@@ -2360,7 +2397,7 @@
         const errEl = document.getElementById('ai-desc-error');
         errEl.style.display = 'block';
         errEl.textContent = document.documentElement.lang === 'ar' ? 'تعذر الاتصال بخدمة الذكاء الاصطناعي.' : 'Could not connect to AI service.';
-        setTimeout(() => {
+        aiDescErrorTimeout = setTimeout(() => {
           resetAIDescState();
         }, 3000);
       }
