@@ -27,21 +27,9 @@
 | 16 | `is_active` | boolean | DEFAULT true |
 | 17 | `verification_status` | enum('verified','pending','rejected','changes_requested') | DEFAULT 'verified' |
 | 18 | `verification_notes` | text | NULLABLE |
-| 19 | `doc_commercial_register` | varchar(255) | NULLABLE |
-| 20 | `doc_tax_number` | varchar(255) | NULLABLE |
-| 21 | `doc_articles_of_association` | varchar(255) | NULLABLE |
-| 22 | `doc_practice_license` | varchar(255) | NULLABLE |
-| 23 | `doc_commercial_register_status` | varchar(255) | DEFAULT 'pending' |
-| 24 | `doc_tax_number_status` | varchar(255) | DEFAULT 'pending' |
-| 25 | `doc_articles_of_association_status` | varchar(255) | DEFAULT 'pending' |
-| 26 | `doc_practice_license_status` | varchar(255) | DEFAULT 'pending' |
-| 27 | `doc_commercial_register_note` | text | NULLABLE |
-| 28 | `doc_tax_number_note` | text | NULLABLE |
-| 29 | `doc_articles_of_association_note` | text | NULLABLE |
-| 30 | `doc_practice_license_note` | text | NULLABLE |
-| 31 | `interests` | json | NULLABLE |
-| 32 | `created_at` | timestamp | NULLABLE |
-| 33 | `updated_at` | timestamp | NULLABLE |
+| 19 | `interests` | json | NULLABLE |
+| 20 | `created_at` | timestamp | NULLABLE |
+| 21 | `updated_at` | timestamp | NULLABLE |
 
 ---
 
@@ -78,7 +66,24 @@
 
 ---
 
-## 4. `venues` — القاعات / الأماكن
+## 4. `user_documents` — وثائق المستخدم
+
+| # | Column | Type | Constraints |
+|---|--------|------|-------------|
+| 1 | `id` | bigint (unsigned) | PK, Auto Increment |
+| 2 | `user_id` | bigint (unsigned) | NOT NULL, FK → users.id (CASCADE) |
+| 3 | `document_type` | enum('commercial_register', 'tax_number', 'articles_of_association', 'practice_license') | NOT NULL |
+| 4 | `file_path` | varchar(255) | NULLABLE |
+| 5 | `status` | varchar(255) | DEFAULT 'pending' — (pending, approved, rejected, pending_update) |
+| 6 | `note` | text | NULLABLE |
+| 7 | `created_at` | timestamp | NULLABLE |
+| 8 | `updated_at` | timestamp | NULLABLE |
+
+> **UNIQUE:** (`user_id`, `document_type`)
+
+---
+
+## 5. `venues` — القاعات / الأماكن
 
 | # | Column | Type | Constraints |
 |---|--------|------|-------------|
@@ -96,7 +101,7 @@
 
 ---
 
-## 5. `venue_maintenance_periods` — فترات صيانة القاعات
+## 6. `venue_maintenance_periods` — فترات صيانة القاعات
 
 | # | Column | Type | Constraints |
 |---|--------|------|-------------|
@@ -110,7 +115,7 @@
 
 ---
 
-## 6. `events` — الفعاليات
+## 7. `events` — الفعاليات
 
 | # | Column | Type | Constraints |
 |---|--------|------|-------------|
@@ -120,42 +125,75 @@
 | 4 | `location` | varchar(255) | NULLABLE |
 | 5 | `event_type` | varchar(255) | DEFAULT 'مؤتمر' |
 | 6 | `venue_id` | bigint (unsigned) | NULLABLE, FK → venues.id (SET NULL) |
-| 7 | `external_venue_name` | varchar(255) | NULLABLE |
-| 8 | `external_venue_location` | varchar(255) | NULLABLE |
-| 9 | `booking_proof_path` | varchar(255) | NULLABLE |
-| 10 | `ministry_document_path` | varchar(255) | NULLABLE |
-| 11 | `period` | varchar(255) | NULLABLE |
-| 12 | `booking_date` | date | NULLABLE |
-| 13 | `start_time` | datetime | NOT NULL |
-| 14 | `end_time` | datetime | NOT NULL |
-| 15 | `external_schedule` | json | NULLABLE |
-| 16 | `internal_schedule` | json | NULLABLE |
-| 17 | `agenda` | json | NULLABLE |
-| 18 | `published_schedule` | json | NULLABLE |
-| 19 | `capacity` | integer | NULLABLE |
-| 20 | `image` | varchar(255) | NULLABLE |
-| 21 | `status` | varchar(255) | DEFAULT 'pending' |
-| 22 | `rejection_reason` | text | NULLABLE |
-| 23 | `cancellation_reason` | text | NULLABLE |
-| 24 | `cancellation_rejection_reason` | text | NULLABLE |
-| 25 | `review_message` | text | NULLABLE |
-| 26 | `review_fields` | json | NULLABLE |
-| 27 | `review_status` | varchar(255) | DEFAULT 'none' |
-| 28 | `is_sponsorship_open` | boolean | DEFAULT true |
-| 29 | `is_tickets_open` | boolean | DEFAULT true |
-| 30 | `is_exhibition` | boolean | DEFAULT false |
-| 31 | `is_exhibitor_registration_open` | boolean | DEFAULT true |
-| 32 | `is_applications_open` | boolean | DEFAULT true |
-| 33 | `is_published` | boolean | DEFAULT false |
-| 34 | `event_objective` | text | NULLABLE |
-| 35 | `target_audience` | varchar(255) | NULLABLE |
-| 36 | `created_by` | bigint (unsigned) | NOT NULL, FK → users.id |
-| 37 | `created_at` | timestamp | NULLABLE |
-| 38 | `updated_at` | timestamp | NULLABLE |
+| 7 | `start_time` | datetime | NOT NULL |
+| 8 | `end_time` | datetime | NOT NULL |
+| 9 | `capacity` | integer | NULLABLE |
+| 10 | `image` | varchar(255) | NULLABLE |
+| 11 | `status` | varchar(255) | DEFAULT 'pending' |
+| 12 | `is_sponsorship_open` | boolean | DEFAULT true |
+| 13 | `is_tickets_open` | boolean | DEFAULT true |
+| 14 | `is_exhibition` | boolean | DEFAULT false |
+| 15 | `is_exhibitor_registration_open` | boolean | DEFAULT true |
+| 16 | `is_applications_open` | boolean | DEFAULT true |
+| 17 | `is_published` | boolean | DEFAULT false |
+| 18 | `event_objective` | text | NULLABLE |
+| 19 | `target_audience` | varchar(255) | NULLABLE |
+| 20 | `created_by` | bigint (unsigned) | NOT NULL, FK → users.id |
+| 21 | `created_at` | timestamp | NULLABLE |
+| 22 | `updated_at` | timestamp | NULLABLE |
 
 ---
 
-## 7. `event_sponsor` — الجدول الوسيط (الرعاة والفعاليات)
+## 8. `event_external_venues` — قاعات الفعاليات الخارجية
+
+| # | Column | Type | Constraints |
+|---|--------|------|-------------|
+| 1 | `id` | bigint (unsigned) | PK, Auto Increment |
+| 2 | `event_id` | bigint (unsigned) | NOT NULL, UNIQUE, FK → events.id (CASCADE) |
+| 3 | `venue_name` | varchar(255) | NOT NULL |
+| 4 | `venue_location` | varchar(255) | NULLABLE |
+| 5 | `booking_proof_path` | varchar(255) | NULLABLE |
+| 6 | `booking_date` | date | NULLABLE |
+| 7 | `period` | varchar(255) | NULLABLE |
+| 8 | `created_at` | timestamp | NULLABLE |
+| 9 | `updated_at` | timestamp | NULLABLE |
+
+---
+
+## 9. `event_schedules` — جداول وأجندات الفعاليات
+
+| # | Column | Type | Constraints |
+|---|--------|------|-------------|
+| 1 | `id` | bigint (unsigned) | PK, Auto Increment |
+| 2 | `event_id` | bigint (unsigned) | NOT NULL, UNIQUE, FK → events.id (CASCADE) |
+| 3 | `ministry_document_path` | varchar(255) | NULLABLE |
+| 4 | `external_schedule` | json | NULLABLE |
+| 5 | `internal_schedule` | json | NULLABLE |
+| 6 | `agenda` | json | NULLABLE |
+| 7 | `published_schedule` | json | NULLABLE |
+| 8 | `created_at` | timestamp | NULLABLE |
+| 9 | `updated_at` | timestamp | NULLABLE |
+
+---
+
+## 10. `event_reviews` — مراجعات الفعاليات والإلغاء
+
+| # | Column | Type | Constraints |
+|---|--------|------|-------------|
+| 1 | `id` | bigint (unsigned) | PK, Auto Increment |
+| 2 | `event_id` | bigint (unsigned) | NOT NULL, UNIQUE, FK → events.id (CASCADE) |
+| 3 | `rejection_reason` | text | NULLABLE |
+| 4 | `review_message` | text | NULLABLE |
+| 5 | `review_fields` | json | NULLABLE |
+| 6 | `review_status` | varchar(255) | DEFAULT 'none' — (none, needs_review, reviewed) |
+| 7 | `cancellation_reason` | text | NULLABLE |
+| 8 | `cancellation_rejection_reason` | text | NULLABLE |
+| 9 | `created_at` | timestamp | NULLABLE |
+| 10 | `updated_at` | timestamp | NULLABLE |
+
+---
+
+## 11. `event_sponsor` — الجدول الوسيط (الرعاة والفعاليات)
 
 | # | Column | Type | Constraints |
 |---|--------|------|-------------|
@@ -171,7 +209,7 @@
 
 ---
 
-## 8. `tickets` — التذاكر
+## 12. `tickets` — التذاكر
 
 | # | Column | Type | Constraints |
 |---|--------|------|-------------|
@@ -186,7 +224,7 @@
 
 ---
 
-## 9. `attendance_logs` — سجل الحضور
+## 13. `attendance_logs` — سجل الحضور
 
 | # | Column | Type | Constraints |
 |---|--------|------|-------------|
@@ -199,7 +237,7 @@
 
 ---
 
-## 10. `sponsorship_requests` — طلبات الرعاية
+## 14. `sponsorship_requests` — طلبات الرعاية
 
 | # | Column | Type | Constraints |
 |---|--------|------|-------------|
@@ -215,7 +253,7 @@
 
 ---
 
-## 11. `event_notifications` — إشعارات الفعاليات
+## 15. `event_notifications` — إشعارات الفعاليات
 
 | # | Column | Type | Constraints |
 |---|--------|------|-------------|
@@ -228,7 +266,7 @@
 
 ---
 
-## 12. `notifications` — الإشعارات (Laravel Notifications)
+## 16. `notifications` — الإشعارات (Laravel Notifications)
 
 | # | Column | Type | Constraints |
 |---|--------|------|-------------|
@@ -245,7 +283,7 @@
 
 ---
 
-## 13. `ratings` — التقييمات
+## 17. `ratings` — التقييمات
 
 | # | Column | Type | Constraints |
 |---|--------|------|-------------|
@@ -261,7 +299,7 @@
 
 ---
 
-## 14. `password_reset_codes` — رموز استعادة كلمة المرور
+## 18. `password_reset_codes` — رموز استعادة كلمة المرور
 
 | # | Column | Type | Constraints |
 |---|--------|------|-------------|
@@ -274,7 +312,7 @@
 
 ---
 
-## 15. `password_reset_tokens` — رموز إعادة تعيين كلمة المرور
+## 19. `password_reset_tokens` — رموز إعادة تعيين كلمة المرور
 
 | # | Column | Type | Constraints |
 |---|--------|------|-------------|
@@ -284,7 +322,7 @@
 
 ---
 
-## 16. `event_reminders` — تذكيرات الفعاليات
+## 20. `event_reminders` — تذكيرات الفعاليات
 
 | # | Column | Type | Constraints |
 |---|--------|------|-------------|
@@ -299,7 +337,7 @@
 
 ---
 
-## 17. `agreement_negotiations` — تفاوض العقود
+## 21. `agreement_negotiations` — تفاوض العقود
 
 | # | Column | Type | Constraints |
 |---|--------|------|-------------|
@@ -314,7 +352,7 @@
 
 ---
 
-## 18. `agreement_versions` — نسخ العقود
+## 22. `agreement_versions` — نسخ العقود
 
 | # | Column | Type | Constraints |
 |---|--------|------|-------------|
@@ -330,7 +368,7 @@
 
 ---
 
-## 19. `assistance_requests` — طلبات المساعدة
+## 23. `assistance_requests` — طلبات المساعدة
 
 | # | Column | Type | Constraints |
 |---|--------|------|-------------|
@@ -348,7 +386,7 @@
 
 ---
 
-## 20. `exhibition_applications` — طلبات المعارض
+## 24. `exhibition_applications` — طلبات المعارض
 
 | # | Column | Type | Constraints |
 |---|--------|------|-------------|
@@ -370,7 +408,7 @@
 
 ---
 
-## 21. `exhibition_zones` — مناطق المعرض
+## 25. `exhibition_zones` — مناطق المعرض
 
 | # | Column | Type | Constraints |
 |---|--------|------|-------------|
@@ -382,7 +420,7 @@
 
 ---
 
-## 22. `exhibition_booths` — أجنحة المعرض
+## 26. `exhibition_booths` — أجنحة المعرض
 
 | # | Column | Type | Constraints |
 |---|--------|------|-------------|
@@ -400,4 +438,4 @@
 
 | التصنيف | الجداول | العدد |
 |---------|---------|-------|
-| **الإجمالي** | users, profiles, profile_contacts, venues, venue_maintenance_periods, events, event_sponsor, tickets, attendance_logs, sponsorship_requests, event_notifications, notifications, ratings, password_reset_codes, password_reset_tokens, event_reminders, agreement_negotiations, agreement_versions, assistance_requests, exhibition_applications, exhibition_zones, exhibition_booths | **22** |
+| **الإجمالي** | users, profiles, profile_contacts, user_documents, venues, venue_maintenance_periods, events, event_external_venues, event_schedules, event_reviews, event_sponsor, tickets, attendance_logs, sponsorship_requests, event_notifications, notifications, ratings, password_reset_codes, password_reset_tokens, event_reminders, agreement_negotiations, agreement_versions, assistance_requests, exhibition_applications, exhibition_zones, exhibition_booths | **26** |
