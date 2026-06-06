@@ -5,7 +5,7 @@
  Endpoints:
    1. POST /predict                – Predict attendance + confidence range
    2. POST /retrain                – Append event data & retrain model
-   3. POST /generate-description   – AI-generated event description (Groq/Llama)
+   3. POST /generate-description   – AI-generated event description (Gemini 2.0 Flash)
    4. GET  /health                 – Health-check
 
  Run: uvicorn main:app --host 0.0.0.0 --port 8001 --reload
@@ -25,7 +25,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import Literal, Optional
-from groq import Groq
+import httpx
 
 
 # ---------------------------------------------------------------------------
@@ -321,7 +321,7 @@ def retrain_model(payload: RetrainRequest):
 def generate_description(payload: GenerateDescriptionRequest):
     """
     Generate an AI-powered event description based on the title.
-    Uses Groq API (free tier — 14,400 req/day) with Llama 3.3 70B.
+    Uses OpenRouter API with Qwen 2.5 72B Instruct (Free tier).
 
     **Example JSON body:**
     ```json
@@ -331,11 +331,11 @@ def generate_description(payload: GenerateDescriptionRequest):
     }
     ```
     """
-    groq_key = os.getenv("GROQ_API_KEY", "")
-    if not groq_key:
+    openrouter_key = os.getenv("OPENROUTER_API_KEY", "")
+    if not openrouter_key:
         raise HTTPException(
             status_code=503,
-            detail="Groq API key not configured. Set GROQ_API_KEY in .env",
+            detail="OpenRouter API key not configured. Set OPENROUTER_API_KEY in .env",
         )
 
     # Build a context-aware prompt
@@ -343,38 +343,88 @@ def generate_description(payload: GenerateDescriptionRequest):
     if payload.event_type:
         type_context = f" (نوع الفعالية: {payload.event_type})"
 
+    # Strict instructions to prevent "Tattbeel" / marketing hype and garbage formatting
     system_prompt = (
-        "أنت مساعد ذكي لمنصة إدارة الفعاليات EventHub. "
-        "مهمتك كتابة أوصاف احترافية وجذابة للفعاليات بالعربية الفصحى. "
-        "اكتب الوصف فقط بدون أي مقدمة أو عنوان أو رموز تعبيرية."
+        "أنت مساعد ذكي لمنصة EventHub. مهمتك كتابة وصف تقني، دقيق، ومهني للفعاليات باللغة العربية الفصحى السليمة. "
+        "تجنب تماماً أسلوب المبالغة، والترويج الرخيص، والعبارات التسويقية الرنانة (تجنب تماماً التطبيل والعبارات مثل 'فريدة من نوعها'، 'لا تفوت'، 'أروع'، إلخ). "
+        "اكتب النص بأسلوب موضوعي يركز على الفائدة العلمية أو العملية والهدف الفعلي للفعالية. "
+        "اكتب الوصف مباشرة في جملتين إلى 4 جمل كحد أقصى. "
+        "ممنوع كتابة أي مقدمات أو عناوين، وممنوع استخدام الرموز التعبيرية (emojis) أو علامات الاقتباس."
     )
 
     user_prompt = (
-        f"اكتب وصفاً احترافياً وجذاباً لفعالية بعنوان: \"{payload.title}\"{type_context}. "
-        f"الوصف يجب أن يكون من 2 إلى 4 جمل فقط، "
-        f"يوضح الهدف من الفعالية والفئة المستهدفة، بأسلوب تسويقي محفّز."
+        f"اكتب وصفاً مهنياً وموضوعياً ومباشراً لفعالية بعنوان: \"{payload.title}\"{type_context}. "
+        f"ركز على توضيح المحتوى التقني أو الفعلي للفعالية والفئة المستهدفة فقط وبصياغة فصحى راقية ومباشرة."
     )
 
     try:
-        client = Groq(api_key=groq_key)
-        response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
-            ],
-            temperature=0.7,
-            max_tokens=300,
-        )
+        # Request headers for OpenRouter
+        headers = {
+            "Authorization": f"Bearer {openrouter_key}",
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://eventhub.ly",  # Optional, but nice for OpenRouter analytics
+            "X-Title": "EventHub AI",
+        }
 
-        description = response.choices[0].message.content.strip()
+        # Sequential list of free models to try for fallback robustness
+        models_to_try = [
+            "google/gemma-4-31b-it:free",
+            "google/gemma-4-26b-a4b-it:free",
+            "meta-llama/llama-3.3-70b-instruct:free",
+        ]
 
-        # Clean up any unwanted prefixes the model might add
-        for prefix in ["الوصف:", "وصف:", "وصف الفعالية:"]:
+        last_error = None
+        description = None
+
+        for model in models_to_try:
+            try:
+                # Request body
+                data = {
+                    "model": model,
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt},
+                    ],
+                    "temperature": 0.3,  # Lower temperature for more factual/direct response
+                    "max_tokens": 300,
+                }
+
+                # Call OpenRouter API
+                response = httpx.post(
+                    "https://openrouter.ai/api/v1/chat/completions",
+                    headers=headers,
+                    json=data,
+                    timeout=20.0,
+                )
+
+                if response.status_code == 200:
+                    resp_json = response.json()
+                    choices = resp_json.get("choices")
+                    if choices and len(choices) > 0:
+                        message = choices[0].get("message")
+                        if message and message.get("content"):
+                            description = message["content"].strip()
+                            # We got a successful response! Break the loop.
+                            break
+                else:
+                    last_error = f"Model {model} returned status {response.status_code}: {response.text}"
+            except Exception as e:
+                last_error = f"Model {model} failed with exception: {str(e)}"
+
+        if not description:
+            raise HTTPException(
+                status_code=502,
+                detail=f"All configured free models failed. Last error: {last_error}",
+            )
+
+        # Clean up any unwanted prefixes or quotes the model might still return
+        for prefix in ["الوصف:", "وصف:", "وصف الفعالية:", "الوصف المهني:"]:
             if description.startswith(prefix):
                 description = description[len(prefix):].strip()
         # Remove surrounding quotes if present
         if description.startswith('"') and description.endswith('"'):
+            description = description[1:-1].strip()
+        if description.startswith('«') and description.endswith('»'):
             description = description[1:-1].strip()
 
         return {
@@ -383,16 +433,20 @@ def generate_description(payload: GenerateDescriptionRequest):
             "title": payload.title,
         }
 
+    except HTTPException:
+        raise
+    except httpx.RequestError as exc:
+        raise HTTPException(
+            status_code=502,
+            detail=f"HTTP communication error with OpenRouter: {str(exc)}",
+        )
     except Exception as e:
         error_msg = str(e)
-
-        # Check for rate limit / quota errors
-        if "429" in error_msg or "rate_limit" in error_msg.lower() or "quota" in error_msg.lower():
+        if "429" in error_msg or "rate_limit" in error_msg.lower():
             raise HTTPException(
                 status_code=429,
-                detail="Rate limit exceeded. Please wait a moment and try again.",
+                detail="Rate limit exceeded on OpenRouter. Please wait a moment and try again.",
             )
-
         raise HTTPException(
             status_code=502,
             detail=f"Failed to generate description: {error_msg}",
