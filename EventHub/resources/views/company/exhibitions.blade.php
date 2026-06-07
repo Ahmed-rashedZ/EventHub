@@ -36,14 +36,13 @@
             <tr>
               <th>Status</th>
               <th>Exhibition Title</th>
-              <th>Venue</th>
               <th>Date</th>
               <th>Booth Detail</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody id="ex-body">
-            <tr class="loading-row"><td colspan="6"><div class="spinner" style="margin:auto"></div></td></tr>
+            <tr class="loading-row"><td colspan="5"><div class="spinner" style="margin:auto"></div></td></tr>
           </tbody>
         </table>
       </div>
@@ -82,13 +81,13 @@
     const tbody = document.getElementById('ex-body');
     
     if (!res.ok) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--danger)">Failed to load data</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--danger)">Failed to load data</td></tr>';
       return;
     }
 
     const apps = res.data;
     if (!apps.length) {
-      tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state">📦<p>You haven\'t applied to any exhibitions yet.</p></div></td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state">📦<p>You haven\'t applied to any exhibitions yet.</p></div></td></tr>';
       return;
     }
 
@@ -97,12 +96,10 @@
         <td>${badge(app.status)}</td>
         <td>
             <div style="font-weight:600" class="i18n-skip">${app.event?.title || '—'}</div>
-            <div style="font-size:0.75rem; color:var(--text-muted)">Applied: ${new Date(app.created_at).toLocaleDateString()}</div>
         </td>
-        <td style="color:var(--text-muted)">${app.event?.venue?.name || '—'}</td>
         <td style="color:var(--text-muted)">${fmtDateShort(app.event?.start_time)}</td>
         <td>
-            ${app.booth ? `<strong>Booth #${app.booth.booth_number}</strong><br/><span style="font-size:0.75rem">${app.booth.booth_size}</span>` : '<span style="opacity:0.5">N/A</span>'}
+            ${(app.booth_number || (app.booth && app.booth.booth_number)) ? `<strong>${t('Booth')} #${app.booth_number || app.booth.booth_number}</strong><br/><span style="font-size:0.75rem">${app.booth_size || (app.booth && app.booth.size) || ''}</span>` : `<span style="opacity:0.5">${t('N/A')}</span>`}
         </td>
         <td>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
@@ -223,8 +220,9 @@
           <div class="ed-info-card ed-info-accent2">
             <div class="ed-info-icon">📍</div>
             <div><div class="ed-info-label">Location</div><div class="ed-info-value">
-              ${ev.location_link || (ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` 
-              : (ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` : '—'))}
+              ${ev.location_link ? `<a href="${ev.location_link.startsWith('http') ? ev.location_link : 'https://' + ev.location_link}" target="_blank" style="color:inherit;text-decoration:underline;">${ev.location_link} ↗</a>`
+              : (ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">${t('Open in Maps ↗')}</a>` 
+              : (ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">${t('Open in Maps ↗')}</a>` : '—'))}
             </div></div>
           </div>
         </div>

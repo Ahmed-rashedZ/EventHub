@@ -379,7 +379,7 @@ class EventController extends Controller
                 "Event \"{$event->title}\" was submitted by {$request->user()->name} and needs your approval.",
                 'event',
                 '📋',
-                '/admin/events',
+                '/admin/events?eventId=' . $event->id,
                 $event->id
             ));
         }
@@ -918,7 +918,7 @@ class EventController extends Controller
                 "Event \"{$event->title}\" was updated by {$request->user()->name} after review.",
                 'event',
                 '🔄',
-                '/admin/events',
+                '/admin/events?eventId=' . $event->id,
                 $event->id
             ));
         }
@@ -1080,7 +1080,7 @@ class EventController extends Controller
                 "Manager {$request->user()->name} requested to cancel \"{$event->title}\".",
                 'event',
                 '⚠️',
-                '/admin/events',
+                '/admin/events?eventId=' . $event->id,
                 $event->id
             ));
         }

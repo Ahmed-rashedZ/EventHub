@@ -185,7 +185,7 @@ class VerificationController extends Controller
                 'All your documents have been approved! You now have full access to the platform.',
                 'verification',
                 '✅',
-                $user->role === 'Event Manager' ? '/manager/dashboard' : '/sponsor/dashboard'
+                $user->role === 'Event Manager' ? '/manager/dashboard' : ($user->role === 'Company' ? '/company/dashboard' : '/sponsor/dashboard')
             ));
 
             return response()->json(['message' => 'All documents approved. User verified.']);

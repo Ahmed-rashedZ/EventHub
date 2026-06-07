@@ -73,7 +73,7 @@ class CompanyAnalyticsController extends Controller
             });
 
         // Application history
-        $history = ExhibitionApplication::with(['event'])
+        $history = ExhibitionApplication::with(['event', 'booth'])
             ->where('company_id', $user->id)
             ->latest()
             ->get()
@@ -85,6 +85,13 @@ class CompanyAnalyticsController extends Controller
                     'event_title'    => $app->event->title ?? '—',
                     'submitted_at'   => $app->created_at->format('Y-m-d'),
                     'status'         => $app->status,
+                    'booth'          => $app->booth ? [
+                        'number' => $app->booth->booth_number,
+                        'size'   => $app->booth->size
+                    ] : ($app->booth_number ? [
+                        'number' => $app->booth_number,
+                        'size'   => $app->booth_size
+                    ] : null),
                 ];
             });
 
@@ -109,7 +116,7 @@ class CompanyAnalyticsController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        $apps = ExhibitionApplication::with(['event.venue', 'negotiation'])
+        $apps = ExhibitionApplication::with(['event.venue', 'negotiation', 'booth'])
             ->where('company_id', $user->id)
             ->latest()
             ->get();

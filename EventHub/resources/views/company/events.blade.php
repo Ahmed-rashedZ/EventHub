@@ -117,24 +117,26 @@
   <div class="modal-overlay" id="req-modal">
     <div class="modal">
       <div class="modal-header">
-        <h3 class="modal-title">Apply for Exhibition</h3>
+        <h3 class="modal-title"><script>document.write(t('Apply for Exhibition'))</script></h3>
         <button class="modal-close" onclick="closeModal()">✕</button>
       </div>
       <form id="req-form">
         <input type="hidden" id="r-event-id" value="" />
         <div style="margin-bottom:20px; padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.1);">
-          <div style="font-size:12px; color:var(--text-muted)">Selected Event</div>
+          <div style="font-size:12px; color:var(--text-muted)"><script>document.write(t('Selected Event'))</script></div>
           <div id="r-event-title" style="font-weight:bold; font-size:18px; color:#ffffff;">--</div>
         </div>
         <div class="form-group">
-          <label class="form-label">Message / Intro</label>
-          <textarea id="r-message" class="form-control"
-            placeholder="Introduce your company and specify what kind of booth you are looking for..."
-            rows="4"></textarea>
+          <label class="form-label"><script>document.write(t('Product Category'))</script></label>
+          <input type="text" id="r-category" class="form-control" placeholder="" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label"><script>document.write(t('Message / Intro'))</script></label>
+          <textarea id="r-message" class="form-control" placeholder="" rows="4"></textarea>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-          <button type="submit" class="btn btn-primary" id="btn-submit">Apply for Booth</button>
+          <button type="button" class="btn btn-ghost" onclick="closeModal()"><script>document.write(t('Cancel'))</script></button>
+          <button type="submit" class="btn btn-primary" id="btn-submit"><script>document.write(t('Apply for Booth'))</script></button>
         </div>
       </form>
     </div>
@@ -308,6 +310,11 @@
       }
       document.getElementById('r-event-id').value = eventId;
       document.getElementById('r-event-title').innerText = eventTitle;
+
+      // Set placeholders dynamically
+      document.getElementById('r-category').placeholder = t('e.g. Technology, Food, Education...');
+      document.getElementById('r-message').placeholder = t('Introduce your company and specify what kind of booth you are looking for...');
+
       document.getElementById('req-modal').classList.add('open');
     }
 
@@ -319,11 +326,12 @@
     document.getElementById('req-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('btn-submit');
-      btn.textContent = 'Sending...';
+      btn.textContent = t('Sending...');
       btn.disabled = true;
 
       const payload = {
         event_id: +document.getElementById('r-event-id').value,
+        product_category: document.getElementById('r-category').value,
         message: document.getElementById('r-message').value,
         initiator: 'company'
       };
@@ -331,10 +339,10 @@
       const res = await api.post('/exhibition', payload);
 
       if (res.ok) {
-        showToast('Application sent directly to Event Manager!', 'success');
+        showToast(t('Application sent directly to Event Manager!'), 'success');
         closeModal();
       } else {
-        showToast(res.data?.message || 'Error sending application', 'error');
+        showToast(res.data?.message || t('Error sending application'), 'error');
       }
 
       btn.textContent = t('Apply for Booth');
@@ -435,8 +443,9 @@
             <div class="ed-info-card ed-info-accent2">
               <div class="ed-info-icon">📍</div>
               <div><div class="ed-info-label">Location</div><div class="ed-info-value">
-                ${ev.location_link || (ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` 
-                : (ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` : '—'))}
+                ${ev.location_link ? `<a href="${ev.location_link.startsWith('http') ? ev.location_link : 'https://' + ev.location_link}" target="_blank" style="color:inherit;text-decoration:underline;">${ev.location_link} ↗</a>`
+                : (ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">${t('Open in Maps ↗')}</a>` 
+                : (ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">${t('Open in Maps ↗')}</a>` : '—'))}
               </div></div>
             </div>
           </div>

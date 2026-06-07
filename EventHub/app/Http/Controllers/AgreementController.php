@@ -110,7 +110,7 @@ class AgreementController extends Controller
                 "تم إنشاء عقد لحدث \"{$target->event->title}\". يرجى مراجعة العقد وتعديل البنود.",
                 'agreement',
                 '📋',
-                $otherUser->role === 'Event Manager' ? '/manager/sponsorship' : ($type === 'exhibition' ? '/company/applications' : '/sponsor/requests'),
+                $otherUser->role === 'Event Manager' ? ($type === 'exhibition' ? '/manager/exhibition' : '/manager/sponsorship') : ($type === 'exhibition' ? '/company/exhibitions' : '/sponsor/requests'),
                 $target->event_id
             ));
         }
@@ -248,11 +248,11 @@ class AgreementController extends Controller
         
         if ($otherUser) {
             $otherUser->notify(new SystemNotification(
-                'عقد محدوث 📝',
+                'عقد محدث',
                 "{$user->name} رفع نسخة جديدة من عقد \"{$target->event->title}\".",
                 'agreement',
                 '📝',
-                $otherUser->role === 'Event Manager' ? '/manager/sponsorship' : ($type === 'exhibition' ? '/company/applications' : '/sponsor/requests'),
+                $otherUser->role === 'Event Manager' ? ($type === 'exhibition' ? '/manager/exhibition' : '/manager/sponsorship') : ($type === 'exhibition' ? '/company/exhibitions' : '/sponsor/requests'),
                 $target->event_id
             ));
         }
@@ -338,7 +338,7 @@ class AgreementController extends Controller
                 "{$user->name} " . ($request->action === 'accepted' ? 'قبل العقد' : ($request->action === 'rejected' ? 'رفض العقد' : 'طلب تعديلات')) . " لحدث \"{$target->event->title}\".",
                 'agreement',
                 $icon,
-                $otherUser->role === 'Event Manager' ? '/manager/sponsorship' : ($type === 'exhibition' ? '/company/applications' : '/sponsor/requests'),
+                $otherUser->role === 'Event Manager' ? ($type === 'exhibition' ? '/manager/exhibition' : '/manager/sponsorship') : ($type === 'exhibition' ? '/company/exhibitions' : '/sponsor/requests'),
                 $target->event_id
             ));
         }
@@ -397,7 +397,7 @@ class AgreementController extends Controller
                 "{$user->name} ألغى الاتفاقية لحدث \"{$target->event->title}\".\nالسبب: \"{$request->message}\"",
                 'agreement',
                 '🚫',
-                $otherUser->role === 'Event Manager' ? '/manager/sponsorship' : ($type === 'exhibition' ? '/company/applications' : '/sponsor/requests'),
+                $otherUser->role === 'Event Manager' ? ($type === 'exhibition' ? '/manager/exhibition' : '/manager/sponsorship') : ($type === 'exhibition' ? '/company/exhibitions' : '/sponsor/requests'),
                 $target->event_id
             ));
         }

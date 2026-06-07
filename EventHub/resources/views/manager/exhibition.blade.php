@@ -914,7 +914,7 @@
   async function loadLayoutData(eventId) {
     const container = document.getElementById(`layout-container-${eventId}`);
     const res = await api.get(`/exhibition/inventory/${eventId}`);
-    if (!res.ok) return showToast('Failed to load layout', 'error');
+    if (!res.ok) return showToast(t('Failed to load layout'), 'error');
 
     const g = exhGroups.find(x => (x.event_id || (x.event && x.event.id)) == eventId);
     const ev = g ? (g.event || {}) : {};
@@ -1012,7 +1012,7 @@
     if (!confirm(t('Are you sure?'))) return;
     const res = await api.delete(`/exhibition/inventory/booths/${id}`);
     if (res.ok) { showToast(t('Booth deleted'), 'success'); loadLayoutData(eventId); }
-    else { showToast(res.data?.message || 'Error', 'error'); }
+    else { showToast(res.data?.message || t('Error'), 'error'); }
   }
 
   const formatSize = (s) => {
@@ -1052,11 +1052,11 @@
     }
 
     if (res.ok) {
-       showToast(id ? 'Updated' : 'Created', 'success');
+       showToast(id ? t('Updated') : t('Created'), 'success');
        closeBoothItemModal();
        loadLayoutData(eventId);
     } else {
-       showToast(res.data?.message || 'Error', 'error');
+       showToast(res.data?.message || t('Error'), 'error');
     }
   });
 
@@ -1077,7 +1077,7 @@
       closeBatchModalUI();
       loadLayoutData(eventId); 
     } else {
-      showToast(res.data?.message || 'Error', 'error');
+      showToast(res.data?.message || t('Error'), 'error');
     }
   });
 
@@ -1092,18 +1092,18 @@
 
     const res = await api.get(`/exhibition/inventory/${eventId}`);
     if (!res.ok) {
-       boothSelect.innerHTML = '<option value="">Error loading</option>';
+       boothSelect.innerHTML = '<option value="">' + t('Error loading') + '</option>';
        return;
     }
 
-    let options = `<option value="">-- Select Booth --</option>`;
+    let options = `<option value="">\${t('-- Select Booth --')}</option>`;
     res.data.forEach(zone => {
       const availableInZone = zone.booths.filter(b => !b.exhibition_application_id || b.exhibition_application_id == id);
       if (availableInZone.length > 0) {
         options += `<optgroup label="${zone.name}">`;
         availableInZone.forEach(b => {
           const selected = b.exhibition_application_id == id ? 'selected' : '';
-          options += `<option value="${b.id}" ${selected}>${b.booth_number} (${b.size || 'No size'})</option>`;
+          options += `<option value="${b.id}" ${selected}>${b.booth_number} (${b.size || t('No size')})</option>`;
         });
         options += `</optgroup>`;
       }

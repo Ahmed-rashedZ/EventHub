@@ -240,9 +240,8 @@
                 rows="3"></textarea>
             </div>
             <div class="form-group">
-              <label class="form-label">Event Banner Image</label>
-              <input id="e-image" type="file" accept="image/*" class="form-control" style="padding: 7px 10px;"
-                required />
+              <label class="form-label"><script>document.write(t('Event Banner Image'))</script></label>
+              <input id="e-image" type="file" accept="image/*" class="form-control" style="padding: 7px 10px;" required />
               <div id="banner-preview"
                 style="display:none; margin-top:10px; border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,0.06);">
                 <img id="banner-preview-img" src=""
@@ -316,8 +315,8 @@
 
             <div id="internal-fields">
               <div class="form-group" style="margin-top: 16px;">
-                <label class="form-label">📅 Select Event Days</label>
-                <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:8px;">Click on days to select them. Max span: 14 days between first and last day.</small>
+                <label class="form-label"><script>document.write(t('📅 Select Event Days'))</script></label>
+                <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:8px;"><script>document.write(t('Click on days to select them. Max span: 14 days between first and last day.'))</script></small>
                 <div id="e-int-calendar-wrap"
                   style="border:1px solid rgba(139,92,246,0.15);border-radius:16px;overflow:hidden;"></div>
                 <input id="e-booking-date" type="text" style="display:none;" />
@@ -327,20 +326,19 @@
 
             <div id="external-fields" style="display: none;">
               <div class="form-group">
-                <label class="form-label">Google Maps Link</label>
+                <label class="form-label"><script>document.write(t('Google Maps Link'))</script></label>
                 <input id="e-ext-location" type="url" class="form-control" placeholder="https://maps.google.com/..." />
               </div>
               <div class="form-group">
-                <label class="form-label">Proof of Booking (PDF/Image)</label>
-                <input id="e-booking-proof" type="file" accept=".pdf,image/*" class="form-control"
-                  style="padding: 7px 10px;" />
-                <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block">Required. Upload official confirmation of the external booking.</small>
+                <label class="form-label"><script>document.write(t('Proof of Booking (PDF/Image)'))</script></label>
+                <input id="e-booking-proof" type="file" accept=".pdf,image/*" class="form-control" style="padding:7px 10px;" />
+                <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block"><script>document.write(t('Required. Upload official confirmation of the external booking.'))</script></small>
               </div>
 
               <!-- Multi-day Calendar -->
               <div class="form-group">
-                <label class="form-label">📅 Select Event Days</label>
-                <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:8px;">Click on days to select them. Max span: 14 days between first and last day.</small>
+                <label class="form-label"><script>document.write(t('📅 Select Event Days'))</script></label>
+                <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:8px;"><script>document.write(t('Click on days to select them. Max span: 14 days between first and last day.'))</script></small>
                 <div id="e-ext-calendar-wrap"
                   style="border:1px solid rgba(139,92,246,0.15);border-radius:16px;overflow:hidden;"></div>
               </div>
@@ -404,24 +402,27 @@
                 <input id="e-capacity" type="number" class="form-control" placeholder="200" min="1" required />
               </div>
             </div>
-            <div class="form-group">
-              <label class="form-label">📄 Competent Authority Approval</label>
-              <input id="e-ministry-doc" type="file" accept=".pdf,image/*" class="form-control"
-                style="padding: 7px 10px;" required />
-              <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block">Required. Upload the official approval from the relevant competent authority for this event.</small>
-            </div>
+             <div class="form-group">
+               <label class="form-label"><script>document.write(t('Competent Authority Approval'))</script></label>
+               <input id="e-ministry-doc" type="file" accept=".pdf,image/*" class="form-control" style="padding: 7px 10px;" required />
+               <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block"><script>document.write(t('Required. Upload the official approval from the relevant competent authority for this event.'))</script></small>
+             </div>
           </div>
 
           <!-- Agenda Section -->
           <div class="form-section" style="margin-bottom: 0;">
-            <div class="form-section-title"><span>📋</span> Event Agenda <small
-                style="font-weight:400;color:var(--danger);font-size:0.75rem;">(Required)</small></div>
-            <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:12px;">Define the schedule/program for your event. You must add at least one agenda item.</small>
+            <div class="form-section-title">
+              <span>📋</span> <script>document.write(t('Event Agenda'))</script>
+              <small style="font-weight:400;color:var(--danger);font-size:0.75rem;"><script>document.write(t('(Required)'))</script></small>
+            </div>
+            <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:12px;">
+              <script>document.write(t('Define the schedule/program for your event. You must add at least one agenda item.'))</script>
+            </small>
 
             <div id="agenda-items-create" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
             <button type="button" class="btn btn-ghost btn-sm" onclick="addAgendaItem('agenda-items-create')"
               style="display:flex;align-items:center;gap:6px;">
-              <span style="font-size:1.1rem;">+</span> Add Agenda Item
+              <span style="font-size:1.1rem;">+</span> <script>document.write(t('Add Agenda Item'))</script>
             </button>
           </div>
 
@@ -660,9 +661,9 @@
       if (!events.length) { tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">📅</div><p>No events found</p></div></td></tr>'; return; }
       tbody.innerHTML = events.map((ev, i) => {
         const reviewBadge = ev.review_status === 'needs_review'
-          ? `<button onclick="toggleReviewRow(${ev.id})" style="display:inline-flex;align-items:center;gap:4px;background:rgba(245,158,11,0.12);color:#f59e0b;padding:2px 8px;border-radius:8px;font-size:0.7rem;font-weight:600;border:1px solid rgba(245,158,11,0.25);margin-left:6px;cursor:pointer;outline:none;">📝 Review Required</button>`
+          ? `<button onclick="toggleReviewRow(${ev.id})" style="display:inline-flex;align-items:center;gap:4px;background:rgba(245,158,11,0.12);color:#f59e0b;padding:2px 8px;border-radius:8px;font-size:0.7rem;font-weight:600;border:1px solid rgba(245,158,11,0.25);cursor:pointer;outline:none;">📝 Review Required</button>`
           : ev.review_status === 'reviewed'
-            ? `<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(59,130,246,0.12);color:#3b82f6;padding:2px 8px;border-radius:8px;font-size:0.7rem;font-weight:600;border:1px solid rgba(59,130,246,0.25);margin-left:6px;">🔄 Updated</span>`
+            ? `<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(59,130,246,0.12);color:#3b82f6;padding:2px 8px;border-radius:8px;font-size:0.7rem;font-weight:600;border:1px solid rgba(59,130,246,0.25);">🔄 Updated</span>`
             : '';
 
         const reviewRow = ev.review_status === 'needs_review' && ev.review_message
@@ -707,7 +708,7 @@
              ${ev.status !== 'approved' ? '<div style="font-size:10px;color:#ef4444;margin-top:4px;">Needs Approval</div>' : ''}
              ${ev.status === 'approved' && (ev.time_status === 'live' || ev.time_status === 'ended') ? `<div style="font-size:10px;color:var(--text-muted);margin-top:4px;">Event ${ev.time_status === 'live' ? 'is live' : 'has ended'}</div>` : ''}
           </td>
-          <td>${badge(ev.status)} ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''} ${reviewBadge}</td>
+          <td><div style="display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center;">${badge(ev.status)} ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''} ${reviewBadge}</div></td>
           <td style="display:flex;gap:6px;padding:14px 16px;flex-wrap:wrap">
             <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${ev.id})" title="View Details">ℹ️ Details</button>
             <button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='/manager/event-stats/${ev.id}'" title="View Statistics">📊 Stats</button>
@@ -998,28 +999,28 @@
                   const d = new Date(dateStr + 'T00:00:00');
                   const dayLabel = `${dn[d.getDay()]} ${d.getDate()} ${mn[d.getMonth()]} ${d.getFullYear()}`;
                   agendaHtml += `<div style="margin-bottom:10px;"><div style="font-size:0.68rem;font-weight:600;color:#a78bfa;margin-bottom:6px;padding:4px 10px;background:rgba(139,92,246,0.08);border-radius:6px;display:inline-block;">📅 ${dayLabel}</div><div style="display:flex;flex-direction:column;gap:4px;">`;
-                  items.forEach(a => {
-                    agendaHtml += `<div style="display:flex;flex-direction:column;gap:4px;background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:10px;padding:8px 14px;margin-left:8px;">
+                    items.forEach(a => {
+                      agendaHtml += `<div style="display:flex;flex-direction:column;gap:4px;background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:10px;padding:8px 14px;margin:0 8px;">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                          <div style="display:flex;align-items:center;gap:6px;min-width:110px;"><span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.start_time}</span><span style="color:#64748b;font-size:0.7rem;">→</span><span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.end_time}</span></div>
+                          <div style="flex:1;font-size:0.85rem;color:#e2e8f0;font-weight:500;">${a.title}</div>
+                        </div>
+                        ${a.description ? `<div style="font-size:0.78rem;color:#94a3b8;margin-top:4px;padding-inline-start:12px;border-inline-start:2px solid rgba(34,211,238,0.2);text-align:start;line-height:1.4;">${a.description}</div>` : ''}
+                      </div>`;
+                    });
+                    agendaHtml += `</div></div>`;
+                  });
+                } else if (Array.isArray(agenda)) {
+                  agendaHtml += `<div style="display:flex;flex-direction:column;gap:4px;">`;
+                  agenda.forEach(a => {
+                    agendaHtml += `<div style="display:flex;flex-direction:column;gap:4px;background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:10px;padding:8px 14px;margin:0 8px;">
                       <div style="display:flex;align-items:center;gap:10px;">
                         <div style="display:flex;align-items:center;gap:6px;min-width:110px;"><span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.start_time}</span><span style="color:#64748b;font-size:0.7rem;">→</span><span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.end_time}</span></div>
                         <div style="flex:1;font-size:0.85rem;color:#e2e8f0;font-weight:500;">${a.title}</div>
                       </div>
-                      ${a.description ? `<div style="font-size:0.75rem;color:#94a3b8;margin-left:126px;">${a.description}</div>` : ''}
+                      ${a.description ? `<div style="font-size:0.78rem;color:#94a3b8;margin-top:4px;padding-inline-start:12px;border-inline-start:2px solid rgba(34,211,238,0.2);text-align:start;line-height:1.4;">${a.description}</div>` : ''}
                     </div>`;
                   });
-                  agendaHtml += `</div></div>`;
-                });
-              } else if (Array.isArray(agenda)) {
-                agendaHtml += `<div style="display:flex;flex-direction:column;gap:4px;">`;
-                agenda.forEach(a => {
-                  agendaHtml += `<div style="display:flex;flex-direction:column;gap:4px;background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:10px;padding:8px 14px;">
-                    <div style="display:flex;align-items:center;gap:10px;">
-                      <div style="display:flex;align-items:center;gap:6px;min-width:110px;"><span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.start_time}</span><span style="color:#64748b;font-size:0.7rem;">→</span><span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.end_time}</span></div>
-                      <div style="flex:1;font-size:0.85rem;color:#e2e8f0;font-weight:500;">${a.title}</div>
-                    </div>
-                    ${a.description ? `<div style="font-size:0.75rem;color:#94a3b8;margin-left:126px;">${a.description}</div>` : ''}
-                  </div>`;
-                });
                 agendaHtml += `</div>`;
               }
               agendaHtml += `</div>`;
@@ -1141,7 +1142,7 @@
 
       // Fetch current event data
       const res = await api.get(`/events/${eventId}`);
-      if (!res.ok) { showToast('Error loading event', 'error'); return; }
+      if (!res.ok) { showToast(t('Error loading event'), 'error'); return; }
 
       agendaEventData = res.data;
 
@@ -1154,7 +1155,8 @@
 
       // Build tabs
       if (tabsContainer) {
-        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const isAr = document.documentElement.lang === 'ar';
+        const dayNames = isAr ? ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'] : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         agendaDays.forEach(dStr => {
           const d = new Date(dStr + 'T00:00:00');
           const label = `${dayNames[d.getDay()]} ${d.getDate()}`;
@@ -1224,18 +1226,16 @@
 
       // Validate bounds and logic
       let isValid = true;
+      const isAr = document.documentElement.lang === 'ar';
       for (const day of Object.keys(cleanAgenda)) {
         let startBound = "00:00", endBound = "23:59";
-        const extS = agendaEventData.external_schedule?.find(x => x.date === day);
-        const intS = agendaEventData.internal_schedule?.find(x => x.date === day);
-
-        if (extS) {
-          startBound = extS.start_time; endBound = extS.end_time;
-        } else if (intS && intS.start_time) {
-          startBound = intS.start_time; endBound = intS.end_time;
-        } else if (agendaEventData.start_time) {
-          startBound = agendaEventData.start_time.split('T')[1].substring(0, 5);
-          endBound = agendaEventData.end_time.split('T')[1].substring(0, 5);
+        const schedule = agendaEventData?.external_schedule?.length > 0 ? agendaEventData.external_schedule : agendaEventData?.internal_schedule;
+        if (schedule) {
+          const daySched = schedule.find(s => s.date === day);
+          if (daySched) {
+            startBound = daySched.start_time || daySched.start;
+            endBound = daySched.end_time || daySched.end;
+          }
         }
 
         const items = cleanAgenda[day] || [];
@@ -1244,17 +1244,17 @@
         for (let i = 0; i < items.length; i++) {
           const item = items[i];
           if (item.start_time >= item.end_time) {
-            showToast(`Invalid time in ${day}. Start time must be before end time.`, 'error');
+            showToast(isAr ? `وقت غير صالح في ${day}. وقت البدء يجب أن يكون قبل وقت الانتهاء.` : `Invalid time in ${day}. Start time must be before end time.`, 'error');
             isValid = false;
             break;
           }
           if (item.start_time < startBound || item.end_time > endBound) {
-            showToast(`Invalid time in ${day}. Agenda must be strictly between ${startBound} and ${endBound}`, 'error');
+            showToast(isAr ? `وقت غير صالح في ${day}. الاجندة يجب ان تكون بين ${startBound} و ${endBound}` : `Invalid time in ${day}. Agenda must be strictly between ${startBound} and ${endBound}`, 'error');
             isValid = false;
             break;
           }
           if (i > 0 && item.start_time < items[i - 1].end_time) {
-            showToast(`Overlapping agenda items in ${day} are not allowed.`, 'error');
+            showToast(isAr ? `تداخل في الاوقات في ${day} غير مسموح.` : `Overlapping agenda items in ${day} are not allowed.`, 'error');
             isValid = false;
             break;
           }
@@ -1415,24 +1415,9 @@
       // Auto-add missing days
       createAgendaDays.forEach(dStr => {
         if (!existingDatesInAgenda.includes(dStr)) {
-          let startTime = '09:00';
-          let endTime = '10:00';
-
-          if (locationType === 'external') {
-            const sched = getExhibitionSchedule(dStr);
-            startTime = sched.start;
-            let [h, m] = startTime.split(':').map(Number);
-            h = (h + 1) % 24;
-            endTime = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-            if (endTime > sched.end) endTime = sched.end;
-          } else {
-            const sched = getExhibitionSchedule(dStr);
-            startTime = sched.start;
-            let [h, m] = startTime.split(':').map(Number);
-            h = (h + 1) % 24;
-            endTime = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-            if (endTime > sched.end) endTime = sched.end;
-          }
+          const sched = getExhibitionSchedule(dStr);
+          const startTime = sched.start;
+          const endTime = sched.end;
 
           addAgendaItem('agenda-items-create', {
             date: dStr,
@@ -1449,9 +1434,9 @@
     async function toggleSponsorship(eventId, checked) {
       const res = await api.patch(`/events/${eventId}/toggle-sponsorship`);
       if (res.ok) {
-        showToast(res.data.event.is_sponsorship_open ? 'Sponsorship is now OPEN for this event.' : 'Sponsorship is now CLOSED for this event.', 'success');
+        showToast(res.data.event.is_sponsorship_open ? t('Sponsorship is now OPEN for this event.') : t('Sponsorship is now CLOSED for this event.'), 'success');
       } else {
-        showToast(res.data?.message || 'Error updating status', 'error');
+        showToast(res.data?.message || t('Error updating status'), 'error');
         document.getElementById(`spon-tog-${eventId}`).checked = !checked;
       }
     }
@@ -1463,28 +1448,28 @@
         const canAccept = res.data.can_accept_exhibitors;
         if (isOpen) {
             if (canAccept) {
-                showToast('Exhibitor registration is now OPEN.', 'success');
+                showToast(t('Exhibitor registration is now OPEN.'), 'success');
             } else {
-                showToast('Registration toggled ON, but it remains inactive due to the 60-day deadline.', 'info');
+                showToast(t('Registration toggled ON, but it remains inactive due to the 60-day deadline.'), 'info');
             }
         } else {
-            showToast('Exhibitor registration is now CLOSED.', 'success');
+            showToast(t('Exhibitor registration is now CLOSED.'), 'success');
         }
       } else {
-        showToast(res.data?.message || 'Error updating status', 'error');
+        showToast(res.data?.message || t('Error updating status'), 'error');
         const tog = document.getElementById(`exh-tog-${eventId}`);
         if (tog) tog.checked = !checked;
       }
     }
 
     async function deleteEvent(eventId) {
-      if (!confirm('Are you sure you want to delete this event? This action cannot be undone.')) return;
+      if (!confirm(t('Are you sure you want to delete this event? This action cannot be undone.'))) return;
       const res = await api.delete(`/events/${eventId}`);
       if (res.ok) {
-        showToast('Event deleted successfully', 'success');
+        showToast(t('Event deleted successfully'), 'success');
         loadEvents();
       } else {
-        showToast(res.data?.message || 'Error deleting event', 'error');
+        showToast(res.data?.message || t('Error deleting event'), 'error');
       }
     }
 
@@ -1596,6 +1581,16 @@
         return;
       }
 
+      const format12Hr = (t24) => {
+        if (!t24) return '';
+        let [h, m] = t24.split(':');
+        h = parseInt(h);
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        h = h % 12;
+        h = h ? h : 12;
+        return `${h.toString().padStart(2, '0')}:${m} ${ampm}`;
+      };
+
       const existingPeriods = {};
       container.querySelectorAll('.int-slot-card').forEach(card => {
         const date = card.dataset.date;
@@ -1618,6 +1613,10 @@
         const bookings = window.currentVenueBookings ? window.currentVenueBookings.filter(b => b.booking_date === dateStr) : [];
         const bookedPeriods = bookings.filter(b => b.type !== 'maintenance').map(b => b.period);
 
+        const morningTime = venue ? ` \u200E(${format12Hr(venue.morning_start)} - ${format12Hr(venue.morning_end)})` : '';
+        const eveningTime = venue ? ` \u200E(${format12Hr(venue.evening_start)} - ${format12Hr(venue.evening_end)})` : '';
+        const fullDayTime = venue ? ` \u200E(${format12Hr(venue.morning_start)} - ${format12Hr(venue.evening_end)})` : '';
+
         return `
         <div class="int-slot-card" data-date="${dateStr}" style="
           background: rgba(255,255,255,0.03); border: 1px solid rgba(139,92,246,0.2);
@@ -1634,7 +1633,7 @@
             <div style="flex:1.5; display:flex; gap:14px; align-items:center; min-width:260px;">
                <div style="flex:1;">
                  <label style="font-size:0.65rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:4px;">Start</label>
-                 <input type="time" class="int-slot-start form-control" value="09:00" style="padding:7px 10px;font-size:0.85rem;height:38px;" onchange="updateAgendaBoundsForDate('${dateStr}')" required />
+                 <input type="time" class="int-slot-start form-control" value="09:00" style="padding:7px 10px;font-size:0.85rem;height:38px;" onchange="updateAgendaBoundsForDate('${dateStr}', true)" required />
                </div>
                <div style="color:#64748b;font-size:1.1rem;margin-top:18px;">→</div>
                <div style="flex:1;">
@@ -1644,12 +1643,12 @@
             </div>
             ` : `
             <div style="flex:1; min-width:200px;">
-              <label style="font-size:0.65rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:4px;">${document.documentElement.lang === 'ar' ? 'اختر الفترة' : 'Select Period'}</label>
+              <label style="font-size:0.65rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:4px;">${t('Select Period')}</label>
               <select class="int-slot-period form-control" style="padding:7px 10px;font-size:0.85rem;height:38px;" onchange="checkIntPeriodAvailability(this, '${dateStr}')" required>
-                <option value="">Select a period...</option>
-                <option value="morning" ${forcedPeriod === 'morning' ? 'selected' : ''} ${bookedPeriods.includes('morning') || bookedPeriods.includes('full_day') ? 'disabled' : ''}>Morning Period ☀</option>
-                <option value="evening" ${forcedPeriod === 'evening' ? 'selected' : ''} ${bookedPeriods.includes('evening') || bookedPeriods.includes('full_day') ? 'disabled' : ''}>Evening Period 🌙</option>
-                <option value="full_day" ${forcedPeriod === 'full_day' ? 'selected' : ''} ${bookedPeriods.includes('morning') || bookedPeriods.includes('evening') || bookedPeriods.includes('full_day') ? 'disabled' : ''}>Full Day 🗓️</option>
+                <option value="">${t('Select a period...')}</option>
+                <option value="morning" ${forcedPeriod === 'morning' ? 'selected' : ''} ${bookedPeriods.includes('morning') || bookedPeriods.includes('full_day') ? 'disabled' : ''}>${t('Morning Period')}${morningTime}</option>
+                <option value="evening" ${forcedPeriod === 'evening' ? 'selected' : ''} ${bookedPeriods.includes('evening') || bookedPeriods.includes('full_day') ? 'disabled' : ''}>${t('Evening Period')}${eveningTime}</option>
+                <option value="full_day" ${forcedPeriod === 'full_day' ? 'selected' : ''} ${bookedPeriods.includes('morning') || bookedPeriods.includes('evening') || bookedPeriods.includes('full_day') ? 'disabled' : ''}>${t('Full Day')}${fullDayTime}</option>
               </select>
             </div>
             `}
@@ -1663,6 +1662,7 @@
       }).join('');
       updateCreateAgendaDays();
     }
+
 
     window.removeIntDay = function (dateStr) {
       if (intCalendarInstance) {
@@ -1682,6 +1682,7 @@
         showToast('This period is already booked. Please select another.', 'error');
         selectElem.value = '';
       }
+      updateAgendaBoundsForDate(dateStr, true);
     };
 
     function buildInternalSchedule() {
@@ -1809,12 +1810,12 @@
           <div style="flex:1;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
             <div style="flex:1;min-width:100px;">
               <label style="font-size:0.65rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:3px;">Start</label>
-              <input type="time" class="ext-slot-start form-control" value="${prev.start}" onchange="updateAgendaBoundsForDate('${dateStr}')" style="padding:6px 10px;font-size:0.85rem;" />
+              <input type="time" class="ext-slot-start form-control" value="${prev.start}" onchange="updateAgendaBoundsForDate('${dateStr}', true)" style="padding:6px 10px;font-size:0.85rem;" />
             </div>
             <div style="color:#64748b;font-size:1.1rem;margin-top:14px;">→</div>
             <div style="flex:1;min-width:100px;">
               <label style="font-size:0.65rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:3px;">End</label>
-              <input type="time" class="ext-slot-end form-control" value="${prev.end}" onchange="updateAgendaBoundsForDate('${dateStr}')" style="padding:6px 10px;font-size:0.85rem;" />
+              <input type="time" class="ext-slot-end form-control" value="${prev.end}" onchange="updateAgendaBoundsForDate('${dateStr}', true)" style="padding:6px 10px;font-size:0.85rem;" />
             </div>
           </div>
           <button type="button" onclick="removeExtDay('${dateStr}')" style="
@@ -1892,6 +1893,11 @@
       if (containerId === 'agenda-items-create') days = createAgendaDays;
       else if (containerId === 'agenda-items-editor') days = agendaDays;
 
+      const isNew = !data;
+      if (days.length === 1 && !data) {
+        data = { date: days[0] };
+      }
+
       const isAr = document.documentElement.lang === 'ar';
       let optionsHtml = '<option value="">' + (isAr ? 'اختر اليوم' : 'Select Day') + '</option>';
       const dayNames = isAr ? ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'] : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -1903,45 +1909,45 @@
       });
 
       item.innerHTML = `
-        <div style="display:flex;align-items:flex-start;gap:8px;">
-          <div style="flex:1;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <div style="display:flex;align-items:flex-end;gap:8px;">
+          <div style="flex:1;display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;">
             <div style="min-width:110px;">
-              <label style="font-size:0.6rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:2px;">Day</label>
+              <label style="font-size:0.6rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:2px;">${t('Day')}</label>
               <select class="agenda-date form-control" required style="padding:5px 8px;font-size:0.82rem;">
                 ${optionsHtml}
               </select>
             </div>
             <div style="min-width:80px;">
-              <label style="font-size:0.6rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:2px;">From</label>
+              <label style="font-size:0.6rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:2px;">${t('From')}</label>
               <input type="time" class="agenda-start form-control" value="${data?.start_time || ''}" required style="padding:5px 8px;font-size:0.82rem;" />
             </div>
-            <span style="color:#64748b;margin-top:12px;">→</span>
+            <div style="padding-bottom:8px;color:#64748b;">→</div>
             <div style="min-width:80px;">
-              <label style="font-size:0.6rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:2px;">To</label>
+              <label style="font-size:0.6rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:2px;">${t('To')}</label>
               <input type="time" class="agenda-end form-control" value="${data?.end_time || ''}" required style="padding:5px 8px;font-size:0.82rem;" />
             </div>
             <div style="flex:1;min-width:120px;">
-              <label style="font-size:0.6rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:2px;">Activity</label>
-              <input type="text" class="agenda-title form-control" value="${data?.title || ''}" placeholder="e.g. Opening Ceremony" required style="padding:5px 8px;font-size:0.82rem;" />
+              <label style="font-size:0.6rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:2px;">${t('Activity')}</label>
+              <input type="text" class="agenda-title form-control" value="${data?.title || ''}" placeholder="${t('e.g. Opening Ceremony')}" required style="padding:5px 8px;font-size:0.82rem;" />
             </div>
           </div>
           <button type="button" onclick="this.closest('.agenda-item').remove()" style="
             background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);
             color:#ef4444;width:28px;height:28px;border-radius:7px;cursor:pointer;
             display:flex;align-items:center;justify-content:center;font-size:0.85rem;
-            flex-shrink:0;margin-top:14px;
-          " title="Remove">✕</button>
+            flex-shrink:0;
+          " title="${t('Remove')}">✕</button>
         </div>
         <div style="width:100%;">
-          <label style="font-size:0.6rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:2px;">Description (Optional)</label>
-          <input type="text" class="agenda-desc form-control" value="${data?.description || ''}" placeholder="Brief details about this activity..." style="padding:5px 8px;font-size:0.82rem;" />
+          <label style="font-size:0.6rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:2px;">${t('Description (Optional)')}</label>
+          <input type="text" class="agenda-desc form-control" value="${data?.description || ''}" placeholder="${t('Brief details about this activity...')}" style="padding:5px 8px;font-size:0.82rem;" />
         </div>
       `;
       container.appendChild(item);
 
       // Add event listener to auto-hide if changed in the editor modal
       // Helper to update bounds for a specific agenda item
-      window.updateAgendaItemBounds = function(agendaItem) {
+      window.updateAgendaItemBounds = function(agendaItem, forceFill = false) {
         const dateSelect = agendaItem.querySelector('.agenda-date');
         const startInput = agendaItem.querySelector('.agenda-start');
         const endInput = agendaItem.querySelector('.agenda-end');
@@ -1952,6 +1958,13 @@
         startInput.max = sched.end;
         endInput.min = sched.start;
         endInput.max = sched.end;
+
+        if (forceFill || !startInput.value) {
+          startInput.value = sched.start;
+        }
+        if (forceFill || !endInput.value) {
+          endInput.value = sched.end;
+        }
 
         // Validation on change
         const validate = () => {
@@ -1967,22 +1980,21 @@
 
         startInput.onchange = validate;
         endInput.onchange = validate;
-        validate(); // Initial check
       };
 
       // Helper to update all agenda items for a specific date
-      window.updateAgendaBoundsForDate = function(dateStr) {
+      window.updateAgendaBoundsForDate = function(dateStr, forceFill = false) {
         document.querySelectorAll('.agenda-item').forEach(item => {
           const dateSelect = item.querySelector('.agenda-date');
           if (dateSelect && dateSelect.value === dateStr) {
-            updateAgendaItemBounds(item);
+            updateAgendaItemBounds(item, forceFill);
           }
         });
       };
 
       const selectElem = item.querySelector('.agenda-date');
       selectElem.addEventListener('change', function () {
-        updateAgendaItemBounds(item);
+        updateAgendaItemBounds(item, true);
         if (containerId === 'agenda-items-editor' && window.currentAgendaEditorDay) {
           if (this.value !== window.currentAgendaEditorDay) {
             item.style.display = 'none';
@@ -1990,7 +2002,7 @@
         }
       });
       // Initial bounds set
-      if (data && data.date) updateAgendaItemBounds(item);
+      if (data && data.date) updateAgendaItemBounds(item, isNew);
     }
 
 
@@ -2129,6 +2141,7 @@
       setLocationMode('internal');
       currentWizardStep = 1;
       updateWizardUI();
+
       // Reset banner preview
       const preview = document.getElementById('banner-preview');
       if (preview) preview.style.display = 'none';
@@ -2991,7 +3004,7 @@
     <div class="modal" style="max-width:600px; max-height: 88vh; overflow-y: auto; margin: 20px 0; padding-top: 0;">
       <div class="modal-header"
         style="position: sticky; top: 0; background: rgba(15,18,25,0.97); backdrop-filter: blur(16px); z-index: 10; padding: 24px 0 16px; margin-bottom: 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-        <h3 class="modal-title">📋 Edit Event Agenda</h3>
+        <h3 class="modal-title">📋 <script>document.write(t('Edit Event Agenda'))</script></h3>
         <button class="modal-close" onclick="closeAgendaEditor()">✕</button>
       </div>
       <div style="padding: 16px 0;">
@@ -3005,11 +3018,11 @@
         <button type="button" class="btn btn-ghost btn-sm"
           onclick="addAgendaItem('agenda-items-editor', {date: window.currentAgendaEditorDay || ''})"
           style="display:flex;align-items:center;gap:6px;margin-bottom:16px;">
-          <span style="font-size:1.1rem;">+</span> Add Agenda Item to Selected Day
+          <span style="font-size:1.1rem;">+</span> <script>document.write(t('Add Agenda Item to Selected Day'))</script>
         </button>
         <div
           style="display:flex;justify-content:flex-end;gap:8px;border-top:1px solid rgba(255,255,255,0.06);padding-top:14px;">
-          <button class="btn btn-ghost" onclick="closeAgendaEditor()">Cancel</button>
+          <button class="btn btn-ghost" onclick="closeAgendaEditor()"><script>document.write(t('Cancel'))</script></button>
           <button class="btn btn-primary" onclick="saveAgenda()" style="display:flex;align-items:center;gap:6px;">💾
             <script>document.write(t('Save Agenda'))</script></button>
         </div>

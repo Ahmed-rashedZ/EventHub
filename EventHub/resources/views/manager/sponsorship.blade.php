@@ -74,8 +74,9 @@
       <div class="form-group">
         <label class="form-label"><script>document.write(t('Event'))</script></label>
         <select id="r-event" class="form-control i18n-skip" required>
-          <option value="">Select your event…</option>
+          <option value="" id="r-event-placeholder">Select your event…</option>
         </select>
+        <script>document.getElementById('r-event-placeholder').text = t('Select your event…')</script>
       </div>
       <div class="form-group" id="target-sponsor-group" style="display:none; background: rgba(16,185,129,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(16,185,129,0.1);">
         <label class="form-label"><script>document.write(t('Target Sponsor'))</script></label>
@@ -319,7 +320,7 @@
     const res = await api.get('/events/list/my');
     const sel = document.getElementById('r-event');
     if (!res.ok) return;
-    sel.innerHTML = '<option value="">Select your event…</option>' + res.data.map(e => `<option value="${e.id}">${e.title}</option>`).join('');
+    sel.innerHTML = '<option value="">' + t('Select your event…') + '</option>' + res.data.map(e => `<option value="${e.id}">${e.title}</option>`).join('');
   }
 
   function openModal(targetId = null, targetName = null) { 

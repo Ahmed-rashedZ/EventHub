@@ -170,6 +170,7 @@ async function generateAgreement(id, type = 'sponsor') {
   if (res.ok) {
     showToast(t('Contract generated successfully!') + ' 📋', 'success');
     openAgreementModal(id, type);
+    refreshParentPage();
   } else {
     showToast(res.data?.message || 'Error', 'error');
     openAgreementModal(id, type);
@@ -250,6 +251,7 @@ async function uploadAgreement(id, type = 'sponsor') {
   if (res.ok) {
     showToast(t('Contract uploaded and sent for review!') + ' 📤', 'success');
     openAgreementModal(id, type);
+    refreshParentPage();
   } else {
     showToast(data?.message || 'Error', 'error');
   }
@@ -277,7 +279,7 @@ async function respondAgreement(id, action, type = 'sponsor') {
       : t('Revision requested') + ' 🔄';
     showToast(successMsg, action === 'accepted' ? 'success' : 'info');
     openAgreementModal(id, type);
-    if (typeof loadRequests === 'function') loadRequests();
+    refreshParentPage();
   } else {
     showToast(res.data?.message || 'Error', 'error');
   }
@@ -346,8 +348,20 @@ async function cancelAgreement() {
   if (res.ok) {
     showToast(t('Agreement cancelled successfully') + ' 🚫', 'info');
     closeCancelModal();
-    if (typeof loadRequests === 'function') loadRequests();
+    refreshParentPage();
   } else {
     showToast(res.data?.message || 'Error', 'error');
+  }
+}
+
+function refreshParentPage() {
+  if (typeof loadRequests === 'function') {
+    loadRequests();
+  }
+  if (typeof loadData === 'function') {
+    loadData();
+  }
+  if (typeof loadExhibitions === 'function') {
+    loadExhibitions();
   }
 }

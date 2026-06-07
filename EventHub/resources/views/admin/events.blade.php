@@ -172,20 +172,20 @@
       if (!events.length) { tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">📅</div><p>${t('No events found')}</p></div></td></tr>`; return; }
       tbody.innerHTML = events.map((ev, i) => {
         const reviewBadge = ev.review_status === 'needs_review' 
-          ? `<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(245,158,11,0.12);color:#f59e0b;padding:2px 8px;border-radius:8px;font-size:0.68rem;font-weight:600;border:1px solid rgba(245,158,11,0.25);margin-left:4px;">⏳ ${t('Awaiting Changes')}</span>`
+          ? `<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(245,158,11,0.12);color:#f59e0b;padding:2px 8px;border-radius:8px;font-size:0.68rem;font-weight:600;border:1px solid rgba(245,158,11,0.25);">⏳ ${t('Awaiting Changes')}</span>`
           : ev.review_status === 'reviewed'
-          ? `<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(59,130,246,0.12);color:#3b82f6;padding:2px 8px;border-radius:8px;font-size:0.68rem;font-weight:600;border:1px solid rgba(59,130,246,0.25);margin-left:4px;">🔄 ${t('Updated')}</span>`
+          ? `<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(59,130,246,0.12);color:#3b82f6;padding:2px 8px;border-radius:8px;font-size:0.68rem;font-weight:600;border:1px solid rgba(59,130,246,0.25);">🔄 ${t('Updated')}</span>`
           : '';
 
         return `
-        <tr>
+        <tr id="event-row-${ev.id}">
           <td style="color:var(--text-muted)">${i + 1}</td>
           <td><div style="font-weight:600; ${ev.status === 'cancelled' ? 'text-decoration:line-through; color:var(--danger)' : ''}" class="i18n-skip">${ev.title}</div></td>
           <td style="color:var(--text-muted)">${ev.venue_id ? (ev.venue?.name || '—') : (ev.external_venue_name ? ev.external_venue_name + ' ' + t('External') : '—')}</td>
           <td style="color:var(--text-muted)">${ev.creator?.name || '—'}</td>
           <td style="color:var(--text-muted);white-space:nowrap">${fmtDateShort(ev.start_time)}</td>
           <td style="color:var(--text-muted)">${ev.capacity || 'Unlimited (مفتوح)'}</td>
-          <td>${badge(ev.status)} ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''} ${reviewBadge}</td>
+          <td><div style="display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center;">${badge(ev.status)} ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''} ${reviewBadge}</div></td>
           <td style="display:flex;gap:6px;padding:14px 16px;flex-wrap:wrap">
             <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${ev.id})" title="${t('View Details')}">ℹ️ ${t('Details')}</button>
             <button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='/admin/event-stats/${ev.id}'" title="${t('View Statistics')}">📊 ${t('Stats')}</button>
@@ -194,6 +194,20 @@
           </td>
         </tr>`;
       }).join('');
+
+      // Check for eventId query param to scroll and highlight target event
+      const urlParams = new URLSearchParams(window.location.search);
+      const targetId = urlParams.get('eventId');
+      if (targetId) {
+        setTimeout(() => {
+          const row = document.getElementById(`event-row-${targetId}`);
+          if (row) {
+            document.querySelectorAll('.highlight-row').forEach(r => r.classList.remove('highlight-row'));
+            row.classList.add('highlight-row');
+            row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 100);
+      }
     }
 
     async function approve(id) {
@@ -445,7 +459,7 @@
                   }
                   scheduleHtml += '</div>';
                   if (ev.published_schedule && ev.published_schedule.length > 0) {
-                     scheduleHtml += '<span style="font-size:0.65rem;background:' + (isPub ? 'rgba(16,185,129,0.15)' : 'rgba(245,158,11,0.15)') + ';color:' + (isPub ? '#10b981' : '#f59e0b') + ';padding:3px 8px;border-radius:6px;font-weight:700;border:1px solid ' + (isPub ? 'rgba(16,185,129,0.3)' : 'rgba(245,158,11,0.3)') + ';">' + (isPub ? '✅ ' + t('Published') : '⏳ ' + t('Setup Day')) + '</span>';
+                     scheduleHtml += '<span style="font-size:0.65rem;background:' + (isPub ? 'rgba(16,185,129,0.15)' : 'rgba(245,158,11,0.15)') + ';color:' + (isPub ? '#10b981' : '#f59e0b') + ';padding:3px 8px;border-radius:6px;font-weight:700;border:1px solid ' + (isPub ? 'rgba(16,185,129,0.3)' : 'rgba(245,158,11,0.3)') + ';display:inline-flex;align-items:center;gap:4px;"><span>' + (isPub ? t('Published') : t('Setup Day')) + '</span><span>' + (isPub ? '✅' : '⏳') + '</span></span>';
                   }
                   scheduleHtml += '</div>';
                 });
@@ -470,7 +484,7 @@
           
           ${exhibitorsHtml}
 
-          ${(() => { let ag=ev.agenda; if(!ag||typeof ag!=='object') return ''; const isArr=Array.isArray(ag); if(isArr&&!ag.length) return ''; if(!isArr&&!Object.keys(ag).length) return ''; const pubDates=(ev.published_schedule&&ev.published_schedule.length>0)?ev.published_schedule.map(p=>p.date):[]; let h='<div style="margin-top:16px;"><div style="font-size:0.72rem;font-weight:700;color:#22d3ee;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">📋 ' + t('Full Event Agenda') + '</div>'; const dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; const renderItem=a=>`<div style="display:flex;align-items:center;gap:10px;background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:10px;padding:8px 14px;margin-left:8px;"><div style="display:flex;align-items:center;gap:6px;min-width:110px;"><span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.start_time}</span><span style="color:#64748b;font-size:0.7rem;">→</span><span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.end_time}</span></div><div style="flex:1;font-size:0.85rem;color:#e2e8f0;font-weight:500;">${a.title}</div></div>`; if(!isArr){Object.keys(ag).sort().forEach(ds=>{const items=ag[ds];if(!items||!items.length)return;const d=new Date(ds+'T00:00:00');const isPub=pubDates.length===0||pubDates.includes(ds); const badge=(pubDates.length>0)?(isPub?'<span style="font-size:0.6rem;background:rgba(16,185,129,0.15);color:#10b981;padding:2px 6px;border-radius:4px;margin-left:6px;border:1px solid rgba(16,185,129,0.3);">✅ ' + t('Published') + '</span>':'<span style="font-size:0.6rem;background:rgba(245,158,11,0.15);color:#f59e0b;padding:2px 6px;border-radius:4px;margin-left:6px;border:1px solid rgba(245,158,11,0.3);">⏳ ' + t('Setup Day') + '</span>'):''; h+=`<div style="margin-bottom:10px;"><div style="font-size:0.68rem;font-weight:600;color:#a78bfa;margin-bottom:6px;padding:4px 10px;background:rgba(139,92,246,0.08);border-radius:6px;display:inline-flex;align-items:center;">📅 ${dn[d.getDay()]} ${d.getDate()} ${mn[d.getMonth()]} ${d.getFullYear()}${badge}</div><div style="display:flex;flex-direction:column;gap:4px;">${items.map(renderItem).join('')}</div></div>`;});}else{h+=`<div style="display:flex;flex-direction:column;gap:4px;">${ag.map(renderItem).join('')}</div>`;} return h+'</div>'; })()}
+          ${(() => { let ag=ev.agenda; if(!ag||typeof ag!=='object') return ''; const isArr=Array.isArray(ag); if(isArr&&!ag.length) return ''; if(!isArr&&!Object.keys(ag).length) return ''; const pubDates=(ev.published_schedule&&ev.published_schedule.length>0)?ev.published_schedule.map(p=>p.date):[]; let h='<div style="margin-top:16px;"><div style="font-size:0.72rem;font-weight:700;color:#22d3ee;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">📋 ' + t('Full Event Agenda') + '</div>'; const dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; const renderItem=a=>`<div style="display:flex;flex-direction:column;gap:4px;background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:10px;padding:8px 14px;margin:0 8px;"><div style="display:flex;align-items:center;gap:10px;"><div style="display:flex;align-items:center;gap:6px;min-width:110px;"><span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.start_time}</span><span style="color:#64748b;font-size:0.7rem;">→</span><span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.end_time}</span></div><div style="flex:1;font-size:0.85rem;color:#e2e8f0;font-weight:500;">${a.title}</div></div>${a.description ? `<div style="font-size:0.78rem;color:#94a3b8;margin-top:4px;padding-inline-start:12px;border-inline-start:2px solid rgba(34,211,238,0.2);text-align:start;line-height:1.4;">${a.description}</div>` : ''}</div>`; if(!isArr){Object.keys(ag).sort().forEach(ds=>{const items=ag[ds];if(!items||!items.length)return;const d=new Date(ds+'T00:00:00');const isPub=pubDates.length===0||pubDates.includes(ds); const badge=(pubDates.length>0)?(isPub?'<span style="font-size:0.6rem;background:rgba(16,185,129,0.15);color:#10b981;padding:2px 6px;border-radius:4px;margin:0 6px;border:1px solid rgba(16,185,129,0.3);display:inline-flex;align-items:center;gap:4px;"><span>' + t('Published') + '</span><span>✅</span></span>':'<span style="font-size:0.6rem;background:rgba(245,158,11,0.15);color:#f59e0b;padding:2px 6px;border-radius:4px;margin:0 6px;border:1px solid rgba(245,158,11,0.3);display:inline-flex;align-items:center;gap:4px;"><span>' + t('Setup Day') + '</span><span>⏳</span></span>'):''; h+=`<div style="margin-bottom:10px;"><div style="font-size:0.68rem;font-weight:600;color:#a78bfa;margin-bottom:6px;padding:4px 10px;background:rgba(139,92,246,0.08);border-radius:6px;display:inline-flex;align-items:center;">📅 ${dn[d.getDay()]} ${d.getDate()} ${mn[d.getMonth()]} ${d.getFullYear()}${badge}</div><div style="display:flex;flex-direction:column;gap:4px;">${items.map(renderItem).join('')}</div></div>`;});}else{h+=`<div style="display:flex;flex-direction:column;gap:4px;">${ag.map(renderItem).join('')}</div>`;} return h+'</div>'; })()}}
 
           <div class="ed-footer" style="margin-top: 8px;">
             <span class="ed-footer-label">${t('Created by')}</span>
@@ -742,6 +756,23 @@
       font-size: 0.85rem;
       font-weight: 600;
       color: #fff;
+    }
+
+    /* ── Highlight Animation for Target Event ── */
+    @keyframes highlightPulse {
+      0% { background-color: rgba(34, 211, 238, 0.3); }
+      100% { background-color: rgba(34, 211, 238, 0.05); }
+    }
+    .highlight-row td {
+      animation: highlightPulse 2s ease-out forwards;
+      border-top: 1px solid rgba(34, 211, 238, 0.5) !important;
+      border-bottom: 1px solid rgba(34, 211, 238, 0.5) !important;
+    }
+    .highlight-row td:first-child {
+      border-left: 3px solid #22d3ee !important;
+    }
+    .highlight-row td:last-child {
+      border-right: 1px solid rgba(34, 211, 238, 0.5) !important;
     }
   </style>
 

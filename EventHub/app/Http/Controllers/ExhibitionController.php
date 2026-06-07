@@ -72,7 +72,7 @@ class ExhibitionController extends Controller
                 "تلقيت دعوة مشاركة في معرض \"{$event->title}\" من {$user->name}.",
                 'exhibition',
                 '🏛️',
-                '/company/applications',
+                '/company/exhibitions',
                 $event->id
             ));
 
@@ -246,7 +246,7 @@ class ExhibitionController extends Controller
                     "طلب مشاركتك في معرض \"{$eventTitle}\" تم " . ($request->status === 'accepted' ? 'قبوله' : 'رفضه') . ".",
                     'exhibition',
                     $request->status === 'accepted' ? '✅' : '❌',
-                    '/company/applications',
+                    '/company/exhibitions',
                     $app->event_id
                 ));
             }
