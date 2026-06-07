@@ -215,9 +215,9 @@
             sessionStorage.setItem('user', JSON.stringify(res.data.user));
           }
           syncToggleUI(dbStatus);
-          showToast(dbStatus ? 'You are now visible.' : 'You are now hidden.', dbStatus ? 'success' : 'info');
+          showToast(dbStatus ? t('You are now visible.') : t('You are now hidden.'), dbStatus ? 'success' : 'info');
       } else {
-          showToast('Failed to sync with server', 'error');
+          showToast(t('Failed to sync with server'), 'error');
           await fetchAvailabilityStatus();
       }
     } finally {

@@ -75,7 +75,7 @@
       'Event Manager': '/manager/dashboard', 
       'Sponsor': '/sponsor/dashboard', 
       'Company': '/company/dashboard',
-      'User': '/profile', 
+      'Attendee': '/profile', 
       'Assistant': '/profile' 
     };
     window.location.href = map[role] || '/login';

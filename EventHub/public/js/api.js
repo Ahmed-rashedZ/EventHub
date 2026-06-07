@@ -140,7 +140,7 @@ function roleBadge(role) {
         Admin: 'role-admin', 
         'Event Manager': 'role-manager', 
         Sponsor: 'role-sponsor', 
-        User: 'role-user', 
+        Attendee: 'role-user', 
         Assistant: 'role-assistant',
         Company: 'role-company' 
     };

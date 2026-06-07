@@ -89,7 +89,7 @@
     </div>
     <div id="message-text" style="font-size:0.95rem; line-height:1.6; color:#fff; background:rgba(255,255,255,0.03); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.05); min-height:80px; white-space:pre-wrap;"></div>
     <div style="margin-top:20px; text-align:right;">
-        <button class="btn btn-primary" onclick="closeMessageModal()" style="padding:6px 20px;">Got it</button>
+        <button class="btn btn-primary" onclick="closeMessageModal()" style="padding:6px 20px;"><script>document.write(t('Got it'))</script></button>
     </div>
   </div>
 </div>
@@ -180,11 +180,11 @@
       if (r.status === 'pending') {
         if (r.initiator === 'event_manager') {
           actionHtml = `
-            <button class="btn btn-success btn-sm" onclick="respond(${r.id}, 'accepted')">Accept</button>
-            <button class="btn btn-danger btn-sm" onclick="respond(${r.id}, 'rejected')">Decline</button>
+            <button class="btn btn-success btn-sm" onclick="respond(${r.id}, 'accepted')">${t('Accept')}</button>
+            <button class="btn btn-danger btn-sm" onclick="respond(${r.id}, 'rejected')">${t('Decline')}</button>
           `;
         } else {
-          actionHtml = `<span style="font-size:11px; color:var(--text-muted); font-style:italic">Awaiting Manager</span>`;
+          actionHtml = `<span style="font-size:11px; color:var(--text-muted); font-style:italic">${t('Awaiting Manager')}</span>`;
         }
       } else if (r.status === 'negotiating') {
         actionHtml = `
@@ -214,7 +214,7 @@
         <td>${badge(effectiveStatus)}</td>
         <td style="display:flex;gap:6px;padding:14px 16px;flex-wrap:wrap;align-items:center">
           <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${e.id})" title="View Details">ℹ️ Details</button>
-          ${(r.negotiation?.final_notes || r.message) ? `<button class="btn btn-ghost btn-sm" onclick="viewMessage(${r.id})" title="View Message">💬 Msg</button>` : ''}
+          ${(r.negotiation?.final_notes || r.message) ? `<button class="btn btn-ghost btn-sm" onclick="viewMessage(${r.id})" title="${t('View Message')}">💬 ${t('Msg')}</button>` : ''}
           ${actionHtml}
         </td>
       </tr>`;
@@ -225,8 +225,8 @@
     const req = allRequests.find(r => r.id === requestId);
     if (!req) return;
     const modal = document.getElementById('message-modal');
-    document.getElementById('message-text').innerText = req.negotiation?.final_notes || req.message || 'No message provided.';
-    document.getElementById('message-sender').innerText = req.initiator === 'event_manager' ? 'From Event Manager' : 'From You';
+    document.getElementById('message-text').innerText = req.negotiation?.final_notes || req.message || t('No message provided.');
+    document.getElementById('message-sender').innerText = req.initiator === 'event_manager' ? t('From Event Manager') : t('From You');
     modal.classList.add('open');
   }
 
@@ -237,10 +237,10 @@
   async function respond(id, status) {
     const res = await api.put(`/sponsorship/${id}`, { status });
     if (res.ok) {
-      showToast(status === 'accepted' ? 'Sponsorship accepted! 🎉' : 'Request declined.', status === 'accepted' ? 'success' : 'info');
+      showToast(status === 'accepted' ? t('Sponsorship accepted! 🎉') : t('Request declined.'), status === 'accepted' ? 'success' : 'info');
       loadRequests();
     }
-    else showToast(res.data?.message || 'Error', 'error');
+    else showToast(res.data?.message || t('Error'), 'error');
   }
 
   const typeIcons = { 'مؤتمر': '🎙️', 'ندوة': '📖', 'ورشة عمل': '🔧', 'دورة تدريبية': '🎓', 'ترفيه': '🎭', 'ملتقى علمي': '🔬', 'رياضة': '⚽', 'تقنية': '💻', 'اجتماعية': '🤝' };

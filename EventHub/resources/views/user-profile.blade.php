@@ -312,7 +312,7 @@
         'Admin': '/admin/dashboard',
         'Event Manager': '/manager/dashboard',
         'Sponsor': '/sponsor/dashboard',
-        'User': '/profile',
+        'Attendee': '/profile',
         'Assistant': '/profile'
       };
       window.location.replace((me && dashMap[me.role]) || '/profile');
@@ -353,7 +353,7 @@
           'Event Manager': 'background:rgba(110,64,242,.15);color:#a78bfa;border:1px solid rgba(110,64,242,.3)',
           'Sponsor': 'background:rgba(234,179,8,.15);color:#eab308;border:1px solid rgba(234,179,8,.3)',
           'Company': 'background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.3)',
-          'User': 'background:rgba(34,211,238,.15);color:#22d3ee;border:1px solid rgba(34,211,238,.3)',
+          'Attendee': 'background:rgba(34,211,238,.15);color:#22d3ee;border:1px solid rgba(34,211,238,.3)',
           'Assistant': 'background:rgba(34,197,94,.15);color:#22c55e;border:1px solid rgba(34,197,94,.3)',
         };
         roleBadge.setAttribute('style', (roleStyles[u.role] || 'background:rgba(255,255,255,.1);color:#fff') + ';display:inline-block;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px');

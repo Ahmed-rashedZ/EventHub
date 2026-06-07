@@ -34,10 +34,10 @@ public function register(Request $request)
         'name' => 'required|string|max:255',
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8',
-        'role' => 'nullable|string|in:User,Assistant',
+        'role' => 'nullable|string|in:Attendee,Assistant',
     ]);
 
-    $role = $request->role ?? 'User';
+    $role = $request->role ?? 'Attendee';
 
     $user = User::create([
         'name' => $request->name,
@@ -166,7 +166,7 @@ public function registerPartner(Request $request)
     }
 
     // ── Platform-Based Role Restrictions ──
-    $mobileRoles = ['User', 'Assistant'];
+    $mobileRoles = ['Attendee', 'Assistant'];
     $webRoles = ['Admin', 'Event Manager', 'Sponsor', 'Company'];
 
     if ($platform === 'web' && in_array($user->role, $mobileRoles)) {
@@ -446,7 +446,7 @@ public function createUser(Request $request)
 
     // Role constraints
     if ($authUser->role === 'Admin') {
-        $allowedRoles = ['User', 'Admin'];
+        $allowedRoles = ['Attendee', 'Admin'];
         if (!in_array($request->role, $allowedRoles)) {
             return response()->json(['message' => 'Invalid role creation for Admin. Event Managers and Sponsors must self-register for verification.'], 403);
         }

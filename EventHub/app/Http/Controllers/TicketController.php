@@ -20,8 +20,8 @@ class TicketController extends Controller
             'event_id' => 'required|exists:events,id',
         ]);
 
-        if ($user->role !== 'User') {
-            return response()->json(['message' => 'Only normal users can book tickets'], 403);
+        if ($user->role !== 'Attendee') {
+            return response()->json(['message' => 'Only attendees can book tickets'], 403);
         }
 
         $event = Event::findOrFail($request->event_id);

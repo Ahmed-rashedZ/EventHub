@@ -1266,13 +1266,13 @@
       const agenda = Object.keys(cleanAgenda).length > 0 ? cleanAgenda : null;
       const res = await api.put(`/events/${agendaEditingEventId}/agenda`, { agenda });
       if (res.ok) {
-        showToast('Agenda saved successfully!', 'success');
+        showToast(t('Agenda saved successfully!'), 'success');
         const savedEventId = agendaEditingEventId;
         closeAgendaEditor();
         loadEvents(); // refresh list
         showEventDetails(savedEventId);
       } else {
-        showToast(res.data?.message || 'Error saving agenda', 'error');
+        showToast(res.data?.message || t('Error saving agenda'), 'error');
       }
     }
 
@@ -2965,6 +2965,19 @@
     };
   </script>
 
+  <!-- Profile Details Modal -->
+  <div class="modal-overlay" id="profile-details-modal">
+    <div class="modal" style="max-width:500px; width:95%; padding:0; border-top:3.5px solid var(--accent2); max-height:85vh; display:flex; flex-direction:column; border-radius:16px;">
+      <div style="padding:16px 20px 12px; display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <h3 class="modal-title" style="margin:0;font-size:1.1rem;display:flex;align-items:center;gap:8px;">👤 <script>document.write(t('Public Profile'))</script></h3>
+        <button class="modal-close" onclick="closeProfileModal()">✕</button>
+      </div>
+      <div id="profile-details-content" style="padding:20px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:16px;">
+        <div class="spinner" style="margin:40px auto"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- Event Details Modal -->
   <div class="modal-overlay" id="event-details-modal">
     <div class="modal ed-modal">
@@ -2998,7 +3011,7 @@
           style="display:flex;justify-content:flex-end;gap:8px;border-top:1px solid rgba(255,255,255,0.06);padding-top:14px;">
           <button class="btn btn-ghost" onclick="closeAgendaEditor()">Cancel</button>
           <button class="btn btn-primary" onclick="saveAgenda()" style="display:flex;align-items:center;gap:6px;">💾
-            Save Agenda</button>
+            <script>document.write(t('Save Agenda'))</script></button>
         </div>
       </div>
     </div>
@@ -4064,6 +4077,145 @@
           console.error(err);
           showToast('An error occurred.', 'error');
       }
+    }
+
+    function navigateToProfile(id) { showProfileModal(id); }
+
+    async function showProfileModal(userId) {
+      const modal = document.getElementById('profile-details-modal');
+      const content = document.getElementById('profile-details-content');
+      modal.classList.add('open');
+      content.innerHTML = '<div class="spinner" style="margin:40px auto"></div>';
+
+      try {
+        const res = await api.get('/profile/' + userId);
+        if (!res.ok) {
+          content.innerHTML = `<div style="text-align:center;color:var(--danger);padding:20px;">${t('Failed to load profile')}</div>`;
+          return;
+        }
+        const u = res.data.user;
+        const p = u.profile || {};
+
+        let avatar = '/images/default-avatar.png';
+        if (u.image && u.image.trim() !== '') {
+          avatar = (u.image.startsWith('http') || u.image.startsWith('/')) ? u.image : '/storage/' + u.image;
+        } else if (u.avatar && u.avatar.trim() !== '') {
+          avatar = (u.avatar.startsWith('http') || u.avatar.startsWith('/')) ? u.avatar : '/storage/' + u.avatar;
+        } else if (p.logo && p.logo.trim() !== '') {
+          avatar = (p.logo.startsWith('http') || p.logo.startsWith('/')) ? p.logo : '/' + p.logo;
+        }
+
+        const roleStyles = {
+          'Admin': 'background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.3)',
+          'Event Manager': 'background:rgba(110,64,242,.15);color:#a78bfa;border:1px solid rgba(110,64,242,.3)',
+          'Sponsor': 'background:rgba(234,179,8,.15);color:#eab308;border:1px solid rgba(234,179,8,.3)',
+          'Company': 'background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.3)',
+          'Attendee': 'background:rgba(34,211,238,.15);color:#22d3ee;border:1px solid rgba(34,211,238,.3)',
+          'Assistant': 'background:rgba(34,197,94,.15);color:#22c55e;border:1px solid rgba(34,197,94,.3)',
+        };
+
+        const roleStyle = roleStyles[u.role] || 'background:rgba(255,255,255,.1);color:#fff';
+
+        // Build contacts HTML
+        let contactsHtml = '';
+        if (u.contact_email) {
+          contactsHtml += `
+            <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.02);padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.05);">
+              <span style="font-size:1.2rem;">📧</span>
+              <div>
+                <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;">${t('Contact Email')}</div>
+                <div style="font-weight:500;font-size:0.85rem;">${u.contact_email}</div>
+              </div>
+            </div>
+          `;
+        }
+        if (u.phone) {
+          contactsHtml += `
+            <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.02);padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.05);">
+              <span style="font-size:1.2rem;">📱</span>
+              <div>
+                <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;">${t('Phone')}</div>
+                <div style="font-weight:500;font-size:0.85rem;"><a href="tel:${u.phone}" style="color:inherit;text-decoration:none;">${u.phone}</a></div>
+              </div>
+            </div>
+          `;
+        }
+
+        // Build social links HTML
+        let socialHtml = '';
+        if (u.social_links && Object.keys(u.social_links).length > 0) {
+          const iconMap = {
+            'twitter': '𝕏', 'x': '𝕏',
+            'linkedin': '💼',
+            'website': '🌐', 'portfolio': '🎨',
+            'facebook': '👥', 'instagram': '📸',
+            'whatsapp': '💬', 'telegram': '✈️',
+            'github': '💻', 'youtube': '🎬',
+            'tiktok': '🎵', 'discord': '👾'
+          };
+          let linksHtml = '';
+          for (let [pKey, link] of Object.entries(u.social_links)) {
+            if (link) {
+              const platform = pKey.split('_')[0];
+              const icon = iconMap[platform] || '🔗';
+              linksHtml += `
+                <a href="${link.startsWith('http') ? link : 'https://' + link}" target="_blank" style="width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);display:inline-flex;align-items:center;justify-content:center;color:var(--text-muted);text-decoration:none;font-size:1.1rem;transition:all 0.2s;" onmouseover="this.style.background='rgba(110,64,242,0.1)';this.style.borderColor='var(--accent)';" onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.borderColor='rgba(255,255,255,0.08)';">
+                  ${icon}
+                </a>
+              `;
+            }
+          }
+          if (linksHtml) {
+            socialHtml = `
+              <div>
+                <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">${t('Social Profiles & Links')}</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">${linksHtml}</div>
+              </div>
+            `;
+          }
+        }
+
+        const bioText = (u.role === 'Sponsor' || u.role === 'Company' ? p.company_description : p.bio) || u.bio || t('No bio provided yet.');
+
+        content.innerHTML = `
+          <!-- Header -->
+          <div style="display:flex;align-items:center;gap:14px;">
+            <img src="${avatar}" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--border);" />
+            <div>
+              <h4 style="margin:0;font-size:1.25rem;font-weight:800;color:#fff;" class="i18n-skip">${u.name}</h4>
+              <div style="display:flex;gap:6px;margin-top:6px;align-items:center;flex-wrap:wrap;">
+                <span style="${roleStyle};padding:2px 8px;border-radius:12px;font-size:0.65rem;font-weight:700;text-transform:uppercase;">${t(u.role)}</span>
+                ${p.company_type ? `<span style="background:rgba(110,64,242,0.1);color:var(--accent);border:1px solid rgba(110,64,242,0.2);padding:2px 8px;border-radius:12px;font-size:0.65rem;font-weight:700;">${p.company_type}</span>` : ''}
+              </div>
+            </div>
+          </div>
+
+          <!-- About -->
+          <div style="margin-top:4px;">
+            <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;">${t('About')}</div>
+            <p style="margin:0;color:rgba(255,255,255,0.75);font-size:0.88rem;line-height:1.6;" class="i18n-skip">${bioText}</p>
+          </div>
+
+          <!-- Contact Info -->
+          ${contactsHtml ? `
+            <div>
+              <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">${t('Contact Information')}</div>
+              <div style="display:flex;flex-direction:column;gap:8px;">${contactsHtml}</div>
+            </div>
+          ` : ''}
+
+          <!-- Socials -->
+          ${socialHtml}
+        `;
+      } catch (err) {
+        console.error(err);
+        content.innerHTML = `<div style="text-align:center;color:var(--danger);padding:20px;">${t('Failed to load profile')}</div>`;
+      }
+    }
+
+    function closeProfileModal() {
+      document.getElementById('profile-details-modal').classList.remove('open');
+      document.getElementById('profile-details-content').innerHTML = '';
     }
   </script>
 

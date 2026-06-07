@@ -22,7 +22,7 @@ class TokenGuestMiddleware
                     'Admin' => '/admin/dashboard',
                     'Event Manager' => '/manager/dashboard',
                     'Sponsor' => '/sponsor/dashboard',
-                    'User' => '/profile',
+                    'Attendee' => '/profile',
                     'Assistant' => '/profile'
                 ];
                 return redirect($map[$user->role] ?? '/profile');

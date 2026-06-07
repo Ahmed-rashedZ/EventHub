@@ -89,7 +89,7 @@ function requireRole(...roles) {
             'Event Manager': '/manager/dashboard',
             'Sponsor':       '/sponsor/dashboard',
             'Company':       '/company/dashboard',
-            'User':          '/profile',
+            'Attendee':      '/profile',
             'Assistant':     '/profile'
         };
         const target = dashMap[user.role] || '/login';

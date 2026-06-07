@@ -180,7 +180,7 @@ class AnalyticsController extends Controller
 
         $users = User::with('profile')
             ->where(function ($q) {
-                $q->whereIn('role', ['Admin', 'User', 'Assistant'])
+                $q->whereIn('role', ['Admin', 'Attendee', 'Assistant'])
                   ->orWhere(function ($q2) {
                       $q2->whereIn('role', ['Event Manager', 'Sponsor', 'Company'])
                          ->where('verification_status', 'verified');

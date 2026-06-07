@@ -363,7 +363,7 @@ function renderInvitations() {
     } else if (inv.status === 'accepted') {
       var timeStatus = inv.event ? inv.event.time_status : 'upcoming';
       if (timeStatus !== 'ended') {
-        actions = '<button class="cancel-btn" data-inv-id="' + inv.id + '" data-is-remove="true" style="background:rgba(239,68,68,0.1); color:#ef4444; border:1px solid rgba(239,68,68,0.25);">🗑️ ' + t('Remove') + '</button>';
+        actions = '<button class="cancel-btn" data-inv-id="' + inv.id + '" data-is-remove="true" style="background:rgba(239,68,68,0.1); color:#ef4444; border:1px solid rgba(239,68,68,0.25);">' + t('Remove') + '</button>';
       } else {
         actions = '<span style="font-size:0.75rem; color:var(--text-muted);" title="' + t('Cannot remove from ended event') + '">' + t('Ended') + '</span>';
       }

@@ -30,9 +30,9 @@ return new class extends Migration
                 'Admin',
                 'Event Manager',
                 'Sponsor',
-                'User',
+                'Attendee',
                 'Assistant'
-            ])->default('User');
+            ])->default('Attendee');
 
             $table->unsignedBigInteger('event_id')->nullable();
 
