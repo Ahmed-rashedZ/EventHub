@@ -614,12 +614,6 @@ class EventController extends Controller
         if ($event->published_schedule && is_array($event->published_schedule) && count($event->published_schedule) > 0) {
             $dates = collect($event->published_schedule)->pluck('date')->sort()->values();
             if ($dates->count() > 0) {
-                $firstDate = $dates->first();
-                $lastDate = $dates->last();
-                
-                $event->start_time = \Carbon\Carbon::parse($firstDate . ' ' . \Carbon\Carbon::parse($event->start_time)->format('H:i:s'));
-                $event->end_time = \Carbon\Carbon::parse($lastDate . ' ' . \Carbon\Carbon::parse($event->end_time)->format('H:i:s'));
-                
                 if ($event->agenda && is_array($event->agenda)) {
                     $filteredAgenda = [];
                     foreach ($event->agenda as $date => $items) {
@@ -1266,6 +1260,30 @@ class EventController extends Controller
             $eventSchedule->update(['published_schedule' => $request->published_schedule]);
         } else {
             $event->schedule()->create(['published_schedule' => $request->published_schedule]);
+        }
+
+        // Calculate and update the overall start_time and end_time in the events table
+        $dates = collect($request->published_schedule)->pluck('date')->sort()->values();
+        if ($dates->count() > 0) {
+            $firstDate = $dates->first();
+            $lastDate = $dates->last();
+            
+            $firstSlot = collect($request->published_schedule)->where('date', $firstDate)->first();
+            $lastSlot = collect($request->published_schedule)->where('date', $lastDate)->first();
+            
+            $startTimeStr = isset($firstSlot['start_time']) ? $firstSlot['start_time'] : Carbon::parse($event->start_time)->format('H:i:s');
+            $endTimeStr = isset($lastSlot['end_time']) ? $lastSlot['end_time'] : Carbon::parse($event->end_time)->format('H:i:s');
+
+            $newStartTime = Carbon::parse($firstDate . ' ' . $startTimeStr);
+            $newEndTime = Carbon::parse($lastDate . ' ' . $endTimeStr);
+            
+            $event->update([
+                'start_time' => $newStartTime,
+                'end_time' => $newEndTime,
+            ]);
+
+            // Clear previously sent event reminders so that they can be resent at the new schedule times
+            \App\Models\EventReminder::where('event_id', $event->id)->delete();
         }
 
         // is_published stays on the parent event
