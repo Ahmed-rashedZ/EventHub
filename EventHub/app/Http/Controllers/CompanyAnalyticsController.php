@@ -108,6 +108,22 @@ class CompanyAnalyticsController extends Controller
         ]);
     }
 
+    // GET /api/company/exhibitions/browse — exhibitions matching company category
+    public function browseExhibitions(Request $request)
+    {
+        $user = $request->user();
+        if ($user->role !== 'Company') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $events = Event::with('creator:id,name', 'venue')
+            ->browsableByCompany($user)
+            ->orderBy('start_time')
+            ->get();
+
+        return response()->json($events);
+    }
+
     // GET /api/company/exhibitions
     public function myExhibitions(Request $request)
     {

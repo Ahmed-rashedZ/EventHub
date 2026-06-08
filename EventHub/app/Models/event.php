@@ -28,6 +28,7 @@ class Event extends Model
         'created_by',
         'event_objective',
         'target_audience',
+        'company_category_slug',
         'is_exhibitor_registration_open',
     ];
 
@@ -247,6 +248,28 @@ class Event extends Model
         }
 
         return true;
+    }
+
+    public function matchesCompanyCategory(?string $companyCategorySlug): bool
+    {
+        if (!$this->is_exhibition || !$this->company_category_slug || !$companyCategorySlug) {
+            return false;
+        }
+
+        return $this->company_category_slug === $companyCategorySlug;
+    }
+
+    public function scopeBrowsableByCompany($query, User $company)
+    {
+        $slug = $company->profile?->company_type_slug;
+
+        return $query
+            ->where('is_exhibition', true)
+            ->where('status', 'approved')
+            ->where('is_published', true)
+            ->where('is_exhibitor_registration_open', true)
+            ->where('start_time', '>', now())
+            ->when($slug, fn ($q) => $q->where('company_category_slug', $slug), fn ($q) => $q->whereRaw('1 = 0'));
     }
 
     // ─── Backward-Compatible Accessors (Safety Net) ──────────────────────────

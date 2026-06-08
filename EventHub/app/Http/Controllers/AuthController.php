@@ -423,8 +423,15 @@ public function getAvailableCompanies(Request $request)
 {
     $companies = User::where('role', 'Company')
         ->where('verification_status', 'verified')
-        ->whereHas('profile', function($q) {
+        ->whereHas('profile', function ($q) use ($request) {
             $q->available();
+
+            if ($request->filled('event_id')) {
+                $event = Event::find($request->event_id);
+                if ($event?->company_category_slug) {
+                    $q->where('company_type_slug', $event->company_category_slug);
+                }
+            }
         })
         ->with(['profile.contacts'])
         ->get();

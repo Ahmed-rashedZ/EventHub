@@ -174,8 +174,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/assistant/history/{id}/stats',      [AssistantController::class, 'getEventStats']);
 
     // ── Company Analytics ──
-    Route::get('/company/analytics',    [CompanyAnalyticsController::class, 'overview']);
-    Route::get('/company/exhibitions',  [CompanyAnalyticsController::class, 'myExhibitions']);
+    Route::get('/company/analytics',           [CompanyAnalyticsController::class, 'overview']);
+    Route::get('/company/exhibitions/browse',  [CompanyAnalyticsController::class, 'browseExhibitions']);
+    Route::get('/company/exhibitions',         [CompanyAnalyticsController::class, 'myExhibitions']);
 });
 
 // ── Storage Proxy for CORS (Flutter Web Fix) ──
