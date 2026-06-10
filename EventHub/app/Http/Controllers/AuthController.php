@@ -107,6 +107,7 @@ public function registerPartner(Request $request)
         'doc_practice_license.max' => 'الملفات يجب ان لا تتجاوز 5 ميغابايت',
 
         'email.unique' => 'البريد الإلكتروني مأخوذ بالفعل',
+        'account.suspended' => 'تم تعليق حسابك. يرجى الاتصال بالدعم',
     ];
 
     $request->validate($rules, $messages);
@@ -181,7 +182,7 @@ public function registerPartner(Request $request)
     $platform = $request->input('platform', 'mobile'); // Default to mobile if not specified
 
     if (!Auth::attempt($credentials)) {
-        return response()->json(['message' => 'Invalid credentials'], 401);
+        return response()->json(['message' => 'بيانات اعتماد غير صحيحة'], 401);
     }
 
     /** @var \App\Models\User $user */
@@ -189,7 +190,7 @@ public function registerPartner(Request $request)
 
     if (!$user->is_active) {
         Auth::logout();
-        return response()->json(['message' => 'Your account has been suspended. Please contact support.'], 403);
+        return response()->json(['message' => 'تم تعليق حسابك. يرجى الاتصال بالدعم'], 403);
     }
 
     // ── Platform-Based Role Restrictions ──

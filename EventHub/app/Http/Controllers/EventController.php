@@ -102,8 +102,8 @@ class EventController extends Controller
             $venue = \App\Models\Venue::find($request->venue_id);
             if ($venue && $request->capacity && $request->capacity > $venue->capacity) {
                 return response()->json([
-                    'message' => "Capacity cannot exceed the venue's total capacity of {$venue->capacity}.",
-                    'errors' => ['capacity' => ["Maximum allowed capacity is {$venue->capacity}."]]
+                    'message' => "السعة لا يمكنها أن تتجاوز السعة الإجمالية للمكان {$venue->capacity}.",
+                    'errors' => ['capacity' => ["أقصى سعة مسموحة هي {$venue->capacity}."]]
                 ], 422);
             }
 
@@ -670,7 +670,7 @@ class EventController extends Controller
                         }
 
                         if ($prevEnd !== null && $item['start_time'] < $prevEnd) {
-                            return response()->json(['message' => "Overlapping agenda items are not allowed on $day."], 422);
+                            return response()->json(['message' => "عناصر جدول الأعمال المتداخلة في $day غير مسموحة."], 422);
                         }
                         $prevEnd = $item['end_time'];
                     }

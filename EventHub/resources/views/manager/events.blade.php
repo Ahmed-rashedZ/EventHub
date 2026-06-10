@@ -1305,7 +1305,7 @@
             break;
           }
           if (i > 0 && item.start_time < items[i - 1].end_time) {
-            showToast(isAr ? `تداخل في الاوقات في ${day} غير مسموح.` : `Overlapping agenda items in ${day} are not allowed.`, 'error');
+            showToast(isAr ? `عناصر جدول الأعمال المتداخلة في ${day} غير مسموحة.` : `Overlapping agenda items in ${day} are not allowed.`, 'error');
             isValid = false;
             break;
           }
@@ -2843,7 +2843,7 @@
             break;
           }
           if (i > 0 && item.start_time < items[i - 1].end_time) {
-            showToast(`Overlapping agenda items in ${day} are not allowed.`, 'error');
+            showToast(`عناصر جدول الأعمال المتداخلة في ${day} غير مسموحة.`, 'error');
             isValidAgenda = false;
             break;
           }

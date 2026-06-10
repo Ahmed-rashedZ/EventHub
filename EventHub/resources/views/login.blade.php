@@ -8,6 +8,12 @@
   <link rel="stylesheet" href="/css/style.css"/>
   <script src="/js/i18n.js"></script>
 <link rel="icon" href="/images/logo.png" type="image/png">
+<style>
+  .form-control.error {
+    border: 2px solid #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+  }
+</style>
 </head>
 <body>
 <div class="auth-page">
@@ -84,6 +90,11 @@
   document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = document.getElementById('login-btn');
+    const passwordInput = document.getElementById('password');
+    
+    // إزالة class الخطأ عند محاولة جديدة
+    passwordInput.classList.remove('error');
+    
     btn.textContent = 'Signing in…'; btn.disabled = true;
 
     const res = await api.post('/login', {
@@ -106,6 +117,8 @@
         }
       }, 600);
     } else {
+      // إضافة border أحمر على حقل كلمة المرور عند فشل تسجيل الدخول
+      passwordInput.classList.add('error');
       showToast(res.data?.message || 'Login failed', 'error');
       btn.textContent = 'Sign In'; btn.disabled = false;
     }
