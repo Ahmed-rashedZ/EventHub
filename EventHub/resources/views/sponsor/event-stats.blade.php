@@ -100,8 +100,8 @@
         <div class="es-stat">
           <div class="es-stat-stripe" style="background:#6e40f2"></div>
           <div class="es-stat-icon" style="background:rgba(110,64,242,.15); display:inline-flex; align-items:center; justify-content:center;">
-            <svg xmlns="http://www.w3.org/2000/svg" style="width:20px;height:20px;color:#6e40f2;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-          </div>
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+            </div>
           <div class="es-stat-label">Capacity</div>
           <div class="es-stat-value" id="s-capacity">—</div>
           <div class="es-stat-sub">Max attendees</div>
@@ -109,8 +109,8 @@
         <div class="es-stat">
           <div class="es-stat-stripe" style="background:#22d3ee"></div>
           <div class="es-stat-icon" style="background:rgba(34,211,238,.15); display:inline-flex; align-items:center; justify-content:center;">
-            <svg xmlns="http://www.w3.org/2000/svg" style="width:20px;height:20px;color:#22d3ee;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" /></svg>
-          </div>
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-12v.75m0 3v.75m0 3v.75m0 3V18M3 6.75A1.75 1.75 0 014.75 5h14.5A1.75 1.75 0 0121 6.75v10.5a1.75 1.75 0 01-1.75 1.75H4.75A1.75 1.75 0 013 17.25V6.75z" /></svg>
+            </div>
           <div class="es-stat-label">Registered</div>
           <div class="es-stat-value" id="s-registered">—</div>
           <div class="es-stat-sub" id="s-registered-sub"></div>
@@ -163,8 +163,8 @@
         </div>
         <div class="es-card">
           <div class="es-card-title">
-            <svg xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px;color:var(--text-muted);display:inline-block;vertical-align:middle;margin-right:6px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> Capacity Breakdown
-          </div>
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg> Capacity Breakdown
+            </div>
           <div class="es-chart-wrap"><canvas id="capChart"></canvas></div>
         </div>
       </div>

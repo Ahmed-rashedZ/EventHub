@@ -98,7 +98,7 @@
         <div class="es-stat">
           <div class="es-stat-stripe" style="background:#6e40f2"></div>
           <div class="es-stat-icon" style="background:rgba(110,64,242,.15); color:#6e40f2; display:flex; align-items:center; justify-content:center;">
-            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.109A11.978 11.978 0 0112 19.5c-1.21 0-2.38-.18-3.484-.512v-.079c0-1.057.277-2.051.765-2.912M13.5 10.986a5.034 5.034 0 003.882-4.908 5.034 5.034 0 00-3.882-4.908M9.75 8.986a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.55 12.014a4.195 4.195 0 001.2-2.932 4.197 4.197 0 00-1.2-2.932M7.485 12H4.625a4.125 4.125 0 00-7.533 2.493M9.007 19.988v-3.07" /></svg>
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
           </div>
           <div class="es-stat-label">Capacity</div>
           <div class="es-stat-value" id="s-capacity">—</div>

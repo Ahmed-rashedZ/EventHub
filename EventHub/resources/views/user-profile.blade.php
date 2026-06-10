@@ -771,7 +771,7 @@
               <div><div class="ed-info-label">${t('Capacity')}</div><div class="ed-info-value">${ev.capacity ? ev.capacity : t('Unlimited')}</div></div>
             </div>
             <div class="ed-info-card ed-info-warning">
-              <div class="ed-info-icon" style="display:flex; align-items:center; justify-content:center;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.109A11.978 11.978 0 0112 19.5c-1.21 0-2.38-.18-3.484-.512v-.079c0-1.057.277-2.051.765-2.912M13.5 10.986a5.034 5.034 0 003.882-4.908 5.034 5.034 0 00-3.882-4.908M9.75 8.986a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.55 12.014a4.195 4.195 0 001.2-2.932 4.197 4.197 0 00-1.2-2.932M7.485 12H4.625a4.125 4.125 0 00-7.533 2.493M9.007 19.988v-3.07" /></svg></div>
+              <div class="ed-info-icon" style="display:flex; align-items:center; justify-content:center;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-12v.75m0 3v.75m0 3v.75m0 3V18M3 6.75A1.75 1.75 0 014.75 5h14.5A1.75 1.75 0 0121 6.75v10.5a1.75 1.75 0 01-1.75 1.75H4.75A1.75 1.75 0 013 17.25V6.75z" /></svg></div>
               <div><div class="ed-info-label">${t('Tickets Booked')}</div><div class="ed-info-value">${ev.tickets_count ?? '—'}</div></div>
             </div>
           </div>
