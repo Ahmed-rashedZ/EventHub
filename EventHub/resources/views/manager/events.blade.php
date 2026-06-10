@@ -19,7 +19,10 @@
 <body>
   <div class="app-layout">
     <aside class="sidebar">
-      <div class="sidebar-logo" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;"><img src="/images/logo.png?v=3" alt="EventHub Logo" style="height: 60px; width: auto; object-fit: contain; background: transparent !important;"></div>
+      <div class="sidebar-logo"
+        style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;"><img
+          src="/images/logo.png?v=3" alt="EventHub Logo"
+          style="height: 60px; width: auto; object-fit: contain; background: transparent !important;"></div>
       <nav class="sidebar-nav" id="sidebar-links"></nav>
       @include('partials._sidebar-footer')
     </aside>
@@ -120,7 +123,8 @@
             </div>
           </div>
           <span id="wiz-label-1"
-            style="font-size: 0.7rem; font-weight: 600; color: #c4b5fd; letter-spacing: 0.03em; transition: color 0.3s;">Event Details</span>
+            style="font-size: 0.7rem; font-weight: 600; color: #c4b5fd; letter-spacing: 0.03em; transition: color 0.3s;">Event
+            Details</span>
         </div>
         <div class="wiz-step" id="wiz-dot-2"
           style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer;"
@@ -132,7 +136,8 @@
             <div style="flex: 1;"></div>
           </div>
           <span id="wiz-label-2"
-            style="font-size: 0.7rem; font-weight: 600; color: #64748b; letter-spacing: 0.03em; transition: color 0.3s;">Booking & Settings</span>
+            style="font-size: 0.7rem; font-weight: 600; color: #64748b; letter-spacing: 0.03em; transition: color 0.3s;">Booking
+            & Settings</span>
         </div>
       </div>
 
@@ -179,33 +184,44 @@
                   <script>document.write(t('Exhibition'))</script>
                 </option>
               </select>
-              <div id="exhibition-hint" style="display:none; margin-top:8px; padding:10px; background:rgba(139,92,246,0.1); border:1px dashed rgba(139,92,246,0.3); border-radius:10px;">
+              <div id="exhibition-hint"
+                style="display:none; margin-top:8px; padding:10px; background:rgba(139,92,246,0.1); border:1px dashed rgba(139,92,246,0.3); border-radius:10px;">
                 <div style="display:flex; align-items:center; gap:8px; font-size:0.85rem; color:#c4b5fd;">
                   <span></span>
-                  <p style="margin:0;"><script>document.write(t('Exhibition features (booths, company applications, and contracts) will be enabled for this event.'))</script></p>
+                  <p style="margin:0;">
+                    <script>document.write(t('Exhibition features (booths, company applications, and contracts) will be enabled for this event.'))</script>
+                  </p>
                 </div>
               </div>
             </div>
 
             <!-- AI Description Suggestion Card -->
-            <div id="ai-desc-card" style="display:none; margin-bottom:16px; padding:14px 16px; background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(6,182,212,0.06)); border:1px solid rgba(139,92,246,0.25); border-radius:14px; position:relative; overflow:hidden; transition: all 0.3s ease;">
-              <div style="position:absolute; top:-20px; right:-20px; width:80px; height:80px; background:radial-gradient(circle, rgba(139,92,246,0.15), transparent); border-radius:50%;"></div>
+            <div id="ai-desc-card"
+              style="display:none; margin-bottom:16px; padding:14px 16px; background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(6,182,212,0.06)); border:1px solid rgba(139,92,246,0.25); border-radius:14px; position:relative; overflow:hidden; transition: all 0.3s ease;">
+              <div
+                style="position:absolute; top:-20px; right:-20px; width:80px; height:80px; background:radial-gradient(circle, rgba(139,92,246,0.15), transparent); border-radius:50%;">
+              </div>
               <div style="display:flex; align-items:center; gap:12px;">
-                <div style="width:38px; height:38px; border-radius:12px; background:linear-gradient(135deg, #8b5cf6, #06b6d4); display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; box-shadow: 0 4px 12px rgba(139,92,246,0.3);">🤖</div>
+                <div
+                  style="width:38px; height:38px; border-radius:12px; background:linear-gradient(135deg, #8b5cf6, #06b6d4); display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; box-shadow: 0 4px 12px rgba(139,92,246,0.3);">
+                  🤖</div>
                 <div style="flex:1; min-width:0;">
                   <!-- Prompt State -->
                   <div id="ai-desc-prompt">
-                    <div style="font-size:0.72rem; font-weight:700; color:#a78bfa; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:3px;">
+                    <div
+                      style="font-size:0.72rem; font-weight:700; color:#a78bfa; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:3px;">
                       <script>document.write(t('AI Assistant'))</script>
                     </div>
                     <div style="font-size:0.85rem; color:#e2e8f0; margin-bottom:8px;">
                       <script>document.write(t('Want AI to generate a description based on your title?'))</script>
                     </div>
                     <div style="display:flex; gap:8px;">
-                      <button type="button" id="ai-desc-generate-btn" onclick="generateAIDescription()" style="padding:6px 16px; background:linear-gradient(135deg, #8b5cf6, #7c3aed); color:#fff; border:none; border-radius:8px; font-size:0.8rem; font-weight:600; cursor:pointer; transition:all 0.2s; box-shadow:0 2px 8px rgba(139,92,246,0.3);">
+                      <button type="button" id="ai-desc-generate-btn" onclick="generateAIDescription()"
+                        style="padding:6px 16px; background:linear-gradient(135deg, #8b5cf6, #7c3aed); color:#fff; border:none; border-radius:8px; font-size:0.8rem; font-weight:600; cursor:pointer; transition:all 0.2s; box-shadow:0 2px 8px rgba(139,92,246,0.3);">
                         <script>document.write(t('Generate'))</script>
                       </button>
-                      <button type="button" onclick="dismissAIDesc()" style="padding:6px 12px; background:rgba(255,255,255,0.06); color:#94a3b8; border:1px solid rgba(255,255,255,0.1); border-radius:8px; font-size:0.8rem; cursor:pointer; transition:all 0.2s;">
+                      <button type="button" onclick="dismissAIDesc()"
+                        style="padding:6px 12px; background:rgba(255,255,255,0.06); color:#94a3b8; border:1px solid rgba(255,255,255,0.1); border-radius:8px; font-size:0.8rem; cursor:pointer; transition:all 0.2s;">
                         <script>document.write(t('No thanks'))</script>
                       </button>
                     </div>
@@ -221,7 +237,8 @@
                   </div>
                   <!-- Success State -->
                   <div id="ai-desc-success" style="display:none;">
-                    <div style="font-size:0.72rem; font-weight:700; color:#10b981; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:3px;">
+                    <div
+                      style="font-size:0.72rem; font-weight:700; color:#10b981; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:3px;">
                       <script>document.write(t('Description Generated!'))</script>
                     </div>
                     <div style="font-size:0.82rem; color:#94a3b8;">
@@ -240,8 +257,11 @@
                 rows="3"></textarea>
             </div>
             <div class="form-group">
-              <label class="form-label"><script>document.write(t('Event Banner Image'))</script></label>
-              <input id="e-image" type="file" accept="image/*" class="form-control" style="padding: 7px 10px;" required />
+              <label class="form-label">
+                <script>document.write(t('Event Banner Image'))</script>
+              </label>
+              <input id="e-image" type="file" accept="image/*" class="form-control" style="padding: 7px 10px;"
+                required />
               <div id="banner-preview"
                 style="display:none; margin-top:10px; border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,0.06);">
                 <img id="banner-preview-img" src=""
@@ -296,7 +316,7 @@
                   </select>
                   <div
                     style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; opacity: 0.7;">
-                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -308,15 +328,19 @@
                     style="padding-left: 42px; background-color: rgba(255,255,255,0.02);" />
                   <div
                     style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; opacity: 0.7;">
-                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
             <div id="internal-fields">
               <div class="form-group" style="margin-top: 16px;">
-                <label class="form-label"><script>document.write(t('Select Event Days'))</script></label>
-                <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:8px;"><script>document.write(t('Click on days to select them. Max span: 14 days between first and last day.'))</script></small>
+                <label class="form-label">
+                  <script>document.write(t('Select Event Days'))</script>
+                </label>
+                <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:8px;">
+                  <script>document.write(t('Click on days to select them. Max span: 14 days between first and last day.'))</script>
+                </small>
                 <div id="e-int-calendar-wrap"
                   style="border:1px solid rgba(139,92,246,0.15);border-radius:16px;overflow:hidden;"></div>
                 <input id="e-booking-date" type="text" style="display:none;" />
@@ -326,19 +350,30 @@
 
             <div id="external-fields" style="display: none;">
               <div class="form-group">
-                <label class="form-label"><script>document.write(t('Google Maps Link'))</script></label>
+                <label class="form-label">
+                  <script>document.write(t('Google Maps Link'))</script>
+                </label>
                 <input id="e-ext-location" type="url" class="form-control" placeholder="https://maps.google.com/..." />
               </div>
               <div class="form-group">
-                <label class="form-label"><script>document.write(t('Proof of Booking (PDF/Image)'))</script></label>
-                <input id="e-booking-proof" type="file" accept=".pdf,image/*" class="form-control" style="padding:7px 10px;" />
-                <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block"><script>document.write(t('Required. Upload official confirmation of the external booking.'))</script></small>
+                <label class="form-label">
+                  <script>document.write(t('Proof of Booking (PDF/Image)'))</script>
+                </label>
+                <input id="e-booking-proof" type="file" accept=".pdf,image/*" class="form-control"
+                  style="padding:7px 10px;" />
+                <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block">
+                  <script>document.write(t('Required. Upload official confirmation of the external booking.'))</script>
+                </small>
               </div>
 
               <!-- Multi-day Calendar -->
               <div class="form-group">
-                <label class="form-label"><script>document.write(t('Select Event Days'))</script></label>
-                <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:8px;"><script>document.write(t('Click on days to select them. Max span: 14 days between first and last day.'))</script></small>
+                <label class="form-label">
+                  <script>document.write(t('Select Event Days'))</script>
+                </label>
+                <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:8px;">
+                  <script>document.write(t('Click on days to select them. Max span: 14 days between first and last day.'))</script>
+                </small>
                 <div id="e-ext-calendar-wrap"
                   style="border:1px solid rgba(139,92,246,0.15);border-radius:16px;overflow:hidden;"></div>
               </div>
@@ -364,25 +399,35 @@
                 placeholder="e.g. Students, Professionals, General Public" required />
             </div>
             <!-- AI Attendance Prediction Card -->
-            <div id="ai-prediction-card" style="display:none; margin-bottom:16px; padding:16px 18px; background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(6,182,212,0.06)); border:1px solid rgba(16,185,129,0.25); border-radius:14px; position:relative; overflow:hidden;">
-              <div style="position:absolute; top:-20px; right:-20px; width:80px; height:80px; background:radial-gradient(circle, rgba(16,185,129,0.15), transparent); border-radius:50%;"></div>
+            <div id="ai-prediction-card"
+              style="display:none; margin-bottom:16px; padding:16px 18px; background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(6,182,212,0.06)); border:1px solid rgba(16,185,129,0.25); border-radius:14px; position:relative; overflow:hidden;">
+              <div
+                style="position:absolute; top:-20px; right:-20px; width:80px; height:80px; background:radial-gradient(circle, rgba(16,185,129,0.15), transparent); border-radius:50%;">
+              </div>
               <div style="display:flex; align-items:flex-start; gap:12px;">
-                <div style="width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg, #10b981, #06b6d4); display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0; box-shadow: 0 4px 12px rgba(16,185,129,0.3);"></div>
+                <div
+                  style="width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg, #10b981, #06b6d4); display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0; box-shadow: 0 4px 12px rgba(16,185,129,0.3);">
+                </div>
                 <div style="flex:1; min-width:0;">
-                  <div style="font-size:0.7rem; font-weight:700; color:#10b981; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px;">
+                  <div
+                    style="font-size:0.7rem; font-weight:700; color:#10b981; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px;">
                     <script>document.write(t('AI Attendance Prediction'))</script>
                   </div>
                   <div id="ai-prediction-loading" style="display:none;">
                     <div style="display:flex; align-items:center; gap:8px;">
                       <div class="spinner" style="width:18px; height:18px; border-width:2px;"></div>
-                      <span style="font-size:0.8rem; color:#94a3b8;"><script>document.write(t('Analyzing event data...'))</script></span>
+                      <span style="font-size:0.8rem; color:#94a3b8;">
+                        <script>document.write(t('Analyzing event data...'))</script>
+                      </span>
                     </div>
                   </div>
                   <div id="ai-prediction-result" style="display:none;">
                     <div style="font-size:1.4rem; font-weight:800; color:#fff; line-height:1.2;">
-                      <script>document.write(t('Expected Attendance:'))</script> <span id="ai-predicted-number" style="color:#10b981;"></span>
+                      <script>document.write(t('Expected Attendance:'))</script> <span id="ai-predicted-number"
+                        style="color:#10b981;"></span>
                     </div>
-                    <div id="ai-prediction-hint" style="font-size:0.78rem; color:#94a3b8; margin-top:6px; line-height:1.4;"></div>
+                    <div id="ai-prediction-hint"
+                      style="font-size:0.78rem; color:#94a3b8; margin-top:6px; line-height:1.4;"></div>
                   </div>
                   <div id="ai-prediction-error" style="display:none; font-size:0.8rem; color:#f59e0b;"></div>
                 </div>
@@ -390,30 +435,46 @@
             </div>
             <div class="form-group">
               <label class="form-label">Capacity</label>
-              <div style="display:flex; gap:15px; margin-bottom:10px; background:rgba(255,255,255,0.03); padding:8px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.05);">
-                <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.85rem; color:#fff;">
-                  <input type="radio" name="capacity_type" value="fixed" checked onchange="toggleCapacityInput('create', this.value)" style="width:16px; height:16px; accent-color:#8b5cf6;"> <script>document.write(t('Fixed Number'))</script>
+              <div
+                style="display:flex; gap:15px; margin-bottom:10px; background:rgba(255,255,255,0.03); padding:8px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.05);">
+                <label
+                  style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.85rem; color:#fff;">
+                  <input type="radio" name="capacity_type" value="fixed" checked
+                    onchange="toggleCapacityInput('create', this.value)"
+                    style="width:16px; height:16px; accent-color:#8b5cf6;">
+                  <script>document.write(t('Fixed Number'))</script>
                 </label>
-                <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.85rem; color:#fff;">
-                  <input type="radio" name="capacity_type" value="unlimited" onchange="toggleCapacityInput('create', this.value)" style="width:16px; height:16px; accent-color:#8b5cf6;"> <script>document.write(t('Unlimited'))</script> (مفتوح)
+                <label
+                  style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.85rem; color:#fff;">
+                  <input type="radio" name="capacity_type" value="unlimited"
+                    onchange="toggleCapacityInput('create', this.value)"
+                    style="width:16px; height:16px; accent-color:#8b5cf6;">
+                  <script>document.write(t('Unlimited'))</script> (مفتوح)
                 </label>
               </div>
               <div id="capacity-input-wrap">
                 <input id="e-capacity" type="number" class="form-control" placeholder="200" min="1" required />
               </div>
             </div>
-             <div class="form-group">
-               <label class="form-label"><script>document.write(t('Competent Authority Approval'))</script></label>
-               <input id="e-ministry-doc" type="file" accept=".pdf,image/*" class="form-control" style="padding: 7px 10px;" required />
-               <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block"><script>document.write(t('Required. Upload the official approval from the relevant competent authority for this event.'))</script></small>
-             </div>
+            <div class="form-group">
+              <label class="form-label">
+                <script>document.write(t('Competent Authority Approval'))</script>
+              </label>
+              <input id="e-ministry-doc" type="file" accept=".pdf,image/*" class="form-control"
+                style="padding: 7px 10px;" required />
+              <small style="color:var(--text-muted);font-size:12px;margin-top:4px;display:block">
+                <script>document.write(t('Required. Upload the official approval from the relevant competent authority for this event.'))</script>
+              </small>
+            </div>
           </div>
 
           <!-- Agenda Section -->
           <div class="form-section" style="margin-bottom: 0;">
             <div class="form-section-title">
               <script>document.write(t('Event Agenda'))</script>
-              <small style="font-weight:400;color:var(--danger);font-size:0.75rem;"><script>document.write(t('(Required)'))</script></small>
+              <small style="font-weight:400;color:var(--danger);font-size:0.75rem;">
+                <script>document.write(t('(Required)'))</script>
+              </small>
             </div>
             <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:12px;">
               <script>document.write(t('Define the schedule/program for your event. You must add at least one agenda item.'))</script>
@@ -422,7 +483,8 @@
             <div id="agenda-items-create" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
             <button type="button" class="btn btn-ghost btn-sm" onclick="addAgendaItem('agenda-items-create')"
               style="display:flex;align-items:center;gap:6px;">
-              <span style="font-size:1.1rem;">+</span> <script>document.write(t('Add Agenda Item'))</script>
+              <span style="font-size:1.1rem;">+</span>
+              <script>document.write(t('Add Agenda Item'))</script>
             </button>
           </div>
 
@@ -455,7 +517,8 @@
         style="margin: 16px 0; padding: 12px 16px; background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.15); border-radius: 10px;">
         <div
           style="font-size:0.65rem;font-weight:700;color:#f59e0b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">
-          <script>document.write(t("Admin's Review"))</script></div>
+          <script>document.write(t("Admin's Review"))</script>
+        </div>
         <div id="edit-review-msg" style="font-size:0.75rem;color:#e2e8f0;line-height:1.4;"></div>
       </div>
 
@@ -482,7 +545,7 @@
   <script>
     function getContactIcon(type) {
       const svgStyle = 'width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2; display:block;';
-      switch(type.toLowerCase()) {
+      switch (type.toLowerCase()) {
         case 'email':
         case 'contact_email':
           return `<svg style="${svgStyle}" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>`;
@@ -1050,28 +1113,28 @@
                   const d = new Date(dateStr + 'T00:00:00');
                   const dayLabel = `${dn[d.getDay()]} ${d.getDate()} ${mn[d.getMonth()]} ${d.getFullYear()}`;
                   agendaHtml += `<div style="margin-bottom:10px;"><div style="font-size:0.68rem;font-weight:600;color:#a78bfa;margin-bottom:6px;padding:4px 10px;background:rgba(139,92,246,0.08);border-radius:6px;display:inline-flex;align-items:center;gap:6px;"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg> ${dayLabel}</div><div style="display:flex;flex-direction:column;gap:4px;">`;
-                    items.forEach(a => {
-                      agendaHtml += `<div style="display:flex;flex-direction:column;gap:4px;background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:10px;padding:8px 14px;margin:0 8px;">
+                  items.forEach(a => {
+                    agendaHtml += `<div style="display:flex;flex-direction:column;gap:4px;background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:10px;padding:8px 14px;margin:0 8px;">
                         <div style="display:flex;align-items:center;gap:10px;">
                           <div style="display:flex;align-items:center;gap:6px;min-width:110px;"><span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.start_time}</span><span style="color:#64748b;font-size:0.7rem;">→</span><span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.end_time}</span></div>
                           <div style="flex:1;font-size:0.85rem;color:#e2e8f0;font-weight:500;">${a.title}</div>
                         </div>
                         ${a.description ? `<div style="font-size:0.78rem;color:#94a3b8;margin-top:4px;padding-inline-start:12px;border-inline-start:2px solid rgba(34,211,238,0.2);text-align:start;line-height:1.4;">${a.description}</div>` : ''}
                       </div>`;
-                    });
-                    agendaHtml += `</div></div>`;
                   });
-                } else if (Array.isArray(agenda)) {
-                  agendaHtml += `<div style="display:flex;flex-direction:column;gap:4px;">`;
-                  agenda.forEach(a => {
-                    agendaHtml += `<div style="display:flex;flex-direction:column;gap:4px;background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:10px;padding:8px 14px;margin:0 8px;">
+                  agendaHtml += `</div></div>`;
+                });
+              } else if (Array.isArray(agenda)) {
+                agendaHtml += `<div style="display:flex;flex-direction:column;gap:4px;">`;
+                agenda.forEach(a => {
+                  agendaHtml += `<div style="display:flex;flex-direction:column;gap:4px;background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:10px;padding:8px 14px;margin:0 8px;">
                       <div style="display:flex;align-items:center;gap:10px;">
                         <div style="display:flex;align-items:center;gap:6px;min-width:110px;"><span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.start_time}</span><span style="color:#64748b;font-size:0.7rem;">→</span><span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.end_time}</span></div>
                         <div style="flex:1;font-size:0.85rem;color:#e2e8f0;font-weight:500;">${a.title}</div>
                       </div>
                       ${a.description ? `<div style="font-size:0.78rem;color:#94a3b8;margin-top:4px;padding-inline-start:12px;border-inline-start:2px solid rgba(34,211,238,0.2);text-align:start;line-height:1.4;">${a.description}</div>` : ''}
                     </div>`;
-                  });
+                });
                 agendaHtml += `</div>`;
               }
               agendaHtml += `</div>`;
@@ -1400,7 +1463,7 @@
           const startEl = card.querySelector('.int-slot-start');
           const endEl = card.querySelector('.int-slot-end');
           if (startEl && endEl) return { start: startEl.value, end: endEl.value };
-          
+
           const period = card.querySelector('.int-slot-period')?.value;
           const venueId = document.getElementById('e-venue').value;
           const venue = globalVenues.find(v => v.id == venueId);
@@ -1498,13 +1561,13 @@
         const isOpen = res.data.event.is_exhibitor_registration_open;
         const canAccept = res.data.can_accept_exhibitors;
         if (isOpen) {
-            if (canAccept) {
-                showToast(t('Exhibitor registration is now OPEN.'), 'success');
-            } else {
-                showToast(t('Registration toggled ON, but it remains inactive due to the 60-day deadline.'), 'info');
-            }
+          if (canAccept) {
+            showToast(t('Exhibitor registration is now OPEN.'), 'success');
+          } else {
+            showToast(t('Registration toggled ON, but it remains inactive due to the 60-day deadline.'), 'info');
+          }
         } else {
-            showToast(t('Exhibitor registration is now CLOSED.'), 'success');
+          showToast(t('Exhibitor registration is now CLOSED.'), 'success');
         }
       } else {
         showToast(res.data?.message || t('Error updating status'), 'error');
@@ -1743,7 +1806,7 @@
         const date = card.dataset.date;
         let periodEl = card.querySelector('input.int-slot-period');
         if (!periodEl) periodEl = card.querySelector('select.int-slot-period');
-        
+
         const period = periodEl ? periodEl.value : '';
         const startEl = card.querySelector('.int-slot-start');
         const endEl = card.querySelector('.int-slot-end');
@@ -1998,7 +2061,7 @@
 
       // Add event listener to auto-hide if changed in the editor modal
       // Helper to update bounds for a specific agenda item
-      window.updateAgendaItemBounds = function(agendaItem, forceFill = false) {
+      window.updateAgendaItemBounds = function (agendaItem, forceFill = false) {
         const dateSelect = agendaItem.querySelector('.agenda-date');
         const startInput = agendaItem.querySelector('.agenda-start');
         const endInput = agendaItem.querySelector('.agenda-end');
@@ -2034,7 +2097,7 @@
       };
 
       // Helper to update all agenda items for a specific date
-      window.updateAgendaBoundsForDate = function(dateStr, forceFill = false) {
+      window.updateAgendaBoundsForDate = function (dateStr, forceFill = false) {
         document.querySelectorAll('.agenda-item').forEach(item => {
           const dateSelect = item.querySelector('.agenda-date');
           if (dateSelect && dateSelect.value === dateStr) {
@@ -2060,9 +2123,9 @@
 
     async function loadVenues() {
       const res = await api.get('/venues');
-      if (!res.ok) { 
-        document.getElementById('e-venue').innerHTML = '<option value="">No venues available</option>'; 
-        return; 
+      if (!res.ok) {
+        document.getElementById('e-venue').innerHTML = '<option value="">No venues available</option>';
+        return;
       }
       globalVenues = res.data;
       renderVenues(document.getElementById('e-type').value);
@@ -2071,7 +2134,7 @@
     function renderVenues(eventType) {
       const sel = document.getElementById('e-venue');
       const isExhibition = eventType === 'معرض';
-      
+
       const filtered = globalVenues.filter(v => {
         const isFairVenue = v.name.includes('معرض');
         return isExhibition ? isFairVenue : !isFairVenue;
@@ -2080,11 +2143,11 @@
       if (filtered.length === 0) {
         sel.innerHTML = `<option value="">${document.documentElement.lang === 'ar' ? 'لا توجد قاعات متاحة لهذا النوع حالياً' : 'No halls available for this type currently'}</option>`;
       } else {
-        const placeholder = isExhibition 
+        const placeholder = isExhibition
           ? (document.documentElement.lang === 'ar' ? 'اختر المعرض...' : 'Select the exhibition...')
           : (document.documentElement.lang === 'ar' ? 'اختر القاعة...' : 'Select a hall...');
-          
-        sel.innerHTML = `<option value="">${placeholder}</option>` + 
+
+        sel.innerHTML = `<option value="">${placeholder}</option>` +
           filtered.map(v => `<option value="${v.id}">${v.name}</option>`).join('');
       }
     }
@@ -2440,11 +2503,11 @@
           document.getElementById('ai-desc-loading').style.display = 'none';
           const errEl = document.getElementById('ai-desc-error');
           errEl.style.display = 'block';
-          
+
           // Check for rate limit error
           const detail = res.data?.detail || res.data?.message || '';
           const isRateLimit = detail.toLowerCase().includes('rate limit') || detail.toLowerCase().includes('quota') || res.status === 429;
-          
+
           if (isRateLimit) {
             errEl.textContent = document.documentElement.lang === 'ar' ? '⏳ تم تجاوز الحد المسموح. انتظر دقيقة وحاول مرة أخرى.' : '⏳ Rate limit reached. Please wait a minute and try again.';
           } else {
@@ -2665,7 +2728,7 @@
     // Exhibition Hint Toggle Logic
     const eTypeEl = document.getElementById('e-type');
     if (eTypeEl) {
-      eTypeEl.addEventListener('change', function() {
+      eTypeEl.addEventListener('change', function () {
         const hint = document.getElementById('exhibition-hint');
         if (this.value === 'معرض') {
           hint.style.display = 'block';
@@ -2678,7 +2741,7 @@
     }
 
     // Global modal functions
-    window.openModal = window.openModal || function() {
+    window.openModal = window.openModal || function () {
       const modal = document.getElementById('event-modal');
       if (modal) {
         modal.classList.add('open');
@@ -2691,13 +2754,13 @@
       }
     };
 
-    window.closeModal = window.closeModal || function() {
+    window.closeModal = window.closeModal || function () {
       const modal = document.getElementById('event-modal');
       if (modal) modal.classList.remove('open');
     };
 
     // Delegated listener for Edit Modal type change
-    document.addEventListener('change', function(e) {
+    document.addEventListener('change', function (e) {
       if (e.target && e.target.id === 'edit-type') {
         // Handle edit modal logic if needed
       }
@@ -2718,7 +2781,7 @@
         formData.append('venue_id', document.getElementById('e-venue').value);
 
         const internalSchedule = buildInternalSchedule();
-        
+
         if (intSelectedDates.length === 0) {
           showToast('Please select at least one day for the venue.', 'error');
           return;
@@ -3018,12 +3081,12 @@
 
     // Patch the calendar onChange handlers to also trigger AI prediction
     const _origRenderIntTimeSlots = renderIntTimeSlots;
-    renderIntTimeSlots = function() {
+    renderIntTimeSlots = function () {
       _origRenderIntTimeSlots();
       triggerAIPrediction();
     };
     const _origRenderExtTimeSlots = renderExtTimeSlots;
-    renderExtTimeSlots = function() {
+    renderExtTimeSlots = function () {
       _origRenderExtTimeSlots();
       triggerAIPrediction();
     };
@@ -3031,12 +3094,22 @@
 
   <!-- Profile Details Modal -->
   <div class="modal-overlay" id="profile-details-modal">
-    <div class="modal" style="max-width:500px; width:95%; padding:0; border-top:3.5px solid var(--accent2); max-height:85vh; display:flex; flex-direction:column; border-radius:16px;">
-      <div style="padding:16px 20px 12px; display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid rgba(255,255,255,0.05);">
-        <h3 class="modal-title" style="margin:0;font-size:1.1rem;display:flex;align-items:center;gap:8px;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:block;"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg> <script>document.write(t('Public Profile'))</script></h3>
+    <div class="modal"
+      style="max-width:500px; width:95%; padding:0; border-top:3.5px solid var(--accent2); max-height:85vh; display:flex; flex-direction:column; border-radius:16px;">
+      <div
+        style="padding:16px 20px 12px; display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <h3 class="modal-title" style="margin:0;font-size:1.1rem;display:flex;align-items:center;gap:8px;"><svg
+            width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+            style="display:block;">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+          </svg>
+          <script>document.write(t('Public Profile'))</script>
+        </h3>
         <button class="modal-close" onclick="closeProfileModal()">&times;</button>
       </div>
-      <div id="profile-details-content" style="padding:20px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:16px;">
+      <div id="profile-details-content"
+        style="padding:20px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:16px;">
         <div class="spinner" style="margin:40px auto"></div>
       </div>
     </div>
@@ -3055,7 +3128,13 @@
     <div class="modal" style="max-width:600px; max-height: 88vh; overflow-y: auto; margin: 20px 0; padding-top: 0;">
       <div class="modal-header"
         style="position: sticky; top: 0; background: rgba(15,18,25,0.97); backdrop-filter: blur(16px); z-index: 10; padding: 24px 0 16px; margin-bottom: 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-        <h3 class="modal-title"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:inline-block; vertical-align:middle; margin-inline-end:6px;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg> <script>document.write(t('Edit Event Agenda'))</script></h3>
+        <h3 class="modal-title"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+            viewBox="0 0 24 24" style="display:inline-block; vertical-align:middle; margin-inline-end:6px;">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <script>document.write(t('Edit Event Agenda'))</script>
+        </h3>
         <button class="modal-close" onclick="closeAgendaEditor()">&times;</button>
       </div>
       <div style="padding: 16px 0;">
@@ -3069,13 +3148,22 @@
         <button type="button" class="btn btn-ghost btn-sm"
           onclick="addAgendaItem('agenda-items-editor', {date: window.currentAgendaEditorDay || ''})"
           style="display:flex;align-items:center;gap:6px;margin-bottom:16px;">
-          <span style="font-size:1.1rem;">+</span> <script>document.write(t('Add Agenda Item to Selected Day'))</script>
+          <span style="font-size:1.1rem;">+</span>
+          <script>document.write(t('Add Agenda Item to Selected Day'))</script>
         </button>
         <div
           style="display:flex;justify-content:flex-end;gap:8px;border-top:1px solid rgba(255,255,255,0.06);padding-top:14px;">
-          <button class="btn btn-ghost" onclick="closeAgendaEditor()"><script>document.write(t('Cancel'))</script></button>
-          <button class="btn btn-primary" onclick="saveAgenda()" style="display:flex;align-items:center;gap:6px;"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:block;"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
-            <script>document.write(t('Save Agenda'))</script></button>
+          <button class="btn btn-ghost" onclick="closeAgendaEditor()">
+            <script>document.write(t('Cancel'))</script>
+          </button>
+          <button class="btn btn-primary" onclick="saveAgenda()" style="display:flex;align-items:center;gap:6px;"><svg
+              width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+              style="display:block;">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+            </svg>
+            <script>document.write(t('Save Agenda'))</script>
+          </button>
         </div>
       </div>
     </div>
@@ -3085,7 +3173,12 @@
   <div class="modal-overlay" id="cancellation-modal">
     <div class="modal" style="max-width:450px;">
       <div class="modal-header">
-        <h3 class="modal-title"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:inline-block; vertical-align:middle; margin-inline-end:6px; color:var(--warning);"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg> Request Event Cancellation</h3>
+        <h3 class="modal-title"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+            viewBox="0 0 24 24"
+            style="display:inline-block; vertical-align:middle; margin-inline-end:6px; color:var(--warning);">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg> Request Event Cancellation</h3>
         <button class="modal-close" onclick="closeCancellationModal()">&times;</button>
       </div>
       <div class="modal-body">
@@ -3931,6 +4024,7 @@
     .ed-info-accent .ed-info-label {
       color: var(--accent);
     }
+
     .ed-info-accent .ed-info-icon {
       background: rgba(110, 64, 242, 0.15);
       color: #a78bfa;
@@ -3939,6 +4033,7 @@
     .ed-info-accent2 .ed-info-label {
       color: var(--accent2);
     }
+
     .ed-info-accent2 .ed-info-icon {
       background: rgba(34, 211, 238, 0.15);
       color: #22d3ee;
@@ -3947,6 +4042,7 @@
     .ed-info-warning .ed-info-label {
       color: var(--warning);
     }
+
     .ed-info-warning .ed-info-icon {
       background: rgba(245, 158, 11, 0.15);
       color: #f59e0b;
@@ -3955,6 +4051,7 @@
     .ed-info-danger .ed-info-label {
       color: #ef4444;
     }
+
     .ed-info-danger .ed-info-icon {
       background: rgba(239, 68, 68, 0.15);
       color: #ef4444;
@@ -3986,7 +4083,12 @@
     <div class="modal" style="max-width:500px;">
       <div class="modal-header">
         <h3 class="modal-title" style="display:inline-flex; align-items:center; gap:8px;">
-          <svg style="width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          <svg style="width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
           <span id="pub-modal-title">Publish Days</span>
         </h3>
         <button class="modal-close" onclick="closePublishedScheduleModal()">&times;</button>
@@ -4000,7 +4102,10 @@
         <button type="button" id="pub-unpublish-btn" class="btn btn-sm"
           style="background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.25);display:none;align-items:center;gap:6px;"
           onclick="unpublishEvent()">
-          <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
+          <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+          </svg>
           Unpublish
         </button>
         <div style="display:flex; gap:10px; margin-left:auto;">
@@ -4008,11 +4113,19 @@
           <button type="button" class="btn btn-sm"
             style="background:rgba(139,92,246,0.15);color:#a78bfa;border:1px solid rgba(139,92,246,0.3);display:inline-flex;align-items:center;gap:6px;"
             onclick="savePublishedSchedule(false)">
-            <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
             Save Draft
           </button>
-          <button type="button" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:6px;" onclick="savePublishedSchedule(true)">
-            <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+          <button type="button" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:6px;"
+            onclick="savePublishedSchedule(true)">
+            <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
             Publish
           </button>
         </div>
@@ -4030,8 +4143,8 @@
 
       // Set translations
       document.getElementById('pub-modal-title').innerText = t('Publish Days');
-      const statusIcon = ev.is_published 
-        ? `<svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2.5; display:inline-block; vertical-align:middle;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>` 
+      const statusIcon = ev.is_published
+        ? `<svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2.5; display:inline-block; vertical-align:middle;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>`
         : `<svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2; display:inline-block; vertical-align:middle;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>`;
       document.getElementById('pub-modal-desc').innerHTML = t('published_schedule_desc') +
         `<div style="margin-top:10px;padding:8px 12px;border-radius:8px;font-size:0.8rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;${ev.is_published ? 'background:rgba(16,185,129,0.1);color:#10b981;border:1px solid rgba(16,185,129,0.2);' : 'background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.2);'}">${statusIcon} ${ev.is_published ? t('Published — Visible to public') : t('Draft — Not visible to public yet')}</div>`;
@@ -4153,38 +4266,38 @@
     async function expandCapacity(eventId, currentCap, venueMax) {
       const newCap = prompt(`Current capacity: ${currentCap}\nVenue max: ${venueMax}\n\nEnter new total capacity:`, currentCap);
       if (newCap === null || newCap === "" || parseInt(newCap) === currentCap) return;
-      
+
       const capInt = parseInt(newCap);
       if (isNaN(capInt) || capInt < 1) {
-          showToast('Please enter a valid number.', 'error');
-          return;
+        showToast('Please enter a valid number.', 'error');
+        return;
       }
 
       if (capInt > venueMax) {
-          showToast(`Cannot exceed venue capacity (${venueMax}).`, 'error');
-          return;
+        showToast(`Cannot exceed venue capacity (${venueMax}).`, 'error');
+        return;
       }
 
       try {
-          const res = await api.patch(`/events/${eventId}/capacity`, { capacity: capInt });
-          if (res.ok) {
-              showToast('Capacity expanded successfully!', 'success');
-              // Update local data
-              const ev = allEvents.find(e => e.id === eventId);
-              if (ev) ev.capacity = capInt;
-              
-              // Update UI in modal if open
-              const capValEl = document.getElementById(`det-capacity-${eventId}`);
-              if (capValEl) capValEl.textContent = capInt;
-              
-              // Refresh list to update capacity column
-              applyFilter();
-          } else {
-              showToast(res.data.message || 'Failed to update capacity.', 'error');
-          }
+        const res = await api.patch(`/events/${eventId}/capacity`, { capacity: capInt });
+        if (res.ok) {
+          showToast('Capacity expanded successfully!', 'success');
+          // Update local data
+          const ev = allEvents.find(e => e.id === eventId);
+          if (ev) ev.capacity = capInt;
+
+          // Update UI in modal if open
+          const capValEl = document.getElementById(`det-capacity-${eventId}`);
+          if (capValEl) capValEl.textContent = capInt;
+
+          // Refresh list to update capacity column
+          applyFilter();
+        } else {
+          showToast(res.data.message || 'Failed to update capacity.', 'error');
+        }
       } catch (err) {
-          console.error(err);
-          showToast('An error occurred.', 'error');
+        console.error(err);
+        showToast('An error occurred.', 'error');
       }
     }
 
