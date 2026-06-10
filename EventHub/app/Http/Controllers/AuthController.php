@@ -35,6 +35,8 @@ public function register(Request $request)
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8',
         'role' => 'nullable|string|in:Attendee,Assistant',
+    ], [
+        'email.unique' => 'البريد الإلكتروني مأخوذ بالفعل',
     ]);
 
     $role = $request->role ?? 'Attendee';
@@ -82,7 +84,32 @@ public function registerPartner(Request $request)
         $rules['doc_practice_license'] = 'required|file|mimes:pdf,jpg,jpeg,png|max:5120';
     }
 
-    $request->validate($rules);
+    // Custom Arabic error messages
+    $messages = [
+        'doc_commercial_register.required' => 'حقل السجل التجاري مطلوب',
+        'doc_commercial_register.file' => 'الملف يجب أن يكون من نوع',
+        'doc_commercial_register.mimes' => 'الملف يجب أن يكون من نوع: pdf, jpg, jpeg, png',
+        'doc_commercial_register.max' => 'الملفات يجب ان لا تتجاوز 5 ميغابايت',
+
+        'doc_tax_number.required' => 'حقل الرقم الضريبي مطلوب',
+        'doc_tax_number.file' => 'الملف يجب أن يكون من نوع',
+        'doc_tax_number.mimes' => 'الملف يجب أن يكون من نوع: pdf, jpg, jpeg, png',
+        'doc_tax_number.max' => 'الملفات يجب ان لا تتجاوز 5 ميغابايت',
+
+        'doc_articles_of_association.required' => 'حقل النظام الأساسي مطلوب',
+        'doc_articles_of_association.file' => 'الملف يجب أن يكون من نوع',
+        'doc_articles_of_association.mimes' => 'الملف يجب أن يكون من نوع: pdf, jpg, jpeg, png',
+        'doc_articles_of_association.max' => 'الملفات يجب ان لا تتجاوز 5 ميغابايت',
+
+        'doc_practice_license.required' => 'حقل رخصة الممارسة مطلوب',
+        'doc_practice_license.file' => 'الملف يجب أن يكون من نوع',
+        'doc_practice_license.mimes' => 'الملف يجب أن يكون من نوع: pdf, jpg, jpeg, png',
+        'doc_practice_license.max' => 'الملفات يجب ان لا تتجاوز 5 ميغابايت',
+
+        'email.unique' => 'البريد الإلكتروني مأخوذ بالفعل',
+    ];
+
+    $request->validate($rules, $messages);
 
     // Build user data (core auth only — documents go to user_documents table)
     $userData = [
