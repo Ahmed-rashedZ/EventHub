@@ -97,10 +97,42 @@
 
       <!-- Stat Cards -->
       <div class="es-stats" id="stats-row">
-        <div class="es-stat"><div class="es-stat-stripe" style="background:#6e40f2"></div><div class="es-stat-icon" style="background:rgba(110,64,242,.15)">👥</div><div class="es-stat-label">Capacity</div><div class="es-stat-value" id="s-capacity">—</div><div class="es-stat-sub">Max attendees</div></div>
-        <div class="es-stat"><div class="es-stat-stripe" style="background:#22d3ee"></div><div class="es-stat-icon" style="background:rgba(34,211,238,.15)">🎟️</div><div class="es-stat-label">Registered</div><div class="es-stat-value" id="s-registered">—</div><div class="es-stat-sub" id="s-registered-sub"></div></div>
-        <div class="es-stat"><div class="es-stat-stripe" style="background:#22c55e"></div><div class="es-stat-icon" style="background:rgba(34,197,94,.15)">✅</div><div class="es-stat-label">Checked In</div><div class="es-stat-value" id="s-attended">—</div><div class="es-stat-sub" id="s-attended-sub"></div></div>
-        <div class="es-stat"><div class="es-stat-stripe" style="background:#f59e0b"></div><div class="es-stat-icon" style="background:rgba(245,158,11,.15)">⏳</div><div class="es-stat-label">Remaining</div><div class="es-stat-value" id="s-remaining">—</div><div class="es-stat-sub">Not checked in yet</div></div>
+        <div class="es-stat">
+          <div class="es-stat-stripe" style="background:#6e40f2"></div>
+          <div class="es-stat-icon" style="background:rgba(110,64,242,.15); display:inline-flex; align-items:center; justify-content:center;">
+            <svg xmlns="http://www.w3.org/2000/svg" style="width:20px;height:20px;color:#6e40f2;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+          </div>
+          <div class="es-stat-label">Capacity</div>
+          <div class="es-stat-value" id="s-capacity">—</div>
+          <div class="es-stat-sub">Max attendees</div>
+        </div>
+        <div class="es-stat">
+          <div class="es-stat-stripe" style="background:#22d3ee"></div>
+          <div class="es-stat-icon" style="background:rgba(34,211,238,.15); display:inline-flex; align-items:center; justify-content:center;">
+            <svg xmlns="http://www.w3.org/2000/svg" style="width:20px;height:20px;color:#22d3ee;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" /></svg>
+          </div>
+          <div class="es-stat-label">Registered</div>
+          <div class="es-stat-value" id="s-registered">—</div>
+          <div class="es-stat-sub" id="s-registered-sub"></div>
+        </div>
+        <div class="es-stat">
+          <div class="es-stat-stripe" style="background:#22c55e"></div>
+          <div class="es-stat-icon" style="background:rgba(34,197,94,.15); display:inline-flex; align-items:center; justify-content:center;">
+            <svg xmlns="http://www.w3.org/2000/svg" style="width:20px;height:20px;color:#22c55e;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+          <div class="es-stat-label">Checked In</div>
+          <div class="es-stat-value" id="s-attended">—</div>
+          <div class="es-stat-sub" id="s-attended-sub"></div>
+        </div>
+        <div class="es-stat">
+          <div class="es-stat-stripe" style="background:#f59e0b"></div>
+          <div class="es-stat-icon" style="background:rgba(245,158,11,.15); display:inline-flex; align-items:center; justify-content:center;">
+            <svg xmlns="http://www.w3.org/2000/svg" style="width:20px;height:20px;color:#f59e0b;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+          <div class="es-stat-label">Remaining</div>
+          <div class="es-stat-value" id="s-remaining">—</div>
+          <div class="es-stat-sub">Not checked in yet</div>
+        </div>
       </div>
 
       <!-- Rate Rings -->
@@ -124,18 +156,24 @@
       <!-- Charts Row -->
       <div class="es-row">
         <div class="es-card">
-          <div class="es-card-title"><span>📊</span> Registration vs Attendance</div>
+          <div class="es-card-title">
+            <svg xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px;color:var(--text-muted);display:inline-block;vertical-align:middle;margin-right:6px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg> Registration vs Attendance
+          </div>
           <div class="es-chart-wrap"><canvas id="regAttChart"></canvas></div>
         </div>
         <div class="es-card">
-          <div class="es-card-title"><span>🎯</span> Capacity Breakdown</div>
+          <div class="es-card-title">
+            <svg xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px;color:var(--text-muted);display:inline-block;vertical-align:middle;margin-right:6px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> Capacity Breakdown
+          </div>
           <div class="es-chart-wrap"><canvas id="capChart"></canvas></div>
         </div>
       </div>
 
       <!-- Participants Table -->
       <div class="es-card" style="margin-bottom:24px">
-        <div class="es-card-title"><span>👥</span> Participants (<span id="part-count">0</span>)</div>
+        <div class="es-card-title">
+          <svg xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px;color:var(--text-muted);display:inline-block;vertical-align:middle;margin-right:6px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg> Participants (<span id="part-count">0</span>)
+        </div>
         <div class="table-wrap">
           <table class="es-participants-table">
             <thead><tr><th>#</th><th>Attendee</th><th>Ticket Code</th><th>Status</th><th>Scanned At</th></tr></thead>
@@ -148,7 +186,9 @@
 
       <!-- Reviews & Ratings -->
       <div class="es-card" style="margin-bottom:24px" id="reviews-section">
-        <div class="es-card-title"><span>⭐</span> Reviews & Ratings (<span id="review-count">0</span>)</div>
+        <div class="es-card-title">
+          <svg xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px;color:var(--text-muted);display:inline-block;vertical-align:middle;margin-right:6px;" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg> Reviews & Ratings (<span id="review-count">0</span>)
+        </div>
         <div id="reviews-loading" style="text-align:center;padding:32px"><div class="spinner" style="margin:auto"></div></div>
         <div id="reviews-content" style="display:none">
           <!-- Summary -->
@@ -195,7 +235,6 @@ Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
 Chart.defaults.font.family = 'Inter';
 
 const TYPE_COLORS = { 'مؤتمر':'#3b82f6', 'ندوة':'#8b5cf6', 'ورشة عمل':'#10b981', 'دورة تدريبية':'#06b6d4', 'ترفيه':'#ec4899', 'ملتقى علمي':'#f59e0b', 'رياضة':'#22c55e', 'تقنية':'#6366f1', 'اجتماعية':'#f97316' };
-const TYPE_ICONS  = { 'مؤتمر':'🎙️', 'ندوة':'📖', 'ورشة عمل':'🔧', 'دورة تدريبية':'🎓', 'ترفيه':'🎭', 'ملتقى علمي':'🔬', 'رياضة':'⚽', 'تقنية':'💻', 'اجتماعية':'🤝' };
 
 function animVal(el, end, suffix='') {
   let s=0; const st=performance.now();
@@ -239,7 +278,6 @@ async function loadEventStats() {
   const ev = eventRes.data;
   const eType = ev.event_type || 'Other';
   const tColor = TYPE_COLORS[eType] || '#6b7280';
-  const tIcon  = TYPE_ICONS[eType]  || '📌';
 
 
   // Stats
@@ -331,15 +369,15 @@ async function loadEventStats() {
   document.getElementById('part-count').textContent = participants.length;
 
   if (!participants.length) {
-    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state" style="padding:30px"><div class="empty-icon">🎟️</div><p>${t('No registrations yet')}</p></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state" style="padding:30px"><div class="empty-icon" style="display:flex;justify-content:center;margin-bottom:15px;color:var(--text-muted);"><svg xmlns="http://www.w3.org/2000/svg" style="width:40px;height:40px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2-2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" /></svg></div><p>${t('No registrations yet')}</p></div></td></tr>`;
   } else {
     tbody.innerHTML = participants.map((t, i) => {
       const latestLog = (t.attendance_logs && t.attendance_logs.length) 
         ? t.attendance_logs.reduce((latest, current) => new Date(current.scanned_at) > new Date(latest.scanned_at) ? current : latest, t.attendance_logs[0])
         : t.attendance_log;
       const scanTime = latestLog ? fmtDate(latestLog.scanned_at) : '—';
-      const scannerName = latestLog && latestLog.scanner ? `<div style="font-size:.7rem;color:var(--text-muted);margin-top:2px">👤 by ${latestLog.scanner.name}</div>` : '';
-      const daysAttendedStr = t.total_days_attended ? `<div style="font-size:.7rem;color:var(--text-muted);margin-top:4px">📅 ${t.total_days_attended} day(s)</div>` : '';
+      const scannerName = latestLog && latestLog.scanner ? `<div style="font-size:.7rem;color:var(--text-muted);margin-top:2px">by ${latestLog.scanner.name}</div>` : '';
+      const daysAttendedStr = t.total_days_attended ? `<div style="font-size:.7rem;color:var(--text-muted);margin-top:4px;display:flex;align-items:center;gap:4px;"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink: 0;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> <bdi>${t.total_days_attended}</bdi> ${t('day(s)')}</div>` : '';
       
       return `
         <tr>
@@ -374,7 +412,7 @@ async function loadEventStats() {
 function starsHtml(rating, size = '1rem') {
   const rounded = Math.round(rating); // whole numbers only
   return [1,2,3,4,5].map(i =>
-    `<span class="es-review-star" style="font-size:${size};color:${i <= rounded ? '#eab308' : 'rgba(255,255,255,.15)'}">★</span>`
+    `<span class="es-review-star" style="font-size:${size};color:${i <= rounded ? '#eab308' : 'rgba(255,255,255,.15)'}">&#9733;</span>`
   ).join('');
 }
 
@@ -385,7 +423,7 @@ function loadReviews(res) {
   contEl.style.display = 'block';
 
   if (!res.ok) {
-    document.getElementById('review-list').innerHTML = `<div class="es-review-empty"><div class="es-review-empty-icon">⚠️</div><p>${t('Failed to load reviews')}</p></div>`;
+    document.getElementById('review-list').innerHTML = `<div class="es-review-empty"><div class="es-review-empty-icon" style="display:flex;justify-content:center;margin-bottom:15px;color:var(--danger);"><svg xmlns="http://www.w3.org/2000/svg" style="width:40px;height:40px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg></div><p>${t('Failed to load reviews')}</p></div>`;
     return;
   }
 
@@ -410,7 +448,7 @@ function loadReviews(res) {
     const pct = reviews.length ? Math.round((cnt / reviews.length) * 100) : 0;
     return `<div class="es-star-row">
       <span class="es-star-row-label" style="color:#eab308">${star}</span>
-      <span style="font-size:.85rem;color:#eab308">★</span>
+      <span style="font-size:.85rem;color:#eab308">&#9733;</span>
       <div class="es-star-bar"><div class="es-star-bar-fill" style="width:${pct}%"></div></div>
       <span class="es-star-bar-count">${cnt}</span>
     </div>`;
@@ -420,7 +458,7 @@ function loadReviews(res) {
   // Review list
   const listEl = document.getElementById('review-list');
   if (!reviews.length) {
-    listEl.innerHTML = `<div class="es-review-empty"><div class="es-review-empty-icon">💬</div><p>${t('No reviews yet for this event')}</p></div>`;
+    listEl.innerHTML = `<div class="es-review-empty"><div class="es-review-empty-icon" style="display:flex;justify-content:center;margin-bottom:15px;color:var(--text-muted);"><svg xmlns="http://www.w3.org/2000/svg" style="width:40px;height:40px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg></div><p>${t('No reviews yet for this event')}</p></div>`;
     return;
   }
 

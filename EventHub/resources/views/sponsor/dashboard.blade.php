@@ -62,15 +62,8 @@
 <div class="app-layout">
   <aside class="sidebar">
     <div class="sidebar-logo" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;"><img src="/images/logo.png" alt="EventHub Logo" style="height: 60px; width: auto; object-fit: contain;"></div>
-    <nav class="sidebar-nav">
-      <span class="nav-section-label">Overview</span>
-      <a class="nav-item active" href="/sponsor/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
-      <span class="nav-section-label">Opportunities</span>
-      <a class="nav-item" href="/sponsor/events"><span class="nav-icon">🌍</span> Browse Events</a>
-      <a class="nav-item" href="/sponsor/requests"><span class="nav-icon">💼</span> Sponsorships</a>
-      <a class="nav-item" href="/sponsor/history"><span class="nav-icon">📜</span> History</a>
-      <span class="nav-section-label">Settings</span>
-      <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
+    <nav class="sidebar-nav" id="sidebar-links" style="display:flex; flex-direction:column; gap:4px; padding-top:10px;">
+      <!-- Filled by auth.js -->
     </nav>
     @include('partials._sidebar-footer')
   </aside>
@@ -86,7 +79,7 @@
     <!-- Shown only when profile.is_available is false (DB), after /profile load -->
     <div id="hidden-alert" style="display:none; background:rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 16px; border-radius: var(--radius); margin-bottom: 24px; color: #ff6b6b; font-weight: 500;">
       <div style="display:flex; align-items:flex-start; gap:12px;">
-        <span style="font-size:1.5rem;">⚠️</span>
+        <svg xmlns="http://www.w3.org/2000/svg" style="width:24px;height:24px;color:#ff6b6b;flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
         <p id="hidden-alert-text" style="margin:0; font-size:0.95rem; line-height:1.5;">
           You are currently not visible to event managers.<br/>
           You will remain hidden until you turn this option ON again.
@@ -109,10 +102,26 @@
       </div>
     </div>
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-label">Accepted</div><div class="stat-value" id="stat-accepted">—</div><div class="stat-icon">✅</div></div>
-      <div class="stat-card"><div class="stat-label">Pending</div><div class="stat-value" id="stat-pending">—</div><div class="stat-icon">⏳</div></div>
-      <div class="stat-card"><div class="stat-label">Rejected</div><div class="stat-value" id="stat-rejected">—</div><div class="stat-icon">❌</div></div>
-      <div class="stat-card"><div class="stat-label">Open Requests</div><div class="stat-value" id="stat-open">—</div><div class="stat-icon">📬</div></div>
+      <div class="stat-card">
+        <div class="stat-label">Accepted</div>
+        <div class="stat-value" id="stat-accepted">—</div>
+        <div class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" style="width:24px;height:24px;color:var(--success);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Pending</div>
+        <div class="stat-value" id="stat-pending">—</div>
+        <div class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" style="width:24px;height:24px;color:var(--warning);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Rejected</div>
+        <div class="stat-value" id="stat-rejected">—</div>
+        <div class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" style="width:24px;height:24px;color:var(--danger);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Open Requests</div>
+        <div class="stat-value" id="stat-open">—</div>
+        <div class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" style="width:24px;height:24px;color:var(--accent);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0a2 2 0 01-2 2H6a2 2 0 01-2-2m16 0L12 17l-8-4" /></svg></div>
+      </div>
     </div>
 
     <div class="card">
@@ -238,7 +247,7 @@
     document.getElementById('stat-rejected').textContent = mine.filter(r => r.status === 'rejected').length;
     document.getElementById('stat-open').textContent     = open.length;
 
-    if (!mine.length) { tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">💼</div><p>No sponsorships yet. <a href="/sponsor/requests">Browse open requests!</a></p></div></td></tr>'; return; }
+    if (!mine.length) { tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><div class="empty-icon" style="display:flex;justify-content:center;margin-bottom:15px;color:var(--text-muted);"><svg xmlns="http://www.w3.org/2000/svg" style="width:40px;height:40px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg></div><p>No sponsorships yet. <a href="/sponsor/requests">Browse open requests!</a></p></div></td></tr>'; return; }
     tbody.innerHTML = mine.map(r => {
       let effectiveStatus = r.status;
       if (r.event?.status === 'cancelled') effectiveStatus = 'cancelled';
@@ -257,7 +266,7 @@
         <td style="color:var(--text-muted)">${fmtDateShort(r.event?.start_time)}</td>
         <td>
           ${badge(effectiveStatus)}
-          ${r.status === 'accepted' && r.event?.status !== 'cancelled' ? `<button onclick="downloadContract(${r.id})" style="margin-left:8px;font-size:12px;text-decoration:none;color:#fff;background:rgba(255,255,255,0.08);padding:4px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.15);display:inline-flex;align-items:center;gap:4px;cursor:pointer;">📄 ${t('Agreement')}</button>` : ''}
+          ${r.status === 'accepted' && r.event?.status !== 'cancelled' ? `<button onclick="downloadContract(${r.id})" style="margin-left:8px;font-size:12px;text-decoration:none;color:#fff;background:rgba(255,255,255,0.08);padding:4px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.15);display:inline-flex;align-items:center;gap:4px;cursor:pointer;">${t('Agreement')}</button>` : ''}
         </td>
       </tr>`;
     }).join('');

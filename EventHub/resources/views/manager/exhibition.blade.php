@@ -226,8 +226,8 @@
 <div class="modal-overlay" id="profile-details-modal">
   <div class="modal" style="max-width:500px; width:95%; padding:0; border-top:3.5px solid var(--accent2); max-height:85vh; display:flex; flex-direction:column; border-radius:16px;">
     <div style="padding:16px 20px 12px; display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid rgba(255,255,255,0.05);">
-      <h3 class="modal-title" style="margin:0;font-size:1.1rem;display:flex;align-items:center;gap:8px;">👤 <script>document.write(t('Public Profile'))</script></h3>
-      <button class="modal-close" onclick="closeProfileModal()">✕</button>
+      <h3 class="modal-title" style="margin:0;font-size:1.1rem;display:flex;align-items:center;gap:8px;"><svg xmlns="http://www.w3.org/2000/svg" style="width:18px;height:18px;color:var(--accent2);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg> <script>document.write(t('Public Profile'))</script></h3>
+      <button class="modal-close" onclick="closeProfileModal()">&times;</button>
     </div>
     <div id="profile-details-content" style="padding:20px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:16px;">
       <div class="spinner" style="margin:40px auto"></div>
@@ -240,7 +240,7 @@
   <div class="modal" style="max-width: 450px;">
     <div class="modal-header">
       <h3 class="modal-title"><script>document.write(t('Invite to Exhibition'))</script></h3>
-      <button class="modal-close" onclick="closeModal()">✕</button>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
     </div>
     <form id="req-form">
       <div class="form-group">
@@ -273,7 +273,7 @@
   <div class="modal" style="max-width: 500px;">
     <div class="modal-header">
       <h3 class="modal-title"><script>document.write(t('Invitation Message'))</script></h3>
-      <button class="modal-close" onclick="closeMsgModal()">✕</button>
+      <button class="modal-close" onclick="closeMsgModal()">&times;</button>
     </div>
     <div class="modal-body" id="msg-content" style="padding: 20px; font-size: 15px; line-height: 1.6; color: var(--text);"></div>
     <div class="modal-footer">
@@ -290,7 +290,7 @@
   <div class="modal" style="max-width:520px; width:95%; padding:0; border-top:3px solid #0ea5e9; max-height:85vh; display:flex; flex-direction:column; border-radius:16px;">
     <div style="padding:16px 20px 0; display:flex; justify-content:space-between; align-items:center;">
       <div><h3 class="modal-title" style="margin:0;font-size:1rem;"><script>document.write(t('Contract Negotiation'))</script></h3><p style="font-size:0.7rem;color:var(--text-muted);margin:2px 0 0"><script>document.write(t('Negotiate terms with the company'))</script></p></div>
-      <button class="modal-close" onclick="closeAgreementModal()">✕</button>
+      <button class="modal-close" onclick="closeAgreementModal()">&times;</button>
     </div>
     <div id="agreement-content" style="padding:12px 20px 20px; overflow-y:auto; flex:1;">
       <div class="spinner" style="margin:40px auto"></div>
@@ -303,7 +303,7 @@
   <div class="modal" style="max-width: 400px;">
     <div class="modal-header">
       <h3 class="modal-title"><script>document.write(t('Assign Booth Location'))</script></h3>
-      <button class="modal-close" onclick="closeBoothModal()">✕</button>
+      <button class="modal-close" onclick="closeBoothModal()">&times;</button>
     </div>
     <form id="booth-form">
       <input type="hidden" id="b-app-id" />
@@ -327,7 +327,7 @@
   <div class="modal" style="max-width: 400px;">
     <div class="modal-header">
       <h3 class="modal-title"><script>document.write(t('Add New Zone'))</script></h3>
-      <button class="modal-close" onclick="closeZoneModalUI()">✕</button>
+      <button class="modal-close" onclick="closeZoneModalUI()">&times;</button>
     </div>
     <form id="zone-form">
       <input type="hidden" id="z-event-id" />
@@ -348,7 +348,7 @@
   <div class="modal" style="max-width: 400px;">
     <div class="modal-header">
       <h3 class="modal-title" id="booth-item-title"><script>document.write(t('Add Booth'))</script></h3>
-      <button class="modal-close" onclick="closeBoothItemModal()">✕</button>
+      <button class="modal-close" onclick="closeBoothItemModal()">&times;</button>
     </div>
     <form id="booth-item-form">
       <input type="hidden" id="bi-id" />
@@ -375,7 +375,7 @@
   <div class="modal" style="max-width: 450px;">
     <div class="modal-header">
       <h3 class="modal-title"><script>document.write(t('Batch Generate Booths'))</script></h3>
-      <button class="modal-close" onclick="closeBatchModalUI()">✕</button>
+      <button class="modal-close" onclick="closeBatchModalUI()">&times;</button>
     </div>
     <form id="batch-form-ui">
       <input type="hidden" id="batch-zone-id" />
@@ -442,7 +442,11 @@
 
     if (!res.ok || !res.data.length) {
       container.innerHTML = `<div class="card" style="padding:40px;text-align:center;">
-        <div style="font-size:2.5rem;margin-bottom:10px;">🏛️</div>
+        <div style="margin-bottom:15px; display:flex; justify-content:center; color:var(--text-muted);">
+          <svg xmlns="http://www.w3.org/2000/svg" style="width:48px;height:48px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+          </svg>
+        </div>
         <p style="color:var(--text-muted)">${t('No exhibition applications yet')}</p>
         <p style="color:var(--text-muted);font-size:0.8rem;margin-top:6px;">${t('Invite companies from the list above to get started.')}</p>
       </div>`;
@@ -497,15 +501,15 @@
         if (app.status === 'pending') {
           if (app.initiator === 'company') {
             actionHtml = `
-              <button class="btn btn-success" style="padding:3px 10px;font-size:11px;font-weight:600;" onclick="respondReq(${app.id}, 'accepted')">✅ ${t('Accept')}</button>
-              <button class="btn btn-danger" style="padding:3px 10px;font-size:11px;font-weight:600;" onclick="respondReq(${app.id}, 'rejected')">❌ ${t('Reject')}</button>
+              <button class="btn btn-success" style="padding:3px 10px;font-size:11px;font-weight:600;" onclick="respondReq(${app.id}, 'accepted')">${t('Accept')}</button>
+              <button class="btn btn-danger" style="padding:3px 10px;font-size:11px;font-weight:600;" onclick="respondReq(${app.id}, 'rejected')">${t('Reject')}</button>
             `;
           } else {
             actionHtml = `<span style="font-size:11px;color:var(--text-muted);">${t('Awaiting Response')}</span>`;
           }
         } else if (app.status === 'negotiating' || app.status === 'accepted') {
           actionHtml = `
-            <button class="btn btn-sm" onclick="openAgreementModal(${app.id}, 'exhibition')" style="padding:3px 10px;font-size:11px;background:rgba(34,211,238,0.1);color:#22d3ee;border:1px solid rgba(34,211,238,0.2);font-weight:600;">📋 ${t('Contract')}</button>
+            <button class="btn btn-sm" onclick="openAgreementModal(${app.id}, 'exhibition')" style="padding:3px 10px;font-size:11px;background:rgba(34,211,238,0.1);color:#22d3ee;border:1px solid rgba(34,211,238,0.2);font-weight:600;">${t('Contract')}</button>
           `;
           if (app.status === 'accepted') {
             const isWithin14Days = ev.start_time && (new Date(ev.start_time) - new Date()) / (1000 * 60 * 60 * 24) < 14;
@@ -513,13 +517,12 @@
 
             if (canChange) {
               let boothBtnText = app.booth ? t('Change Booth') : t('Assign Booth');
-              let boothBtnIcon = app.booth ? '🔄' : '📍';
               actionHtml += `
-                <button class="btn btn-sm" onclick="openBoothModal(${app.id}, '${comp.name.replace(/'/g, "\\'")}', ${app.event_id})" style="padding:3px 10px;font-size:11px;background:rgba(16,185,129,0.1);color:#10b981;border:1px solid rgba(16,185,129,0.2);font-weight:600;">${boothBtnIcon} ${boothBtnText}</button>
+                <button class="btn btn-sm" onclick="openBoothModal(${app.id}, '${comp.name.replace(/'/g, "\\'")}', ${app.event_id})" style="padding:3px 10px;font-size:11px;background:rgba(16,185,129,0.1);color:#10b981;border:1px solid rgba(16,185,129,0.2);font-weight:600;">${boothBtnText}</button>
               `;
             } else {
               actionHtml += `
-                <button class="btn btn-sm" disabled style="padding:3px 10px;font-size:11px;background:rgba(255,255,255,0.05);color:var(--text-muted);border:1px solid var(--border);cursor:not-allowed;opacity:0.6;">🔒 ${t('Booth Locked')}</button>
+                <button class="btn btn-sm" disabled style="padding:3px 10px;font-size:11px;background:rgba(255,255,255,0.05);color:var(--text-muted);border:1px solid var(--border);cursor:not-allowed;opacity:0.6;">${t('Booth Locked')}</button>
               `;
             }
           }
@@ -540,7 +543,7 @@
             ${badge(app.status)}
             ${app.status === 'accepted' && app.booth ? `
               <div style="margin-top:5px; display: flex; align-items: center; gap: 4px; color: #10b981; font-size: 11px; font-weight: 600;">
-                <span style="background:#10b981; color:white; border-radius:50%; width:14px; height:14px; display:inline-flex; align-items:center; justify-content:center; font-size:9px;">✓</span>
+                <span style="background:#10b981; color:white; border-radius:50%; width:14px; height:14px; display:inline-flex; align-items:center; justify-content:center; font-size:9px;">&check;</span>
                 ${t('Confirmed')}
               </div>
             ` : ''}
@@ -549,17 +552,24 @@
         </tr>`;
       }).join('');
 
+      const statusIcon = isPast 
+        ? `<svg xmlns="http://www.w3.org/2000/svg" style="width:20px;height:20px;color:var(--text-muted);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>` 
+        : `<svg xmlns="http://www.w3.org/2000/svg" style="width:20px;height:20px;color:var(--accent2);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>`;
+
+      const calendarIcon = `<svg xmlns="http://www.w3.org/2000/svg" style="width:14px;height:14px;color:var(--text-muted);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>`;
+      const pinIcon = `<svg xmlns="http://www.w3.org/2000/svg" style="width:14px;height:14px;color:var(--text-muted);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>`;
+
       return `
       <div class="exh-card">
         <div class="exh-header" onclick="toggleExhGroup(${gi})">
           <div>
-            <div class="exh-title" style="color:var(--accent2);">
-              ${isPast ? '📁' : '🏢'} <span class="i18n-skip">${ev.title || '—'}</span>
+            <div class="exh-title" style="color:var(--accent2); display:flex; align-items:center; gap:8px;">
+              ${statusIcon} <span class="i18n-skip">${ev.title || '—'}</span>
               ${isPast ? `<span style="font-size:0.65rem;background:rgba(156,163,175,0.1);color:var(--text-muted);padding:2px 8px;border-radius:4px;border:1px solid var(--border);">${t('Past')}</span>` : ''}
             </div>
             <div class="exh-meta">
-              <span style="display:flex; align-items:center; gap:4px;">📅 ${fmtDate(ev.start_time)}</span>
-              <span style="display:flex; align-items:center; gap:4px;">📍 ${ev.venue?.name || '—'}</span>
+              <span style="display:flex; align-items:center; gap:6px;">${calendarIcon} ${fmtDate(ev.start_time)}</span>
+              <span style="display:flex; align-items:center; gap:6px;">${pinIcon} ${ev.venue?.name || '—'}</span>
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:16px;">
@@ -593,7 +603,9 @@
           <div id="content-apps-${gi}" class="tab-pane active" style="padding:24px 28px;">
             <div class="search-bar" style="margin-bottom: 20px;">
               <div style="position:relative;">
-                <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:0.9rem; opacity:0.5;">🔍</span>
+                <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); opacity:0.5; display:flex; align-items:center;">
+                  <svg xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px;color:#fff;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </span>
                 <input type="text" class="form-control" placeholder="${t('Search company...')}" style="padding-left:38px; border-radius:10px; background:rgba(255,255,255,0.03);" onkeyup="filterCompanies(${gi}, this.value)">
               </div>
             </div>
@@ -611,7 +623,10 @@
                 <h4 style="margin:0; font-size:1rem;">${t('Zones & Booths Configuration')}</h4>
                 <p style="font-size:0.75rem; color:var(--text-muted); margin:4px 0 0;">${t('Manage exhibition zones and available slots')}</p>
               </div>
-              <button class="btn btn-primary btn-sm" onclick="openZoneModalUI(${g.event.id})">➕ ${t('Add Zone')}</button>
+              <button class="btn btn-primary btn-sm" onclick="openZoneModalUI(${g.event.id})" style="display:inline-flex; align-items:center; gap:6px;">
+                <svg xmlns="http://www.w3.org/2000/svg" style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
+                ${t('Add Zone')}
+              </button>
             </div>
             <div id="layout-container-${g.event.id}" class="layout-grid">
               <div class="spinner" style="margin:20px auto"></div>
@@ -647,7 +662,7 @@
   async function respondReq(id, status) {
     const res = await api.put(`/exhibition/${id}`, { status });
     if (res.ok) {
-      showToast(status === 'accepted' ? t('Preliminary acceptance successful! Contract negotiation started.') + ' 📝' : t('Rejected.'), 'success');
+      showToast(status === 'accepted' ? t('Preliminary acceptance successful! Contract negotiation started.') : t('Rejected.'), 'success');
       loadData();
     } else {
       showToast(res.data?.message || t('Error'), 'error');
@@ -750,7 +765,7 @@
       if (u.contact_email) {
         contactsHtml += `
           <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.02);padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.05);">
-            <span style="font-size:1.2rem;">📧</span>
+            <svg xmlns="http://www.w3.org/2000/svg" style="width:18px;height:18px;color:var(--text-muted);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
             <div>
               <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;">${t('Contact Email')}</div>
               <div style="font-weight:500;font-size:0.85rem;">${u.contact_email}</div>
@@ -761,7 +776,7 @@
       if (u.phone) {
         contactsHtml += `
           <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.02);padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.05);">
-            <span style="font-size:1.2rem;">📱</span>
+            <svg xmlns="http://www.w3.org/2000/svg" style="width:18px;height:18px;color:var(--text-muted);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
             <div>
               <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;">${t('Phone')}</div>
               <div style="font-weight:500;font-size:0.85rem;"><a href="tel:${u.phone}" style="color:inherit;text-decoration:none;">${u.phone}</a></div>
@@ -773,23 +788,13 @@
       // Build social links HTML
       let socialHtml = '';
       if (u.social_links && Object.keys(u.social_links).length > 0) {
-        const iconMap = {
-          'twitter': '𝕏', 'x': '𝕏',
-          'linkedin': '💼',
-          'website': '🌐', 'portfolio': '🎨',
-          'facebook': '👥', 'instagram': '📸',
-          'whatsapp': '💬', 'telegram': '✈️',
-          'github': '💻', 'youtube': '🎬',
-          'tiktok': '🎵', 'discord': '👾'
-        };
         let linksHtml = '';
         for (let [pKey, link] of Object.entries(u.social_links)) {
           if (link) {
             const platform = pKey.split('_')[0];
-            const icon = iconMap[platform] || '🔗';
             linksHtml += `
-              <a href="${link.startsWith('http') ? link : 'https://' + link}" target="_blank" style="width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);display:inline-flex;align-items:center;justify-content:center;color:var(--text-muted);text-decoration:none;font-size:1.1rem;transition:all 0.2s;" onmouseover="this.style.background='rgba(110,64,242,0.1)';this.style.borderColor='var(--accent)';" onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.borderColor='rgba(255,255,255,0.08)';">
-                ${icon}
+              <a href="${link.startsWith('http') ? link : 'https://' + link}" target="_blank" style="padding:0 12px;height:36px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);display:inline-flex;align-items:center;justify-content:center;color:var(--text-muted);text-decoration:none;font-size:0.75rem;font-weight:700;transition:all 0.2s;" onmouseover="this.style.background='rgba(110,64,242,0.1)';this.style.borderColor='var(--accent)';" onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.borderColor='rgba(255,255,255,0.08)';">
+                ${platform.toUpperCase()}
               </a>
             `;
           }
@@ -924,7 +929,7 @@
     if (zones.length === 0) {
       container.innerHTML = `<div style="text-align:center; padding:40px; color:var(--text-muted);">
         <p>${t('No zones defined yet.')}</p>
-        ${!isWithin14Days ? `<button class="btn btn-ghost btn-sm" onclick="openZoneModalUI(${eventId})">➕ ${t('Create First Zone')}</button>` : ''}
+        ${!isWithin14Days ? `<button class="btn btn-ghost btn-sm" onclick="openZoneModalUI(${eventId})" style="display:inline-flex; align-items:center; gap:6px;"><svg xmlns="http://www.w3.org/2000/svg" style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg> ${t('Create First Zone')}</button>` : ''}
       </div>`;
       return;
     }
@@ -932,7 +937,7 @@
     let headerMsg = '';
     if (isWithin14Days) {
       headerMsg = `<div style="background:rgba(245,158,11,0.1); color:#f59e0b; border:1px solid rgba(245,158,11,0.2); padding:10px 15px; border-radius:12px; margin-bottom:20px; font-size:0.85rem; font-weight:600; display:flex; align-items:center; gap:10px;">
-        <span>🔒</span> ${t('Exhibition layout is locked (Less than 14 days remaining). You can no longer add, edit, or delete zones and booths.')}
+        <svg xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px;color:#f59e0b;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg> ${t('Exhibition layout is locked (Less than 14 days remaining). You can no longer add, edit, or delete zones and booths.')}
       </div>`;
     }
 
@@ -942,9 +947,9 @@
           <h5 style="margin:0; font-size:0.9rem;">${z.name}</h5>
           ${!isWithin14Days ? `
             <div style="display:flex; gap:8px;">
-              <button class="btn btn-ghost btn-sm" style="padding:2px 8px; font-size:0.7rem;" onclick="openBatchModalUI(${z.id}, ${eventId})">➕ ${t('Batch Add')}</button>
-              <button class="btn btn-ghost btn-sm" style="padding:2px 8px; font-size:0.7rem;" onclick="openBoothModalInZone(${z.id}, ${eventId})">➕ ${t('Booth')}</button>
-              <button class="btn-icon" style="color:#ef4444;" onclick="deleteZone(${z.id}, ${eventId})">✕</button>
+              <button class="btn btn-ghost btn-sm" style="padding:2px 8px; font-size:0.7rem; display:inline-flex; align-items:center; gap:4px;" onclick="openBatchModalUI(${z.id}, ${eventId})"><svg xmlns="http://www.w3.org/2000/svg" style="width:12px;height:12px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg> ${t('Batch Add')}</button>
+              <button class="btn btn-ghost btn-sm" style="padding:2px 8px; font-size:0.7rem; display:inline-flex; align-items:center; gap:4px;" onclick="openBoothModalInZone(${z.id}, ${eventId})"><svg xmlns="http://www.w3.org/2000/svg" style="width:12px;height:12px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg> ${t('Booth')}</button>
+              <button class="btn-icon" style="color:#ef4444;" onclick="deleteZone(${z.id}, ${eventId})">&times;</button>
             </div>
           ` : ''}
         </div>
@@ -956,8 +961,8 @@
               ${b.application ? `<div class="booth-comp" title="${b.application.company.name}">${b.application.company.name}</div>` : ''}
               ${!isWithin14Days ? `
                 <div class="booth-actions">
-                  <button class="btn-icon" onclick="editBooth(${b.id}, '${b.booth_number}', '${b.size || ''}', ${eventId})">✏️</button>
-                  <button class="btn-icon" style="color:#f87171;" onclick="deleteBooth(${b.id}, ${eventId})">🗑</button>
+                  <button class="btn-icon" onclick="editBooth(${b.id}, '${b.booth_number}', '${b.size || ''}', ${eventId})" title="${t('Edit')}"><svg xmlns="http://www.w3.org/2000/svg" style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg></button>
+                  <button class="btn-icon" style="color:#f87171;" onclick="deleteBooth(${b.id}, ${eventId})" title="${t('Delete')}"><svg xmlns="http://www.w3.org/2000/svg" style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
                 </div>
               ` : ''}
             </div>
@@ -1096,7 +1101,7 @@
        return;
     }
 
-    let options = `<option value="">\${t('-- Select Booth --')}</option>`;
+    let options = `<option value="">${t('-- Select Booth --')}</option>`;
     res.data.forEach(zone => {
       const availableInZone = zone.booths.filter(b => !b.exhibition_application_id || b.exhibition_application_id == id);
       if (availableInZone.length > 0) {

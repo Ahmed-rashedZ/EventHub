@@ -39,10 +39,10 @@
             <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 120px;">
                 <div id="avatar-preview-container" style="width: 100px; height: 100px; border-radius: 50%; background: #eef2f5; border: 2px dashed #cbd5e1; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 10px;">
                     <img id="current-logo" src="" alt="Profile Image" style="display:none; width: 100%; height: 100%; object-fit: cover;"/>
-                    <span id="avatar-placeholder" style="color: #94a3b8; font-size: 24px;">👤</span>
+                    <span id="avatar-placeholder" style="color: #94a3b8; font-size: 18px; font-weight: 600;">?</span>
                 </div>
                 <input id="p-logo" type="file" accept="image/*" style="display:none;" />
-                <button type="button" class="btn btn-ghost" style="font-size: 12px; padding: 4px 8px; margin: 0; width: 100%;" onclick="document.getElementById('p-logo').click()">📷 Change Photo</button>
+                <button type="button" class="btn btn-ghost" style="font-size: 12px; padding: 4px 8px; margin: 0; width: 100%;" onclick="document.getElementById('p-logo').click()">Change Photo</button>
             </div>
         </div>
         <div class="form-group">
@@ -237,7 +237,7 @@
             <input type="text" class="form-control c-value" placeholder="Enter link or username..." value="${value}" style="width:100%; min-width: 200px; padding: 10px;" />
             <span class="c-error" style="color:#e11d48; font-size:12px; margin-top:4px; display:none; font-weight:500;"></span>
         </div>
-        <button type="button" class="btn remove-contact-btn" style="padding:0; margin:0; height:26px; width:26px; min-width:26px; border-radius:4px; font-size:14px; background:#fee2e2; color:#ef4444; border:1px solid #fca5a5; display:flex; align-items:center; justify-content:center; cursor:pointer;" title="Remove">✕</button>
+        <button type="button" class="btn remove-contact-btn" style="padding:0; margin:0; height:26px; width:26px; min-width:26px; border-radius:4px; font-size:14px; background:#fee2e2; color:#ef4444; border:1px solid #fca5a5; display:flex; align-items:center; justify-content:center; cursor:pointer;" title="Remove">&times;</button>
       `;
 
       const selectType = row.querySelector('.c-type');

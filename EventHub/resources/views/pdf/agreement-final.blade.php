@@ -32,10 +32,10 @@
 
     <h1>عقد رعاية رسمي — نسخة نهائية</h1>
     <p class="subtitle">
-        <span class="badge-accepted">✅ تم الاتفاق والتوقيع</span>
+        <span class="badge-accepted">تم الاتفاق والتوقيع</span>
     </p>
 
-    <h2>📋 تفاصيل الاتفاقية</h2>
+    <h2>تفاصيل الاتفاقية</h2>
     <table class="details">
         <tr><th>تاريخ الاتفاقية:</th><td>{{ $date }}</td></tr>
         <tr><th>عنوان الحدث:</th><td><strong>{{ $event->title }}</strong></td></tr>
@@ -47,7 +47,7 @@
         <tr><th>الجمهور المستهدف:</th><td>{{ $event->target_audience ?? '—' }}</td></tr>
     </table>
 
-    <h2>👥 أطراف العقد</h2>
+    <h2>أطراف العقد</h2>
     <table class="parties-table">
         <tr>
             <th>الطرف الأول: مدير الحدث</th>
@@ -59,7 +59,7 @@
         </tr>
     </table>
 
-    <h2>📝 بنود وشروط العقد</h2>
+    <h2>بنود وشروط العقد</h2>
     <div class="content" style="background:#fafafa; border:1px solid #eee; border-radius:10px; padding:20px; text-align:right;">
         
         <div style="margin-bottom:15px;">
@@ -112,7 +112,7 @@
     </div>
 
     <div class="seal">
-        <p class="seal-text">✅ تم الاتفاق النهائي بين الطرفين بتاريخ {{ $date }}</p>
+        <p class="seal-text">تم الاتفاق النهائي بين الطرفين بتاريخ {{ $date }}</p>
         <p style="color: #666; font-size: 11px;">هذا العقد ملزم قانونياً لكلا الطرفين وفقاً للبنود المتفق عليها في ملف العقد النهائي.</p>
     </div>
 

@@ -89,7 +89,7 @@
     <!-- Hidden Warning -->
     <div id="hidden-alert" style="display:none; background:rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 16px; border-radius: var(--radius); margin-bottom: 24px; color: #ff6b6b; font-weight: 500;">
       <div style="display:flex; align-items:flex-start; gap:12px;">
-        <span style="font-size:1.5rem;">⚠️</span>
+        <span style="font-size:1.5rem; color:#ff6b6b;">!</span>
         <p style="margin:0; font-size:0.95rem; line-height:1.5;">
           You are currently hidden from exhibition managers. Turn on "Open to Invitations" to be visible to organizers.
         </p>
@@ -114,17 +114,17 @@
       <div class="stat-card">
         <div class="stat-label">Accepted Apps</div>
         <div class="stat-value" id="stat-accepted">—</div>
-        <div class="stat-icon">✅</div>
+        <div class="stat-icon"></div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Pending Apps</div>
         <div class="stat-value" id="stat-pending">—</div>
-        <div class="stat-icon">⏳</div>
+        <div class="stat-icon"></div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Acceptance Rate</div>
         <div class="stat-value" id="stat-rate">—</div>
-        <div class="stat-icon">📈</div>
+        <div class="stat-icon"></div>
       </div>
     </div>
 
@@ -193,11 +193,11 @@
            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
             ${badge(app.status)}
             ${app.status === 'pending' && app.initiator === 'event_manager' ? `
-              <button class="btn btn-success btn-sm" style="padding:4px 10px;" onclick="respondRequest(${app.application_id}, 'accepted')">✅ ${t('Accept')}</button>
-              <button class="btn btn-danger btn-sm" style="padding:4px 10px;" onclick="respondRequest(${app.application_id}, 'rejected')">❌ ${t('Reject')}</button>
+              <button class="btn btn-success btn-sm" style="padding:4px 10px;" onclick="respondRequest(${app.application_id}, 'accepted')">${t('Accept')}</button>
+              <button class="btn btn-danger btn-sm" style="padding:4px 10px;" onclick="respondRequest(${app.application_id}, 'rejected')">${t('Reject')}</button>
             ` : ''}
             ${app.status === 'negotiating' ? `<a href="/company/exhibitions" class="btn btn-sm btn-primary" style="padding:4px 10px;">${t('Review Offer')}</a>` : ''}
-            <button class="btn btn-sm btn-ghost" style="padding:4px 10px;" onclick="showEventDetails(${app.event_id})" title="${t('View Details')}">ℹ️ ${t('Details')}</button>
+            <button class="btn btn-sm btn-ghost" style="padding:4px 10px;" onclick="showEventDetails(${app.event_id})" title="${t('View Details')}">${t('Details')}</button>
            </div>
         </td>
       </tr>
@@ -254,7 +254,7 @@
     }
     toggle.disabled = false;
   }
-  const typeIcons = { 'مؤتمر': '🎙️', 'ندوة': '📖', 'ورشة عمل': '🔧', 'دورة تدريبية': '🎓', 'ترفيه': '🎭', 'ملتقى علمي': '🔬', 'رياضة': '⚽', 'تقنية': '💻', 'اجتماعية': '🤝', 'معرض': '🎪', 'Other': '📌' };
+  const typeIcons = { 'مؤتمر': '', 'ندوة': '', 'ورشة عمل': '', 'دورة تدريبية': '', 'ترفيه': '', 'ملتقى علمي': '', 'رياضة': '', 'تقنية': '', 'اجتماعية': '', 'معرض': '', 'Other': '' };
   const typeColors = { 'مؤتمر': '#3b82f6', 'ندوة': '#8b5cf6', 'ورشة عمل': '#10b981', 'دورة تدريبية': '#06b6d4', 'ترفيه': '#ec4899', 'ملتقى علمي': '#f59e0b', 'رياضة': '#22c55e', 'تقنية': '#6366f1', 'اجتماعية': '#f97316', 'معرض': '#f43f5e', 'Other': '#64748b' };
 
   function showEventDetails(eventId) {
@@ -268,7 +268,7 @@
       api.get(`/company/exhibitions`)
     ]).then(([res, appRes]) => {
       if (!res.ok) {
-        content.innerHTML = `<div class="empty-state"><div class="empty-icon">❌</div><p>${t('Could not fetch event details')}</p></div>`;
+        content.innerHTML = `<div class="empty-state"><div class="empty-icon"></div><p>${t('Could not fetch event details')}</p></div>`;
         return;
       }
       const ev = res.data;
@@ -277,7 +277,7 @@
 
       const eType = ev.event_type || 'Other';
       const tColor = typeColors[eType] || typeColors.Other || '#64748b';
-      const tIcon = typeIcons[eType] || typeIcons.Other || '📌';
+      const tIcon = typeIcons[eType] || typeIcons.Other || '';
 
       const bannerSection = ev.image
         ? `<div class="ed-banner" style="background-image:url('/storage/${ev.image}')"><div class="ed-banner-fade"></div></div>`
@@ -311,7 +311,7 @@
         exhibitorsHtml = `
           <div style="margin-top:20px;">
             <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent2);margin-bottom:12px;display:flex;align-items:center;gap:8px;">
-              <span style="font-size:1.1rem;">🏢</span> ${t('Participating Companies')} (${ev.exhibitors.length})
+              ${t('Participating Companies')} (${ev.exhibitors.length})
             </div>
             <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));gap:10px;">
               ${exItems}
@@ -342,11 +342,11 @@
 
         <div class="ed-info-grid">
           <div class="ed-info-card ed-info-accent2">
-            <div class="ed-info-icon">🏛️</div>
+            <div class="ed-info-icon"></div>
             <div><div class="ed-info-label">${t('Venue')}</div><div class="ed-info-value">${ev.venue?.name || ev.external_venue_name || '—'}</div></div>
           </div>
           <div class="ed-info-card ed-info-accent2">
-            <div class="ed-info-icon">📍</div>
+            <div class="ed-info-icon"></div>
             <div><div class="ed-info-label">${t('Location')}</div><div class="ed-info-value">
               ${ev.location_link ? `<a href="${ev.location_link}" target="_blank" style="color:inherit;text-decoration:underline;">${t('Open in Maps')} ↗</a>`
               : (ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">${t('Open in Maps')} ↗</a>` 
@@ -357,7 +357,7 @@
 
         ${ev.booking_proof ? `
           <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(34,211,238,0.06); border:1px solid rgba(34,211,238,0.15); margin-top:10px;">
-              <div class="ed-info-icon">📎</div>
+              <div class="ed-info-icon"></div>
               <div style="flex:1">
                   <div class="ed-info-label" style="color:#22d3ee">${t('Booking Proof')}</div>
                   <a href="/storage/${ev.booking_proof}" target="_blank" class="ed-info-value" style="text-decoration:underline;">${t('View Document ↗')}</a>
@@ -367,7 +367,7 @@
 
         ${ev.ministry_approval_doc ? `
           <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(139,92,246,0.06); border:1px solid rgba(139,92,246,0.15); margin-top:10px;">
-              <div class="ed-info-icon">📄</div>
+              <div class="ed-info-icon"></div>
               <div style="flex:1">
                   <div class="ed-info-label" style="color:#a78bfa">${t('Competent Authority Approval')}</div>
                   <a href="/storage/${ev.ministry_approval_doc}" target="_blank" class="ed-info-value" style="text-decoration:underline;">${t('View Document ↗')}</a>
@@ -378,7 +378,7 @@
         ${ev.objective ? `
           <div class="ed-info-card" style="grid-column: 1 / -1; flex-direction:column; align-items:flex-start; gap:5px; margin-top:10px;">
               <div style="display:flex; align-items:center; gap:8px;">
-                  <span style="font-size:1.1rem;">🎯</span>
+                  
                   <div class="ed-info-label" style="margin-bottom:0">${t('Event Objective')}</div>
               </div>
               <div class="ed-info-value" style="font-weight:400; font-size:0.85rem; line-height:1.4; color:rgba(255,255,255,0.7)">${ev.objective}</div>
@@ -388,7 +388,7 @@
         ${ev.target_audience ? `
           <div class="ed-info-card" style="grid-column: 1 / -1; flex-direction:column; align-items:flex-start; gap:5px; margin-top:10px;">
               <div style="display:flex; align-items:center; gap:8px;">
-                  <span style="font-size:1.1rem;">👥</span>
+                  
                   <div class="ed-info-label" style="margin-bottom:0">${t('Target Audience')}</div>
               </div>
               <div class="ed-info-value" style="font-weight:400; font-size:0.85rem; line-height:1.4; color:rgba(255,255,255,0.7)">${ev.target_audience}</div>
@@ -403,7 +403,7 @@
               const dn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
               const mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
               let scheduleHtml = '<div style="grid-column: 1 / -1; margin-top:15px;">';
-              scheduleHtml += '<div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">📅 ' + t('Event Schedule') + ' (' + schedule.length + ' ' + (schedule.length > 1 ? t('days') : t('day')) + ')</div>';
+              scheduleHtml += '<div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">' + t('Event Schedule') + ' (' + schedule.length + ' ' + (schedule.length > 1 ? t('days') : t('day')) + ')</div>';
               scheduleHtml += '<div style="display:flex;flex-direction:column;gap:6px;">';
               schedule.forEach(function(slot) {
                 const d = new Date(slot.date + 'T00:00:00');
@@ -429,18 +429,18 @@
               scheduleHtml += '</div></div>';
               return scheduleHtml;
             } else {
-              return '<div class="ed-info-card ed-info-accent" style="margin-top:10px;"><div class="ed-info-icon">🕐</div><div><div class="ed-info-label">' + t('Start') + '</div><div class="ed-info-value">' + fmtDate(ev.start_time) + '</div></div></div>' +
-                     '<div class="ed-info-card ed-info-accent" style="margin-top:10px;"><div class="ed-info-icon">🕔</div><div><div class="ed-info-label">' + t('End') + '</div><div class="ed-info-value">' + fmtDate(ev.end_time) + '</div></div></div>';
+              return '<div class="ed-info-card ed-info-accent" style="margin-top:10px;"><div class="ed-info-icon"></div><div><div class="ed-info-label">' + t('Start') + '</div><div class="ed-info-value">' + fmtDate(ev.start_time) + '</div></div></div>' +
+                     '<div class="ed-info-card ed-info-accent" style="margin-top:10px;"><div class="ed-info-icon"></div><div><div class="ed-info-label">' + t('End') + '</div><div class="ed-info-value">' + fmtDate(ev.end_time) + '</div></div></div>';
             }
           })()}
 
           <div class="ed-info-grid" style="margin-top:15px;">
             <div class="ed-info-card ed-info-warning">
-              <div class="ed-info-icon">👥</div>
+              <div class="ed-info-icon"></div>
               <div><div class="ed-info-label">${t('Capacity')}</div><div class="ed-info-value">${ev.capacity ? ev.capacity : t('Unlimited')}</div></div>
             </div>
             <div class="ed-info-card ed-info-warning">
-              <div class="ed-info-icon">🎫</div>
+              <div class="ed-info-icon"></div>
               <div><div class="ed-info-label">${t('Tickets Booked')}</div><div class="ed-info-value">${ev.tickets_count || 0}</div></div>
             </div>
           </div>
@@ -474,7 +474,7 @@
 <!-- Event Details Modal -->
 <div class="modal-overlay" id="event-details-modal">
   <div class="modal ed-modal">
-    <button class="ed-close-btn" onclick="closeEventDetailsModal()">✕</button>
+    <button class="ed-close-btn" onclick="closeEventDetailsModal()">&times;</button>
     <div id="event-details-content" class="ed-content"></div>
   </div>
 </div>

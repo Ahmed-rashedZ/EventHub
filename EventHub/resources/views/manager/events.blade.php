@@ -99,7 +99,7 @@
       <div class="modal-header"
         style="position: sticky; top: 0; background: rgba(15,18,25,0.97); backdrop-filter: blur(16px); z-index: 10; padding: 24px 0 16px; margin-bottom: 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
         <h3 class="modal-title">Create New Event</h3>
-        <button class="modal-close" onclick="closeModal()">✕</button>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
       </div>
 
       <!-- Step Progress Indicator -->
@@ -140,7 +140,7 @@
         <!-- ═══════ STEP 1: Basic Info ═══════ -->
         <div id="wizard-step-1" class="wizard-step">
           <div class="form-section">
-            <div class="form-section-title"><span>📝</span> Basic Information</div>
+            <div class="form-section-title">Basic Information</div>
             <div class="form-group">
               <label class="form-label">Event Title</label>
               <input id="e-title" type="text" class="form-control" placeholder="e.g. Tech Summit 2026" required />
@@ -181,17 +181,17 @@
               </select>
               <div id="exhibition-hint" style="display:none; margin-top:8px; padding:10px; background:rgba(139,92,246,0.1); border:1px dashed rgba(139,92,246,0.3); border-radius:10px;">
                 <div style="display:flex; align-items:center; gap:8px; font-size:0.85rem; color:#c4b5fd;">
-                  <span>🏛️</span>
+                  <span></span>
                   <p style="margin:0;"><script>document.write(t('Exhibition features (booths, company applications, and contracts) will be enabled for this event.'))</script></p>
                 </div>
               </div>
             </div>
 
-            <!-- 🤖 AI Description Suggestion Card -->
+            <!-- AI Description Suggestion Card -->
             <div id="ai-desc-card" style="display:none; margin-bottom:16px; padding:14px 16px; background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(6,182,212,0.06)); border:1px solid rgba(139,92,246,0.25); border-radius:14px; position:relative; overflow:hidden; transition: all 0.3s ease;">
               <div style="position:absolute; top:-20px; right:-20px; width:80px; height:80px; background:radial-gradient(circle, rgba(139,92,246,0.15), transparent); border-radius:50%;"></div>
               <div style="display:flex; align-items:center; gap:12px;">
-                <div style="width:38px; height:38px; border-radius:12px; background:linear-gradient(135deg, #8b5cf6, #06b6d4); display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; box-shadow: 0 4px 12px rgba(139,92,246,0.3);">✨</div>
+                <div style="width:38px; height:38px; border-radius:12px; background:linear-gradient(135deg, #8b5cf6, #06b6d4); display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; box-shadow: 0 4px 12px rgba(139,92,246,0.3);">🤖</div>
                 <div style="flex:1; min-width:0;">
                   <!-- Prompt State -->
                   <div id="ai-desc-prompt">
@@ -203,7 +203,7 @@
                     </div>
                     <div style="display:flex; gap:8px;">
                       <button type="button" id="ai-desc-generate-btn" onclick="generateAIDescription()" style="padding:6px 16px; background:linear-gradient(135deg, #8b5cf6, #7c3aed); color:#fff; border:none; border-radius:8px; font-size:0.8rem; font-weight:600; cursor:pointer; transition:all 0.2s; box-shadow:0 2px 8px rgba(139,92,246,0.3);">
-                        <script>document.write(t('✨ Generate'))</script>
+                        <script>document.write(t('Generate'))</script>
                       </button>
                       <button type="button" onclick="dismissAIDesc()" style="padding:6px 12px; background:rgba(255,255,255,0.06); color:#94a3b8; border:1px solid rgba(255,255,255,0.1); border-radius:8px; font-size:0.8rem; cursor:pointer; transition:all 0.2s;">
                         <script>document.write(t('No thanks'))</script>
@@ -266,7 +266,7 @@
           <input type="hidden" id="e-location-type" name="location_type" value="internal" />
 
           <div class="form-section">
-            <div class="form-section-title"><span>📅</span> Venue & Schedule</div>
+            <div class="form-section-title">Venue & Schedule</div>
 
             <div class="form-group" style="margin-bottom: 24px;">
               <label class="form-label">Event Venue</label>
@@ -279,11 +279,11 @@
                 </div>
                 <button type="button" id="btn-internal" onclick="setLocationMode('internal')"
                   style="flex: 1; padding: 10px 16px; background: transparent; border: none; color: #fff; font-weight: 600; font-size: 0.85rem; cursor: pointer; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 6px; transition: color 0.3s;">
-                  🏢 Inside Exhibition
+                  Inside Exhibition
                 </button>
                 <button type="button" id="btn-external" onclick="setLocationMode('external')"
                   style="flex: 1; padding: 10px 16px; background: transparent; border: none; color: #64748b; font-weight: 600; font-size: 0.85rem; cursor: pointer; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 6px; transition: color 0.3s;">
-                  🌍 External Venue
+                  External Venue
                 </button>
               </div>
 
@@ -296,7 +296,7 @@
                   </select>
                   <div
                     style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; opacity: 0.7;">
-                    🏢</div>
+                    </div>
                 </div>
               </div>
 
@@ -308,14 +308,14 @@
                     style="padding-left: 42px; background-color: rgba(255,255,255,0.02);" />
                   <div
                     style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; opacity: 0.7;">
-                    🌍</div>
+                    </div>
                 </div>
               </div>
             </div>
 
             <div id="internal-fields">
               <div class="form-group" style="margin-top: 16px;">
-                <label class="form-label"><script>document.write(t('📅 Select Event Days'))</script></label>
+                <label class="form-label"><script>document.write(t('Select Event Days'))</script></label>
                 <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:8px;"><script>document.write(t('Click on days to select them. Max span: 14 days between first and last day.'))</script></small>
                 <div id="e-int-calendar-wrap"
                   style="border:1px solid rgba(139,92,246,0.15);border-radius:16px;overflow:hidden;"></div>
@@ -337,7 +337,7 @@
 
               <!-- Multi-day Calendar -->
               <div class="form-group">
-                <label class="form-label"><script>document.write(t('📅 Select Event Days'))</script></label>
+                <label class="form-label"><script>document.write(t('Select Event Days'))</script></label>
                 <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:8px;"><script>document.write(t('Click on days to select them. Max span: 14 days between first and last day.'))</script></small>
                 <div id="e-ext-calendar-wrap"
                   style="border:1px solid rgba(139,92,246,0.15);border-radius:16px;overflow:hidden;"></div>
@@ -352,7 +352,7 @@
           </div>
 
           <div class="form-section" style="margin-bottom: 0;">
-            <div class="form-section-title"><span>⚙️</span> Additional Settings</div>
+            <div class="form-section-title">Additional Settings</div>
             <div class="form-group">
               <label class="form-label">Event Objective</label>
               <textarea id="e-objective" class="form-control" placeholder="What is the main goal of this event?"
@@ -363,11 +363,11 @@
               <input id="e-audience" type="text" class="form-control"
                 placeholder="e.g. Students, Professionals, General Public" required />
             </div>
-            <!-- 🤖 AI Attendance Prediction Card -->
+            <!-- AI Attendance Prediction Card -->
             <div id="ai-prediction-card" style="display:none; margin-bottom:16px; padding:16px 18px; background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(6,182,212,0.06)); border:1px solid rgba(16,185,129,0.25); border-radius:14px; position:relative; overflow:hidden;">
               <div style="position:absolute; top:-20px; right:-20px; width:80px; height:80px; background:radial-gradient(circle, rgba(16,185,129,0.15), transparent); border-radius:50%;"></div>
               <div style="display:flex; align-items:flex-start; gap:12px;">
-                <div style="width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg, #10b981, #06b6d4); display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0; box-shadow: 0 4px 12px rgba(16,185,129,0.3);">🤖</div>
+                <div style="width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg, #10b981, #06b6d4); display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0; box-shadow: 0 4px 12px rgba(16,185,129,0.3);"></div>
                 <div style="flex:1; min-width:0;">
                   <div style="font-size:0.7rem; font-weight:700; color:#10b981; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px;">
                     <script>document.write(t('AI Attendance Prediction'))</script>
@@ -412,7 +412,7 @@
           <!-- Agenda Section -->
           <div class="form-section" style="margin-bottom: 0;">
             <div class="form-section-title">
-              <span>📋</span> <script>document.write(t('Event Agenda'))</script>
+              <script>document.write(t('Event Agenda'))</script>
               <small style="font-weight:400;color:var(--danger);font-size:0.75rem;"><script>document.write(t('(Required)'))</script></small>
             </div>
             <small style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:12px;">
@@ -433,7 +433,7 @@
               <span style="font-size:1.1em;">←</span> Back
             </button>
             <button type="submit" class="btn btn-primary" style="display:flex;align-items:center;gap:8px;">
-              <span>🚀</span> Submit for Approval
+              Submit for Approval
             </button>
           </div>
         </div>
@@ -446,8 +446,8 @@
     <div class="modal" style="max-width:520px; max-height: 85vh; overflow-y: auto; margin: 20px 0; padding-top: 0;">
       <div class="modal-header"
         style="position: sticky; top: 0; background: rgba(15,18,25,0.97); backdrop-filter: blur(16px); z-index: 10; padding: 24px 0 16px; margin-bottom: 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-        <h3 class="modal-title">✏️ Edit Event</h3>
-        <button class="modal-close" onclick="closeEditModal()">✕</button>
+        <h3 class="modal-title">Edit Event</h3>
+        <button class="modal-close" onclick="closeEditModal()">&times;</button>
       </div>
 
       <!-- Review message banner -->
@@ -455,7 +455,7 @@
         style="margin: 16px 0; padding: 12px 16px; background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.15); border-radius: 10px;">
         <div
           style="font-size:0.65rem;font-weight:700;color:#f59e0b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">
-          📝 <script>document.write(t("Admin's Review"))</script></div>
+          <script>document.write(t("Admin's Review"))</script></div>
         <div id="edit-review-msg" style="font-size:0.75rem;color:#e2e8f0;line-height:1.4;"></div>
       </div>
 
@@ -468,7 +468,7 @@
           style="margin-top: 16px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between;">
           <button type="button" class="btn btn-ghost" onclick="closeEditModal()">Cancel</button>
           <button type="submit" class="btn btn-primary" style="display:flex;align-items:center;gap:6px;">
-            <span>📤</span> Submit Changes
+            Submit Changes
           </button>
         </div>
       </form>
@@ -480,6 +480,45 @@
   <script src="/js/notifications.js"></script>
   <script src="/js/auth.js"></script>
   <script>
+    function getContactIcon(type) {
+      const svgStyle = 'width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2; display:block;';
+      switch(type.toLowerCase()) {
+        case 'email':
+        case 'contact_email':
+          return `<svg style="${svgStyle}" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>`;
+        case 'phone':
+          return `<svg style="${svgStyle}" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2v3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>`;
+        case 'twitter':
+        case 'x':
+          return `<span style="font-weight: 800; font-family: sans-serif;">𝕏</span>`;
+        case 'linkedin':
+          return `<svg style="${svgStyle}" viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>`;
+        case 'website':
+        case 'globe':
+          return `<svg style="${svgStyle}" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>`;
+        case 'portfolio':
+          return `<svg style="${svgStyle}" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>`;
+        case 'facebook':
+          return `<svg style="${svgStyle}" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>`;
+        case 'instagram':
+          return `<svg style="${svgStyle}" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>`;
+        case 'whatsapp':
+          return `<svg style="${svgStyle}" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>`;
+        case 'telegram':
+          return `<svg style="${svgStyle}" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`;
+        case 'github':
+          return `<svg style="${svgStyle}" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>`;
+        case 'youtube':
+          return `<svg style="${svgStyle}" viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"></path><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"></polygon></svg>`;
+        case 'tiktok':
+          return `<svg style="${svgStyle}" viewBox="0 0 24 24"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path></svg>`;
+        case 'discord':
+          return `<svg style="${svgStyle}" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M8 12c1 0 2-1 2-2s-1-2-2-2-2 1-2 2 1 2 2 2zm8 0c1 0 2-1 2-2s-1-2-2-2-2 1-2 2 1 2 2 2z"></path><path d="M12 14c-2 0-4-1-4-1v2s2 1 4 1 4-1 4-1v-2s-2 1-4 1z"></path></svg>`;
+        default:
+          return `<svg style="${svgStyle}" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>`;
+      }
+    }
+
     let allEvents = [];
     let globalVenues = [];
     window.currentVenueBookings = [];
@@ -552,7 +591,7 @@
                 // Add tooltip element
                 const tooltip = document.createElement('div');
                 tooltip.className = 'maint-tooltip';
-                tooltip.textContent = `🔧 ${reason}`;
+                tooltip.textContent = reason;
                 dayElem.appendChild(tooltip);
               }
               return;
@@ -584,7 +623,7 @@
           if (e.target.classList.contains('date-maintenance')) {
             const reason = e.target.getAttribute('data-maint-reason');
             const isAr = document.documentElement.lang === 'ar';
-            let msg = isAr ? '🔧 هذا التاريخ محجوز للصيانة' : '🔧 This date is reserved for maintenance';
+            let msg = isAr ? 'هذا التاريخ محجوز للصيانة' : 'This date is reserved for maintenance';
             if (reason) {
               msg += isAr ? ` (السبب: ${reason})` : ` (Reason: ${reason})`;
             }
@@ -658,24 +697,23 @@
 
     function renderEvents(events) {
       const tbody = document.getElementById('events-body');
-      if (!events.length) { tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">📅</div><p>No events found</p></div></td></tr>'; return; }
+      if (!events.length) { tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon"><svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"></path></svg></div><p>No events found</p></div></td></tr>'; return; }
       tbody.innerHTML = events.map((ev, i) => {
         const reviewBadge = ev.review_status === 'needs_review'
-          ? `<button onclick="toggleReviewRow(${ev.id})" style="display:inline-flex;align-items:center;gap:4px;background:rgba(245,158,11,0.12);color:#f59e0b;padding:2px 8px;border-radius:8px;font-size:0.7rem;font-weight:600;border:1px solid rgba(245,158,11,0.25);cursor:pointer;outline:none;">📝 Review Required</button>`
+          ? `<button onclick="toggleReviewRow(${ev.id})" style="display:inline-flex;align-items:center;gap:4px;background:rgba(245,158,11,0.12);color:#f59e0b;padding:2px 8px;border-radius:8px;font-size:0.7rem;font-weight:600;border:1px solid rgba(245,158,11,0.25);cursor:pointer;outline:none;">Review Required</button>`
           : ev.review_status === 'reviewed'
-            ? `<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(59,130,246,0.12);color:#3b82f6;padding:2px 8px;border-radius:8px;font-size:0.7rem;font-weight:600;border:1px solid rgba(59,130,246,0.25);">🔄 Updated</span>`
+            ? `<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(59,130,246,0.12);color:#3b82f6;padding:2px 8px;border-radius:8px;font-size:0.7rem;font-weight:600;border:1px solid rgba(59,130,246,0.25);">Updated</span>`
             : '';
 
         const reviewRow = ev.review_status === 'needs_review' && ev.review_message
           ? `<tr id="review-row-${ev.id}" style="display:none;"><td colspan="8" style="padding:0;border:none;">
               <div style="margin:0 16px 12px; padding:12px 16px; background:rgba(245,158,11,0.06); border:1px solid rgba(245,158,11,0.15); border-radius:10px; display:flex; align-items:center; gap:12px;">
-                <span style="font-size:1.3rem;">📝</span>
                 <div style="flex:1;">
                   <div style="font-size:0.65rem;font-weight:700;color:#f59e0b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px;">${t('Admin Review')}</div>
                   <div style="font-size:0.75rem;color:#e2e8f0;line-height:1.4;">${ev.review_message}</div>
                   <div style="font-size:0.65rem;color:#94a3b8;margin-top:4px;">${t('Fields to update:')} ${(ev.review_fields || []).map(f => `<span style="background:rgba(255,255,255,0.06);padding:1px 6px;border-radius:4px;margin-right:4px;">${t(f) || f}</span>`).join('')}</div>
                 </div>
-                <button class="btn btn-sm" style="background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);white-space:nowrap;" onclick="openEditModal(${ev.id})">✏️ Edit</button>
+                <button class="btn btn-sm" style="background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);white-space:nowrap;" onclick="openEditModal(${ev.id})">Edit</button>
               </div>
             </td></tr>`
           : '';
@@ -709,11 +747,13 @@
              ${ev.status === 'approved' && (ev.time_status === 'live' || ev.time_status === 'ended') ? `<div style="font-size:10px;color:var(--text-muted);margin-top:4px;">Event ${ev.time_status === 'live' ? 'is live' : 'has ended'}</div>` : ''}
           </td>
           <td><div style="display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center;">${badge(ev.status)} ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''} ${reviewBadge}</div></td>
-          <td style="display:flex;gap:6px;padding:14px 16px;flex-wrap:wrap">
-            <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${ev.id})" title="View Details">ℹ️ Details</button>
-            <button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='/manager/event-stats/${ev.id}'" title="View Statistics">📊 Stats</button>
-            ${ev.status === 'approved' && ev.time_status !== 'ended' ? `<button class="btn btn-sm" style="background:${ev.is_published ? 'rgba(16,185,129,0.12)' : 'rgba(139,92,246,0.12)'};color:${ev.is_published ? '#10b981' : '#a78bfa'};border:1px solid ${ev.is_published ? 'rgba(16,185,129,0.25)' : 'rgba(139,92,246,0.25)'}" onclick="openPublishedScheduleModal(${ev.id})" title="Publish Specific Days">${ev.is_published ? '✅' : '📅'} ${t('Publish Days')}</button>` : ''}
-            ${ev.status === 'pending' ? `<button class="btn btn-sm" style="background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25)" onclick="deleteEvent(${ev.id})" title="Delete Event">🗑️ Delete</button>` : ''}
+          <td style="padding:14px 16px;">
+            <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+              <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${ev.id})" title="View Details">Details</button>
+              <button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='/manager/event-stats/${ev.id}'" title="View Statistics">Stats</button>
+              ${ev.status === 'approved' && ev.time_status !== 'ended' ? `<button class="btn btn-sm" style="background:${ev.is_published ? 'rgba(16,185,129,0.12)' : 'rgba(139,92,246,0.12)'};color:${ev.is_published ? '#10b981' : '#a78bfa'};border:1px solid ${ev.is_published ? 'rgba(16,185,129,0.25)' : 'rgba(139,92,246,0.25)'}" onclick="openPublishedScheduleModal(${ev.id})" title="Publish Specific Days">${t('Publish Days')}</button>` : ''}
+              ${ev.status === 'pending' ? `<button class="btn btn-sm" style="background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25)" onclick="deleteEvent(${ev.id})" title="Delete Event">Delete</button>` : ''}
+            </div>
           </td>
         </tr>${reviewRow}`;
       }).join('');
@@ -727,7 +767,7 @@
       }
     }
 
-    const typeIcons = { 'مؤتمر': '🎙️', 'ندوة': '📖', 'ورشة عمل': '🔧', 'دورة تدريبية': '🎓', 'ترفيه': '🎭', 'ملتقى علمي': '🔬', 'رياضة': '⚽', 'تقنية': '💻', 'اجتماعية': '🤝', 'معرض': '🎪', 'Other': '📌' };
+    const typeIcons = { 'مؤتمر': '', 'ندوة': '', 'ورشة عمل': '', 'دورة تدريبية': '', 'ترفيه': '', 'ملتقى علمي': '', 'رياضة': '', 'تقنية': '', 'اجتماعية': '', 'معرض': '', 'Other': '' };
     const typeColors = { 'مؤتمر': '#3b82f6', 'ندوة': '#8b5cf6', 'ورشة عمل': '#10b981', 'دورة تدريبية': '#06b6d4', 'ترفيه': '#ec4899', 'ملتقى علمي': '#f59e0b', 'رياضة': '#22c55e', 'تقنية': '#6366f1', 'اجتماعية': '#f97316', 'معرض': '#f43f5e', 'Other': '#64748b' };
 
     function showEventDetails(eventId) {
@@ -741,32 +781,31 @@
         api.get(`/events/${eventId}/reviews`)
       ]).then(([res, revRes]) => {
         if (!res.ok) {
-          content.innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><p>Could not fetch event details</p></div>';
+          content.innerHTML = '<div class="empty-state"><div class="empty-icon" style="display:flex; justify-content:center; color:var(--danger);"><svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg></div><p>Could not fetch event details</p></div>';
           return;
         }
         const ev = res.data;
         const reviewData = revRes.ok ? revRes.data : { average_rating: 0, reviews: [] };
         const eType = ev.event_type || 'Other';
         const tColor = typeColors[eType] || typeColors.Other || '#64748b';
-        const tIcon = typeIcons[eType] || typeIcons.Other || '📌';
 
         const bannerSection = ev.image
           ? `<div class="ed-banner" style="background-image:url('/storage/${ev.image}')"><div class="ed-banner-fade"></div></div>`
-          : `<div class="ed-banner ed-banner-placeholder"><span class="ed-banner-emoji">${tIcon}</span><div class="ed-banner-fade"></div></div>`;
+          : `<div class="ed-banner ed-banner-placeholder"><div class="ed-banner-fade"></div></div>`;
 
         const rejectionSection = (ev.status === 'rejected' && ev.rejection_reason)
-          ? `<div class="ed-rejection"><span class="ed-rej-label">⚠ Rejection Reason</span><p>${ev.rejection_reason}</p></div>`
+          ? `<div class="ed-rejection"><span class="ed-rej-label">Rejection Reason</span><p>${ev.rejection_reason}</p></div>`
           : '';
 
         let sponsorsHtml = '';
         if (ev.sponsors && ev.sponsors.length > 0) {
           const getTierBadge = (tier) => {
             switch (tier) {
-              case 'diamond': return '<span style="background:rgba(6,182,212,0.15); color:#06b6d4; padding:3px 8px; border-radius:12px; border:1px solid rgba(6,182,212,0.3); font-size:10px;">💎 Diamond</span>';
-              case 'gold': return '<span style="background:rgba(234,179,8,0.15); color:#eab308; padding:3px 8px; border-radius:12px; border:1px solid rgba(234,179,8,0.3); font-size:10px;">🥇 Gold</span>';
-              case 'silver': return '<span style="background:rgba(156,163,175,0.15); color:#9ca3af; padding:3px 8px; border-radius:12px; border:1px solid rgba(156,163,175,0.3); font-size:10px;">🥈 Silver</span>';
-              case 'bronze': return '<span style="background:rgba(217,119,6,0.15); color:#d97706; padding:3px 8px; border-radius:12px; border:1px solid rgba(217,119,6,0.3); font-size:10px;">🥉 Bronze</span>';
-              default: return `<span style="background:rgba(255,255,255,0.1); color:#fff; padding:3px 8px; border-radius:12px; border:1px solid rgba(255,255,255,0.2); font-size:10px;">${tier || 'Sponsor'}</span>`;
+              case 'diamond': return '<span style="background:rgba(6,182,212,0.15); color:#06b6d4; padding:3px 8px; border-radius:12px; border:1px solid rgba(6,182,212,0.3); font-size:10px; display:inline-flex; align-items:center; gap:4px;">&#128142; Diamond</span>';
+              case 'gold': return '<span style="background:rgba(234,179,8,0.15); color:#eab308; padding:3px 8px; border-radius:12px; border:1px solid rgba(234,179,8,0.3); font-size:10px; display:inline-flex; align-items:center; gap:4px;">&#129351; Gold</span>';
+              case 'silver': return '<span style="background:rgba(156,163,175,0.15); color:#9ca3af; padding:3px 8px; border-radius:12px; border:1px solid rgba(156,163,175,0.3); font-size:10px; display:inline-flex; align-items:center; gap:4px;">&#129352; Silver</span>';
+              case 'bronze': return '<span style="background:rgba(217,119,6,0.15); color:#d97706; padding:3px 8px; border-radius:12px; border:1px solid rgba(217,119,6,0.3); font-size:10px; display:inline-flex; align-items:center; gap:4px;">&#129353; Bronze</span>';
+              default: return `<span style="background:rgba(255,255,255,0.1); color:#fff; padding:3px 8px; border-radius:12px; border:1px solid rgba(255,255,255,0.2); font-size:10px; display:inline-flex; align-items:center; gap:4px;">&#9898; ${tier || 'Sponsor'}</span>`;
             }
           };
 
@@ -824,7 +863,7 @@
           exhibitorsHtml = `
             <div style="margin-top:20px;">
               <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent2);margin-bottom:12px;display:flex;align-items:center;gap:8px;">
-                <span style="font-size:1.1rem;">🏢</span> ${t('Participating Companies')} (${ev.exhibitors.length})
+                ${t('Participating Companies')} (${ev.exhibitors.length})
               </div>
               <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));gap:10px;">
                 ${exItems}
@@ -840,7 +879,7 @@
         <div class="ed-header">
           <div class="ed-title-row">
             <h2 class="ed-title i18n-skip">${ev.title}</h2>
-            <span class="ed-type-pill" style="--tcolor:${tColor}">${tIcon} ${eType}</span>
+            <span class="ed-type-pill" style="--tcolor:${tColor}">${eType}</span>
           </div>
           <div class="ed-badges">
             ${ev.status ? badge(ev.status) : ''}
@@ -858,14 +897,14 @@
 
           <div class="ed-info-grid">
             <div class="ed-info-card ed-info-accent2">
-              <div class="ed-info-icon">🏛️</div>
+              <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.5m-15 10.5V10.5M3 21h18M10.5 8.25h3"></path></svg></div>
               <div>
                 <div class="ed-info-label">Venue</div>
                 <div class="ed-info-value">${ev.venue?.name || ev.external_venue_name || '—'}</div>
               </div>
             </div>
             <div class="ed-info-card ed-info-accent2">
-              <div class="ed-info-icon">📍</div>
+              <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0zM19.5 10.5c0 7.142-7.5 11.25-7.5 11.25s-7.5-4.108-7.5-11.25a7.5 7.5 0 1115 0z"></path></svg></div>
               <div>
                 <div class="ed-info-label">Location</div>
                 <div class="ed-info-value">
@@ -875,31 +914,31 @@
               </div>
             </div>
           ${!ev.venue_id && ev.booking_proof_path ? `
-          <div class="ed-info-card ed-info-accent2" style="grid-column: 1 / -1; background:rgba(34,211,238,0.05); border-color:rgba(34,211,238,0.2);">
-            <div class="ed-info-icon">📎</div>
-            <div><div class="ed-info-label" style="color:#22d3ee">Booking Proof</div><div class="ed-info-value"><button onclick="downloadEventDoc(${ev.id}, 'booking_proof')" style="color:#22d3ee;text-decoration:underline;background:none;border:none;padding:0;font:inherit;cursor:pointer;">View Document ↗</button></div></div>
+          <div class="ed-info-card ed-info-accent2" style="grid-column: 1 / -1;">
+            <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l4.5-4.5m.718-2.262a9 9 0 019-9"></path></svg></div>
+            <div><div class="ed-info-label">Booking Proof</div><div class="ed-info-value"><button onclick="downloadEventDoc(${ev.id}, 'booking_proof')" style="color:#22d3ee;text-decoration:underline;background:none;border:none;padding:0;font:inherit;cursor:pointer;">View Document ↗</button></div></div>
           </div>
           ` : ''}
           ${ev.ministry_document_path ? `
-          <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(139,92,246,0.05); border-color:rgba(139,92,246,0.2); border: 1px solid rgba(139,92,246,0.2);">
-            <div class="ed-info-icon">📄</div>
-            <div><div class="ed-info-label" style="color:#a78bfa">Competent Authority Approval</div><div class="ed-info-value"><button onclick="downloadEventDoc(${ev.id}, 'ministry_document')" style="color:#a78bfa;text-decoration:underline;background:none;border:none;padding:0;font:inherit;cursor:pointer;">View Document ↗</button></div></div>
+          <div class="ed-info-card ed-info-accent" style="grid-column: 1 / -1;">
+            <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"></path></svg></div>
+            <div><div class="ed-info-label">Competent Authority Approval</div><div class="ed-info-value"><button onclick="downloadEventDoc(${ev.id}, 'ministry_document')" style="color:#a78bfa;text-decoration:underline;background:none;border:none;padding:0;font:inherit;cursor:pointer;">View Document ↗</button></div></div>
           </div>
           ` : `
-          <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(239,68,68,0.05); border-color:rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.2);">
-            <div class="ed-info-icon">⚠️</div>
-            <div><div class="ed-info-label" style="color:#ef4444">Competent Authority Approval</div><div class="ed-info-value" style="color:#ef4444;">Not uploaded</div></div>
+          <div class="ed-info-card ed-info-danger" style="grid-column: 1 / -1;">
+            <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg></div>
+            <div><div class="ed-info-label">Competent Authority Approval</div><div class="ed-info-value" style="color:#ef4444;">Not uploaded</div></div>
           </div>
           `}
           ${ev.event_objective ? `
-          <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
-            <div class="ed-info-icon">🎯</div>
+          <div class="ed-info-card ed-info-accent" style="grid-column: 1 / -1;">
+            <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
             <div><div class="ed-info-label">Event Objective</div><div class="ed-info-value" style="font-size:0.9rem;">${ev.event_objective}</div></div>
           </div>
           ` : ''}
           ${ev.target_audience ? `
-          <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
-            <div class="ed-info-icon">👥</div>
+          <div class="ed-info-card ed-info-accent2" style="grid-column: 1 / -1;">
+            <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg></div>
             <div><div class="ed-info-label">Target Audience</div><div class="ed-info-value" style="font-size:0.9rem;">${ev.target_audience}</div></div>
           </div>
           ` : ''}
@@ -911,7 +950,7 @@
               const dn = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
               const mn = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
               let scheduleHtml = '<div style="grid-column: 1 / -1;">';
-              scheduleHtml += '<div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">📅 Event Schedule (' + schedule.length + ' day' + (schedule.length > 1 ? 's' : '') + ')</div>';
+              scheduleHtml += '<div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Event Schedule (' + schedule.length + ' day' + (schedule.length > 1 ? 's' : '') + ')</div>';
               scheduleHtml += '<div style="display:flex;flex-direction:column;gap:6px;">';
               schedule.forEach(function (slot) {
                 const d = new Date(slot.date + 'T00:00:00');
@@ -937,22 +976,22 @@
               scheduleHtml += '</div></div>';
               return scheduleHtml;
             } else {
-              return '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon">🕐</div><div><div class="ed-info-label">Start</div><div class="ed-info-value">' + fmtDate(ev.start_time) + '</div></div></div>' +
-                '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon">🕔</div><div><div class="ed-info-label">End</div><div class="ed-info-value">' + fmtDate(ev.end_time) + '</div></div></div>';
+              return '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon" style="display:flex; align-items:center; justify-content:center;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div><div><div class="ed-info-label">Start</div><div class="ed-info-value">' + fmtDate(ev.start_time) + '</div></div></div>' +
+                '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon" style="display:flex; align-items:center; justify-content:center;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div><div><div class="ed-info-label">End</div><div class="ed-info-value">' + fmtDate(ev.end_time) + '</div></div></div>';
             }
           })()}
           <div class="ed-info-card ed-info-warning">
-            <div class="ed-info-icon">👥</div>
+            <div class="ed-info-icon" style="display:flex; align-items:center; justify-content:center;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.109A11.978 11.978 0 0112 19.5c-1.21 0-2.38-.18-3.484-.512v-.079c0-1.057.277-2.051.765-2.912M13.5 10.986a5.034 5.034 0 003.882-4.908 5.034 5.034 0 00-3.882-4.908M9.75 8.986a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.55 12.014a4.195 4.195 0 001.2-2.932 4.197 4.197 0 00-1.2-2.932M7.485 12H4.625a4.125 4.125 0 00-7.533 2.493M9.007 19.988v-3.07" /></svg></div>
             <div>
               <div class="ed-info-label" style="display:flex;align-items:center;gap:6px;">
                 Capacity 
-                ${ev.status === 'approved' && ev.time_status !== 'ended' ? `<button class="btn-icon-sm" onclick="expandCapacity(${ev.id}, ${ev.capacity}, ${ev.venue?.capacity || 99999})" title="Expand Capacity" style="padding:2px;background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.2);border-radius:4px;cursor:pointer;">✏️</button>` : ''}
+                ${ev.status === 'approved' && ev.time_status !== 'ended' ? `<button class="btn-icon-sm" onclick="expandCapacity(${ev.id}, ${ev.capacity}, ${ev.venue?.capacity || 99999})" title="Expand Capacity" style="padding:2px;background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.2);border-radius:4px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg></button>` : ''}
               </div>
               <div class="ed-info-value" id="det-capacity-${ev.id}">${ev.capacity || (document.documentElement.lang === 'ar' ? 'مفتوح' : 'Unlimited')}</div>
             </div>
           </div>
           <div class="ed-info-card ed-info-warning">
-            <div class="ed-info-icon">🎟️</div>
+            <div class="ed-info-icon" style="display:flex; align-items:center; justify-content:center;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-12v.75m0 3v.75m0 3v.75m0 3V18M3 6.75A1.75 1.75 0 014.75 5h14.5A1.75 1.75 0 0121 6.75v10.5a1.75 1.75 0 01-1.75 1.75H4.75A1.75 1.75 0 013 17.25V6.75z" /></svg></div>
             <div>
               <div class="ed-info-label">Tickets Booked</div>
               <div class="ed-info-value">${ev.tickets_count ?? '—'}</div>
@@ -989,7 +1028,7 @@
 
               if (!hasFilteredAgenda) return '';
 
-              agendaHtml += `<div style="margin-top:16px;"><div style="font-size:0.72rem;font-weight:700;color:#22d3ee;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">📋 Event Agenda</div>`;
+              agendaHtml += `<div style="margin-top:16px;"><div style="font-size:0.72rem;font-weight:700;color:#22d3ee;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;display:flex;align-items:center;gap:6px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>Event Agenda</div>`;
               if (typeof agenda === 'object' && !Array.isArray(agenda)) {
                 const dn = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                 const mn = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -998,7 +1037,7 @@
                   if (!items || items.length === 0) return;
                   const d = new Date(dateStr + 'T00:00:00');
                   const dayLabel = `${dn[d.getDay()]} ${d.getDate()} ${mn[d.getMonth()]} ${d.getFullYear()}`;
-                  agendaHtml += `<div style="margin-bottom:10px;"><div style="font-size:0.68rem;font-weight:600;color:#a78bfa;margin-bottom:6px;padding:4px 10px;background:rgba(139,92,246,0.08);border-radius:6px;display:inline-block;">📅 ${dayLabel}</div><div style="display:flex;flex-direction:column;gap:4px;">`;
+                  agendaHtml += `<div style="margin-bottom:10px;"><div style="font-size:0.68rem;font-weight:600;color:#a78bfa;margin-bottom:6px;padding:4px 10px;background:rgba(139,92,246,0.08);border-radius:6px;display:inline-flex;align-items:center;gap:6px;"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg> ${dayLabel}</div><div style="display:flex;flex-direction:column;gap:4px;">`;
                     items.forEach(a => {
                       agendaHtml += `<div style="display:flex;flex-direction:column;gap:4px;background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:10px;padding:8px 14px;margin:0 8px;">
                         <div style="display:flex;align-items:center;gap:10px;">
@@ -1032,7 +1071,7 @@
           ${ev.time_status !== 'ended' ? `
           <div style="margin-top:12px;display:flex;justify-content:center;">
             <button class="btn btn-sm" style="background:rgba(34,211,238,0.1);color:#22d3ee;border:1px solid rgba(34,211,238,0.2);display:flex;align-items:center;gap:6px;" onclick="openAgendaEditor(${ev.id})">
-              📋 ${t('Edit Agenda')}
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg> ${t('Edit Agenda')}
             </button>
           </div>
           ` : ''}
@@ -1046,12 +1085,12 @@
                 <button class="btn btn-sm ${ev.is_tickets_open ? 'btn-danger' : 'btn-success'}" 
                         style="flex: 1; min-width: 140px; justify-content: center;" 
                         onclick="toggleTicketSales(${ev.id})">
-                  ${ev.is_tickets_open ? '🛑 Close Ticket Sales' : '🎟️ Open Ticket Sales'}
+                  ${ev.is_tickets_open ? t('Close Ticket Sales') : t('Open Ticket Sales')}
                 </button>
                 <button class="btn btn-sm btn-danger" 
                         style="flex: 1; min-width: 140px; justify-content: center; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3);" 
                         onclick="openCancellationModal(${ev.id})">
-                  ❌ Request Cancellation
+                  Request Cancellation
                 </button>
               ` : ''}
 
@@ -1065,7 +1104,7 @@
 
               ${ev.status === 'approved' && ev.cancellation_rejection_reason ? `
                 <div style="width: 100%; padding: 12px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 10px;">
-                  <div style="font-size: 0.75rem; font-weight: 700; color: #ef4444; text-transform: uppercase; margin-bottom: 4px;">🚫 Cancellation Rejected</div>
+                  <div style="font-size: 0.75rem; font-weight: 700; color: #ef4444; text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> Cancellation Rejected</div>
                   <div style="font-size: 0.85rem; color: #e2e8f0;">The admin rejected your cancellation request.</div>
                   <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(239, 68, 68, 0.1);"><strong>Admin Note:</strong> ${ev.cancellation_rejection_reason}</div>
                 </div>
@@ -1554,7 +1593,7 @@
                 dayElem.setAttribute('data-maint-reason', maintBooking.reason);
                 const tooltip = document.createElement('div');
                 tooltip.className = 'maint-tooltip';
-                tooltip.textContent = `🔧 ${maintBooking.reason}`;
+                tooltip.textContent = `[${t('Maintenance')}] ${maintBooking.reason}`;
                 dayElem.appendChild(tooltip);
               }
               return;
@@ -1657,7 +1696,7 @@
             background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25);
             color:#ef4444; width:30px; height:30px; border-radius:8px; cursor:pointer;
             display:flex; align-items:center; justify-content:center; font-size:0.9rem; margin-top:20px;
-          " title="Remove this day">✕</button>
+          " title="Remove this day">&times;</button>
         </div>`;
       }).join('');
       updateCreateAgendaDays();
@@ -1823,7 +1862,7 @@
             color:#ef4444; width:30px; height:30px; border-radius:8px; cursor:pointer;
             display:flex; align-items:center; justify-content:center; font-size:0.9rem;
             transition: background 0.2s; flex-shrink:0; margin-top:10px;
-          " title="Remove this day">✕</button>
+          " title="Remove this day">&times;</button>
         </div>`;
       }).join('');
       updateCreateAgendaDays();
@@ -1936,7 +1975,7 @@
             color:#ef4444;width:28px;height:28px;border-radius:7px;cursor:pointer;
             display:flex;align-items:center;justify-content:center;font-size:0.85rem;
             flex-shrink:0;
-          " title="${t('Remove')}">✕</button>
+          " title="${t('Remove')}">&times;</button>
         </div>
         <div style="width:100%;">
           <label style="font-size:0.6rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:2px;">${t('Description (Optional)')}</label>
@@ -2230,7 +2269,7 @@
         num1.style.background = 'linear-gradient(135deg, #10b981, #059669)';
         num1.style.color = '#fff';
         num1.style.boxShadow = '0 3px 10px rgba(16,185,129,0.3)';
-        num1.innerHTML = '✓';
+        num1.innerHTML = '&check;';
         num2.style.background = 'linear-gradient(135deg, #8b5cf6, #7c3aed)';
         num2.style.color = '#fff';
         num2.style.boxShadow = '0 3px 10px rgba(139,92,246,0.3)';
@@ -2429,15 +2468,15 @@
       let html = '';
 
       const fieldLabels = {
-        title: '📝 Event Title',
-        description: '📄 Description',
-        event_type: '🏷️ Event Type',
-        capacity: '👥 Capacity',
-        event_objective: '🎯 Event Objective',
-        target_audience: '🎯 Target Audience',
-        image: '🖼️ Event Banner',
-        competent_authority_approval: '📄 Competent Authority Approval',
-        booking_proof: '📎 Booking Proof'
+        title: 'Event Title',
+        description: 'Description',
+        event_type: 'Event Type',
+        capacity: 'Capacity',
+        event_objective: 'Event Objective',
+        target_audience: 'Target Audience',
+        image: 'Event Banner',
+        competent_authority_approval: 'Competent Authority Approval',
+        booking_proof: 'Booking Proof'
       };
 
       fields.forEach(f => {
@@ -2841,14 +2880,14 @@
         a.download = filename;
         a.click();
         URL.revokeObjectURL(url);
-        showToast('Download complete ✅', 'success');
+        showToast('Download complete', 'success');
       } catch (err) {
         showToast('Error downloading document', 'error');
       }
     }
 
     // ══════════════════════════════════════════════════════════════
-    //  🤖 AI Attendance Prediction
+    //  AI Attendance Prediction
     // ══════════════════════════════════════════════════════════════
     let aiPredictionTimer = null;
 
@@ -2946,8 +2985,8 @@
           // Hint: recommend setting capacity based on prediction range
           const isAr = document.documentElement.lang === 'ar';
           const hint = isAr
-            ? `💡 بناءً على بيانات الفعاليات السابقة، ننصحك بتحديد السعة بحوالي ${upper.toLocaleString()} شخص أو أكثر لتغطية الطلب المتوقع.`
-            : `💡 Based on historical data, we recommend setting the capacity to around ${upper.toLocaleString()} or more to cover expected demand.`;
+            ? `بناءً على بيانات الفعاليات السابقة، ننصحك بتحديد السعة بحوالي ${upper.toLocaleString()} شخص أو أكثر لتغطية الطلب المتوقع.`
+            : `Based on historical data, we recommend setting the capacity to around ${upper.toLocaleString()} or more to cover expected demand.`;
           document.getElementById('ai-prediction-hint').textContent = hint;
           resultEl.style.display = 'block';
         } else {
@@ -2982,8 +3021,8 @@
   <div class="modal-overlay" id="profile-details-modal">
     <div class="modal" style="max-width:500px; width:95%; padding:0; border-top:3.5px solid var(--accent2); max-height:85vh; display:flex; flex-direction:column; border-radius:16px;">
       <div style="padding:16px 20px 12px; display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid rgba(255,255,255,0.05);">
-        <h3 class="modal-title" style="margin:0;font-size:1.1rem;display:flex;align-items:center;gap:8px;">👤 <script>document.write(t('Public Profile'))</script></h3>
-        <button class="modal-close" onclick="closeProfileModal()">✕</button>
+        <h3 class="modal-title" style="margin:0;font-size:1.1rem;display:flex;align-items:center;gap:8px;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:block;"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg> <script>document.write(t('Public Profile'))</script></h3>
+        <button class="modal-close" onclick="closeProfileModal()">&times;</button>
       </div>
       <div id="profile-details-content" style="padding:20px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:16px;">
         <div class="spinner" style="margin:40px auto"></div>
@@ -2994,7 +3033,7 @@
   <!-- Event Details Modal -->
   <div class="modal-overlay" id="event-details-modal">
     <div class="modal ed-modal">
-      <button class="ed-close-btn" onclick="closeEventDetailsModal()">✕</button>
+      <button class="ed-close-btn" onclick="closeEventDetailsModal()">&times;</button>
       <div id="event-details-content" class="ed-content"></div>
     </div>
   </div>
@@ -3004,8 +3043,8 @@
     <div class="modal" style="max-width:600px; max-height: 88vh; overflow-y: auto; margin: 20px 0; padding-top: 0;">
       <div class="modal-header"
         style="position: sticky; top: 0; background: rgba(15,18,25,0.97); backdrop-filter: blur(16px); z-index: 10; padding: 24px 0 16px; margin-bottom: 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-        <h3 class="modal-title">📋 <script>document.write(t('Edit Event Agenda'))</script></h3>
-        <button class="modal-close" onclick="closeAgendaEditor()">✕</button>
+        <h3 class="modal-title"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:inline-block; vertical-align:middle; margin-inline-end:6px;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg> <script>document.write(t('Edit Event Agenda'))</script></h3>
+        <button class="modal-close" onclick="closeAgendaEditor()">&times;</button>
       </div>
       <div style="padding: 16px 0;">
         <!-- Agenda Tabs for selected day -->
@@ -3023,7 +3062,7 @@
         <div
           style="display:flex;justify-content:flex-end;gap:8px;border-top:1px solid rgba(255,255,255,0.06);padding-top:14px;">
           <button class="btn btn-ghost" onclick="closeAgendaEditor()"><script>document.write(t('Cancel'))</script></button>
-          <button class="btn btn-primary" onclick="saveAgenda()" style="display:flex;align-items:center;gap:6px;">💾
+          <button class="btn btn-primary" onclick="saveAgenda()" style="display:flex;align-items:center;gap:6px;"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:block;"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
             <script>document.write(t('Save Agenda'))</script></button>
         </div>
       </div>
@@ -3034,8 +3073,8 @@
   <div class="modal-overlay" id="cancellation-modal">
     <div class="modal" style="max-width:450px;">
       <div class="modal-header">
-        <h3 class="modal-title">⚠️ Request Event Cancellation</h3>
-        <button class="modal-close" onclick="closeCancellationModal()">✕</button>
+        <h3 class="modal-title"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:inline-block; vertical-align:middle; margin-inline-end:6px; color:var(--warning);"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg> Request Event Cancellation</h3>
+        <button class="modal-close" onclick="closeCancellationModal()">&times;</button>
       </div>
       <div class="modal-body">
         <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:16px;">
@@ -3401,7 +3440,7 @@
     }
 
     .flatpickr-day.date-maintenance::after {
-      content: '🔧';
+      content: '\\1F527';
       position: absolute;
       bottom: 1px;
       right: 3px;
@@ -3851,8 +3890,16 @@
     }
 
     .ed-info-icon {
-      font-size: 1.3rem;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 1.1rem;
     }
 
     .ed-info-label {
@@ -3872,13 +3919,33 @@
     .ed-info-accent .ed-info-label {
       color: var(--accent);
     }
+    .ed-info-accent .ed-info-icon {
+      background: rgba(110, 64, 242, 0.15);
+      color: #a78bfa;
+    }
 
     .ed-info-accent2 .ed-info-label {
       color: var(--accent2);
     }
+    .ed-info-accent2 .ed-info-icon {
+      background: rgba(34, 211, 238, 0.15);
+      color: #22d3ee;
+    }
 
     .ed-info-warning .ed-info-label {
       color: var(--warning);
+    }
+    .ed-info-warning .ed-info-icon {
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+    }
+
+    .ed-info-danger .ed-info-label {
+      color: #ef4444;
+    }
+    .ed-info-danger .ed-info-icon {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
     }
 
     .ed-footer {
@@ -3906,8 +3973,11 @@
   <div class="modal-overlay" id="published-schedule-modal">
     <div class="modal" style="max-width:500px;">
       <div class="modal-header">
-        <h3 class="modal-title"><span id="pub-modal-title">📅 Publish Days</span></h3>
-        <button class="modal-close" onclick="closePublishedScheduleModal()">✕</button>
+        <h3 class="modal-title" style="display:inline-flex; align-items:center; gap:8px;">
+          <svg style="width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          <span id="pub-modal-title">Publish Days</span>
+        </h3>
+        <button class="modal-close" onclick="closePublishedScheduleModal()">&times;</button>
       </div>
       <div class="modal-body">
         <p id="pub-modal-desc" style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;"></p>
@@ -3916,14 +3986,23 @@
       <div class="modal-footer"
         style="margin-top:24px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
         <button type="button" id="pub-unpublish-btn" class="btn btn-sm"
-          style="background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.25);display:none;"
-          onclick="unpublishEvent()">🚫 Unpublish</button>
+          style="background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.25);display:none;align-items:center;gap:6px;"
+          onclick="unpublishEvent()">
+          <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
+          Unpublish
+        </button>
         <div style="display:flex; gap:10px; margin-left:auto;">
           <button type="button" class="btn btn-ghost" onclick="closePublishedScheduleModal()">Cancel</button>
           <button type="button" class="btn btn-sm"
-            style="background:rgba(139,92,246,0.15);color:#a78bfa;border:1px solid rgba(139,92,246,0.3);"
-            onclick="savePublishedSchedule(false)">💾 Save Draft</button>
-          <button type="button" class="btn btn-primary" onclick="savePublishedSchedule(true)">🚀 Publish</button>
+            style="background:rgba(139,92,246,0.15);color:#a78bfa;border:1px solid rgba(139,92,246,0.3);display:inline-flex;align-items:center;gap:6px;"
+            onclick="savePublishedSchedule(false)">
+            <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            Save Draft
+          </button>
+          <button type="button" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:6px;" onclick="savePublishedSchedule(true)">
+            <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            Publish
+          </button>
         </div>
       </div>
     </div>
@@ -3938,9 +4017,12 @@
       currentPublishedScheduleEventId = eventId;
 
       // Set translations
-      document.getElementById('pub-modal-title').innerText = '📅 ' + t('Publish Days');
+      document.getElementById('pub-modal-title').innerText = t('Publish Days');
+      const statusIcon = ev.is_published 
+        ? `<svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2.5; display:inline-block; vertical-align:middle;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>` 
+        : `<svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2; display:inline-block; vertical-align:middle;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>`;
       document.getElementById('pub-modal-desc').innerHTML = t('published_schedule_desc') +
-        `<div style="margin-top:10px;padding:8px 12px;border-radius:8px;font-size:0.8rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;${ev.is_published ? 'background:rgba(16,185,129,0.1);color:#10b981;border:1px solid rgba(16,185,129,0.2);' : 'background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.2);'}">${ev.is_published ? '✅ ' + t('Published — Visible to public') : '⏳ ' + t('Draft — Not visible to public yet')}</div>`;
+        `<div style="margin-top:10px;padding:8px 12px;border-radius:8px;font-size:0.8rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;${ev.is_published ? 'background:rgba(16,185,129,0.1);color:#10b981;border:1px solid rgba(16,185,129,0.2);' : 'background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.2);'}">${statusIcon} ${ev.is_published ? t('Published — Visible to public') : t('Draft — Not visible to public yet')}</div>`;
 
       // Show/hide unpublish button
       const unpubBtn = document.getElementById('pub-unpublish-btn');
@@ -3954,7 +4036,9 @@
 
       if (schedule.length === 0) {
         container.innerHTML = `<div style="text-align:center; padding:30px; background:rgba(255,255,255,0.02); border-radius:12px; border:1px dashed rgba(255,255,255,0.1);">
-                <div style="font-size:2rem; margin-bottom:10px;">📅</div>
+                <div style="display:flex; justify-content:center; color:var(--text-muted); opacity:0.3; margin-bottom:10px;">
+                  <svg style="width:36px; height:36px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                </div>
                 <p style="color:var(--text-muted);">${t('No schedule found for this event.')}</p>
             </div>`;
       } else {
@@ -4025,7 +4109,7 @@
       });
 
       if (res.ok) {
-        showToast(publish ? t('Event published successfully! 🚀') : t('published_schedule_success'), 'success');
+        showToast(publish ? t('Event published successfully!') : t('published_schedule_success'), 'success');
         closePublishedScheduleModal();
         loadEvents();
       } else {
@@ -4134,7 +4218,7 @@
         if (u.contact_email) {
           contactsHtml += `
             <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.02);padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.05);">
-              <span style="font-size:1.2rem;">📧</span>
+              <span style="display:inline-flex;color:var(--text-muted);">${getContactIcon('email')}</span>
               <div>
                 <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;">${t('Contact Email')}</div>
                 <div style="font-weight:500;font-size:0.85rem;">${u.contact_email}</div>
@@ -4145,7 +4229,7 @@
         if (u.phone) {
           contactsHtml += `
             <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.02);padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.05);">
-              <span style="font-size:1.2rem;">📱</span>
+              <span style="display:inline-flex;color:var(--text-muted);">${getContactIcon('phone')}</span>
               <div>
                 <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;">${t('Phone')}</div>
                 <div style="font-weight:500;font-size:0.85rem;"><a href="tel:${u.phone}" style="color:inherit;text-decoration:none;">${u.phone}</a></div>
@@ -4157,20 +4241,11 @@
         // Build social links HTML
         let socialHtml = '';
         if (u.social_links && Object.keys(u.social_links).length > 0) {
-          const iconMap = {
-            'twitter': '𝕏', 'x': '𝕏',
-            'linkedin': '💼',
-            'website': '🌐', 'portfolio': '🎨',
-            'facebook': '👥', 'instagram': '📸',
-            'whatsapp': '💬', 'telegram': '✈️',
-            'github': '💻', 'youtube': '🎬',
-            'tiktok': '🎵', 'discord': '👾'
-          };
           let linksHtml = '';
           for (let [pKey, link] of Object.entries(u.social_links)) {
             if (link) {
               const platform = pKey.split('_')[0];
-              const icon = iconMap[platform] || '🔗';
+              const icon = getContactIcon(platform);
               linksHtml += `
                 <a href="${link.startsWith('http') ? link : 'https://' + link}" target="_blank" style="width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);display:inline-flex;align-items:center;justify-content:center;color:var(--text-muted);text-decoration:none;font-size:1.1rem;transition:all 0.2s;" onmouseover="this.style.background='rgba(110,64,242,0.1)';this.style.borderColor='var(--accent)';" onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.borderColor='rgba(255,255,255,0.08)';">
                   ${icon}

@@ -161,17 +161,7 @@
 <div class="app-layout">
   <aside class="sidebar">
     <div class="sidebar-logo" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;"><img src="/images/logo.png" alt="EventHub Logo" style="height: 60px; width: auto; object-fit: contain;"></div>
-    <nav class="sidebar-nav">
-      <span class="nav-section-label">Overview</span>
-      <a class="nav-item" href="/admin/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
-      <span class="nav-section-label">Management</span>
-      <a class="nav-item" href="/admin/users"><span class="nav-icon">👥</span> Users</a>
-      <a class="nav-item" href="/admin/events"><span class="nav-icon">📅</span> Events</a>
-      <a class="nav-item active" href="/admin/venues"><span class="nav-icon">🏛️</span> Venues</a>
-      <a class="nav-item" href="/admin/verifications"><span class="nav-icon">🛡️</span> Verifications</a>
-      <span class="nav-section-label">Settings</span>
-      <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
-    </nav>
+    <nav class="sidebar-nav" id="sidebar-links"></nav>
     @include('partials._sidebar-footer')
   </aside>
 
@@ -201,7 +191,7 @@
   <div class="modal">
     <div class="modal-header">
       <h3 class="modal-title" id="modal-title"><script>document.write(t('Add Venue'))</script></h3>
-      <button class="modal-close" onclick="closeModal()">✕</button>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
     </div>
     <form id="venue-form">
       <input type="hidden" id="venue-id"/>
@@ -227,7 +217,7 @@
 
       <!-- Period Settings -->
       <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:16px;margin-bottom:16px">
-        <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.35);margin-bottom:12px">⏰ <script>document.write(t('Period Settings'))</script></div>
+        <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.35);margin-bottom:12px"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align:middle;margin-inline-end:6px;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> <script>document.write(t('Period Settings'))</script></div>
         <div class="form-grid">
           <div class="form-group">
             <label class="form-label"><script>document.write(t('Morning Start'))</script></label>
@@ -270,12 +260,12 @@
   <div class="modal" style="max-width:560px; max-height:85vh; overflow-y:auto;">
     <div class="modal-header">
       <h3 class="modal-title"><script>document.write(t('Schedule Maintenance'))</script> — <span id="maint-venue-name"></span></h3>
-      <button class="modal-close" onclick="closeMaintenanceModal()">✕</button>
+      <button class="modal-close" onclick="closeMaintenanceModal()">&times;</button>
     </div>
     
     <!-- Add New Period -->
     <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:20px;margin-bottom:20px">
-      <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.35);margin-bottom:16px">📅 <script>document.write(t('Add Maintenance Period'))</script></div>
+      <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.35);margin-bottom:16px"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align:middle;margin-inline-end:6px;"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> <script>document.write(t('Add Maintenance Period'))</script></div>
       <div class="form-grid">
         <div class="form-group">
           <label class="form-label"><script>document.write(t('Start Date'))</script></label>
@@ -317,7 +307,7 @@
 
     <!-- Existing Periods List -->
     <div>
-      <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.35);margin-bottom:12px">📋 <script>document.write(t('Scheduled Maintenance Periods'))</script></div>
+      <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.35);margin-bottom:12px"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align:middle;margin-inline-end:6px;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg> <script>document.write(t('Scheduled Maintenance Periods'))</script></div>
       <div id="maintenance-list">
         <div style="text-align:center;color:var(--text-muted);padding:20px"><script>document.write(t('Loading...'))</script></div>
       </div>
@@ -406,7 +396,7 @@
   async function loadVenues() {
     const res = await api.get('/venues');
     const tbody = document.getElementById('venues-body');
-    if (!res.ok || !res.data.length) { tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">🏛️</div><p>${t('No venues yet. Add one!')}</p></div></td></tr>`; return; }
+    if (!res.ok || !res.data.length) { tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon" style="display:flex; justify-content:center; margin-bottom:12px; color:var(--text-muted);"><svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg></div><p>${t('No venues yet. Add one!')}</p></div></td></tr>`; return; }
     tbody.innerHTML = res.data.map((v, i) => {
       // Count upcoming maintenance periods
       const now = new Date().toISOString().split('T')[0];
@@ -415,11 +405,11 @@
       
       let statusHtml;
       if (v.status === 'maintenance') {
-        statusHtml = `<span class="badge" style="background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3)">🔒 ${t('Full Lockdown')}</span>`;
+        statusHtml = `<span class="badge" style="background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3)">${t('Full Lockdown')}</span>`;
       } else if (activeMaint.length > 0) {
-        statusHtml = `<span class="badge" style="background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3)">🔧 ${t('Under Maintenance')}</span>`;
+        statusHtml = `<span class="badge" style="background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3)">${t('Under Maintenance')}</span>`;
       } else {
-        statusHtml = `<span class="badge" style="background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3)">✅ ${t('Available')}</span>`;
+        statusHtml = `<span class="badge" style="background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3)">${t('Available')}</span>`;
       }
 
       const maintBadge = upcomingMaint.length > 0
@@ -430,13 +420,13 @@
       <tr>
         <td style="color:var(--text-muted)">${i+1}</td>
         <td><div style="font-weight:600">${v.name}</div></td>
-        <td><div style="font-size:0.9rem; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${v.location && v.location.startsWith('http') ? `<a href="${v.location}" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;display:inline-flex;align-items:center;gap:4px">📍 ${t('Open in Maps')}</a>` : `<span style="color:var(--text-muted)">📍 ${v.location || '—'}</span>`}</div></td>
+        <td><div style="font-size:0.9rem; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${v.location && v.location.startsWith('http') ? `<a href="${v.location}" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;display:inline-flex;align-items:center;gap:4px"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align:middle;margin-inline-end:4px;"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg> ${t('Open in Maps')}</a>` : `<span style="color:var(--text-muted)"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align:middle;margin-inline-end:4px;"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg> ${v.location || '—'}</span>`}</div></td>
         <td style="color:var(--text-muted)">${v.capacity.toLocaleString()}</td>
         <td>${statusHtml}</td>
         <td>${maintBadge}</td>
         <td style="display:flex;gap:6px;padding:14px 16px">
-          <button class="btn btn-ghost btn-sm" onclick='editVenue(${JSON.stringify(v)})'>✏️ ${t('Edit')}</button>
-          <button class="btn btn-sm" style="background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.25)" onclick='openMaintenanceModal(${v.id}, ${JSON.stringify(v.name)})'>🔧 ${t('Maintenance')}</button>
+          <button class="btn btn-ghost btn-sm" onclick='editVenue(${JSON.stringify(v)})'>${t('Edit')}</button>
+          <button class="btn btn-sm" style="background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.25)" onclick='openMaintenanceModal(${v.id}, ${JSON.stringify(v.name)})'>${t('Maintenance')}</button>
         </td>
       </tr>`;
     }).join('');
@@ -513,7 +503,7 @@
     
     const res = await api.get(`/venues/${currentMaintenanceVenueId}/maintenance`);
     if (!res.ok || !res.data.length) {
-      container.innerHTML = `<div style="text-align:center;color:var(--text-muted);padding:24px;background:rgba(255,255,255,0.02);border:1px dashed rgba(255,255,255,0.08);border-radius:10px"><div style="font-size:2rem;margin-bottom:8px">📋</div><p style="margin:0">${t('No maintenance periods scheduled')}</p></div>`;
+      container.innerHTML = `<div style="text-align:center;color:var(--text-muted);padding:24px;background:rgba(255,255,255,0.02);border:1px dashed rgba(255,255,255,0.08);border-radius:10px"><svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin:0 auto 8px;color:var(--text-muted);display:block;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg><p style="margin:0">${t('No maintenance periods scheduled')}</p></div>`;
       return;
     }
 
@@ -524,9 +514,9 @@
       const isFuture = p.start_date > now;
       
       let statusBadge;
-      if (isActive) statusBadge = `<span style="background:rgba(245,158,11,0.15);color:#f59e0b;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700">🔧 ${t('ACTIVE NOW')}</span>`;
-      else if (isPast) statusBadge = `<span style="background:rgba(107,114,128,0.15);color:#6b7280;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700">✓ ${t('COMPLETED')}</span>`;
-      else statusBadge = `<span style="background:rgba(59,130,246,0.15);color:#3b82f6;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700">⏳ ${t('UPCOMING')}</span>`;
+      if (isActive) statusBadge = `<span style="background:rgba(245,158,11,0.15);color:#f59e0b;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700">${t('ACTIVE NOW')}</span>`;
+      else if (isPast) statusBadge = `<span style="background:rgba(107,114,128,0.15);color:#6b7280;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700">${t('COMPLETED')}</span>`;
+      else statusBadge = `<span style="background:rgba(59,130,246,0.15);color:#3b82f6;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700">${t('UPCOMING')}</span>`;
 
       // Calculate duration
       const start = new Date(p.start_date);
@@ -546,11 +536,11 @@
               <span style="color:var(--text-muted);font-size:11px">${days} ${t(days > 1 ? 'days' : 'day')}</span>
             </div>
             <div style="font-weight:600;font-size:0.9rem;color:#fff;margin-bottom:4px">
-              📅 ${startFmt} → ${endFmt}
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align:middle;margin-inline-end:4px;"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> ${startFmt} → ${endFmt}
             </div>
-            ${p.reason ? `<div style="color:var(--text-muted);font-size:0.8rem">💬 ${p.reason}</div>` : ''}
+            ${p.reason ? `<div style="color:var(--text-muted);font-size:0.8rem"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align:middle;margin-inline-end:4px;"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg> ${p.reason}</div>` : ''}
           </div>
-          ${!isPast ? `<button class="btn btn-sm" style="background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.25)" onclick="deleteMaintenancePeriod(${p.id})">🗑️</button>` : ''}
+          ${!isPast ? `<button class="btn btn-sm" style="background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.25);display:inline-flex;align-items:center;justify-content:center;padding:6px 8px;" onclick="deleteMaintenancePeriod(${p.id})"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>` : ''}
         </div>`;
     }).join('');
   }
@@ -592,7 +582,7 @@
         const alertHtml = `
           <div id="conflict-alert" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:16px;margin-bottom:12px;animation:fadeIn 0.3s ease">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-              <span style="font-size:1.3rem">⛔</span>
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:#ef4444;vertical-align:middle;margin-inline-end:6px;"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
               <span style="font-weight:700;color:#ef4444;font-size:0.9rem">${t('Cannot Schedule Maintenance')}</span>
             </div>
             <p style="color:rgba(255,255,255,0.8);font-size:0.82rem;margin:0 0 8px;line-height:1.6">
@@ -601,13 +591,13 @@
             <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px">
               ${data.conflicting_events.map(name => `
                 <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(239,68,68,0.06);border-radius:8px;border:1px solid rgba(239,68,68,0.15)">
-                  <span style="font-size:0.85rem">📅</span>
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align:middle;margin-inline-end:4px;"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                   <span style="font-weight:600;color:#fff;font-size:0.82rem">${name}</span>
                 </div>
               `).join('')}
             </div>
             <p style="color:rgba(255,255,255,0.5);font-size:0.75rem;margin:0;font-style:italic">
-              💡 ${t('Please choose dates that don\'t conflict with existing bookings.')}
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align:middle;margin-inline-end:4px;color:#f59e0b;"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg> ${t('Please choose dates that don\'t conflict with existing bookings.')}
             </p>
           </div>
         `;

@@ -306,7 +306,7 @@
                            oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 10)"
                            title="Please enter a valid Libyan mobile number (091, 092, 093, or 094 followed by 7 digits)">
                 </div>
-                <button type="button" class="btn btn-ghost" style="color: var(--danger); font-size: 1.25rem; min-width: 44px; height: 44px; padding: 0; justify-content: center;" onclick="this.parentElement.remove()">✕</button>
+                <button type="button" class="btn btn-ghost" style="color: var(--danger); font-size: 1.25rem; min-width: 44px; height: 44px; padding: 0; justify-content: center;" onclick="this.parentElement.remove()">&times;</button>
             `;
             container.appendChild(row);
         }
@@ -345,7 +345,7 @@
                 <div style="flex-grow: 1;">
                     <input type="url" name="social_links[${platformKey || 'link_'+currentIdx}]" class="form-control url-input" placeholder="https://..." value="${urlValue}" required>
                 </div>
-                <button type="button" class="btn btn-ghost" style="color: var(--danger); font-size: 1.25rem; min-width: 44px; height: 44px; padding: 0; justify-content: center;" onclick="this.parentElement.remove()">✕</button>
+                <button type="button" class="btn btn-ghost" style="color: var(--danger); font-size: 1.25rem; min-width: 44px; height: 44px; padding: 0; justify-content: center;" onclick="this.parentElement.remove()">&times;</button>
             `;
             container.appendChild(row);
         }
@@ -394,10 +394,10 @@
 
         // Verification Docs Script
         const DOC_ICONS = {
-            'doc_commercial_register': '📋',
-            'doc_tax_number': '🔢',
-            'doc_articles_of_association': '📝',
-            'doc_practice_license': '🏢',
+            'doc_commercial_register': `<svg style="width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><line x1="9" y1="12" x2="15" y2="12"></line><line x1="9" y1="16" x2="15" y2="16"></line><line x1="9" y1="8" x2="10" y2="8"></line></svg>`,
+            'doc_tax_number': `<svg style="width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line><line x1="10" y1="3" x2="8" y2="21"></line><line x1="16" y1="3" x2="14" y2="21"></line></svg>`,
+            'doc_articles_of_association': `<svg style="width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>`,
+            'doc_practice_license': `<svg style="width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line></svg>`,
         };
 
         async function loadMyDocuments() {
@@ -413,38 +413,41 @@
                 }
 
                 docsGrid.innerHTML = res.data.documents.map(doc => {
-                    const icon = DOC_ICONS[doc.key] || '📄';
+                    const icon = DOC_ICONS[doc.key] || '<svg style="width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>';
                     const statusMap = {
-                        'approved': { color: '#10b981', bg: 'rgba(16,185,129,0.1)', icon: '✅', label: t('Approved') },
-                        'rejected': { color: '#ef4444', bg: 'rgba(239,68,68,0.1)', icon: '❌', label: t('Rejected') },
-                        'pending_update': { color: '#3b82f6', bg: 'rgba(59,130,246,0.1)', icon: '🔄', label: t('Pending Review') },
-                        'pending': { color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', icon: '⏳', label: t('Pending') },
+                        'approved': { color: '#10b981', bg: 'rgba(16,185,129,0.1)', icon: `<svg style="width:12px; height:12px; stroke:currentColor; fill:none; stroke-width:2; margin-inline-end: 4px; display:inline-block; vertical-align:middle;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>`, label: t('Approved') },
+                        'rejected': { color: '#ef4444', bg: 'rgba(239,68,68,0.1)', icon: `<svg style="width:12px; height:12px; stroke:currentColor; fill:none; stroke-width:2; margin-inline-end: 4px; display:inline-block; vertical-align:middle;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`, label: t('Rejected') },
+                        'pending_update': { color: '#3b82f6', bg: 'rgba(59,130,246,0.1)', icon: `<svg style="width:12px; height:12px; stroke:currentColor; fill:none; stroke-width:2; margin-inline-end: 4px; display:inline-block; vertical-align:middle;" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>`, label: t('Pending Review') },
+                        'pending': { color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', icon: `<svg style="width:12px; height:12px; stroke:currentColor; fill:none; stroke-width:2; margin-inline-end: 4px; display:inline-block; vertical-align:middle;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>`, label: t('Pending') },
                     };
                     const s = statusMap[doc.status] || statusMap['pending'];
                     const userId = {{ $user->id }};
 
                     let noteHtml = '';
                     if (doc.status === 'rejected' && doc.note) {
-                        noteHtml = `<p style="margin: 0.5rem 0 0; font-size: 0.8rem; color: #ef4444; background: rgba(239,68,68,0.05); padding: 6px 10px; border-radius: 6px;">💬 ${doc.note}</p>`;
+                        noteHtml = `<p style="margin: 0.5rem 0 0; font-size: 0.8rem; color: #ef4444; background: rgba(239,68,68,0.05); padding: 6px 10px; border-radius: 6px; display:flex; align-items:center; gap:4px;"><svg style="width:12px; height:12px; stroke:currentColor; fill:none; stroke-width:2; display:inline-block; vertical-align:middle;" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> ${doc.note}</p>`;
                     }
+
+                    const docSvg = `<svg style="width:12px; height:12px; stroke:currentColor; fill:none; stroke-width:2; margin-inline-end:4px; display:inline-block; vertical-align:middle;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`;
+                    const clipSvg = `<svg style="width:12px; height:12px; stroke:currentColor; fill:none; stroke-width:2; margin-inline-end:4px; display:inline-block; vertical-align:middle;" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>`;
 
                     return `
                         <div style="padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius); display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; transition: border-color 0.2s;"
                              onmouseover="this.style.borderColor='rgba(110,64,242,0.3)'" onmouseout="this.style.borderColor='var(--border)'">
                             <div style="flex: 1; min-width: 200px;">
                                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                                    <span style="font-size: 1.2rem;">${icon}</span>
+                                    <span style="display: flex; align-items: center;">${icon}</span>
                                     <h4 style="margin: 0; font-size: 0.95rem;">${t(doc.label)}</h4>
                                 </div>
-                                <span style="font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; font-weight: 600; background: ${s.bg}; color: ${s.color};">
+                                <span style="font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; font-weight: 600; background: ${s.bg}; color: ${s.color}; display: inline-flex; align-items: center;">
                                     ${s.icon} ${s.label}
                                 </span>
                                 ${noteHtml}
                             </div>
                             <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                ${doc.has_file ? `<button class="btn btn-ghost btn-sm" onclick="viewDocument(${userId}, '${doc.key}')">📄 ${t('View Document')}</button>` : ''}
-                                <label class="btn btn-secondary btn-sm" style="cursor: pointer; margin:0;">
-                                    📎 ${t('Upload New')}
+                                ${doc.has_file ? `<button type="button" class="btn btn-ghost btn-sm" onclick="viewDocument(${userId}, '${doc.key}')">${docSvg}${t('View Document')}</button>` : ''}
+                                <label class="btn btn-secondary btn-sm" style="cursor: pointer; margin:0; display: inline-flex; align-items: center;">
+                                    ${clipSvg}${t('Upload New')}
                                     <input type="file" name="${doc.key}" style="display: none;" accept=".pdf,.png,.jpg,.jpeg" onchange="updateDocFileName(this, '${doc.key}')">
                                 </label>
                             </div>
@@ -470,7 +473,7 @@
         function updateDocFileName(input, docKey) {
             const displayEl = document.getElementById('filename-' + docKey);
             if (input.files && input.files[0]) {
-                displayEl.textContent = '📎 ' + t('Selected:') + ' ' + input.files[0].name;
+                displayEl.innerHTML = '<svg style="width:12px; height:12px; stroke:currentColor; fill:none; stroke-width:2; margin-inline-end:4px; display:inline-block; vertical-align:middle;" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg> ' + t('Selected:') + ' ' + input.files[0].name;
                 displayEl.style.display = 'block';
                 document.getElementById('btn-submit-docs').style.display = 'inline-flex';
             } else {

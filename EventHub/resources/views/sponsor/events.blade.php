@@ -118,7 +118,7 @@
     <div class="modal">
       <div class="modal-header">
         <h3 class="modal-title">Sponsor Event</h3>
-        <button class="modal-close" onclick="closeModal()">✕</button>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
       </div>
       <form id="req-form">
         <input type="hidden" id="r-event-id" value="" />
@@ -279,15 +279,15 @@
             <div style="font-weight:600">${e.title}</div>
         </td>
         <td>
-            <div style="font-size:13px; color:var(--accent2); cursor:pointer; display:inline-block;" onclick="navigateToProfile(${e.creator?.id})">
-                👤 ${e.creator?.name || 'Unknown'}
+            <div class="i18n-skip" style="font-size:13px; color:var(--accent2); cursor:pointer; display:inline-block;" onclick="navigateToProfile(${e.creator?.id})">
+                ${e.creator?.name || 'Unknown'}
             </div>
         </td>
         <td style="color:var(--text-muted)">${e.venue?.name || 'TBA'}</td>
         <td style="color:var(--text-muted)">${fmtDateShort(e.start_time)} <div style="margin-top:4px;">${timeBadge(e.time_status)}</div></td>
         <td style="color:var(--text-muted)">${e.capacity ? e.capacity.toLocaleString() : (document.documentElement.lang === 'ar' ? 'مفتوح' : 'Unlimited')}</td>
         <td style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-           <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${e.id})" title="View Details">ℹ️ Details</button>
+           <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${e.id})" title="View Details">Details</button>
            <div style="display:flex; align-items:center;">
              ${reqBtnHtml}
            </div>
@@ -337,7 +337,6 @@
       btn.disabled = false;
     });
 
-    const typeIcons = { 'مؤتمر': '🎙️', 'ندوة': '📖', 'ورشة عمل': '🔧', 'دورة تدريبية': '🎓', 'ترفيه': '🎭', 'ملتقى علمي': '🔬', 'رياضة': '⚽', 'تقنية': '💻', 'اجتماعية': '🤝', 'معرض': '🎪', 'Other': '📌' };
     const typeColors = { 'مؤتمر': '#3b82f6', 'ندوة': '#8b5cf6', 'ورشة عمل': '#10b981', 'دورة تدريبية': '#06b6d4', 'ترفيه': '#ec4899', 'ملتقى علمي': '#f59e0b', 'رياضة': '#22c55e', 'تقنية': '#6366f1', 'اجتماعية': '#f97316', 'معرض': '#f43f5e', 'Other': '#64748b' };
 
     function showEventDetails(eventId) {
@@ -351,28 +350,27 @@
         api.get(`/events/${eventId}/reviews`)
       ]).then(([res, revRes]) => {
         if (!res.ok) {
-          content.innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><p>Could not fetch event details</p></div>';
+          content.innerHTML = `<div class="empty-state"><div style="display:flex;justify-content:center;margin-bottom:15px;color:var(--danger);"><svg xmlns="http://www.w3.org/2000/svg" style="width:40px;height:40px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg></div><p>Could not fetch event details</p></div>`;
           return;
         }
         const ev = res.data;
         const reviewData = revRes.ok ? revRes.data : { average_rating: 0, reviews: [] };
         const eType = ev.event_type || 'Other';
         const tColor = typeColors[eType] || typeColors.Other || '#64748b';
-        const tIcon = typeIcons[eType] || typeIcons.Other || '📌';
 
         const bannerSection = ev.image
           ? `<div class="ed-banner" style="background-image:url('/storage/${ev.image}')"><div class="ed-banner-fade"></div></div>`
-          : `<div class="ed-banner ed-banner-placeholder"><span class="ed-banner-emoji">${tIcon}</span><div class="ed-banner-fade"></div></div>`;
+          : `<div class="ed-banner ed-banner-placeholder"><div style="display:flex; justify-content:center; color:rgba(255,255,255,0.15);"><svg xmlns="http://www.w3.org/2000/svg" style="width:64px;height:64px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg></div><div class="ed-banner-fade"></div></div>`;
 
         let sponsorsHtml = '';
         if (ev.sponsors && ev.sponsors.length > 0) {
           const getTierBadge = (tier) => {
             switch (tier) {
-              case 'diamond': return '<span style="background:rgba(6,182,212,0.15); color:#06b6d4; padding:3px 8px; border-radius:12px; border:1px solid rgba(6,182,212,0.3); font-size:10px;">💎 Diamond</span>';
-              case 'gold': return '<span style="background:rgba(234,179,8,0.15); color:#eab308; padding:3px 8px; border-radius:12px; border:1px solid rgba(234,179,8,0.3); font-size:10px;">🥇 Gold</span>';
-              case 'silver': return '<span style="background:rgba(156,163,175,0.15); color:#9ca3af; padding:3px 8px; border-radius:12px; border:1px solid rgba(156,163,175,0.3); font-size:10px;">🥈 Silver</span>';
-              case 'bronze': return '<span style="background:rgba(217,119,6,0.15); color:#d97706; padding:3px 8px; border-radius:12px; border:1px solid rgba(217,119,6,0.3); font-size:10px;">🥉 Bronze</span>';
-              default: return `<span style="background:rgba(255,255,255,0.1); color:#fff; padding:3px 8px; border-radius:12px; border:1px solid rgba(255,255,255,0.2); font-size:10px;">${tier || 'Sponsor'}</span>`;
+              case 'diamond': return '<span style="background:rgba(6,182,212,0.15); color:#06b6d4; padding:3px 8px; border-radius:12px; border:1px solid rgba(6,182,212,0.3); font-size:10px; display:inline-flex; align-items:center; gap:4px;">&#128142; Diamond</span>';
+              case 'gold': return '<span style="background:rgba(234,179,8,0.15); color:#eab308; padding:3px 8px; border-radius:12px; border:1px solid rgba(234,179,8,0.3); font-size:10px; display:inline-flex; align-items:center; gap:4px;">&#129351; Gold</span>';
+              case 'silver': return '<span style="background:rgba(156,163,175,0.15); color:#9ca3af; padding:3px 8px; border-radius:12px; border:1px solid rgba(156,163,175,0.3); font-size:10px; display:inline-flex; align-items:center; gap:4px;">&#129352; Silver</span>';
+              case 'bronze': return '<span style="background:rgba(217,119,6,0.15); color:#d97706; padding:3px 8px; border-radius:12px; border:1px solid rgba(217,119,6,0.3); font-size:10px; display:inline-flex; align-items:center; gap:4px;">&#129353; Bronze</span>';
+              default: return `<span style="background:rgba(255,255,255,0.1); color:#fff; padding:3px 8px; border-radius:12px; border:1px solid rgba(255,255,255,0.2); font-size:10px; display:inline-flex; align-items:center; gap:4px;">&#9898; ${tier || 'Sponsor'}</span>`;
             }
           };
 
@@ -437,7 +435,7 @@
           exhibitorsHtml = `
             <div style="margin-top:20px;">
               <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent2);margin-bottom:12px;display:flex;align-items:center;gap:8px;">
-                <span style="font-size:1.1rem;">🏢</span> Participating Companies (${ev.exhibitors.length})
+                <svg xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px;color:var(--accent2);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg> Participating Companies (${ev.exhibitors.length})
               </div>
               <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));gap:10px;">
                 ${exItems}
@@ -445,13 +443,18 @@
             </div>`;
         }
 
+        const VenueIcon = `<svg xmlns="http://www.w3.org/2000/svg" style="width:18px;height:18px;color:var(--accent2);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>`;
+        const PinIcon = `<svg xmlns="http://www.w3.org/2000/svg" style="width:18px;height:18px;color:var(--accent2);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>`;
+        const ClockIcon = `<svg xmlns="http://www.w3.org/2000/svg" style="width:18px;height:18px;color:var(--accent);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+        const UsersIcon = `<svg xmlns="http://www.w3.org/2000/svg" style="width:18px;height:18px;color:var(--warning);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.109A11.978 11.978 0 0112 19.5c-1.21 0-2.38-.18-3.484-.512v-.079c0-1.057.277-2.051.765-2.912M13.5 10.986a5.034 5.034 0 003.882-4.908 5.034 5.034 0 00-3.882-4.908M9.75 8.986a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.55 12.014a4.195 4.195 0 001.2-2.932 4.197 4.197 0 00-1.2-2.932M7.485 12H4.625a4.125 4.125 0 00-7.533 2.493M9.007 19.988v-3.07" /></svg>`;
+
         content.innerHTML = `
         ${bannerSection}
         <div class="ed-body">
           <div class="ed-header">
             <div class="ed-title-row">
               <h2 class="ed-title">${ev.title}</h2>
-              <span class="ed-type-pill" style="--tcolor:${tColor}">${tIcon} ${eType}</span>
+              <span class="ed-type-pill" style="--tcolor:${tColor}">${eType}</span>
             </div>
             <div class="ed-badges">
               ${timeBadge(ev.time_status)}
@@ -463,11 +466,11 @@
           </div>
           <div class="ed-info-grid">
             <div class="ed-info-card ed-info-accent2">
-              <div class="ed-info-icon">🏛️</div>
+              <div class="ed-info-icon">${VenueIcon}</div>
               <div><div class="ed-info-label">Venue</div><div class="ed-info-value">${ev.venue?.name || ev.external_venue_name || '—'}</div></div>
             </div>
             <div class="ed-info-card ed-info-accent2">
-              <div class="ed-info-icon">📍</div>
+              <div class="ed-info-icon">${PinIcon}</div>
               <div><div class="ed-info-label">Location</div><div class="ed-info-value">
                 ${ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` 
                 : (ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` : '—')}
@@ -481,7 +484,7 @@
                 const dn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
                 const mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
                 let scheduleHtml = '<div style="grid-column: 1 / -1;">';
-                scheduleHtml += '<div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">📅 Event Schedule (' + schedule.length + ' day' + (schedule.length > 1 ? 's' : '') + ')</div>';
+                scheduleHtml += '<div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Event Schedule (' + schedule.length + ' day' + (schedule.length > 1 ? 's' : '') + ')</div>';
                 scheduleHtml += '<div style="display:flex;flex-direction:column;gap:6px;">';
                 schedule.forEach(function(slot) {
                   const d = new Date(slot.date + 'T00:00:00');
@@ -507,12 +510,12 @@
                 scheduleHtml += '</div></div>';
                 return scheduleHtml;
               } else {
-                return '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon">🕐</div><div><div class="ed-info-label">Start</div><div class="ed-info-value">' + fmtDate(ev.start_time) + '</div></div></div>' +
-                       '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon">🕔</div><div><div class="ed-info-label">End</div><div class="ed-info-value">' + fmtDate(ev.end_time) + '</div></div></div>';
+                return '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon">' + ClockIcon + '</div><div><div class="ed-info-label">Start</div><div class="ed-info-value">' + fmtDate(ev.start_time) + '</div></div></div>' +
+                       '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon">' + ClockIcon + '</div><div><div class="ed-info-label">End</div><div class="ed-info-value">' + fmtDate(ev.end_time) + '</div></div></div>';
               }
             })()}
             <div class="ed-info-card ed-info-warning">
-              <div class="ed-info-icon">👥</div>
+              <div class="ed-info-icon">${UsersIcon}</div>
               <div><div class="ed-info-label">Capacity</div><div class="ed-info-value">${ev.capacity || (document.documentElement.lang === 'ar' ? 'مفتوح' : 'Unlimited')}</div></div>
             </div>
           </div>
@@ -521,7 +524,7 @@
 
           ${exhibitorsHtml}
           
-          ${(() => { let ag=ev.agenda; if(!ag||typeof ag!=='object') return ''; const isArr=Array.isArray(ag); if(isArr&&!ag.length) return ''; if(!isArr&&!Object.keys(ag).length) return ''; const pubDates=ev.published_schedule&&ev.published_schedule.length>0?ev.published_schedule.map(p=>p.date):null; if(pubDates&&!isArr){const f={};Object.keys(ag).forEach(ds=>{if(pubDates.includes(ds))f[ds]=ag[ds];});ag=f;if(!Object.keys(ag).length)return '';} let h='<div style="margin-top:16px;"><div style="font-size:0.72rem;font-weight:700;color:#22d3ee;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">📋 Event Agenda</div>'; const dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; const renderItem=a=>`<div style="display:flex;flex-direction:column;gap:4px;background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:10px;padding:8px 14px;margin:0 8px;"><div style="display:flex;align-items:center;gap:10px;"><div style="display:flex;align-items:center;gap:6px;min-width:110px;"><span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.start_time}</span><span style="color:#64748b;font-size:0.7rem;">→</span><span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.end_time}</span></div><div style="flex:1;font-size:0.85rem;color:#e2e8f0;font-weight:500;">${a.title}</div></div>${a.description ? `<div style="font-size:0.78rem;color:#94a3b8;margin-top:4px;padding-inline-start:12px;border-inline-start:2px solid rgba(34,211,238,0.2);text-align:start;line-height:1.4;">${a.description}</div>` : ''}</div>`; if(!isArr){Object.keys(ag).sort().forEach(ds=>{const items=ag[ds];if(!items||!items.length)return;const d=new Date(ds+'T00:00:00');h+=`<div style="margin-bottom:10px;"><div style="font-size:0.68rem;font-weight:600;color:#a78bfa;margin-bottom:6px;padding:4px 10px;background:rgba(139,92,246,0.08);border-radius:6px;display:inline-block;">📅 ${dn[d.getDay()]} ${d.getDate()} ${mn[d.getMonth()]} ${d.getFullYear()}</div><div style="display:flex;flex-direction:column;gap:4px;">${items.map(renderItem).join('')}</div></div>`;});}else{h+=`<div style="display:flex;flex-direction:column;gap:4px;">${ag.map(renderItem).join('')}</div>`;} return h+'</div>'; })()}
+          ${(() => { let ag=ev.agenda; if(!ag||typeof ag!=='object') return ''; const isArr=Array.isArray(ag); if(isArr&&!ag.length) return ''; if(!isArr&&!Object.keys(ag).length) return ''; const pubDates=ev.published_schedule&&ev.published_schedule.length>0?ev.published_schedule.map(p=>p.date):null; if(pubDates&&!isArr){const f={};Object.keys(ag).forEach(ds=>{if(pubDates.includes(ds))f[ds]=ag[ds];});ag=f;if(!Object.keys(ag).length)return '';} const agendaIcon = `<svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2; display:inline-block; vertical-align:middle; margin-inline-end:4px;" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><line x1="9" y1="12" x2="15" y2="12"></line><line x1="9" y1="16" x2="15" y2="16"></line><line x1="9" y1="8" x2="10" y2="8"></line></svg>`; let h='<div style="margin-top:16px;"><div style="font-size:0.72rem;font-weight:700;color:#22d3ee;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;display:flex;align-items:center;">' + agendaIcon + ' Event Agenda</div>'; const dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; const renderItem=a=>`<div style="display:flex;flex-direction:column;gap:4px;background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:10px;padding:8px 14px;margin:0 8px;"><div style="display:flex;align-items:center;gap:10px;"><div style="display:flex;align-items:center;gap:6px;min-width:110px;"><span style="background:rgba(34,211,238,0.1);color:#22d3ee;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.start_time}</span><span style="color:#64748b;font-size:0.7rem;">→</span><span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:3px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">${a.end_time}</span></div><div style="flex:1;font-size:0.85rem;color:#e2e8f0;font-weight:500;">${a.title}</div></div>${a.description ? `<div style="font-size:0.78rem;color:#94a3b8;margin-top:4px;padding-inline-start:12px;border-inline-start:2px solid rgba(34,211,238,0.2);text-align:start;line-height:1.4;">${a.description}</div>` : ''}</div>`; if(!isArr){Object.keys(ag).sort().forEach(ds=>{const items=ag[ds];if(!items||!items.length)return;const d=new Date(ds+'T00:00:00');const itemCalIcon = `<svg style="width:12px; height:12px; stroke:currentColor; fill:none; stroke-width:2; display:inline-block; vertical-align:middle; margin-inline-end:4px;" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>`; h+=`<div style="margin-bottom:10px;"><div style="font-size:0.68rem;font-weight:600;color:#a78bfa;margin-bottom:6px;padding:4px 10px;background:rgba(139,92,246,0.08);border-radius:6px;display:inline-flex;align-items:center;">` + itemCalIcon + ` ${dn[d.getDay()]} ${d.getDate()} ${mn[d.getMonth()]} ${d.getFullYear()}</div><div style="display:flex;flex-direction:column;gap:4px;">${items.map(renderItem).join('')}</div></div>`;});}else{h+=`<div style="display:flex;flex-direction:column;gap:4px;">${ag.map(renderItem).join('')}</div>`;} return h+'</div>'; })()}
 
           <div class="ed-footer mt-2">
             <span class="ed-footer-label">Event Manager</span>
@@ -545,7 +548,7 @@
   <!-- Event Details Modal -->
   <div class="modal-overlay" id="event-details-modal">
     <div class="modal ed-modal">
-      <button class="ed-close-btn" onclick="closeEventDetailsModal()">✕</button>
+      <button class="ed-close-btn" onclick="closeEventDetailsModal()">&times;</button>
       <div id="event-details-content" class="ed-content"></div>
     </div>
   </div>
@@ -719,8 +722,33 @@
     }
 
     .ed-info-icon {
-      font-size: 1.3rem;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 1.1rem;
+    }
+
+    .ed-info-accent .ed-info-icon {
+      background: rgba(110, 64, 242, 0.15);
+      color: #a78bfa;
+    }
+    .ed-info-accent2 .ed-info-icon {
+      background: rgba(34, 211, 238, 0.15);
+      color: #22d3ee;
+    }
+    .ed-info-warning .ed-info-icon {
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+    }
+    .ed-info-danger .ed-info-icon {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
     }
 
     .ed-info-label {

@@ -42,7 +42,7 @@
         <table>
           <thead><tr><th>#</th><th><script>document.write(t('Event'))</script></th><th><script>document.write(t('Sponsor (Sector)'))</script></th><th><script>document.write(t('Status'))</script></th><th><script>document.write(t('Actions'))</script></th><th><script>document.write(t('Tier'))</script></th></tr></thead>
           <tbody id="req-body">
-            <tr class="loading-row"><td colspan="7"><div class="spinner" style="margin:auto"></div></td></tr>
+            <tr class="loading-row"><td colspan="6"><div class="spinner" style="margin:auto"></div></td></tr>
           </tbody>
         </table>
       </div>
@@ -54,8 +54,8 @@
 <div class="modal-overlay" id="profile-details-modal">
   <div class="modal" style="max-width:500px; width:95%; padding:0; border-top:3.5px solid var(--accent2); max-height:85vh; display:flex; flex-direction:column; border-radius:16px;">
     <div style="padding:16px 20px 12px; display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid rgba(255,255,255,0.05);">
-      <h3 class="modal-title" style="margin:0;font-size:1.1rem;display:flex;align-items:center;gap:8px;">👤 <script>document.write(t('Public Profile'))</script></h3>
-      <button class="modal-close" onclick="closeProfileModal()">✕</button>
+      <h3 class="modal-title" style="margin:0;font-size:1.1rem;display:flex;align-items:center;gap:8px;"><script>document.write(t('Public Profile'))</script></h3>
+      <button class="modal-close" onclick="closeProfileModal()">&times;</button>
     </div>
     <div id="profile-details-content" style="padding:20px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:16px;">
       <div class="spinner" style="margin:40px auto"></div>
@@ -68,7 +68,7 @@
   <div class="modal" style="max-width: 450px;">
     <div class="modal-header">
       <h3 class="modal-title"><script>document.write(t('Request Sponsorship'))</script></h3>
-      <button class="modal-close" onclick="closeModal()">✕</button>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
     </div>
     <form id="req-form">
       <div class="form-group">
@@ -101,7 +101,7 @@
   <div class="modal" style="max-width: 500px;">
     <div class="modal-header">
       <h3 class="modal-title"><script>document.write(t('Sponsorship Message'))</script></h3>
-      <button class="modal-close" onclick="closeMsgModal()">✕</button>
+      <button class="modal-close" onclick="closeMsgModal()">&times;</button>
     </div>
     <div class="modal-body" id="msg-content" style="padding: 20px; font-size: 15px; line-height: 1.6; color: var(--text);"></div>
     <div class="modal-footer">
@@ -115,24 +115,24 @@
   <div class="modal" style="max-width: 400px;">
     <div class="modal-header">
       <h3 class="modal-title"><script>document.write(t('Accept Sponsorship'))</script></h3>
-      <button class="modal-close" onclick="closeAcceptModal()">✕</button>
+      <button class="modal-close" onclick="closeAcceptModal()">&times;</button>
     </div>
     <form id="accept-form" onsubmit="submitAccept(event)">
       <input type="hidden" id="accept-req-id">
       <div class="form-group">
         <label class="form-label" style="font-size: 0.8rem;"><script>document.write(t('Select Sponsor Tier'))</script></label>
         <select id="a-tier" class="form-control" style="cursor: pointer;">
-          <option value="">🏷️ <script>document.write(t('Unranked'))</script></option>
-          <option value="diamond">💎 <script>document.write(t('Diamond Sponsor'))</script></option>
-          <option value="gold">🥇 <script>document.write(t('Gold Sponsor'))</script></option>
-          <option value="silver">🥈 <script>document.write(t('Silver Sponsor'))</script></option>
-          <option value="bronze">🥉 <script>document.write(t('Bronze Sponsor'))</script></option>
+          <option value="">&#9898; <script>document.write(t('Unranked'))</script></option>
+          <option value="diamond">&#128142; <script>document.write(t('Diamond Sponsor'))</script></option>
+          <option value="gold">&#129351; <script>document.write(t('Gold Sponsor'))</script></option>
+          <option value="silver">&#129352; <script>document.write(t('Silver Sponsor'))</script></option>
+          <option value="bronze">&#129353; <script>document.write(t('Bronze Sponsor'))</script></option>
         </select>
         <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;"><script>document.write(t('Choose a tier or leave unranked. Two sponsors cannot have the same tier.'))</script></p>
       </div>
       <div class="modal-footer" style="margin-top: 20px;">
         <button type="button" class="btn btn-ghost" onclick="closeAcceptModal()"><script>document.write(t('Cancel'))</script></button>
-        <button type="submit" class="btn btn-success"><script>document.write(t('✅ Confirm Acceptance'))</script></button>
+        <button type="submit" class="btn btn-success"><script>document.write(t('Confirm Acceptance'))</script></button>
       </div>
     </form>
   </div>
@@ -143,18 +143,18 @@
   <div class="modal" style="max-width: 400px;">
     <div class="modal-header">
       <h3 class="modal-title"><script>document.write(t('Edit Sponsor Tier'))</script></h3>
-      <button class="modal-close" onclick="closeEditRankModal()">✕</button>
+      <button class="modal-close" onclick="closeEditRankModal()">&times;</button>
     </div>
     <form id="edit-rank-form" onsubmit="submitEditRank(event)">
       <input type="hidden" id="edit-req-id">
       <div class="form-group">
         <label class="form-label" style="font-size: 0.8rem;"><script>document.write(t('Select New Sponsor Tier'))</script></label>
         <select id="e-tier" class="form-control" style="cursor: pointer;">
-          <option value="">🏷️ <script>document.write(t('Unranked'))</script></option>
-          <option value="diamond">💎 <script>document.write(t('Diamond Sponsor'))</script></option>
-          <option value="gold">🥇 <script>document.write(t('Gold Sponsor'))</script></option>
-          <option value="silver">🥈 <script>document.write(t('Silver Sponsor'))</script></option>
-          <option value="bronze">🥉 <script>document.write(t('Bronze Sponsor'))</script></option>
+          <option value="">&#9898; <script>document.write(t('Unranked'))</script></option>
+          <option value="diamond">&#128142; <script>document.write(t('Diamond Sponsor'))</script></option>
+          <option value="gold">&#129351; <script>document.write(t('Gold Sponsor'))</script></option>
+          <option value="silver">&#129352; <script>document.write(t('Silver Sponsor'))</script></option>
+          <option value="bronze">&#129353; <script>document.write(t('Bronze Sponsor'))</script></option>
         </select>
         <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;"><script>document.write(t('This tier will be updated immediately in all event details.'))</script></p>
       </div>
@@ -171,7 +171,7 @@
   <div class="modal" style="max-width:520px; width:95%; padding:0; border-top:3px solid #22d3ee; max-height:85vh; display:flex; flex-direction:column; border-radius:16px;">
     <div style="padding:16px 20px 0; display:flex; justify-content:space-between; align-items:center;">
       <div><h3 class="modal-title" style="margin:0;font-size:1rem;"><script>document.write(t('Contract Negotiation'))</script></h3><p style="font-size:0.7rem;color:var(--text-muted);margin:2px 0 0"><script>document.write(t('Negotiate terms with the sponsor'))</script></p></div>
-      <button class="modal-close" onclick="closeAgreementModal()">✕</button>
+      <button class="modal-close" onclick="closeAgreementModal()">&times;</button>
     </div>
     <div id="agreement-content" style="padding:12px 20px 20px; overflow-y:auto; flex:1;">
       <div class="spinner" style="margin:40px auto"></div>
@@ -197,11 +197,11 @@
 
   function getTierBadge(tier) {
     switch (tier) {
-      case 'diamond': return '<span style="background:rgba(6,182,212,0.15); color:#06b6d4; padding:3px 10px; border-radius:12px; border:1px solid rgba(6,182,212,0.3); font-size:11px; font-weight:600;">💎 Diamond</span>';
-      case 'gold':    return '<span style="background:rgba(234,179,8,0.15); color:#eab308; padding:3px 10px; border-radius:12px; border:1px solid rgba(234,179,8,0.3); font-size:11px; font-weight:600;">🥇 Gold</span>';
-      case 'silver':  return '<span style="background:rgba(156,163,175,0.15); color:#9ca3af; padding:3px 10px; border-radius:12px; border:1px solid rgba(156,163,175,0.3); font-size:11px; font-weight:600;">🥈 Silver</span>';
-      case 'bronze':  return '<span style="background:rgba(217,119,6,0.15); color:#d97706; padding:3px 10px; border-radius:12px; border:1px solid rgba(217,119,6,0.3); font-size:11px; font-weight:600;">🥉 Bronze</span>';
-      default:        return '<span style="background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.5); padding:3px 10px; border-radius:12px; border:1px solid rgba(255,255,255,0.12); font-size:11px; font-weight:600;">🏷️ Unranked</span>';
+      case 'diamond': return '<span style="background:rgba(6,182,212,0.15); color:#06b6d4; padding:3px 10px; border-radius:12px; border:1px solid rgba(6,182,212,0.3); font-size:11px; font-weight:600; display:inline-flex; align-items:center; gap:4px;">&#128142; Diamond</span>';
+      case 'gold':    return '<span style="background:rgba(234,179,8,0.15); color:#eab308; padding:3px 10px; border-radius:12px; border:1px solid rgba(234,179,8,0.3); font-size:11px; font-weight:600; display:inline-flex; align-items:center; gap:4px;">&#129351; Gold</span>';
+      case 'silver':  return '<span style="background:rgba(156,163,175,0.15); color:#9ca3af; padding:3px 10px; border-radius:12px; border:1px solid rgba(156,163,175,0.3); font-size:11px; font-weight:600; display:inline-flex; align-items:center; gap:4px;">&#129352; Silver</span>';
+      case 'bronze':  return '<span style="background:rgba(217,119,6,0.15); color:#d97706; padding:3px 10px; border-radius:12px; border:1px solid rgba(217,119,6,0.3); font-size:11px; font-weight:600; display:inline-flex; align-items:center; gap:4px;">&#129353; Bronze</span>';
+      default:        return '<span style="background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.5); padding:3px 10px; border-radius:12px; border:1px solid rgba(255,255,255,0.12); font-size:11px; font-weight:600; display:inline-flex; align-items:center; gap:4px;">&#9898; Unranked</span>';
     }
   }
 
@@ -209,7 +209,7 @@
     const res = await api.get('/sponsorship');
     const tbody = document.getElementById('req-body');
     if (!res.ok || !res.data.length) { 
-        tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">💼</div><p>' + t('No sponsorship requests yet') + '</p></div></td></tr>'; 
+        tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon"><svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v5.3a2.25 2.25 0 01-2.25 2.25h-12a2.25 2.25 0 01-2.25-2.25v-5.3m16.5 0a2.25 2.25 0 00-2.25-2.25h-12a2.25 2.25 0 00-2.25 2.25m16.5 0V7.5a2.25 2.25 0 00-2.25-2.25h-12A2.25 2.25 0 003.75 7.5v6.65M7.5 12h9m-9 3H12m6.75-9.75V3.75a.75.75 0 00-.75-.75h-7.5a.75.75 0 00-.75.75v1.5"></path></svg></div><p>' + t('No sponsorship requests yet') + '</p></div></td></tr>'; 
         return; 
     }
 
@@ -226,20 +226,20 @@
       if (r.status === 'pending') {
           if (r.initiator === 'sponsor') {
               actionHtml = `
-                <button class="btn btn-success" style="padding: 4px 12px; font-size: 12px; font-weight: 600;" onclick="respondReq(${r.id}, 'accepted')">✅ ${t('Accept')}</button>
-                <button class="btn btn-danger" style="padding: 4px 12px; font-size: 12px; font-weight: 600;" onclick="respondReq(${r.id}, 'rejected')">❌ ${t('Reject')}</button>
+                <button class="btn btn-success" style="padding: 4px 12px; font-size: 12px; font-weight: 600;" onclick="respondReq(${r.id}, 'accepted')">${t('Accept')}</button>
+                <button class="btn btn-danger" style="padding: 4px 12px; font-size: 12px; font-weight: 600;" onclick="respondReq(${r.id}, 'rejected')">${t('Reject')}</button>
               `;
           } else {
               actionHtml = `<div style="font-size: 11px; color: var(--text-muted);">${t('Awaiting Response')}</div>`;
           }
       } else if (r.status === 'negotiating') {
           actionHtml = `
-            <button class="btn btn-sm" onclick="openAgreementModal(${r.id}, 'sponsor')" style="padding:4px 12px; font-size:11px; background:rgba(34,211,238,0.12); color:#22d3ee; border:1px solid rgba(34,211,238,0.25); font-weight:600;">📋 ${t('Contract Negotiation')}</button>
+            <button class="btn btn-sm" onclick="openAgreementModal(${r.id}, 'sponsor')" style="padding:4px 12px; font-size:11px; background:rgba(34,211,238,0.12); color:#22d3ee; border:1px solid rgba(34,211,238,0.25); font-weight:600;">${t('Contract Negotiation')}</button>
           `;
       } else if (r.status === 'accepted') {
           actionHtml = `
-            ${canEdit ? `<button class="btn btn-ghost btn-sm" onclick="editRank(${r.id})" style="padding: 4px 12px; font-size: 11px;">✏️ ${t('Edit Tier')}</button>` : `<span style="font-size:11px; color:var(--text-muted)">${t('Locked')}</span>`}
-            <button class="btn btn-sm" onclick="openAgreementModal(${r.id}, 'sponsor')" style="padding:4px 12px; font-size:11px; background:rgba(16,185,129,0.12); color:#10b981; border:1px solid rgba(16,185,129,0.25); font-weight:600;">📄 ${t('Agreement')}</button>
+            ${canEdit ? `<button class="btn btn-ghost btn-sm" onclick="editRank(${r.id})" style="padding: 4px 12px; font-size: 11px;">${t('Edit Tier')}</button>` : `<span style="font-size:11px; color:var(--text-muted)">${t('Locked')}</span>`}
+            <button class="btn btn-sm" onclick="openAgreementModal(${r.id}, 'sponsor')" style="padding:4px 12px; font-size:11px; background:rgba(16,185,129,0.12); color:#10b981; border:1px solid rgba(16,185,129,0.25); font-weight:600;">${t('Agreement')}</button>
           `;
       } else {
           actionHtml = `<span style="font-size:11px;color:var(--text-muted);">${t('Locked')}</span>`;
@@ -254,7 +254,9 @@
             <div style="font-size:0.7rem; color:var(--text-muted); font-weight:400;">${r.sponsor?.profile?.company_type || t('General')}</div>
         </td>
         <td>${badge(r.status)}</td>
-        <td><div style="display: flex; gap: 8px; flex-wrap:wrap;">${actionHtml}</div></td>
+        <td>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">${actionHtml}</div>
+        </td>
         <td>
           ${r.status === 'accepted' ? getTierBadge(getSponsorTier(r)) : '<span style="font-size:12px; color:var(--text-muted)">—</span>'}
         </td>
@@ -343,7 +345,7 @@
     
     const res = await api.put(`/sponsorship/${id}`, payload);
     if (res.ok) { 
-        showToast(status === 'accepted' ? t('Preliminary acceptance successful! Contract negotiation started. 📝') : t('Request rejected.'), status === 'accepted' ? 'success' : 'info'); 
+        showToast(status === 'accepted' ? t('Preliminary acceptance successful! Contract negotiation started.') : t('Request rejected.'), status === 'accepted' ? 'success' : 'info'); 
         loadRequests(); 
     }
     else showToast(res.data?.message || t('Error'), 'error');
@@ -374,7 +376,7 @@
       
       const res = await api.patch(`/sponsorship/${id}/tier`, { tier });
       if (res.ok) {
-          showToast(t('Sponsor tier updated beautifully! ✨'), 'success');
+          showToast(t('Sponsor tier updated beautifully!'), 'success');
           closeEditRankModal();
           loadRequests();
       } else {
@@ -466,7 +468,7 @@
       if (u.contact_email) {
         contactsHtml += `
           <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.02);padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.05);">
-            <span style="font-size:1.2rem;">📧</span>
+            <span style="display:flex; align-items:center; justify-content:center; color:var(--text-muted);"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"></path></svg></span>
             <div>
               <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;">${t('Contact Email')}</div>
               <div style="font-weight:500;font-size:0.85rem;">${u.contact_email}</div>
@@ -477,7 +479,7 @@
       if (u.phone) {
         contactsHtml += `
           <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.02);padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.05);">
-            <span style="font-size:1.2rem;">📱</span>
+            <span style="display:flex; align-items:center; justify-content:center; color:var(--text-muted);"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H13.5A2.25 2.25 0 0115.75 3.75V20.25A2.25 2.25 0 0113.5 22.5H10.5A2.25 2.25 0 018.25 20.25V3.75A2.25 2.25 0 0110.5 1.5Z M12 18.75h.008v.008H12v-.008Z"></path></svg></span>
             <div>
               <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;">${t('Phone')}</div>
               <div style="font-weight:500;font-size:0.85rem;"><a href="tel:${u.phone}" style="color:inherit;text-decoration:none;">${u.phone}</a></div>
@@ -489,23 +491,13 @@
       // Build social links HTML
       let socialHtml = '';
       if (u.social_links && Object.keys(u.social_links).length > 0) {
-        const iconMap = {
-          'twitter': '𝕏', 'x': '𝕏',
-          'linkedin': '💼',
-          'website': '🌐', 'portfolio': '🎨',
-          'facebook': '👥', 'instagram': '📸',
-          'whatsapp': '💬', 'telegram': '✈️',
-          'github': '💻', 'youtube': '🎬',
-          'tiktok': '🎵', 'discord': '👾'
-        };
         let linksHtml = '';
         for (let [pKey, link] of Object.entries(u.social_links)) {
           if (link) {
             const platform = pKey.split('_')[0];
-            const icon = iconMap[platform] || '🔗';
             linksHtml += `
-              <a href="${link.startsWith('http') ? link : 'https://' + link}" target="_blank" style="width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);display:inline-flex;align-items:center;justify-content:center;color:var(--text-muted);text-decoration:none;font-size:1.1rem;transition:all 0.2s;" onmouseover="this.style.background='rgba(110,64,242,0.1)';this.style.borderColor='var(--accent)';" onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.borderColor='rgba(255,255,255,0.08)';">
-                ${icon}
+              <a href="${link.startsWith('http') ? link : 'https://' + link}" target="_blank" style="padding:6px 12px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);display:inline-flex;align-items:center;justify-content:center;color:var(--text-muted);text-decoration:none;font-size:0.75rem;font-weight:600;transition:all 0.2s;text-transform:uppercase;letter-spacing:0.03em;" onmouseover="this.style.background='rgba(110,64,242,0.1)';this.style.borderColor='var(--accent)';this.style.color='#fff';" onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.borderColor='rgba(255,255,255,0.08)';this.style.color='var(--text-muted)';">
+                ${platform}
               </a>
             `;
           }

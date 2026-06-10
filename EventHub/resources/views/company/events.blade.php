@@ -118,7 +118,7 @@
     <div class="modal">
       <div class="modal-header">
         <h3 class="modal-title"><script>document.write(t('Apply for Exhibition'))</script></h3>
-        <button class="modal-close" onclick="closeModal()">✕</button>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
       </div>
       <form id="req-form">
         <input type="hidden" id="r-event-id" value="" />
@@ -284,15 +284,15 @@
             <div style="font-weight:600" class="i18n-skip">${e.title}</div>
         </td>
         <td>
-            <div style="font-size:13px; color:var(--accent2); cursor:pointer; display:inline-block;" onclick="navigateToProfile(${e.creator?.id})">
-                👤 ${e.creator?.name || 'Unknown'}
+            <div style="font-size:13px; color:var(--accent2); cursor:pointer; display:inline-flex; align-items:center; gap:4px;" onclick="navigateToProfile(${e.creator?.id})">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg> ${e.creator?.name || 'Unknown'}
             </div>
         </td>
         <td style="color:var(--text-muted)">${e.venue?.name || 'TBA'}</td>
         <td style="color:var(--text-muted)">${fmtDateShort(e.start_time)} <div style="margin-top:4px;">${timeBadge(e.time_status)}</div></td>
         <td style="color:var(--text-muted)">${e.capacity ? e.capacity.toLocaleString() : t('Unlimited')}</td>
         <td style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-           <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${e.id})" title="${t('View Details')}">ℹ️ ${t('Details')}</button>
+           <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${e.id})" title="${t('View Details')}" style="display:inline-flex;align-items:center;gap:4px;"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 111.063.852l-.708 2.836a.75.75 0 001.063.852l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" /></svg>${t('Details')}</button>
            <div style="display:flex; align-items:center;">
              ${reqBtnHtml}
            </div>
@@ -349,7 +349,6 @@
       btn.disabled = false;
     });
 
-    const typeIcons = { 'مؤتمر': '🎙️', 'ندوة': '📖', 'ورشة عمل': '🔧', 'دورة تدريبية': '🎓', 'ترفيه': '🎭', 'ملتقى علمي': '🔬', 'رياضة': '⚽', 'تقنية': '💻', 'اجتماعية': '🤝', 'معرض': '🎪', 'Other': '📌' };
     const typeColors = { 'مؤتمر': '#3b82f6', 'ندوة': '#8b5cf6', 'ورشة عمل': '#10b981', 'دورة تدريبية': '#06b6d4', 'ترفيه': '#ec4899', 'ملتقى علمي': '#f59e0b', 'رياضة': '#22c55e', 'تقنية': '#6366f1', 'اجتماعية': '#f97316', 'معرض': '#f43f5e', 'Other': '#64748b' };
 
     function showEventDetails(eventId) {
@@ -363,7 +362,7 @@
         api.get(`/company/exhibitions`)
       ]).then(([res, appRes]) => {
         if (!res.ok) {
-          content.innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><p>Could not fetch event details</p></div>';
+          content.innerHTML = '<div class="empty-state"><div class="empty-icon" style="display:flex; justify-content:center; margin-bottom:12px; color:var(--text-muted);"><svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg></div><p>Could not fetch event details</p></div>';
           return;
         }
         const ev = res.data;
@@ -372,11 +371,10 @@
 
         const eType = ev.event_type || 'Other';
         const tColor = typeColors[eType] || typeColors.Other || '#64748b';
-        const tIcon = typeIcons[eType] || typeIcons.Other || '📌';
 
         const bannerSection = ev.image
           ? `<div class="ed-banner" style="background-image:url('/storage/${ev.image}')"><div class="ed-banner-fade"></div></div>`
-          : `<div class="ed-banner ed-banner-placeholder"><span class="ed-banner-emoji">${tIcon}</span><div class="ed-banner-fade"></div></div>`;
+          : `<div class="ed-banner ed-banner-placeholder"><div class="ed-banner-fade"></div></div>`;
 
 
 
@@ -407,7 +405,7 @@
           exhibitorsHtml = `
             <div style="margin-top:20px;">
               <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent2);margin-bottom:12px;display:flex;align-items:center;gap:8px;">
-                <span style="font-size:1.1rem;">🏢</span> ${t('Participating Companies')} (${ev.exhibitors.length})
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align:middle;color:var(--accent2);"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H15m-1.5 3H15m-1.5 3H15" /></svg> ${t('Participating Companies')} (${ev.exhibitors.length})
               </div>
               <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));gap:10px;">
                 ${exItems}
@@ -421,7 +419,7 @@
           <div class="ed-header">
             <div class="ed-title-row">
               <h2 class="ed-title i18n-skip">${ev.title}</h2>
-              <span class="ed-type-pill" style="--tcolor:${tColor}">${tIcon} ${eType}</span>
+              <span class="ed-type-pill" style="--tcolor:${tColor}">${eType}</span>
             </div>
             <div class="ed-badges">
               ${timeBadge(ev.time_status)}
@@ -437,11 +435,11 @@
 
           <div class="ed-info-grid">
             <div class="ed-info-card ed-info-accent2">
-              <div class="ed-info-icon">🏛️</div>
+              <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--accent2);"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.33m-15 10.67V10.33" /></svg></div>
               <div><div class="ed-info-label">Venue</div><div class="ed-info-value">${ev.venue?.name || ev.external_venue_name || '—'}</div></div>
             </div>
             <div class="ed-info-card ed-info-accent2">
-              <div class="ed-info-icon">📍</div>
+              <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--accent2);"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25s-7.5-4.108-7.5-11.25a7.5 7.5 0 1115 0z" /></svg></div>
               <div><div class="ed-info-label">Location</div><div class="ed-info-value">
                 ${ev.location_link ? `<a href="${ev.location_link.startsWith('http') ? ev.location_link : 'https://' + ev.location_link}" target="_blank" style="color:inherit;text-decoration:underline;">${ev.location_link} ↗</a>`
                 : (ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">${t('Open in Maps ↗')}</a>` 
@@ -453,7 +451,7 @@
           <!-- Document Links -->
           ${ev.booking_proof ? `
             <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(34,211,238,0.06); border:1px solid rgba(34,211,238,0.15);">
-                <div class="ed-info-icon">📎</div>
+                <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:#22d3ee;"><path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" /></svg></div>
                 <div style="flex:1">
                     <div class="ed-info-label" style="color:#22d3ee">Booking Proof</div>
                     <a href="/storage/${ev.booking_proof}" target="_blank" class="ed-info-value" style="text-decoration:underline;">View Document ↗</a>
@@ -463,7 +461,7 @@
 
           ${ev.ministry_approval_doc ? `
             <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(139,92,246,0.06); border:1px solid rgba(139,92,246,0.15);">
-                <div class="ed-info-icon">📄</div>
+                <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:#a78bfa;"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg></div>
                 <div style="flex:1">
                     <div class="ed-info-label" style="color:#a78bfa">Competent Authority Approval</div>
                     <a href="/storage/${ev.ministry_approval_doc}" target="_blank" class="ed-info-value" style="text-decoration:underline;">View Document ↗</a>
@@ -475,7 +473,7 @@
           ${ev.objective ? `
             <div class="ed-info-card" style="grid-column: 1 / -1; flex-direction:column; align-items:flex-start; gap:5px;">
                 <div style="display:flex; align-items:center; gap:8px;">
-                    <span style="font-size:1.1rem;">🎯</span>
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--text-muted);"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></svg>
                     <div class="ed-info-label" style="margin-bottom:0">Event Objective</div>
                 </div>
                 <div class="ed-info-value" style="font-weight:400; font-size:0.85rem; line-height:1.4; color:rgba(255,255,255,0.7)">${ev.objective}</div>
@@ -485,7 +483,7 @@
           ${ev.target_audience ? `
             <div class="ed-info-card" style="grid-column: 1 / -1; flex-direction:column; align-items:flex-start; gap:5px;">
                 <div style="display:flex; align-items:center; gap:8px;">
-                    <span style="font-size:1.1rem;">👥</span>
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--text-muted);"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.109A11.978 11.978 0 0112 19.5c-1.21 0-2.38-.18-3.484-.512v-.079c0-1.057.277-2.051.765-2.912M13.5 10.986a5.034 5.034 0 003.882-4.908 5.034 5.034 0 00-3.882-4.908M9.75 8.986a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.55 12.014a4.195 4.195 0 001.2-2.932 4.197 4.197 0 00-1.2-2.932M7.485 12H4.625a4.125 4.125 0 00-7.533 2.493M9.007 19.988v-3.07" /></svg>
                     <div class="ed-info-label" style="margin-bottom:0">Target Audience</div>
                 </div>
                 <div class="ed-info-value" style="font-weight:400; font-size:0.85rem; line-height:1.4; color:rgba(255,255,255,0.7)">${ev.target_audience}</div>
@@ -500,7 +498,7 @@
                 const dn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
                 const mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
                 let scheduleHtml = '<div style="grid-column: 1 / -1;">';
-                scheduleHtml += '<div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">📅 ' + t('Event Schedule') + ' (' + schedule.length + ' ' + (schedule.length > 1 ? t('days') : t('day')) + ')</div>';
+                scheduleHtml += '<div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;display:flex;align-items:center;gap:6px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg> ' + t('Event Schedule') + ' (' + schedule.length + ' ' + (schedule.length > 1 ? t('days') : t('day')) + ')</div>';
                 scheduleHtml += '<div style="display:flex;flex-direction:column;gap:6px;">';
                 schedule.forEach(function(slot) {
                   const d = new Date(slot.date + 'T00:00:00');
@@ -526,18 +524,18 @@
                 scheduleHtml += '</div></div>';
                 return scheduleHtml;
               } else {
-                return '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon">🕐</div><div><div class="ed-info-label">' + t('Start') + '</div><div class="ed-info-value">' + fmtDate(ev.start_time) + '</div></div></div>' +
-                       '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon">🕔</div><div><div class="ed-info-label">' + t('End') + '</div><div class="ed-info-value">' + fmtDate(ev.end_time) + '</div></div></div>';
+                return '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--accent);"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div><div><div class="ed-info-label">' + t('Start') + '</div><div class="ed-info-value">' + fmtDate(ev.start_time) + '</div></div></div>' +
+                       '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--accent);"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div><div><div class="ed-info-label">' + t('End') + '</div><div class="ed-info-value">' + fmtDate(ev.end_time) + '</div></div></div>';
               }
             })()}
 
             <div class="ed-info-grid">
                 <div class="ed-info-card ed-info-warning">
-                <div class="ed-info-icon">👥</div>
+                <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--warning);"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.109A11.978 11.978 0 0112 19.5c-1.21 0-2.38-.18-3.484-.512v-.079c0-1.057.277-2.051.765-2.912M13.5 10.986a5.034 5.034 0 003.882-4.908 5.034 5.034 0 00-3.882-4.908M9.75 8.986a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.55 12.014a4.195 4.195 0 001.2-2.932 4.197 4.197 0 00-1.2-2.932M7.485 12H4.625a4.125 4.125 0 00-7.533 2.493M9.007 19.988v-3.07" /></svg></div>
                 <div><div class="ed-info-label">${t('Capacity')}</div><div class="ed-info-value">${ev.capacity ? ev.capacity : t('Unlimited')}</div></div>
                 </div>
                 <div class="ed-info-card ed-info-warning">
-                <div class="ed-info-icon">🎫</div>
+                <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--warning);"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-12v.75m0 3v.75m0 3v.75m0 3V18M3 6.75A1.75 1.75 0 014.75 5h14.5A1.75 1.75 0 0121 6.75v10.5a1.75 1.75 0 01-1.75 1.75H4.75A1.75 1.75 0 013 17.25V6.75z" /></svg></div>
                 <div><div class="ed-info-label">Tickets Booked</div><div class="ed-info-value">${ev.tickets_count || 0}</div></div>
                 </div>
             </div>
@@ -571,7 +569,7 @@
   <!-- Event Details Modal -->
   <div class="modal-overlay" id="event-details-modal">
     <div class="modal ed-modal">
-      <button class="ed-close-btn" onclick="closeEventDetailsModal()">✕</button>
+      <button class="ed-close-btn" onclick="closeEventDetailsModal()">&times;</button>
       <div id="event-details-content" class="ed-content"></div>
     </div>
   </div>

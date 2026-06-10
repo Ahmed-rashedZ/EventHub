@@ -68,20 +68,24 @@
     <div class="assistants-layout">
       <!-- Left: Invite Panel -->
       <div class="invite-card">
-        <h3>📨 Invite Assistants</h3>
+        <h3>Invite Assistants</h3>
         <p class="subtitle">Browse available assistants and send event invitations</p>
         <div class="form-group" style="margin-bottom: 14px;">
           <label class="form-label" style="font-size: 0.8rem;">Select Event to Invite For</label>
-          <select id="invite-event" class="form-control"></select>
+          <select id="invite-event" class="form-control i18n-skip"></select>
         </div>
         <div style="position:relative; margin-bottom: 16px;">
           <input type="text" id="search-available" class="form-control" placeholder="Search assistants..." style="padding-left: 36px;">
-          <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:14px; opacity:0.5;">🔍</span>
+          <svg style="position:absolute; left:12px; top:50%; transform:translateY(-50%); width:14px; height:14px; opacity:0.5;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
         </div>
         <div id="available-list" class="available-grid">
           <div class="empty-state" style="padding: 30px;">
-            <div class="icon">👆</div>
-            <p>Select an event first to see available assistants</p>
+            <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(110,64,242,0.1); color: var(--accent); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(110,64,242,0.05);">
+              <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            </div>
+            <p><script>document.write(t('Select an event first to see available assistants'))</script></p>
           </div>
         </div>
       </div>
@@ -90,15 +94,20 @@
       <div>
         <div class="tab-bar">
           <button class="tab-btn active" id="tab-all">All <span class="tab-count" id="count-all">0</span></button>
-          <button class="tab-btn" id="tab-pending">⏳ Pending <span class="tab-count" id="count-pending">0</span></button>
-          <button class="tab-btn" id="tab-accepted">✅ Accepted <span class="tab-count" id="count-accepted">0</span></button>
-          <button class="tab-btn" id="tab-rejected">❌ Rejected <span class="tab-count" id="count-rejected">0</span></button>
+          <button class="tab-btn" id="tab-pending">Pending <span class="tab-count" id="count-pending">0</span></button>
+          <button class="tab-btn" id="tab-accepted">Accepted <span class="tab-count" id="count-accepted">0</span></button>
+          <button class="tab-btn" id="tab-rejected">Rejected <span class="tab-count" id="count-rejected">0</span></button>
         </div>
         <div style="display: flex; gap: 12px; margin-bottom: 16px;">
-          <select id="filter-event" class="form-control" style="max-width: 260px;"><option value="">All Events</option></select>
+          <select id="filter-event" class="form-control i18n-skip" style="max-width: 260px;"><option value="">All Events</option></select>
         </div>
         <div id="invitations-container" style="background: var(--surface2); border-radius: 16px; border: 1px solid var(--border); overflow: hidden;">
-          <div class="empty-state"><div class="icon">📬</div><p>Loading invitations...</p></div>
+          <div class="empty-state">
+            <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(34,211,238,0.1); color: var(--accent2); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(34,211,238,0.05);">
+              <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"></path></svg>
+            </div>
+            <p><script>document.write(t('Loading invitations...'))</script></p>
+          </div>
         </div>
       </div>
     </div>
@@ -154,7 +163,8 @@ function loadEvents() {
   return api.get('/events/list/my').then(function(res) {
     var inviteSelect = document.getElementById('invite-event');
     var filterSelect = document.getElementById('filter-event');
-    inviteSelect.innerHTML = '<option value="">Choose an event...</option>';
+    inviteSelect.innerHTML = '<option value="">' + t('Choose an event...') + '</option>';
+    filterSelect.innerHTML = '<option value="">' + t('All Events') + '</option>';
     if (res.ok && res.data) {
       res.data.forEach(function(ev) {
         eventsMap[ev.id] = ev.title;
@@ -186,7 +196,7 @@ function loadAvailableAssistants() {
   var container = document.getElementById('available-list');
 
   if (!eventId) {
-    container.innerHTML = '<div class="empty-state" style="padding:30px;"><div class="icon">👆</div><p>' + t('Select an event first to see available assistants') + '</p></div>';
+    container.innerHTML = '<div class="empty-state" style="padding:30px;"><div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(110,64,242,0.1); color: var(--accent); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(110,64,242,0.05);"><svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg></div><p>' + t('Select an event first to see available assistants') + '</p></div>';
     return;
   }
 
@@ -201,7 +211,7 @@ function loadAvailableAssistants() {
       return;
     }
     if (res.data.length === 0) {
-      container.innerHTML = '<div class="empty-state" style="padding:30px;"><div class="icon">🔍</div><p>' + t('No available assistants found') + '</p></div>';
+      container.innerHTML = '<div class="empty-state" style="padding:30px;"><div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(139,92,246,0.1); color: var(--accent); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(139,92,246,0.05);"><svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></div><p>' + t('No available assistants found') + '</p></div>';
       return;
     }
 
@@ -214,11 +224,11 @@ function loadAvailableAssistants() {
       if (a.invitation_status === 'accepted') {
         btnHtml = '<button class="invite-btn disabled" style="background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.2);">' + t('Joined') + '</button>';
       } else if (a.invitation_status === 'pending') {
-        btnHtml = '<button class="invite-btn disabled">⏳ ' + t('Invited') + '</button>';
+        btnHtml = '<button class="invite-btn disabled">' + t('Invited') + '</button>';
       } else if (a.invitation_status === 'rejected') {
         btnHtml = '<button class="invite-btn disabled" style="background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2);">' + t('Rejected') + '</button>';
       } else if (a.invitation_status === 'busy') {
-        btnHtml = '<button class="invite-btn disabled" style="background: rgba(245,158,11,0.1); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); cursor: not-allowed;" title="' + t('Assistant has another event at the same time') + '">⚠️ ' + t('Busy') + '</button>';
+        btnHtml = '<button class="invite-btn disabled" style="background: rgba(245,158,11,0.1); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); cursor: not-allowed;" title="' + t('Assistant has another event at the same time') + '">' + t('Busy') + '</button>';
       } else {
         btnHtml = '<button class="invite-btn primary" data-idx="' + idx + '">' + t('Invite') + '</button>';
       }
@@ -248,6 +258,9 @@ function loadAvailableAssistants() {
 // ════════════════════════════════════════════════════════════════
 //  SEND INVITE (direct — no modal)
 // ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
+//  SEND INVITE (direct — no modal)
+// ════════════════════════════════════════════════════════════════
 function sendInvite(idx, btnElement) {
   var assistant = availableCache[idx];
   var eventId = document.getElementById('invite-event').value;
@@ -273,13 +286,13 @@ function sendInvite(idx, btnElement) {
 
   api.post('/manager/invite-assistant', body).then(function(res) {
     if (res.ok) {
-      showToast('✅ ' + t('Invitation sent to') + ' ' + assistant.name + '!', 'success');
-      btnElement.textContent = '⏳ ' + t('Invited');
+      showToast(t('Invitation sent to') + ' ' + assistant.name + '!', 'success');
+      btnElement.textContent = t('Invited');
       btnElement.className = 'invite-btn disabled';
       loadInvitations();
     } else {
       var msg = (res.data && res.data.message) ? res.data.message : t('Failed to send invitation');
-      showToast('❌ ' + msg, 'error');
+      showToast(msg, 'error');
       btnElement.textContent = t('Invite');
       btnElement.className = 'invite-btn primary';
     }
@@ -338,7 +351,7 @@ function renderInvitations() {
       accepted: t('No accepted invitations yet.'),
       rejected: t('No rejected invitations.')
     };
-    container.innerHTML = '<div class="empty-state"><div class="icon">📬</div><p>' + (msgs[currentTab] || '') + '</p></div>';
+    container.innerHTML = '<div class="empty-state"><div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(34,211,238,0.1); color: var(--accent2); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(34,211,238,0.05);"><svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"></path></svg></div><p>' + (msgs[currentTab] || '') + '</p></div>';
     return;
   }
 
@@ -352,14 +365,14 @@ function renderInvitations() {
     var eventTitle = (inv.event && inv.event.title) ? inv.event.title : 'Unknown';
     var statusCls = 'status-' + inv.status;
     var statusLabel = inv.status.charAt(0).toUpperCase() + inv.status.slice(1);
-    var statusIcons = { pending: '⏳', accepted: '✅', rejected: '❌' };
+    var statusIcons = { pending: '●', accepted: '●', rejected: '●' };
     var scans = inv.scans_count || 0;
     var createdDate = inv.created_at ? new Date(inv.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—';
     var initials = name.charAt(0).toUpperCase();
 
     var actions = '';
     if (inv.status === 'pending') {
-      actions = '<button class="cancel-btn" data-inv-id="' + inv.id + '" data-is-remove="false">✕ ' + t('Cancel') + '</button>';
+      actions = '<button class="cancel-btn" data-inv-id="' + inv.id + '" data-is-remove="false">' + t('Cancel') + '</button>';
     } else if (inv.status === 'accepted') {
       var timeStatus = inv.event ? inv.event.time_status : 'upcoming';
       if (timeStatus !== 'ended') {
@@ -377,7 +390,7 @@ function renderInvitations() {
       '</div></td>' +
       '<td style="color:var(--text-secondary);font-size:0.88rem;">' + eventTitle + '</td>' +
       '<td><span class="status-pill ' + statusCls + '">' + (statusIcons[inv.status] || '') + ' ' + statusLabel + '</span></td>' +
-      '<td>' + (inv.status === 'accepted' ? '<span class="scans-badge">📱 ' + scans + '</span>' : '<span style="color:var(--text-muted);">—</span>') + '</td>' +
+      '<td>' + (inv.status === 'accepted' ? '<span class="scans-badge">' + scans + '</span>' : '<span style="color:var(--text-muted);">—</span>') + '</td>' +
       '<td style="font-size:0.82rem;color:var(--text-muted);">' + createdDate + '</td>' +
       '<td style="text-align:right;">' + actions + '</td>' +
     '</tr>';

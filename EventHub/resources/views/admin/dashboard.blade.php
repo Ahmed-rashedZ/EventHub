@@ -51,17 +51,7 @@
 <div class="app-layout">
   <aside class="sidebar">
     <div class="sidebar-logo" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;"><img src="/images/logo.png" alt="EventHub Logo" style="height: 60px; width: auto; object-fit: contain;"></div>
-    <nav class="sidebar-nav">
-      <span class="nav-section-label">Overview</span>
-      <a class="nav-item active" href="/admin/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
-      <span class="nav-section-label">Management</span>
-      <a class="nav-item" href="/admin/users"><span class="nav-icon">👥</span> Users</a>
-      <a class="nav-item" href="/admin/events"><span class="nav-icon">📅</span> Events</a>
-      <a class="nav-item" href="/admin/venues"><span class="nav-icon">🏛️</span> Venues</a>
-      <a class="nav-item" href="/admin/verifications"><span class="nav-icon">🛡️</span> Verifications</a>
-      <span class="nav-section-label">Settings</span>
-      <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
-    </nav>
+    <nav class="sidebar-nav" id="sidebar-links"></nav>
     @include('partials._sidebar-footer')
   </aside>
 
@@ -72,11 +62,51 @@
 
     <!-- Stat Cards -->
     <div class="an-stats" id="stats-row">
-      <div class="an-stat"><div class="an-stat-stripe" style="background:#6e40f2"></div><div class="an-stat-icon" style="background:rgba(110,64,242,.15)">📅</div><div class="an-stat-label">Total Events</div><div class="an-stat-value" id="s-events">—</div><div class="an-stat-sub" id="s-events-sub"></div></div>
-      <div class="an-stat"><div class="an-stat-stripe" style="background:#22c55e"></div><div class="an-stat-icon" style="background:rgba(34,197,94,.15)">✅</div><div class="an-stat-label">Approved</div><div class="an-stat-value" id="s-approved">—</div><div class="an-stat-sub" id="s-approved-sub"></div></div>
-      <div class="an-stat"><div class="an-stat-stripe" style="background:#f59e0b"></div><div class="an-stat-icon" style="background:rgba(245,158,11,.15)">⏳</div><div class="an-stat-label">Pending</div><div class="an-stat-value" id="s-pending">—</div><div class="an-stat-sub">Awaiting review</div></div>
-      <div class="an-stat"><div class="an-stat-stripe" style="background:#22d3ee"></div><div class="an-stat-icon" style="background:rgba(34,211,238,.15)">🎟️</div><div class="an-stat-label">Total Tickets</div><div class="an-stat-value" id="s-tickets">—</div><div class="an-stat-sub" id="s-tickets-sub"></div></div>
-      <div class="an-stat"><div class="an-stat-stripe" style="background:#ec4899"></div><div class="an-stat-icon" style="background:rgba(236,72,153,.15)">👥</div><div class="an-stat-label">Total Users</div><div class="an-stat-value" id="s-users">—</div><div class="an-stat-sub">All registered users</div></div>
+      <div class="an-stat">
+        <div class="an-stat-stripe" style="background:#6e40f2"></div>
+        <div class="an-stat-icon" style="background:rgba(110,64,242,.15); color:#6e40f2; display:flex; align-items:center; justify-content:center;">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"></path></svg>
+        </div>
+        <div class="an-stat-label">Total Events</div>
+        <div class="an-stat-value" id="s-events">—</div>
+        <div class="an-stat-sub" id="s-events-sub"></div>
+      </div>
+      <div class="an-stat">
+        <div class="an-stat-stripe" style="background:#22c55e"></div>
+        <div class="an-stat-icon" style="background:rgba(34,197,94,.15); color:#22c55e; display:flex; align-items:center; justify-content:center;">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </div>
+        <div class="an-stat-label">Approved</div>
+        <div class="an-stat-value" id="s-approved">—</div>
+        <div class="an-stat-sub" id="s-approved-sub"></div>
+      </div>
+      <div class="an-stat">
+        <div class="an-stat-stripe" style="background:#f59e0b"></div>
+        <div class="an-stat-icon" style="background:rgba(245,158,11,.15); color:#f59e0b; display:flex; align-items:center; justify-content:center;">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </div>
+        <div class="an-stat-label">Pending</div>
+        <div class="an-stat-value" id="s-pending">—</div>
+        <div class="an-stat-sub">Awaiting review</div>
+      </div>
+      <div class="an-stat">
+        <div class="an-stat-stripe" style="background:#22d3ee"></div>
+        <div class="an-stat-icon" style="background:rgba(34,211,238,.15); color:#22d3ee; display:flex; align-items:center; justify-content:center;">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-12v.75m0 3v.75m0 3v.75m0 3V18M3 6.75A1.75 1.75 0 014.75 5h14.5A1.75 1.75 0 0121 6.75v10.5a1.75 1.75 0 01-1.75 1.75H4.75A1.75 1.75 0 013 17.25V6.75z"></path></svg>
+        </div>
+        <div class="an-stat-label">Total Tickets</div>
+        <div class="an-stat-value" id="s-tickets">—</div>
+        <div class="an-stat-sub" id="s-tickets-sub"></div>
+      </div>
+      <div class="an-stat">
+        <div class="an-stat-stripe" style="background:#ec4899"></div>
+        <div class="an-stat-icon" style="background:rgba(236,72,153,.15); color:#ec4899; display:flex; align-items:center; justify-content:center;">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+        </div>
+        <div class="an-stat-label">Total Users</div>
+        <div class="an-stat-value" id="s-users">—</div>
+        <div class="an-stat-sub">All registered users</div>
+      </div>
     </div>
 
     <!-- Attendance Rate -->
@@ -90,25 +120,25 @@
 
     <!-- Charts Row: Status + Type -->
     <div class="an-row">
-      <div class="an-card"><div class="an-card-title"><span>📊</span> Events by Status</div><div class="an-chart-wrap"><canvas id="statusChart"></canvas></div></div>
-      <div class="an-card"><div class="an-card-title"><span>🏷️</span> Events by Type</div><div class="an-chart-wrap"><canvas id="typeChart"></canvas></div></div>
+      <div class="an-card"><div class="an-card-title">Events by Status</div><div class="an-chart-wrap"><canvas id="statusChart"></canvas></div></div>
+      <div class="an-card"><div class="an-card-title">Events by Type</div><div class="an-chart-wrap"><canvas id="typeChart"></canvas></div></div>
     </div>
 
     <!-- Registration Trend -->
-    <div class="an-card" style="margin-bottom:24px"><div class="an-card-title"><span>📈</span> Registration Trend (Last 6 Months)</div><div class="an-chart-wrap"><canvas id="trendChart"></canvas></div></div>
+    <div class="an-card" style="margin-bottom:24px"><div class="an-card-title">Registration Trend (Last 6 Months)</div><div class="an-chart-wrap"><canvas id="trendChart"></canvas></div></div>
 
     <!-- Top Events -->
     <div class="an-card" style="margin-bottom:24px">
-      <div class="an-card-title"><span>🏆</span> Top Events by Registrations</div>
+      <div class="an-card-title">Top Events by Registrations</div>
       <table class="an-top-table"><thead><tr><th>#</th><th>Event</th><th>Type</th><th>Tickets</th><th>Fill Rate</th></tr></thead><tbody id="top-events-body"><tr><td colspan="5" style="text-align:center;padding:40px"><div class="spinner" style="margin:auto"></div></td></tr></tbody></table>
     </div>
 
     <!-- Bottom Row: Users by Role + Pending -->
     <div class="an-row">
-      <div class="an-card"><div class="an-card-title"><span>👥</span> Users by Role</div><div class="an-chart-wrap" style="height:220px"><canvas id="rolesChart"></canvas></div></div>
+      <div class="an-card"><div class="an-card-title">Users by Role</div><div class="an-chart-wrap" style="height:220px"><canvas id="rolesChart"></canvas></div></div>
       <div class="an-card">
-        <div class="an-card-title"><span>⚠️</span> Pending Approvals</div>
-        <div id="pending-list"><div class="empty-state" style="padding:30px"><div class="empty-icon">🎉</div><p>No pending events</p></div></div>
+        <div class="an-card-title">Pending Approvals</div>
+        <div id="pending-list"><div class="empty-state" style="padding:30px"><div class="empty-icon" style="display:flex; justify-content:center; margin-bottom:12px; color:var(--text-muted);"><svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"></path></svg></div><p>No pending events</p></div></div>
       </div>
     </div>
   </main>
@@ -213,7 +243,7 @@ async function loadDashboard() {
   // Pending
   const pEl = document.getElementById('pending-list');
   if (pendRes.ok && pendRes.data.length) {
-    pEl.innerHTML = pendRes.data.slice(0,5).map(ev=>`<div class="an-pending-item"><div><div class="an-pending-title">${ev.title}</div><div class="an-pending-sub">${ev.venue?.name||'—'} · ${fmtDateShort(ev.start_time)}</div></div><div style="display:flex;gap:6px"><button class="btn btn-success btn-sm" onclick="approve(${ev.id})">✓</button><button class="btn btn-danger btn-sm" onclick="reject(${ev.id})">✕</button></div></div>`).join('');
+    pEl.innerHTML = pendRes.data.slice(0,5).map(ev=>`<div class="an-pending-item"><div><div class="an-pending-title">${ev.title}</div><div class="an-pending-sub">${ev.venue?.name||'—'} · ${fmtDateShort(ev.start_time)}</div></div><div style="display:flex;gap:6px"><button class="btn btn-success btn-sm" onclick="approve(${ev.id})">&check;</button><button class="btn btn-danger btn-sm" onclick="reject(${ev.id})">&times;</button></div></div>`).join('');
   }
   } catch (err) {
     console.error('Error loading dashboard:', err);

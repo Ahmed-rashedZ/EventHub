@@ -95,10 +95,42 @@
 
       <!-- Stat Cards -->
       <div class="es-stats" id="stats-row">
-        <div class="es-stat"><div class="es-stat-stripe" style="background:#6e40f2"></div><div class="es-stat-icon" style="background:rgba(110,64,242,.15)">👥</div><div class="es-stat-label">Capacity</div><div class="es-stat-value" id="s-capacity">—</div><div class="es-stat-sub">Max attendees</div></div>
-        <div class="es-stat"><div class="es-stat-stripe" style="background:#22d3ee"></div><div class="es-stat-icon" style="background:rgba(34,211,238,.15)">🎟️</div><div class="es-stat-label">Registered</div><div class="es-stat-value" id="s-registered">—</div><div class="es-stat-sub" id="s-registered-sub"></div></div>
-        <div class="es-stat"><div class="es-stat-stripe" style="background:#22c55e"></div><div class="es-stat-icon" style="background:rgba(34,197,94,.15)">✅</div><div class="es-stat-label">Checked In</div><div class="es-stat-value" id="s-attended">—</div><div class="es-stat-sub" id="s-attended-sub"></div></div>
-        <div class="es-stat"><div class="es-stat-stripe" style="background:#f59e0b"></div><div class="es-stat-icon" style="background:rgba(245,158,11,.15)">⏳</div><div class="es-stat-label">Remaining</div><div class="es-stat-value" id="s-remaining">—</div><div class="es-stat-sub">Not checked in yet</div></div>
+        <div class="es-stat">
+          <div class="es-stat-stripe" style="background:#6e40f2"></div>
+          <div class="es-stat-icon" style="background:rgba(110,64,242,.15); color:#6e40f2; display:flex; align-items:center; justify-content:center;">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.109A11.978 11.978 0 0112 19.5c-1.21 0-2.38-.18-3.484-.512v-.079c0-1.057.277-2.051.765-2.912M13.5 10.986a5.034 5.034 0 003.882-4.908 5.034 5.034 0 00-3.882-4.908M9.75 8.986a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.55 12.014a4.195 4.195 0 001.2-2.932 4.197 4.197 0 00-1.2-2.932M7.485 12H4.625a4.125 4.125 0 00-7.533 2.493M9.007 19.988v-3.07" /></svg>
+          </div>
+          <div class="es-stat-label">Capacity</div>
+          <div class="es-stat-value" id="s-capacity">—</div>
+          <div class="es-stat-sub">Max attendees</div>
+        </div>
+        <div class="es-stat">
+          <div class="es-stat-stripe" style="background:#22d3ee"></div>
+          <div class="es-stat-icon" style="background:rgba(34,211,238,.15); color:#22d3ee; display:flex; align-items:center; justify-content:center;">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-12v.75m0 3v.75m0 3v.75m0 3V18M3 6.75A1.75 1.75 0 014.75 5h14.5A1.75 1.75 0 0121 6.75v10.5a1.75 1.75 0 01-1.75 1.75H4.75A1.75 1.75 0 013 17.25V6.75z" /></svg>
+          </div>
+          <div class="es-stat-label">Registered</div>
+          <div class="es-stat-value" id="s-registered">—</div>
+          <div class="es-stat-sub" id="s-registered-sub"></div>
+        </div>
+        <div class="es-stat">
+          <div class="es-stat-stripe" style="background:#22c55e"></div>
+          <div class="es-stat-icon" style="background:rgba(34,197,94,.15); color:#22c55e; display:flex; align-items:center; justify-content:center;">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+          <div class="es-stat-label">Checked In</div>
+          <div class="es-stat-value" id="s-attended">—</div>
+          <div class="es-stat-sub" id="s-attended-sub"></div>
+        </div>
+        <div class="es-stat">
+          <div class="es-stat-stripe" style="background:#f59e0b"></div>
+          <div class="es-stat-icon" style="background:rgba(245,158,11,.15); color:#f59e0b; display:flex; align-items:center; justify-content:center;">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+          <div class="es-stat-label">Remaining</div>
+          <div class="es-stat-value" id="s-remaining">—</div>
+          <div class="es-stat-sub">Not checked in yet</div>
+        </div>
       </div>
 
       <!-- Rate Rings -->
@@ -122,18 +154,18 @@
       <!-- Charts Row -->
       <div class="es-row">
         <div class="es-card">
-          <div class="es-card-title"><span>📊</span> Registration vs Attendance</div>
+          <div class="es-card-title"><span style="color:var(--text-muted);display:inline-flex;align-items:center;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg></span> Registration vs Attendance</div>
           <div class="es-chart-wrap"><canvas id="regAttChart"></canvas></div>
         </div>
         <div class="es-card">
-          <div class="es-card-title"><span>🎯</span> Capacity Breakdown</div>
+          <div class="es-card-title"><span style="color:var(--text-muted);display:inline-flex;align-items:center;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></svg></span> Capacity Breakdown</div>
           <div class="es-chart-wrap"><canvas id="capChart"></canvas></div>
         </div>
       </div>
 
       <!-- Participants Table -->
       <div class="es-card" style="margin-bottom:24px">
-        <div class="es-card-title"><span>👥</span> Participants (<span id="part-count">0</span>)</div>
+        <div class="es-card-title"><span style="color:var(--text-muted);display:inline-flex;align-items:center;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.109A11.978 11.978 0 0112 19.5c-1.21 0-2.38-.18-3.484-.512v-.079c0-1.057.277-2.051.765-2.912M13.5 10.986a5.034 5.034 0 003.882-4.908 5.034 5.034 0 00-3.882-4.908M9.75 8.986a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.55 12.014a4.195 4.195 0 001.2-2.932 4.197 4.197 0 00-1.2-2.932M7.485 12H4.625a4.125 4.125 0 00-7.533 2.493M9.007 19.988v-3.07" /></svg></span> Participants (<span id="part-count">0</span>)</div>
         <div class="table-wrap">
           <table class="es-participants-table">
             <thead><tr><th>#</th><th>Attendee</th><th>Ticket Code</th><th>Status</th><th>Scanned At</th></tr></thead>
@@ -146,7 +178,7 @@
 
       <!-- Reviews & Ratings -->
       <div class="es-card" style="margin-bottom:24px" id="reviews-section">
-        <div class="es-card-title"><span>⭐</span> Reviews & Ratings (<span id="review-count">0</span>)</div>
+        <div class="es-card-title"><span style="color:var(--text-muted);display:inline-flex;align-items:center;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499c.195-.605.97-.605 1.165 0l2.193 6.805a.75.75 0 00.712.51l7.156.023c.636.002.902.812.4 1.203l-5.75 4.475a.75.75 0 00-.272.84l2.25 6.969c.2.618-.51 1.13-1.011.751l-5.748-4.32a.75.75 0 00-.9 0l-5.748 4.32c-.501.379-1.21-.133-1.011-.751l2.25-6.969a.75.75 0 00-.272-.84L1.75 12.04c-.502-.391-.236-1.2.4-1.203l7.156-.023a.75.75 0 00.712-.51l2.193-6.805z" /></svg></span> Reviews & Ratings (<span id="review-count">0</span>)</div>
         <div id="reviews-loading" style="text-align:center;padding:32px"><div class="spinner" style="margin:auto"></div></div>
         <div id="reviews-content" style="display:none">
           <!-- Summary -->
@@ -180,7 +212,6 @@ Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
 Chart.defaults.font.family = 'Inter';
 
 const TYPE_COLORS = { 'مؤتمر':'#3b82f6', 'ندوة':'#8b5cf6', 'ورشة عمل':'#10b981', 'دورة تدريبية':'#06b6d4', 'ترفيه':'#ec4899', 'ملتقى علمي':'#f59e0b', 'رياضة':'#22c55e', 'تقنية':'#6366f1', 'اجتماعية':'#f97316' };
-const TYPE_ICONS  = { 'مؤتمر':'🎙️', 'ندوة':'📖', 'ورشة عمل':'🔧', 'دورة تدريبية':'🎓', 'ترفيه':'🎭', 'ملتقى علمي':'🔬', 'رياضة':'⚽', 'تقنية':'💻', 'اجتماعية':'🤝' };
 
 function animVal(el, end, suffix='') {
   let s=0; const st=performance.now();
@@ -224,7 +255,6 @@ async function loadEventStats() {
   const ev = eventRes.data;
   const eType = ev.event_type || 'Other';
   const tColor = TYPE_COLORS[eType] || '#6b7280';
-  const tIcon  = TYPE_ICONS[eType]  || '📌';
 
 
   // Stats
@@ -297,15 +327,15 @@ async function loadEventStats() {
   document.getElementById('part-count').textContent = participants.length;
 
   if (!participants.length) {
-    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state" style="padding:30px"><div class="empty-icon">🎟️</div><p>${t('No registrations yet')}</p></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state" style="padding:30px"><div class="empty-icon" style="display:flex; justify-content:center; margin-bottom:12px; color:var(--text-muted);"><svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-12v.75m0 3v.75m0 3v.75m0 3V18M3 6.75A1.75 1.75 0 014.75 5h14.5A1.75 1.75 0 0121 6.75v10.5a1.75 1.75 0 01-1.75 1.75H4.75A1.75 1.75 0 013 17.25V6.75z" /></svg></div><p>${t('No registrations yet')}</p></div></td></tr>`;
   } else {
     tbody.innerHTML = participants.map((t, i) => {
       const latestLog = (t.attendance_logs && t.attendance_logs.length) 
         ? t.attendance_logs.reduce((latest, current) => new Date(current.scanned_at) > new Date(latest.scanned_at) ? current : latest, t.attendance_logs[0])
         : t.attendance_log;
       const scanTime = latestLog ? fmtDate(latestLog.scanned_at) : '—';
-      const scannerName = latestLog && latestLog.scanner ? `<div style="font-size:.7rem;color:var(--text-muted);margin-top:2px">👤 by ${latestLog.scanner.name}</div>` : '';
-      const daysAttendedStr = t.total_days_attended ? `<div style="font-size:.7rem;color:var(--text-muted);margin-top:4px">📅 ${t.total_days_attended} day(s)</div>` : '';
+      const scannerName = latestLog && latestLog.scanner ? `<div style="font-size:.7rem;color:var(--text-muted);margin-top:2px;display:inline-flex;align-items:center;gap:4px;"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg> by ${latestLog.scanner.name}</div>` : '';
+      const daysAttendedStr = t.total_days_attended ? `<div style="font-size:.7rem;color:var(--text-muted);margin-top:4px;display:inline-flex;align-items:center;gap:4px;"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg> <bdi>${t.total_days_attended}</bdi> ${t('day(s)')}</div>` : '';
       
       return `
         <tr>
@@ -340,7 +370,7 @@ async function loadEventStats() {
 function starsHtml(rating, size = '1rem') {
   const rounded = Math.round(rating); // whole numbers only
   return [1,2,3,4,5].map(i =>
-    `<span class="es-review-star" style="font-size:${size};color:${i <= rounded ? '#eab308' : 'rgba(255,255,255,.15)'}">★</span>`
+    `<span class="es-review-star" style="font-size:${size};color:${i <= rounded ? '#eab308' : 'rgba(255,255,255,.15)'}">&#9733;</span>`
   ).join('');
 }
 
@@ -351,7 +381,7 @@ function loadReviews(res) {
   contEl.style.display = 'block';
 
   if (!res.ok) {
-    document.getElementById('review-list').innerHTML = `<div class="es-review-empty"><div class="es-review-empty-icon">⚠️</div><p>${t('Failed to load reviews')}</p></div>`;
+    document.getElementById('review-list').innerHTML = `<div class="es-review-empty"><div class="es-review-empty-icon" style="display:flex; justify-content:center; margin-bottom:12px; color:var(--text-muted);"><svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg></div><p>${t('Failed to load reviews')}</p></div>`;
     return;
   }
 
@@ -376,7 +406,7 @@ function loadReviews(res) {
     const pct = reviews.length ? Math.round((cnt / reviews.length) * 100) : 0;
     return `<div class="es-star-row">
       <span class="es-star-row-label" style="color:#eab308">${star}</span>
-      <span style="font-size:.85rem;color:#eab308">★</span>
+      <span style="font-size:.85rem;color:#eab308">&#9733;</span>
       <div class="es-star-bar"><div class="es-star-bar-fill" style="width:${pct}%"></div></div>
       <span class="es-star-bar-count">${cnt}</span>
     </div>`;
@@ -386,7 +416,7 @@ function loadReviews(res) {
   // Review list
   const listEl = document.getElementById('review-list');
   if (!reviews.length) {
-    listEl.innerHTML = `<div class="es-review-empty"><div class="es-review-empty-icon">💬</div><p>${t('No reviews yet for this event')}</p></div>`;
+    listEl.innerHTML = `<div class="es-review-empty"><div class="es-review-empty-icon" style="display:flex; justify-content:center; margin-bottom:12px; color:var(--text-muted);"><svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg></div><p>${t('No reviews yet for this event')}</p></div>`;
     return;
   }
 

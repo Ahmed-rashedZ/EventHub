@@ -31,7 +31,8 @@
       <div style="margin-top: 24px; text-align: left;">
         <div class="card"
           style="padding: 16px; margin-bottom: 16px; background: rgba(59,130,246,0.1); border: 1px solid var(--primary);">
-          <h4 style="margin: 0 0 8px 0; color: var(--primary);">📱
+          <h4 style="margin: 0 0 8px 0; color: var(--primary); display: flex; align-items: center; gap: 8px;">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink: 0;"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
             <script>document.write(t('Attendees (Users)'))</script>
           </h4>
           <p style="margin: 0; font-size: 0.85rem; color: var(--text-secondary);">
@@ -41,7 +42,10 @@
 
         <div class="card"
           style="padding: 20px; background: rgba(139,92,246,0.08); border: 1px solid var(--accent); border-radius: 16px;">
-          <h4 style="margin: 0 0 10px 0; color: var(--accent2); font-size: 1.1rem;">🤝 <script>document.write(t('Partners & Exhibitors'))</script></h4>
+          <h4 style="margin: 0 0 10px 0; color: var(--accent2); font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink: 0;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            <script>document.write(t('Partners & Exhibitors'))</script>
+          </h4>
           <p style="margin: 0 0 16px 0; font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;">
             <script>document.write(t('Join as an Event Manager, Sponsor, or Exhibiting Company. Your account will be reviewed and verified by our team.'))</script>
           </p>

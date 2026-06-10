@@ -21,6 +21,7 @@ const I18N_EN = {
   'Full Event Agenda': 'Full Event Agenda',
   'Public': 'Public',
   'Setup': 'Setup',
+  'Event published successfully!': 'Event published successfully!',
   'Event published successfully! 🚀': 'Event published successfully! 🚀',
   'Event unpublished. It is no longer visible to the public.': 'Event unpublished. It is no longer visible to the public.',
   'Are you sure you want to unpublish this event? It will no longer be visible to the public.': 'Are you sure you want to unpublish this event? It will no longer be visible to the public.',
@@ -97,6 +98,64 @@ const I18N_AR = {
   'Partners & Exhibitors': 'الشركاء والعارضون',
   'Join as an Event Manager, Sponsor, or Exhibiting Company. Your account will be reviewed and verified by our team.': 'انضم كمدير فعاليات أو راعٍ أو شركة عارضة. سيتم مراجعة حسابك والتحقق منه من قِبل فريقنا.',
   'Apply as Partner →': 'التقديم كشريك →',
+  'Suspend': 'إيقاف',
+  'Activate': 'تفعيل',
+  'unused': 'غير مستخدم',
+  'used': 'مستخدم',
+  'pending': 'قيد الانتظار',
+  'approved': 'مقبول',
+  'rejected': 'مرفوض',
+  'accepted': 'تم القبول',
+  'maintenance': 'صيانة',
+  'available': 'متاح',
+  'negotiating': 'قيد التفاوض',
+  'cancelled': 'ملغاة',
+  'cancellation_requested': 'طلب إلغاء',
+  'upcoming': 'قادم',
+  'live': 'مباشر',
+  'ended': 'انتهى',
+  'day(s)': 'أيام',
+  'Pending Review': 'قيد المراجعة',
+  'Max attendees': 'الحد الأقصى للحضور',
+  'Back to Events': 'الرجوع للفعاليات',
+  'Back to My Events': 'الرجوع لفعالياتي',
+  'Fill Rate': 'معدل الامتلاء',
+  'Attendance Rate': 'معدل الحضور',
+  'of capacity': 'من السعة',
+  'attendance': 'الحضور',
+  'registered out of': 'مسجل من أصل',
+  'checked in out of': 'حاضر من أصل',
+  'registrations': 'التسجيلات',
+  'Not Scanned': 'لم يتم المسح',
+  'Available Slots': 'المقاعد المتاحة',
+  'Registered (Not Scanned)': 'مسجل (لم يحضر)',
+  'Participants': 'المشاركون',
+  'No registrations yet': 'لا توجد تسجيلات بعد',
+  'No reviews yet': 'لا توجد تقييمات بعد',
+  'No written review': 'لا توجد مراجعة مكتوبة',
+  'Failed to load reviews': 'فشل تحميل التقييمات',
+  'Based on': 'بناءً على',
+  'No ratings yet': 'لا توجد تقييمات',
+  'Anonymous': 'مجهول',
+  'Event published successfully!': 'تم نشر الفعالية بنجاح!',
+  'Event unpublished. It is no longer visible to the public.': 'تم إلغاء النشر. الفعالية لم تعد مرئية للعامة.',
+  'Are you sure you want to unpublish this event? It will no longer be visible to the public.': 'هل أنت متأكد من إلغاء نشر الفعالية؟ لن تكون مرئية للعامة.',
+  'Please select at least one day to publish.': 'الرجاء تحديد يوم واحد على الأقل للنشر.',
+  'Unpublish': 'إلغاء النشر',
+  'Save Draft': 'حفظ كمسودة',
+  'Publish': 'نشر',
+  'Published — Visible to public': 'منشورة — مرئية للعامة',
+  'Draft — Not visible to public yet': 'مسودة — غير مرئية للعامة بعد',
+  'morning': 'صباحاً',
+  'evening': 'مساءً',
+  'afternoon': 'ظهراً',
+  'full day': 'يوم كامل',
+  'Capacity Breakdown': 'تفصيل السعة الاستيعابية',
+  'Registration vs Attendance': 'التسجيل مقابل الحضور',
+  'Total Scans': 'إجمالي المسح',
+  'Recent Scans': 'عمليات المسح الأخيرة',
+  'Ticket Scanned': 'تم مسح التذكرة',
+  'Ticket Number': 'رقم التذكرة',
   /* ── Page Titles ──────────────────────────────────────── */
   'My Events – EventHub Manager':          'فعالياتي – EventHub',
   'My Analytics – EventHub Manager':       'تحليلاتي – EventHub',
@@ -1189,6 +1248,7 @@ const I18N_AR = {
   'Public': 'عام',
   'Setup': 'تجهيز',
   'No schedule found for this event.': 'لم يتم العثور على جدول زمني لهذه الفعالية.',
+  'Event published successfully!': 'تم نشر الفعالية بنجاح!',
   'Event published successfully! 🚀': 'تم نشر الفعالية بنجاح! 🚀',
   'Event unpublished. It is no longer visible to the public.': 'تم إلغاء نشر الفعالية. لم تعد مرئية للجمهور.',
   'Are you sure you want to unpublish this event? It will no longer be visible to the public.': 'هل أنت متأكد من إلغاء نشر هذه الفعالية؟ لن تكون مرئية للجمهور بعد الآن.',
@@ -1754,8 +1814,15 @@ const I18N_AR = {
    Reverse Dictionary (Arabic → English) – auto-built from I18N_AR
    ───────────────────────────────────────────────────────────────── */
 for (const [en, ar] of Object.entries(I18N_AR)) {
+  if (ar.trim().length <= 1) continue;
+  if (ar === 'معرض' || ar === 'المعرض' || ar === 'المعارض') continue;
   I18N_EN[ar] = en;
 }
+
+// Preserve overwritten Event Manager translations in reverse dictionary
+I18N_EN['مدير الفعاليات'] = 'Event Manager';
+I18N_EN['مدير الفعالية'] = 'Event Manager';
+I18N_EN['مدير فعاليات'] = 'Event Manager';
 
 /* ─────────────────────────────────────────────────────────────────
    Event Type display helper

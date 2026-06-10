@@ -67,22 +67,62 @@
 
     <!-- Stat Cards -->
     <div class="an-stats" id="stats-row">
-      <div class="an-stat"><div class="an-stat-stripe" style="background:#6e40f2"></div><div class="an-stat-icon" style="background:rgba(110,64,242,.15)">📅</div><div class="an-stat-label">My Events</div><div class="an-stat-value" id="s-events">—</div><div class="an-stat-sub" id="s-events-sub"></div></div>
-      <div class="an-stat"><div class="an-stat-stripe" style="background:#22d3ee"></div><div class="an-stat-icon" style="background:rgba(34,211,238,.15)">🎟️</div><div class="an-stat-label">Tickets Sold</div><div class="an-stat-value" id="s-tickets">—</div><div class="an-stat-sub" id="s-tickets-sub"></div></div>
-      <div class="an-stat"><div class="an-stat-stripe" style="background:#22c55e"></div><div class="an-stat-icon" style="background:rgba(34,197,94,.15)">📊</div><div class="an-stat-label">Attendance Rate</div><div class="an-stat-value" id="s-rate">—</div><div class="an-stat-sub" id="s-rate-sub"></div></div>
-      <div class="an-stat"><div class="an-stat-stripe" style="background:#f59e0b"></div><div class="an-stat-icon" style="background:rgba(245,158,11,.15)">📈</div><div class="an-stat-label">Capacity Usage</div><div class="an-stat-value" id="s-cap">—</div><div class="an-stat-sub" id="s-cap-sub"></div></div>
-      <div class="an-stat"><div class="an-stat-stripe" style="background:#eab308"></div><div class="an-stat-icon" style="background:rgba(234,179,8,.15)">⭐</div><div class="an-stat-label">Avg Rating</div><div class="an-stat-value" id="s-rating">—</div><div class="an-stat-sub" id="s-rating-sub">Based on all events</div></div>
+      <div class="an-stat">
+        <div class="an-stat-stripe" style="background:#6e40f2"></div>
+        <div class="an-stat-icon" style="background:rgba(110,64,242,.15); color:#6e40f2; display:flex; align-items:center; justify-content:center;">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"></path></svg>
+        </div>
+        <div class="an-stat-label">My Events</div>
+        <div class="an-stat-value" id="s-events">—</div>
+        <div class="an-stat-sub" id="s-events-sub"></div>
+      </div>
+      <div class="an-stat">
+        <div class="an-stat-stripe" style="background:#22d3ee"></div>
+        <div class="an-stat-icon" style="background:rgba(34,211,238,.15); color:#22d3ee; display:flex; align-items:center; justify-content:center;">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-12v.75m0 3v.75m0 3v.75m0 3V18M3 6.75A1.75 1.75 0 014.75 5h14.5A1.75 1.75 0 0121 6.75v10.5a1.75 1.75 0 01-1.75 1.75H4.75A1.75 1.75 0 013 17.25V6.75z"></path></svg>
+        </div>
+        <div class="an-stat-label">Tickets Sold</div>
+        <div class="an-stat-value" id="s-tickets">—</div>
+        <div class="an-stat-sub" id="s-tickets-sub"></div>
+      </div>
+      <div class="an-stat">
+        <div class="an-stat-stripe" style="background:#22c55e"></div>
+        <div class="an-stat-icon" style="background:rgba(34,197,94,.15); color:#22c55e; display:flex; align-items:center; justify-content:center;">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v5.25c0 .621-.504 1.125-1.125 1.125h-2.25A1.125 1.125 0 013 18.375v-5.25zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125v-9.75zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v14.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"></path></svg>
+        </div>
+        <div class="an-stat-label">Attendance Rate</div>
+        <div class="an-stat-value" id="s-rate">—</div>
+        <div class="an-stat-sub" id="s-rate-sub"></div>
+      </div>
+      <div class="an-stat">
+        <div class="an-stat-stripe" style="background:#f59e0b"></div>
+        <div class="an-stat-icon" style="background:rgba(245,158,11,.15); color:#f59e0b; display:flex; align-items:center; justify-content:center;">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941"></path></svg>
+        </div>
+        <div class="an-stat-label">Capacity Usage</div>
+        <div class="an-stat-value" id="s-cap">—</div>
+        <div class="an-stat-sub" id="s-cap-sub"></div>
+      </div>
+      <div class="an-stat">
+        <div class="an-stat-stripe" style="background:#eab308"></div>
+        <div class="an-stat-icon" style="background:rgba(234,179,8,.15); color:#eab308; display:flex; align-items:center; justify-content:center;">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499c.152-.482.835-.482.987 0l2.128 6.551a1 1 0 00.95.69h6.905c.507 0 .717.659.308.973l-5.584 4.053a1 1 0 00-.364 1.118l2.128 6.551c.152.482-.401.883-.82.597l-5.584-4.053a1 1 0 00-1.175 0l-5.584 4.053c-.419.286-.972-.115-.82-.597l2.128-6.551a1 1 0 00-.364-1.118L2.05 11.713c-.409-.314-.199-.973.308-.973h6.905a1 1 0 00.95-.69L11.48 3.5z"></path></svg>
+        </div>
+        <div class="an-stat-label">Avg Rating</div>
+        <div class="an-stat-value" id="s-rating">—</div>
+        <div class="an-stat-sub" id="s-rating-sub">Based on all events</div>
+      </div>
     </div>
 
 
     <!-- Charts Row -->
     <div class="an-row">
-      <div class="an-card"><div class="an-card-title"><span>📊</span> Events by Status</div><div class="an-chart-wrap"><canvas id="statusChart"></canvas></div></div>
-      <div class="an-card"><div class="an-card-title"><span>🏷️</span> Events by Type</div><div class="an-chart-wrap"><canvas id="typeChart"></canvas></div></div>
+      <div class="an-card"><div class="an-card-title">Events by Status</div><div class="an-chart-wrap"><canvas id="statusChart"></canvas></div></div>
+      <div class="an-card"><div class="an-card-title">Events by Type</div><div class="an-chart-wrap"><canvas id="typeChart"></canvas></div></div>
     </div>
 
     <!-- Event Performance -->
-    <div class="an-section-title"><span>🏆</span> Event Performance</div>
+    <div class="an-section-title">Event Performance</div>
     <div class="an-events-grid" id="events-grid">
       <div class="an-ev-card" style="display:grid;place-items:center;min-height:140px"><div class="spinner"></div></div>
     </div>
@@ -138,7 +178,6 @@ function fmtDateShort(d) {
 
 const COLORS = { approved:'#22c55e', pending:'#f59e0b', rejected:'#ef4444' };
 const TYPE_COLORS = { 'مؤتمر':'#3b82f6', 'ندوة':'#8b5cf6', 'ورشة عمل':'#10b981', 'دورة تدريبية':'#06b6d4', 'ترفيه':'#ec4899', 'ملتقى علمي':'#f59e0b', 'رياضة':'#22c55e', 'تقنية':'#6366f1', 'اجتماعية':'#f97316' };
-const TYPE_ICONS  = { 'مؤتمر':'🎙️', 'ندوة':'📖', 'ورشة عمل':'🔧', 'دورة تدريبية':'🎓', 'ترفيه':'🎭', 'ملتقى علمي':'🔬', 'رياضة':'⚽', 'تقنية':'💻', 'اجتماعية':'🤝' };
 
 
 async function loadAnalytics() {
@@ -175,12 +214,11 @@ async function loadAnalytics() {
   // Event cards
   const grid = document.getElementById('events-grid');
   if (!d.events || !d.events.length) {
-    grid.innerHTML = '<div class="an-ev-card" style="grid-column:1/-1"><div class="empty-state" style="padding:30px"><div class="empty-icon">📅</div><p>No events yet. <a href="/manager/events">Create one!</a></p></div></div>';
+    grid.innerHTML = '<div class="an-ev-card" style="grid-column:1/-1"><div class="empty-state" style="padding:30px"><div class="empty-icon" style="display:flex; justify-content:center; margin-bottom:12px; color:var(--text-muted);"><svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"></path></svg></div><p>No events yet. <a href="/manager/events">Create one!</a></p></div></div>';
     return;
   }
   grid.innerHTML = d.events.map(ev => {
     const tc = TYPE_COLORS[ev.event_type]||'#6b7280';
-    const ti = TYPE_ICONS[ev.event_type]||'📌';
     const fr = ev.fill_rate||0;
     const ar = ev.attendance_rate||0;
     const frColor = ev.capacity ? (fr>80?'#22c55e':fr>50?'#f59e0b':'#ef4444') : '#8b5cf6';
@@ -192,9 +230,9 @@ async function loadAnalytics() {
     return `<div class="an-ev-card">
       <div class="an-ev-header">
         <div class="an-ev-title" style="${ev.status === 'cancelled' ? 'text-decoration:line-through; color:var(--danger)' : ''}">${ev.title}</div>
-        <span class="an-ev-type" style="background:${tc}18;color:${tc}">${ti} ${ev.event_type}</span>
+        <span class="an-ev-type" style="background:${tc}18;color:${tc}">${ev.event_type}</span>
       </div>
-      <div style="font-size: 0.85rem; color: #eab308; margin-bottom: 12px; font-weight: 600;">⭐ ${evRating} / 5.0</div>
+      <div style="font-size: 0.85rem; color: #eab308; margin-bottom: 12px; font-weight: 600; display:flex; align-items:center;"><svg style="display:inline-block; width:14px; height:14px; fill:currentColor; margin-right:4px;" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg> ${evRating} / 5.0</div>
       <div class="an-ev-metrics">
         <div class="an-ev-metric"><div class="an-ev-metric-label">Registered</div><div class="an-ev-metric-val">${ev.tickets_count}</div></div>
         <div class="an-ev-metric"><div class="an-ev-metric-label">Attended</div><div class="an-ev-metric-val">${ev.attended_count}</div></div>

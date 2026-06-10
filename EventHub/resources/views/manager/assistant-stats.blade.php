@@ -68,15 +68,15 @@
       </div>
 
       <div class="es-stats">
-        <div class="es-stat"><div class="es-stat-stripe" style="background:#6e40f2"></div><div class="es-stat-icon" style="background:rgba(110,64,242,.15)">📡</div><div class="es-stat-label">Total Scans</div><div class="es-stat-value" id="s-total">0</div><div class="es-stat-sub">Lifetime activity</div></div>
-        <div class="es-stat"><div class="es-stat-stripe" style="background:#22d3ee"></div><div class="es-stat-icon" style="background:rgba(34,211,238,.15)">📅</div><div class="es-stat-label">Events Worked</div><div class="es-stat-value" id="s-events">0</div><div class="es-stat-sub">Across system</div></div>
-        <div class="es-stat"><div class="es-stat-stripe" style="background:#22c55e"></div><div class="es-stat-icon" style="background:rgba(34,197,94,.15)">⚡</div><div class="es-stat-label">Avg. Velocity</div><div class="es-stat-value" id="s-avg">0</div><div class="es-stat-sub">Scans per event</div></div>
+        <div class="es-stat"><div class="es-stat-stripe" style="background:#6e40f2"></div><div class="es-stat-icon" style="background:rgba(110,64,242,.15)"></div><div class="es-stat-label">Total Scans</div><div class="es-stat-value" id="s-total">0</div><div class="es-stat-sub">Lifetime activity</div></div>
+        <div class="es-stat"><div class="es-stat-stripe" style="background:#22d3ee"></div><div class="es-stat-icon" style="background:rgba(34,211,238,.15)"></div><div class="es-stat-label">Events Worked</div><div class="es-stat-value" id="s-events">0</div><div class="es-stat-sub">Across system</div></div>
+        <div class="es-stat"><div class="es-stat-stripe" style="background:#22c55e"></div><div class="es-stat-icon" style="background:rgba(34,197,94,.15)"></div><div class="es-stat-label">Avg. Velocity</div><div class="es-stat-value" id="s-avg">0</div><div class="es-stat-sub">Scans per event</div></div>
       </div>
 
       <div class="es-row">
         <!-- History Table -->
         <div class="es-card">
-          <div class="es-card-title"><span>📜</span> Recent Check-in Logs</div>
+          <div class="es-card-title"><span></span> Recent Check-in Logs</div>
           <div class="table-wrap">
             <table class="es-participants-table">
               <thead>
@@ -96,7 +96,7 @@
 
         <!-- Distribution -->
         <div class="es-card">
-          <div class="es-card-title"><span>📊</span> Event Breakdown</div>
+          <div class="es-card-title"><span></span> Event Breakdown</div>
           <div id="distribution-list">
              <p style="color:var(--text-muted)">Loading breakdown...</p>
           </div>

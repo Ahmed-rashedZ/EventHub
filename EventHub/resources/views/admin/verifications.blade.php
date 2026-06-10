@@ -144,17 +144,7 @@
 <div class="app-layout">
   <aside class="sidebar">
     <div class="sidebar-logo" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;"><img src="/images/logo.png" alt="EventHub Logo" style="height: 60px; width: auto; object-fit: contain;"></div>
-    <nav class="sidebar-nav">
-      <span class="nav-section-label">Overview</span>
-      <a class="nav-item" href="/admin/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
-      <span class="nav-section-label">Management</span>
-      <a class="nav-item" href="/admin/users"><span class="nav-icon">👥</span> Users</a>
-      <a class="nav-item" href="/admin/events"><span class="nav-icon">📅</span> Events</a>
-      <a class="nav-item" href="/admin/venues"><span class="nav-icon">🏛️</span> Venues</a>
-      <a class="nav-item active" href="/admin/verifications"><span class="nav-icon">🛡️</span> Verifications</a>
-      <span class="nav-section-label">Settings</span>
-      <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
-    </nav>
+    <nav class="sidebar-nav" id="sidebar-links"></nav>
     @include('partials._sidebar-footer')
   </aside>
 
@@ -174,7 +164,7 @@
   <div class="modal" style="max-width: 640px;">
     <div class="modal-header">
       <h3 class="modal-title" id="doc-title"><script>document.write(t('Document Review'))</script></h3>
-      <button class="modal-close" onclick="closeDocModal()">✕</button>
+      <button class="modal-close" onclick="closeDocModal()">&times;</button>
     </div>
 
     <div style="padding: 20px;" id="doc-cards-container">
@@ -183,8 +173,8 @@
 
     <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center;">
       <div style="display:flex; gap: 8px;">
-        <button class="btn btn-primary" id="btn-submit-review" onclick="submitReview()">📤 <script>document.write(t('Submit Review'))</script></button>
-        <button class="btn btn-danger" id="btn-direct-reject" onclick="toggleDirectReject()"><script>document.write(t('🚫 Reject Entirely'))</script></button>
+        <button class="btn btn-primary" id="btn-submit-review" onclick="submitReview()"><script>document.write(t('Submit Review'))</script></button>
+        <button class="btn btn-danger" id="btn-direct-reject" onclick="toggleDirectReject()"><script>document.write(t('Reject Entirely'))</script></button>
       </div>
       <button class="btn btn-ghost" onclick="closeDocModal()"><script>document.write(t('Close'))</script></button>
     </div>
@@ -192,7 +182,7 @@
     <!-- Direct Reject Area -->
     <div class="direct-reject-area" id="direct-reject-area">
       <label class="form-label" style="color: #ef4444; font-size: 0.85rem; font-weight: 700; display:flex; align-items:center; gap:6px; margin-bottom: 12px;">
-        <span style="font-size:1.1rem">🚫</span> <script>document.write(t('Rejection Reason'))</script>
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align:middle;margin-inline-end:4px;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg> <script>document.write(t('Rejection Reason'))</script>
       </label>
       <textarea id="direct-reject-reason"></textarea>
       <div style="display:flex; gap: 8px; justify-content: flex-end;">
@@ -213,10 +203,10 @@
   });
   let currentReq = null;
   const DOC_TYPES = [
-    { key: 'doc_commercial_register',     icon: '📋', label: 'Commercial Register',     labelAr: 'السجل التجاري' },
-    { key: 'doc_tax_number',              icon: '🔢', label: 'Tax Number Certificate',  labelAr: 'شهادة الرقم الضريبي' },
-    { key: 'doc_articles_of_association', icon: '📝', label: 'Articles of Association',  labelAr: 'عقد التأسيس' },
-    { key: 'doc_practice_license',        icon: '🏢', label: 'Practice License',         labelAr: 'إذن المزاولة' },
+    { key: 'doc_commercial_register',     icon: '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align:middle;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>', label: 'Commercial Register',     labelAr: 'السجل التجاري' },
+    { key: 'doc_tax_number',              icon: '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align:middle;"><path stroke-linecap="round" stroke-linejoin="round" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" /></svg>', label: 'Tax Number Certificate',  labelAr: 'شهادة الرقم الضريبي' },
+    { key: 'doc_articles_of_association', icon: '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align:middle;"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>', label: 'Articles of Association',  labelAr: 'عقد التأسيس' },
+    { key: 'doc_practice_license',        icon: '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align:middle;"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>', label: 'Practice License',         labelAr: 'إذن المزاولة' },
   ];
 
   // Track review decisions
@@ -238,7 +228,7 @@
     if (data.length === 0) {
       container.innerHTML = `
         <div class="empty-state" style="padding: 60px;">
-          <div class="empty-icon">🎉</div>
+          <div class="empty-icon" style="display:flex; justify-content:center; margin-bottom:12px; color:var(--text-muted);"><svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
           <p>${t('No pending verification requests.')}</p>
         </div>
       `;
@@ -246,25 +236,29 @@
     }
 
     container.innerHTML = data.map(req => {
-      const icon = req.role === 'Sponsor' ? '💼' : (req.role === 'Company' ? '🏛️' : '🎭');
+      const icon = req.role === 'Sponsor' 
+        ? `<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color: var(--accent);"><path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>` 
+        : (req.role === 'Company' 
+          ? `<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color: var(--accent);"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>` 
+          : `<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color: var(--accent);"><path stroke-linecap="round" stroke-linejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`);
       const isResubmit = req.verification_status === 'changes_requested';
       const isDocUpdate = req.verification_status === 'verified';
       let badge = '';
       if (isDocUpdate) {
-        badge = `<span style="font-size: 0.7rem; background:#3b82f6; color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px;">📄 ${t('Document Update')}</span>`;
+        badge = `<span style="font-size: 0.7rem; background:#3b82f6; color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px;">${t('Document Update')}</span>`;
       } else if (isResubmit) {
-        badge = `<span style="font-size: 0.7rem; background:#0ea5e9; color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px;">${t('🔄 Resubmitted')}</span>`;
+        badge = `<span style="font-size: 0.7rem; background:#0ea5e9; color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px;">${t('Resubmitted')}</span>`;
       } else {
-        badge = `<span style="font-size: 0.7rem; background:#10b981; color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px;">${t('✨ New Request')}</span>`;
+        badge = `<span style="font-size: 0.7rem; background:#10b981; color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px;">${t('New Request')}</span>`;
       }
       return `
         <div class="vf-card">
           <div class="vf-info">
-            <div class="vf-icon">${icon}</div>
+            <div class="vf-icon" style="display:inline-flex;align-items:center;justify-content:center;">${icon}</div>
             <div>
               <div class="vf-name">${req.name} ${badge}</div>
               <div class="vf-email">${req.email}</div>
-              <div class="vf-role">${t(req.role)} ${req.profile && req.profile.company_type ? `• ${req.profile.company_type}` : ''}</div>
+              <div class="vf-role">${t(req.role)} ${req.profile && req.profile.company_type ? `• <bdi>${req.profile.company_type}</bdi>` : ''}</div>
             </div>
           </div>
           <div>
@@ -327,15 +321,15 @@
               <span class="doc-prev-status ${statusBadgeClass}">${statusLabel}</span>
             </div>
             <div class="doc-review-actions">
-              ${hasFile ? `<button class="btn doc-btn-download" onclick="downloadDoc('${req.id}', '${doc.key}')">${t('⬇️ Download')}</button>` : `<span style="color:var(--text-muted); font-size:0.75rem;">${t('No file')}</span>`}
+              ${hasFile ? `<button class="btn doc-btn-download" onclick="downloadDoc('${req.id}', '${doc.key}')">${t('Download')}</button>` : `<span style="color:var(--text-muted); font-size:0.75rem;">${t('No file')}</span>`}
             </div>
           </div>
           
           ${currentNote && currentStatus === 'rejected' ? `<div style="font-size:0.75rem; color:#ef4444; background:rgba(239,68,68,.06); padding:6px 10px; border-radius:6px; margin-bottom:8px;">${t('Previous note: ')}${currentNote}</div>` : ''}
-
+ 
           <div style="display:flex; gap:6px; margin-top:4px;">
-            <button class="btn doc-btn-approve" id="btn-approve-${doc.key}" onclick="setDocDecision('${doc.key}', 'approved')">${t('✅ Accept')}</button>
-            <button class="btn doc-btn-reject" id="btn-reject-${doc.key}" onclick="setDocDecision('${doc.key}', 'rejected')">${t('❌ Reject')}</button>
+            <button class="btn doc-btn-approve" id="btn-approve-${doc.key}" onclick="setDocDecision('${doc.key}', 'approved')">${t('Accept')}</button>
+            <button class="btn doc-btn-reject" id="btn-reject-${doc.key}" onclick="setDocDecision('${doc.key}', 'rejected')">${t('Reject')}</button>
           </div>
           
           <div class="doc-reject-note" id="note-area-${doc.key}">
@@ -414,7 +408,7 @@
       showToast(res.data?.message || t('Error submitting review'), 'error');
     }
 
-    btn.textContent = t('📤 Submit Review'); btn.disabled = false;
+    btn.textContent = t('Submit Review'); btn.disabled = false;
   }
 
   function toggleDirectReject() {

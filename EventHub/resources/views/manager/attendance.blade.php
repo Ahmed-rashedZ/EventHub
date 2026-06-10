@@ -73,7 +73,10 @@
     <div class="topbar">
       <div><h1 class="page-title">Live Attendance</h1><p class="page-subtitle">Real-time attendance tracking for your live events</p></div>
       <div class="topbar-actions">
-        <button class="att-refresh-btn" onclick="loadLiveEvents()">🔄 Refresh</button>
+        <button class="att-refresh-btn" onclick="loadLiveEvents()" style="display:inline-flex; align-items:center; gap:6px;">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"></path></svg>
+          Refresh
+        </button>
       </div>
     </div>
 
@@ -101,7 +104,7 @@
     // Fetch my events
     const res = await api.get('/events/list/my');
     if (!res.ok) {
-      container.innerHTML = '<div class="att-empty"><div class="att-empty-icon">❌</div><div class="att-empty-title">Failed to load events</div><div class="att-empty-text">Please try again</div></div>';
+      container.innerHTML = '<div class="att-empty"><div class="att-empty-icon" style="color:var(--danger); display:flex; justify-content:center; margin-bottom:12px;"><svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div><div class="att-empty-title">Failed to load events</div><div class="att-empty-text">Please try again</div></div>';
       return;
     }
 
@@ -111,7 +114,9 @@
     if (!liveEvents.length) {
       container.innerHTML = `
         <div class="att-empty">
-          <div class="att-empty-icon">📡</div>
+          <div class="att-empty-icon" style="color:var(--text-muted); display:flex; justify-content:center; margin-bottom:12px;">
+            <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.3 12.3a4.5 4.5 0 016.3 0M6.3 9.3a8.5 8.5 0 0111.3 0M3.3 6.3a12.5 12.5 0 0117.3 0M12 15h.01"></path></svg>
+          </div>
           <div class="att-empty-title">No Live Events</div>
           <div class="att-empty-text">You don't have any events that are currently live.<br>Events will appear here during their scheduled time.</div>
         </div>
@@ -139,7 +144,9 @@
     if (!activeEvents.length) {
       container.innerHTML = `
         <div class="att-empty">
-          <div class="att-empty-icon">📡</div>
+          <div class="att-empty-icon" style="color:var(--text-muted); display:flex; justify-content:center; margin-bottom:12px;">
+            <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.3 12.3a4.5 4.5 0 016.3 0M6.3 9.3a8.5 8.5 0 0111.3 0M3.3 6.3a12.5 12.5 0 0117.3 0M12 15h.01"></path></svg>
+          </div>
           <div class="att-empty-title">No Live Events</div>
           <div class="att-empty-text">You don't have any events that are currently live.<br>Events will appear here during their scheduled time.</div>
         </div>
@@ -175,8 +182,8 @@
           <div class="att-ev-info">
             <h3 class="att-ev-title">${ev.title}</h3>
             <div class="att-ev-meta">
-              <span>🏛️ ${ev.venue?.name || '—'}</span>
-              <span>🕐 ${fmtDate(ev.start_time)} — ${fmtDate(ev.end_time)}</span>
+              <span style="display:flex; align-items:center; gap:4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.5m-15 10.5V10.5M3 21h18M10.5 8.25h3"></path></svg> ${ev.venue?.name || '—'}</span>
+              <span style="display:flex; align-items:center; gap:4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> ${fmtDate(ev.start_time)} — ${fmtDate(ev.end_time)}</span>
             </div>
           </div>
           <div class="att-ev-badges">
@@ -219,7 +226,7 @@
 
         <div class="att-ev-participants">
           <button class="att-toggle-btn" id="toggle-${ev.id}" onclick="toggleParticipants(${ev.id})">
-            👥 View Participants (${participants.length})
+            View Participants (${participants.length})
             <span id="arrow-${ev.id}">▼</span>
           </button>
           <div id="parts-${ev.id}" style="display:none">
@@ -244,8 +251,8 @@
                 ? t.attendance_logs.reduce((latest, current) => new Date(current.scanned_at) > new Date(latest.scanned_at) ? current : latest, t.attendance_logs[0])
                 : t.attendance_log;
               const scanTime = latestLog ? fmtDate(latestLog.scanned_at) : '—';
-              const scannerName = latestLog && latestLog.scanner ? `<div style="font-size:.7rem;color:var(--text-muted);margin-top:2px">👤 by ${latestLog.scanner.name}</div>` : '';
-              const daysAttendedStr = t.total_days_attended ? `<div style="font-size:.7rem;color:var(--text-muted);margin-top:4px">📅 ${t.total_days_attended} day(s)</div>` : '';
+              const scannerName = latestLog && latestLog.scanner ? `<div style="font-size:.7rem;color:var(--text-muted);margin-top:2px; display:inline-flex; align-items:center; gap:2px;"><svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"></path></svg> by ${latestLog.scanner.name}</div>` : '';
+              const daysAttendedStr = t.total_days_attended ? `<div style="font-size:.7rem;color:var(--text-muted);margin-top:4px; display:inline-flex; align-items:center; gap:2px;"><svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"></path></svg> <bdi>${t.total_days_attended}</bdi> ${t('day(s)')}</div>` : '';
               
               return `
                 <tr>

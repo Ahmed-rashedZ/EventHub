@@ -81,17 +81,7 @@
 <div class="app-layout">
   <aside class="sidebar">
     <div class="sidebar-logo" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;"><img src="/images/logo.png" alt="EventHub Logo" style="height: 60px; width: auto; object-fit: contain;"></div>
-    <nav class="sidebar-nav">
-      <span class="nav-section-label">Overview</span>
-      <a class="nav-item" href="/admin/dashboard"><span class="nav-icon">📊</span> Dashboard</a>
-      <span class="nav-section-label">Management</span>
-      <a class="nav-item" href="/admin/users"><span class="nav-icon">👥</span> Users</a>
-      <a class="nav-item" href="/admin/events"><span class="nav-icon">📅</span> Events</a>
-      <a class="nav-item" href="/admin/venues"><span class="nav-icon">🏛️</span> Venues</a>
-      <a class="nav-item" href="/admin/verifications"><span class="nav-icon">🛡️</span> Verifications</a>
-      <span class="nav-section-label">Settings</span>
-      <a class="nav-item" href="/profile"><span class="nav-icon">⚙️</span> My Profile</a>
-    </nav>
+    <nav class="sidebar-nav" id="sidebar-links"></nav>
     @include('partials._sidebar-footer')
   </aside>
 
@@ -105,10 +95,42 @@
 
       <!-- Stat Cards -->
       <div class="es-stats" id="stats-row">
-        <div class="es-stat"><div class="es-stat-stripe" style="background:#6e40f2"></div><div class="es-stat-icon" style="background:rgba(110,64,242,.15)">👥</div><div class="es-stat-label">Capacity</div><div class="es-stat-value" id="s-capacity">—</div><div class="es-stat-sub">Max attendees</div></div>
-        <div class="es-stat"><div class="es-stat-stripe" style="background:#22d3ee"></div><div class="es-stat-icon" style="background:rgba(34,211,238,.15)">🎟️</div><div class="es-stat-label">Registered</div><div class="es-stat-value" id="s-registered">—</div><div class="es-stat-sub" id="s-registered-sub"></div></div>
-        <div class="es-stat"><div class="es-stat-stripe" style="background:#22c55e"></div><div class="es-stat-icon" style="background:rgba(34,197,94,.15)">✅</div><div class="es-stat-label">Checked In</div><div class="es-stat-value" id="s-attended">—</div><div class="es-stat-sub" id="s-attended-sub"></div></div>
-        <div class="es-stat"><div class="es-stat-stripe" style="background:#f59e0b"></div><div class="es-stat-icon" style="background:rgba(245,158,11,.15)">⏳</div><div class="es-stat-label">Remaining</div><div class="es-stat-value" id="s-remaining">—</div><div class="es-stat-sub">Not checked in yet</div></div>
+        <div class="es-stat">
+          <div class="es-stat-stripe" style="background:#6e40f2"></div>
+          <div class="es-stat-icon" style="background:rgba(110,64,242,.15); color:#6e40f2; display:flex; align-items:center; justify-content:center;">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.109A11.978 11.978 0 0112 19.5c-1.21 0-2.38-.18-3.484-.512v-.079c0-1.057.277-2.051.765-2.912M13.5 10.986a5.034 5.034 0 003.882-4.908 5.034 5.034 0 00-3.882-4.908M9.75 8.986a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.55 12.014a4.195 4.195 0 001.2-2.932 4.197 4.197 0 00-1.2-2.932M7.485 12H4.625a4.125 4.125 0 00-7.533 2.493M9.007 19.988v-3.07" /></svg>
+          </div>
+          <div class="es-stat-label">Capacity</div>
+          <div class="es-stat-value" id="s-capacity">—</div>
+          <div class="es-stat-sub">Max attendees</div>
+        </div>
+        <div class="es-stat">
+          <div class="es-stat-stripe" style="background:#22d3ee"></div>
+          <div class="es-stat-icon" style="background:rgba(34,211,238,.15); color:#22d3ee; display:flex; align-items:center; justify-content:center;">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-12v.75m0 3v.75m0 3v.75m0 3V18M3 6.75A1.75 1.75 0 014.75 5h14.5A1.75 1.75 0 0121 6.75v10.5a1.75 1.75 0 01-1.75 1.75H4.75A1.75 1.75 0 013 17.25V6.75z"></path></svg>
+          </div>
+          <div class="es-stat-label">Registered</div>
+          <div class="es-stat-value" id="s-registered">—</div>
+          <div class="es-stat-sub" id="s-registered-sub"></div>
+        </div>
+        <div class="es-stat">
+          <div class="es-stat-stripe" style="background:#22c55e"></div>
+          <div class="es-stat-icon" style="background:rgba(34,197,94,.15); color:#22c55e; display:flex; align-items:center; justify-content:center;">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          </div>
+          <div class="es-stat-label">Checked In</div>
+          <div class="es-stat-value" id="s-attended">—</div>
+          <div class="es-stat-sub" id="s-attended-sub"></div>
+        </div>
+        <div class="es-stat">
+          <div class="es-stat-stripe" style="background:#f59e0b"></div>
+          <div class="es-stat-icon" style="background:rgba(245,158,11,.15); color:#f59e0b; display:flex; align-items:center; justify-content:center;">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          </div>
+          <div class="es-stat-label">Remaining</div>
+          <div class="es-stat-value" id="s-remaining">—</div>
+          <div class="es-stat-sub">Not checked in yet</div>
+        </div>
       </div>
 
       <!-- Rate Rings -->
@@ -132,18 +154,18 @@
       <!-- Charts Row -->
       <div class="es-row">
         <div class="es-card">
-          <div class="es-card-title"><span>📊</span> التسجيل مقابل الحضور</div>
+          <div class="es-card-title">التسجيل مقابل الحضور</div>
           <div class="es-chart-wrap"><canvas id="regAttChart"></canvas></div>
         </div>
         <div class="es-card">
-          <div class="es-card-title"><span>🎯</span> تفصيل السعة الاستيعابية</div>
+          <div class="es-card-title">تفصيل السعة الاستيعابية</div>
           <div class="es-chart-wrap"><canvas id="capChart"></canvas></div>
         </div>
       </div>
 
       <!-- Participants Table -->
       <div class="es-card" style="margin-bottom:24px">
-        <div class="es-card-title"><span>👥</span> Participants (<span id="part-count">0</span>)</div>
+        <div class="es-card-title">Participants (<span id="part-count">0</span>)</div>
         <div class="table-wrap">
           <table class="es-participants-table">
             <thead><tr><th>#</th><th>Attendee</th><th>Ticket Code</th><th>Status</th><th>Scanned At</th></tr></thead>
@@ -156,7 +178,7 @@
 
       <!-- Reviews & Ratings -->
       <div class="es-card" style="margin-bottom:24px" id="reviews-section">
-        <div class="es-card-title"><span>⭐</span> Reviews &amp; Ratings (<span id="review-count">0</span>)</div>
+        <div class="es-card-title">Reviews &amp; Ratings (<span id="review-count">0</span>)</div>
         <div id="reviews-loading" style="text-align:center;padding:32px"><div class="spinner" style="margin:auto"></div></div>
         <div id="reviews-content" style="display:none">
           <div class="es-reviews-summary">
@@ -188,7 +210,7 @@ Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
 Chart.defaults.font.family = 'Inter';
 
 const TYPE_COLORS = { 'مؤتمر':'#3b82f6', 'ندوة':'#8b5cf6', 'ورشة عمل':'#10b981', 'دورة تدريبية':'#06b6d4', 'ترفيه':'#ec4899', 'ملتقى علمي':'#f59e0b', 'رياضة':'#22c55e', 'تقنية':'#6366f1', 'اجتماعية':'#f97316' };
-const TYPE_ICONS  = { 'مؤتمر':'🎙️', 'ندوة':'📖', 'ورشة عمل':'🔧', 'دورة تدريبية':'🎓', 'ترفيه':'🎭', 'ملتقى علمي':'🔬', 'رياضة':'⚽', 'تقنية':'💻', 'اجتماعية':'🤝' };
+const TYPE_ICONS  = { 'مؤتمر':'', 'ندوة':'', 'ورشة عمل':'', 'دورة تدريبية':'', 'ترفيه':'', 'ملتقى علمي':'', 'رياضة':'', 'تقنية':'', 'اجتماعية':'' };
 
 function animVal(el, end, suffix='') {
   let s=0; const st=performance.now();
@@ -232,7 +254,7 @@ const [statsRes, eventRes, partRes, reviewsRes] = await Promise.all([
   const ev = eventRes.data;
   const eType = ev.event_type || 'Other';
   const tColor = TYPE_COLORS[eType] || '#6b7280';
-  const tIcon  = TYPE_ICONS[eType]  || '📌';
+  const tIcon  = TYPE_ICONS[eType]  || '';
 
 
 
@@ -304,15 +326,15 @@ const [statsRes, eventRes, partRes, reviewsRes] = await Promise.all([
   document.getElementById('part-count').textContent = participants.length;
 
   if (!participants.length) {
-    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state" style="padding:30px"><div class="empty-icon">🎟️</div><p>${t('No registrations yet')}</p></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state" style="padding:30px"><div class="empty-icon" style="display:flex; justify-content:center; margin-bottom:12px; color:var(--text-muted);"><svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-12v.75m0 3v.75m0 3v.75m0 3V18M3 6.75A1.75 1.75 0 014.75 5h14.5A1.75 1.75 0 0121 6.75v10.5a1.75 1.75 0 01-1.75 1.75H4.75A1.75 1.75 0 013 17.25V6.75z"></path></svg></div><p>${t('No registrations yet')}</p></div></td></tr>`;
   } else {
     tbody.innerHTML = participants.map((t, i) => {
       const latestLog = (t.attendance_logs && t.attendance_logs.length) 
         ? t.attendance_logs.reduce((latest, current) => new Date(current.scanned_at) > new Date(latest.scanned_at) ? current : latest, t.attendance_logs[0])
         : t.attendance_log;
       const scanTime = latestLog ? fmtDate(latestLog.scanned_at) : '—';
-      const scannerName = latestLog && latestLog.scanner ? `<div style="font-size:.7rem;color:var(--text-muted);margin-top:2px">👤 by ${latestLog.scanner.name}</div>` : '';
-      const daysAttendedStr = t.total_days_attended ? `<div style="font-size:.7rem;color:var(--text-muted);margin-top:4px">📅 ${t.total_days_attended} day(s)</div>` : '';
+      const scannerName = latestLog && latestLog.scanner ? `<div style="font-size:.7rem;color:var(--text-muted);margin-top:2px">by ${latestLog.scanner.name}</div>` : '';
+      const daysAttendedStr = t.total_days_attended ? `<div style="font-size:.7rem;color:var(--text-muted);margin-top:4px"><bdi>${t.total_days_attended}</bdi> ${t('day(s)')}</div>` : '';
       
       return `
         <tr>
@@ -347,7 +369,7 @@ const [statsRes, eventRes, partRes, reviewsRes] = await Promise.all([
 function starsHtml(rating, size = '1rem') {
   const rounded = Math.round(rating);
   return [1,2,3,4,5].map(i =>
-    `<span class="es-review-star" style="font-size:${size};color:${i <= rounded ? '#eab308' : 'rgba(255,255,255,.15)'}">★</span>`
+    `<span class="es-review-star" style="font-size:${size};color:${i <= rounded ? '#eab308' : 'rgba(255,255,255,.15)'}">&#9733;</span>`
   ).join('');
 }
 
@@ -358,7 +380,7 @@ function loadReviews(res) {
   contEl.style.display = 'block';
 
   if (!res.ok) {
-    document.getElementById('review-list').innerHTML = `<div class="es-review-empty"><div class="es-review-empty-icon">⚠️</div><p>${t('Failed to load reviews')}</p></div>`;
+    document.getElementById('review-list').innerHTML = `<div class="es-review-empty"><div class="es-review-empty-icon" style="display:flex; justify-content:center; margin-bottom:12px; color:var(--text-muted);"><svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg></div><p>${t('Failed to load reviews')}</p></div>`;
     return;
   }
 
@@ -380,7 +402,7 @@ function loadReviews(res) {
     const pct = reviews.length ? Math.round((cnt / reviews.length) * 100) : 0;
     return `<div class="es-star-row">
       <span class="es-star-row-label" style="color:#eab308">${star}</span>
-      <span style="font-size:.85rem;color:#eab308">★</span>
+      <span style="font-size:.85rem;color:#eab308">&#9733;</span>
       <div class="es-star-bar"><div class="es-star-bar-fill" style="width:${pct}%"></div></div>
       <span class="es-star-bar-count">${cnt}</span>
     </div>`;
@@ -388,7 +410,7 @@ function loadReviews(res) {
 
   const listEl = document.getElementById('review-list');
   if (!reviews.length) {
-    listEl.innerHTML = `<div class="es-review-empty"><div class="es-review-empty-icon">💬</div><p>${t('No reviews yet for this event')}</p></div>`;
+    listEl.innerHTML = `<div class="es-review-empty"><div class="es-review-empty-icon" style="display:flex; justify-content:center; margin-bottom:12px; color:var(--text-muted);"><svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a.596.596 0 01-.716-.503c-.029-.24-.035-.484-.017-.728a5.971 5.971 0 012.355-4.482C5.976 14.15 5.25 13.125 5.25 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z"></path></svg></div><p>${t('No reviews yet for this event')}</p></div>`;
     return;
   }
   listEl.innerHTML = reviews.map(r => {
