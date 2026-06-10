@@ -80,7 +80,7 @@
 <body>
 <div class="app-layout">
   <aside class="sidebar">
-    <div class="sidebar-logo" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;"><img src="/images/logo.png" alt="EventHub Logo" style="height: 60px; width: auto; object-fit: contain;"></div>
+    <div class="sidebar-logo" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;"><img src="/images/logo.png?v=3" alt="EventHub Logo" style="height: 60px; width: auto; object-fit: contain; background: transparent !important;"></div>
     <nav class="sidebar-nav" id="sidebar-links" style="display:flex; flex-direction:column; gap:4px; padding-top:10px;">
       <!-- Filled by auth.js -->
     </nav>
@@ -234,7 +234,7 @@ Chart.defaults.color = '#7d8590';
 Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
 Chart.defaults.font.family = 'Inter';
 
-const TYPE_COLORS = { 'مؤتمر':'#3b82f6', 'ندوة':'#8b5cf6', 'ورشة عمل':'#10b981', 'دورة تدريبية':'#06b6d4', 'ترفيه':'#ec4899', 'ملتقى علمي':'#f59e0b', 'رياضة':'#22c55e', 'تقنية':'#6366f1', 'اجتماعية':'#f97316' };
+const TYPE_COLORS = { 'مؤتمر':'#3b82f6', 'ندوة':'#8b5cf6', 'ورشة عمل':'#10b981', 'دورة تدريبية':'#06b6d4', 'ترفيه':'#ec4899', 'ملتقى علمي':'#f59e0b', 'رياضة':'#22c55e', 'تقنية':'#6366f1', 'اجتماعية':'#f97316', 'معرض':'#f43f5e', 'Exhibition':'#f43f5e' };
 
 function animVal(el, end, suffix='') {
   let s=0; const st=performance.now();
@@ -371,29 +371,29 @@ async function loadEventStats() {
   if (!participants.length) {
     tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state" style="padding:30px"><div class="empty-icon" style="display:flex;justify-content:center;margin-bottom:15px;color:var(--text-muted);"><svg xmlns="http://www.w3.org/2000/svg" style="width:40px;height:40px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2-2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" /></svg></div><p>${t('No registrations yet')}</p></div></td></tr>`;
   } else {
-    tbody.innerHTML = participants.map((t, i) => {
-      const latestLog = (t.attendance_logs && t.attendance_logs.length) 
-        ? t.attendance_logs.reduce((latest, current) => new Date(current.scanned_at) > new Date(latest.scanned_at) ? current : latest, t.attendance_logs[0])
-        : t.attendance_log;
+    tbody.innerHTML = participants.map((ticket, i) => {
+      const latestLog = (ticket.attendance_logs && ticket.attendance_logs.length) 
+        ? ticket.attendance_logs.reduce((latest, current) => new Date(current.scanned_at) > new Date(latest.scanned_at) ? current : latest, ticket.attendance_logs[0])
+        : ticket.attendance_log;
       const scanTime = latestLog ? fmtDate(latestLog.scanned_at) : '—';
       const scannerName = latestLog && latestLog.scanner ? `<div style="font-size:.7rem;color:var(--text-muted);margin-top:2px">by ${latestLog.scanner.name}</div>` : '';
-      const daysAttendedStr = t.total_days_attended ? `<div style="font-size:.7rem;color:var(--text-muted);margin-top:4px;display:flex;align-items:center;gap:4px;"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink: 0;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> <bdi>${t.total_days_attended}</bdi> ${t('day(s)')}</div>` : '';
+      const daysAttendedStr = ticket.total_days_attended ? `<div style="font-size:.7rem;color:var(--text-muted);margin-top:4px;display:flex;align-items:center;gap:4px;"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink: 0;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> <bdi>${ticket.total_days_attended}</bdi> ${t('day(s)')}</div>` : '';
       
       return `
         <tr>
           <td style="color:var(--text-muted)">${i+1}</td>
           <td>
-            <div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="navigateToProfile(${t.user?.id})">
-              <div class="avatar" style="width:28px;height:28px;font-size:.72rem">${t.user?.name?.charAt(0) || '?'}</div>
+            <div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="navigateToProfile(${ticket.user?.id})">
+              <div class="avatar" style="width:28px;height:28px;font-size:.72rem">${ticket.user?.name?.charAt(0) || '?'}</div>
               <div>
-                <div style="font-weight:600;color:var(--accent2)">${t.user?.name || '—'}</div>
-                <div style="font-size:.72rem;color:var(--text-muted)">${t.user?.email || ''}</div>
+                <div style="font-weight:600;color:var(--accent2)">${ticket.user?.name || '—'}</div>
+                <div style="font-size:.72rem;color:var(--text-muted)">${ticket.user?.email || ''}</div>
               </div>
             </div>
           </td>
-          <td style="font-family:monospace;color:var(--accent2)">${t.qr_code}</td>
+          <td style="font-family:monospace;color:var(--accent2)">${ticket.qr_code}</td>
           <td>
-            ${badge(t.scanned_today ? 'used' : 'unused')}
+            ${badge(ticket.scanned_today ? 'used' : 'unused')}
             ${daysAttendedStr}
           </td>
           <td style="color:var(--text-muted)">

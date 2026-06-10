@@ -193,7 +193,7 @@
 <body>
   <div class="app-layout">
     <aside class="sidebar">
-      <div class="sidebar-logo" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;"><img src="/images/logo.png" alt="EventHub Logo" style="height: 60px; width: auto; object-fit: contain;"></div>
+      <div class="sidebar-logo" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;"><img src="/images/logo.png?v=3" alt="EventHub Logo" style="height: 60px; width: auto; object-fit: contain; background: transparent !important;"></div>
       <nav class="sidebar-nav" id="sidebar-links">
         <!-- Will be populated by JS -->
       </nav>
@@ -576,12 +576,12 @@
                 ${ratingBadge}
                 ${ev.status === 'cancelled' ? `<span class="badge badge-cancelled" style="font-size:9px; padding:1px 6px; margin-top:4px;">${t('cancelled')}</span>` : ''}
             </td>
-            <td style="color:var(--text-muted)">${ev.venue?.name || '—'}</td>
+            <td style="color:var(--text-muted)">${ev.venue?.name || ev.external_venue_name || '—'}</td>
             <td style="color:var(--text-muted);white-space:nowrap">${fmtDateShort(ev.start_time)}</td>
             <td style="color:var(--text-muted)">${ev.capacity ? ev.capacity : t('Unlimited')}</td>
             <td><div style="display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center;">${badge(ev.status)} ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''}</div></td>
             <td style="display:flex;gap:6px;flex-wrap:wrap">
-              <button class="btn btn-ghost btn-sm" onclick="showMgrEventDetails(${ev.id})" title="${t('View Details')}">${t('Details')}</button>
+              <button class="btn btn-sm" style="background:rgba(139,92,246,0.12);color:#a78bfa;border:1px solid rgba(139,92,246,0.25)" onclick="showMgrEventDetails(${ev.id})" title="${t('View Details')}">${t('Details')}</button>
               ${(me && (me.role === 'Admin' || me.id == profileUserId)) ? `<button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='${me.role === 'Admin' ? '/admin' : '/manager'}/event-stats/${ev.id}'" title="${t('View Statistics')}">${t('Stats')}</button>` : ''}
             </td>
           </tr>`;

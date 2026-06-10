@@ -186,7 +186,7 @@
 <body>
 <div class="app-layout">
   <aside class="sidebar">
-    <div class="sidebar-logo" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;"><img src="/images/logo.png" alt="EventHub Logo" style="height: 60px; width: auto; object-fit: contain;"></div>
+    <div class="sidebar-logo" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;"><img src="/images/logo.png?v=3" alt="EventHub Logo" style="height: 60px; width: auto; object-fit: contain; background: transparent !important;"></div>
     <nav class="sidebar-nav" id="sidebar-links"></nav>
     @include('partials._sidebar-footer')
   </aside>

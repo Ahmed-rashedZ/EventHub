@@ -91,9 +91,9 @@
 
     <div class="auth-card" style="max-width: 560px;">
       <div class="auth-logo">
-        <div style="display:flex; justify-content:center; align-items:center; width: 100%;"><img src="/images/logo.png"
+        <div style="display:flex; justify-content:center; align-items:center; width: 100%;"><img src="/images/logo.png?v=3"
             alt="EventHub Logo"
-            style="width: 85px; height: 85px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+            style="width: 85px; height: 85px; object-fit: contain; background: transparent !important;">
         </div>
         <h1>EventHub Partner</h1>
       </div>

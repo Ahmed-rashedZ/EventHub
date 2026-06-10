@@ -39,7 +39,7 @@
 <body>
   <div class="app-layout">
     <aside class="sidebar">
-      <div class="sidebar-logo" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;"><img src="/images/logo.png" alt="EventHub Logo" style="height: 60px; width: auto; object-fit: contain;"></div>
+      <div class="sidebar-logo" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;"><img src="/images/logo.png?v=3" alt="EventHub Logo" style="height: 60px; width: auto; object-fit: contain; background: transparent !important;"></div>
       <nav class="sidebar-nav" id="sidebar-links" style="display:flex; flex-direction:column; gap:4px; padding-top:10px;">
         <!-- Filled by auth.js -->
       </nav>
@@ -283,11 +283,11 @@
                 ${e.creator?.name || 'Unknown'}
             </div>
         </td>
-        <td style="color:var(--text-muted)">${e.venue?.name || 'TBA'}</td>
+        <td style="color:var(--text-muted)">${e.venue?.name || e.external_venue_name || 'TBA'}</td>
         <td style="color:var(--text-muted)">${fmtDateShort(e.start_time)} <div style="margin-top:4px;">${timeBadge(e.time_status)}</div></td>
         <td style="color:var(--text-muted)">${e.capacity ? e.capacity.toLocaleString() : (document.documentElement.lang === 'ar' ? 'مفتوح' : 'Unlimited')}</td>
         <td style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-           <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${e.id})" title="View Details">Details</button>
+           <button class="btn btn-sm" style="background:rgba(139,92,246,0.12);color:#a78bfa;border:1px solid rgba(139,92,246,0.25)" onclick="showEventDetails(${e.id})" title="${t('View Details')}">${t('Details')}</button>
            <div style="display:flex; align-items:center;">
              ${reqBtnHtml}
            </div>
@@ -337,7 +337,19 @@
       btn.disabled = false;
     });
 
-    const typeColors = { 'مؤتمر': '#3b82f6', 'ندوة': '#8b5cf6', 'ورشة عمل': '#10b981', 'دورة تدريبية': '#06b6d4', 'ترفيه': '#ec4899', 'ملتقى علمي': '#f59e0b', 'رياضة': '#22c55e', 'تقنية': '#6366f1', 'اجتماعية': '#f97316', 'معرض': '#f43f5e', 'Other': '#64748b' };
+    const typeColors = {
+      'مؤتمر': '#3b82f6', 'Conference': '#3b82f6',
+      'ندوة': '#8b5cf6', 'Seminar': '#8b5cf6',
+      'ورشة عمل': '#10b981', 'Workshop': '#10b981',
+      'دورة تدريبية': '#06b6d4', 'Training Course': '#06b6d4',
+      'ترفيه': '#ec4899', 'Entertainment': '#ec4899',
+      'ملتقى علمي': '#f59e0b', 'Scientific Forum': '#f59e0b',
+      'رياضة': '#22c55e', 'Sports': '#22c55e',
+      'تقنية': '#6366f1', 'Technology': '#6366f1',
+      'اجتماعية': '#f97316', 'Social': '#f97316',
+      'معرض': '#f43f5e', 'Exhibition': '#f43f5e',
+      'Other': '#64748b'
+    };
 
     function showEventDetails(eventId) {
       const modal = document.getElementById('event-details-modal');

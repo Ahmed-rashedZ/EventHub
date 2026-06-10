@@ -15,7 +15,7 @@
   <div class="auth-bg-glow auth-bg-glow-2"></div>
 
   <div class="auth-card">
-    <div class="auth-logo" style="display:flex; justify-content:center; align-items:center; margin-bottom: 20px;"><img src="/images/logo.png" alt="EventHub Logo" style="width: 95px; height: 95px; object-fit: contain; border-radius: 50%; box-shadow: 0 8px 24px rgba(0,0,0,0.1);"></div>
+    <div class="auth-logo" style="display:flex; justify-content:center; align-items:center; margin-bottom: 20px;"><img src="/images/logo.png?v=3" alt="EventHub Logo" style="width: 95px; height: 95px; object-fit: contain; background: transparent !important;"></div>
 
     <h2 class="auth-heading">Welcome back</h2>
     <p class="auth-subheading">Sign in to your account to continue</p>

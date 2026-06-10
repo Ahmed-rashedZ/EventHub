@@ -19,7 +19,7 @@
 <body>
   <div class="app-layout">
     <aside class="sidebar">
-      <div class="sidebar-logo" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;"><img src="/images/logo.png" alt="EventHub Logo" style="height: 60px; width: auto; object-fit: contain;"></div>
+      <div class="sidebar-logo" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;"><img src="/images/logo.png?v=3" alt="EventHub Logo" style="height: 60px; width: auto; object-fit: contain; background: transparent !important;"></div>
       <nav class="sidebar-nav" id="sidebar-links"></nav>
       @include('partials._sidebar-footer')
     </aside>
@@ -749,7 +749,7 @@
           <td><div style="display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center;">${badge(ev.status)} ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''} ${reviewBadge}</div></td>
           <td style="padding:14px 16px;">
             <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
-              <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${ev.id})" title="View Details">Details</button>
+              <button class="btn btn-sm" style="background:rgba(139,92,246,0.12);color:#a78bfa;border:1px solid rgba(139,92,246,0.25)" onclick="showEventDetails(${ev.id})" title="${t('View Details')}">${t('Details')}</button>
               <button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='/manager/event-stats/${ev.id}'" title="View Statistics">Stats</button>
               ${ev.status === 'approved' && ev.time_status !== 'ended' ? `<button class="btn btn-sm" style="background:${ev.is_published ? 'rgba(16,185,129,0.12)' : 'rgba(139,92,246,0.12)'};color:${ev.is_published ? '#10b981' : '#a78bfa'};border:1px solid ${ev.is_published ? 'rgba(16,185,129,0.25)' : 'rgba(139,92,246,0.25)'}" onclick="openPublishedScheduleModal(${ev.id})" title="Publish Specific Days">${t('Publish Days')}</button>` : ''}
               ${ev.status === 'pending' ? `<button class="btn btn-sm" style="background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25)" onclick="deleteEvent(${ev.id})" title="Delete Event">Delete</button>` : ''}
@@ -768,7 +768,19 @@
     }
 
     const typeIcons = { 'مؤتمر': '', 'ندوة': '', 'ورشة عمل': '', 'دورة تدريبية': '', 'ترفيه': '', 'ملتقى علمي': '', 'رياضة': '', 'تقنية': '', 'اجتماعية': '', 'معرض': '', 'Other': '' };
-    const typeColors = { 'مؤتمر': '#3b82f6', 'ندوة': '#8b5cf6', 'ورشة عمل': '#10b981', 'دورة تدريبية': '#06b6d4', 'ترفيه': '#ec4899', 'ملتقى علمي': '#f59e0b', 'رياضة': '#22c55e', 'تقنية': '#6366f1', 'اجتماعية': '#f97316', 'معرض': '#f43f5e', 'Other': '#64748b' };
+    const typeColors = {
+      'مؤتمر': '#3b82f6', 'Conference': '#3b82f6',
+      'ندوة': '#8b5cf6', 'Seminar': '#8b5cf6',
+      'ورشة عمل': '#10b981', 'Workshop': '#10b981',
+      'دورة تدريبية': '#06b6d4', 'Training Course': '#06b6d4',
+      'ترفيه': '#ec4899', 'Entertainment': '#ec4899',
+      'ملتقى علمي': '#f59e0b', 'Scientific Forum': '#f59e0b',
+      'رياضة': '#22c55e', 'Sports': '#22c55e',
+      'تقنية': '#6366f1', 'Technology': '#6366f1',
+      'اجتماعية': '#f97316', 'Social': '#f97316',
+      'معرض': '#f43f5e', 'Exhibition': '#f43f5e',
+      'Other': '#64748b'
+    };
 
     function showEventDetails(eventId) {
       const modal = document.getElementById('event-details-modal');
@@ -1090,7 +1102,7 @@
                 <button class="btn btn-sm btn-danger" 
                         style="flex: 1; min-width: 140px; justify-content: center; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3);" 
                         onclick="openCancellationModal(${ev.id})">
-                  Request Cancellation
+                  ${t('Request Cancellation')}
                 </button>
               ` : ''}
 

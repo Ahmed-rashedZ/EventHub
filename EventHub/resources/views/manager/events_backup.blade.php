@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Events ñ EventHub Manager</title>
+  <title>My Events  EventHub Manager</title>
   <link rel="stylesheet" href="/css/style.css" />
   <script src="/js/i18n.js"></script>
 <link rel="icon" href="/images/logo.png" type="image/png">
@@ -13,7 +13,7 @@
 <body>
   <div class="app-layout">
     <aside class="sidebar">
-      <div class="sidebar-logo" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;"><img src="/images/logo.png" alt="EventHub Logo" style="height: 60px; width: auto; object-fit: contain;"></div>
+      <div class="sidebar-logo" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;"><img src="/images/logo.png?v=3" alt="EventHub Logo" style="height: 60px; width: auto; object-fit: contain; background: transparent !important;"></div>
       <nav class="sidebar-nav">
         <span class="nav-section-label">Overview</span>
         <a class="nav-item" href="/manager/dashboard"><span class="nav-icon">??</span> Dashboard</a>
@@ -112,45 +112,45 @@
         </div>
         <div class="form-group">
           <label class="form-label">Description</label>
-          <textarea id="e-desc" class="form-control" placeholder="Describe your eventÖ" required rows="3"></textarea>
+          <textarea id="e-desc" class="form-control" placeholder="Describe your event" required rows="3"></textarea>
         </div>
         <div class="form-grid">
           <div class="form-group">
             <label class="form-label">Event Type</label>
             <select id="e-type" class="form-control" required>
-              <option value="„ƒ „—"
+              <option value=""
                 title="Business Conference&#10;Tech Conference&#10;Medical Conference&#10;Academic Conference&#10;Startup Conference">
                 <script>document.write(t('Conference'))</script>
               </option>
-              <option value="‰œÊ…"
+              <option value=""
                 title="Educational Seminar&#10;Scientific Seminar&#10;Cultural Seminar&#10;Financial Seminar&#10;Management Seminar">
                 <script>document.write(t('Seminar'))</script>
               </option>
-              <option value="Ê—‘… ⁄„·"
+              <option value=" "
                 title="Programming Workshop&#10;Design Workshop&#10;Writing Workshop&#10;Art Workshop&#10;Strategy Workshop">
                 <script>document.write(t('Workshop'))</script>
               </option>
-              <option value="œÊ—…  œ—Ì»Ì…"
+              <option value=" "
                 title="Language Course&#10;Leadership Course&#10;Marketing Course&#10;HR Course&#10;IT Course">
                 <script>document.write(t('Training Course'))</script>
               </option>
-              <option value=" —›ÌÂ"
+              <option value=""
                 title="Music Concerts&#10;Festivals&#10;Stand-up Comedy&#10;Magic Shows&#10;Gaming Events">
                 <script>document.write(t('Entertainment'))</script>
               </option>
-              <option value="„· ﬁÏ ⁄·„Ì"
+              <option value=" "
                 title="Research Forum&#10;Physics Forum&#10;Medical Forum&#10;Engineering Forum&#10;AI Forum">
                 <script>document.write(t('Scientific Forum'))</script>
               </option>
-              <option value="—Ì«÷…"
+              <option value=""
                 title="Football Tournaments&#10;Marathons&#10;E-Sports&#10;Yoga Classes&#10;Martial Arts">
                 <script>document.write(t('Sports'))</script>
               </option>
-              <option value=" ﬁ‰Ì…"
+              <option value=""
                 title="Hackathons&#10;Tech Expos&#10;Cloud Computing&#10;Cybersecurity&#10;Developer Meetups">
                 <script>document.write(t('Technology'))</script>
               </option>
-              <option value="«Ã „«⁄Ì…"
+              <option value=""
                 title="Networking Events&#10;Charity Events&#10;Community Gatherings&#10;Alumni Meetings&#10;Gala Dinners">
                 <script>document.write(t('Social'))</script>
               </option>
@@ -162,13 +162,13 @@
               <label class="period-card">
                 <input type="radio" name="location_type" value="internal" onchange="toggleLocationFields()" checked>
                 <div class="period-card-content" style="justify-content: center;">
-                  <span class="period-title" style="margin: 0;">œ«Œ· „⁄—÷ ÿ—«»·” (Internal Hall)</span>
+                  <span class="period-title" style="margin: 0;">   (Internal Hall)</span>
                 </div>
               </label>
               <label class="period-card">
                 <input type="radio" name="location_type" value="external" onchange="toggleLocationFields()">
                 <div class="period-card-content" style="justify-content: center;">
-                  <span class="period-title" style="margin: 0;">ﬁ«⁄… Œ«—ÃÌ… (External Hall)</span>
+                  <span class="period-title" style="margin: 0;">  (External Hall)</span>
                 </div>
               </label>
             </div>
@@ -179,7 +179,7 @@
           <div class="form-group">
             <label class="form-label">Select Hall</label>
             <select id="e-venue" class="form-control" onchange="updatePeriodTimes()" required>
-              <option value="">Loading hallsÖ</option>
+              <option value="">Loading halls</option>
             </select>
           </div>
           <div class="form-grid">
@@ -194,7 +194,7 @@
                 <option value="evening">Evening Period ??</option>
                 <option value="full_day">Full Day ???</option>
               </select>
-              <small id="selected-period-time" style="color:var(--text-muted);font-size:12px;margin-top:6px;display:block">ó</small>
+              <small id="selected-period-time" style="color:var(--text-muted);font-size:12px;margin-top:6px;display:block"></small>
             </div>
           </div>
         </div>
@@ -315,7 +315,7 @@
       <tr>
         <td style="color:var(--text-muted)">${i + 1}</td>
         <td><div style="font-weight:600">${ev.title}</div></td>
-        <td style="color:var(--text-muted)">${ev.venue_id ? (ev.venue?.name || 'ó') : (ev.external_venue_name ? ev.external_venue_name + ' (External)' : 'ó')}</td>
+        <td style="color:var(--text-muted)">${ev.venue_id ? (ev.venue?.name || '') : (ev.external_venue_name ? ev.external_venue_name + ' (External)' : '')}</td>
         <td style="color:var(--text-muted);white-space:nowrap">${fmtDateShort(ev.start_time)}</td>
         <td style="color:var(--text-muted)">${ev.capacity}</td>
         <td>
@@ -333,8 +333,8 @@
     }
 
     // Modal for event details
-    const typeIcons = { '„ƒ „—': '???', '‰œÊ…': '??', 'Ê—‘… ⁄„·': '??', 'œÊ—…  œ—Ì»Ì…': '??', ' —›ÌÂ': '??', '„· ﬁÏ ⁄·„Ì': '??', '—Ì«÷…': '?', ' ﬁ‰Ì…': '??', '«Ã „«⁄Ì…': '??' };
-    const typeColors = { '„ƒ „—': '#3b82f6', '‰œÊ…': '#8b5cf6', 'Ê—‘… ⁄„·': '#10b981', 'œÊ—…  œ—Ì»Ì…': '#06b6d4', ' —›ÌÂ': '#ec4899', '„· ﬁÏ ⁄·„Ì': '#f59e0b', '—Ì«÷…': '#22c55e', ' ﬁ‰Ì…': '#6366f1', '«Ã „«⁄Ì…': '#f97316' };
+    const typeIcons = { '': '???', '': '??', ' ': '??', ' ': '??', '': '??', ' ': '??', '': '?', '': '??', '': '??' };
+    const typeColors = { '': '#3b82f6', '': '#8b5cf6', ' ': '#10b981', ' ': '#06b6d4', '': '#ec4899', ' ': '#f59e0b', '': '#22c55e', '': '#6366f1', '': '#f97316' };
 
     function showEventDetails(eventId) {
       const modal = document.getElementById('event-details-modal');
@@ -468,7 +468,7 @@
             <div class="ed-info-icon">???</div>
             <div>
               <div class="ed-info-label">Venue</div>
-              <div class="ed-info-value">${ev.venue_id ? (ev.venue?.name || 'ó') : (ev.external_venue_name || 'ó')}</div>
+              <div class="ed-info-value">${ev.venue_id ? (ev.venue?.name || '') : (ev.external_venue_name || '')}</div>
             </div>
           </div>
           <div class="ed-info-card ed-info-accent2">
@@ -477,7 +477,7 @@
               <div class="ed-info-label">Location</div>
               <div class="ed-info-value">
                 ${ev.venue_id && ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ?</a>` 
-                : (!ev.venue_id && ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ?</a>` : 'ó')}
+                : (!ev.venue_id && ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ?</a>` : '')}
               </div>
             </div>
           </div>
@@ -512,7 +512,7 @@
             <div class="ed-info-icon">???</div>
             <div>
               <div class="ed-info-label">Tickets Booked</div>
-              <div class="ed-info-value">${ev.tickets_count ?? 'ó'}</div>
+              <div class="ed-info-value">${ev.tickets_count ?? ''}</div>
             </div>
           </div>
           </div>
@@ -523,7 +523,7 @@
           <!-- Footer -->
           <div class="ed-footer" style="margin-top: 8px;">
           <span class="ed-footer-label">Created by</span>
-          <span class="ed-footer-name">${ev.creator?.name || ev.manager?.name || 'ó'}</span>
+          <span class="ed-footer-name">${ev.creator?.name || ev.manager?.name || ''}</span>
         </div>
 
       </div>

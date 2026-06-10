@@ -61,7 +61,7 @@
 <body>
 <div class="app-layout">
   <aside class="sidebar">
-    <div class="sidebar-logo" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;"><img src="/images/logo.png" alt="EventHub Logo" style="height: 60px; width: auto; object-fit: contain;"></div>
+    <div class="sidebar-logo" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;"><img src="/images/logo.png?v=3" alt="EventHub Logo" style="height: 60px; width: auto; object-fit: contain; background: transparent !important;"></div>
     <nav class="sidebar-nav" id="sidebar-links" style="display:flex; flex-direction:column; gap:4px; padding-top:10px;">
       <!-- Filled by auth.js -->
     </nav>
@@ -262,11 +262,11 @@
                 <span style="font-size:0.85rem;">${r.manager?.name || '—'}</span>
             </div>
         </td>
-        <td style="color:var(--text-muted)">${r.event?.venue?.name || '—'}</td>
+        <td style="color:var(--text-muted)">${r.event?.venue?.name || r.event?.external_venue_name || '—'}</td>
         <td style="color:var(--text-muted)">${fmtDateShort(r.event?.start_time)}</td>
         <td>
           ${badge(effectiveStatus)}
-          ${r.status === 'accepted' && r.event?.status !== 'cancelled' ? `<button onclick="downloadContract(${r.id})" style="margin-left:8px;font-size:12px;text-decoration:none;color:#fff;background:rgba(255,255,255,0.08);padding:4px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.15);display:inline-flex;align-items:center;gap:4px;cursor:pointer;">${t('Agreement')}</button>` : ''}
+          ${r.status === 'accepted' && r.event?.status !== 'cancelled' ? `<button onclick="downloadContract(${r.id})" style="margin-left:8px;font-size:11px;text-decoration:none;background:rgba(16,185,129,0.12);color:#10b981;border:1px solid rgba(16,185,129,0.25);font-weight:600;padding:4px 12px;border-radius:6px;display:inline-flex;align-items:center;gap:4px;cursor:pointer;">${t('Agreement')}</button>` : ''}
         </td>
       </tr>`;
     }).join('');

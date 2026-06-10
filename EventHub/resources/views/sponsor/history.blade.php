@@ -35,7 +35,7 @@
 </head>
 <body>
 <div class="app-layout">  <aside class="sidebar">
-    <div class="sidebar-logo" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;"><img src="/images/logo.png" alt="EventHub Logo" style="height: 60px; width: auto; object-fit: contain;"></div>
+    <div class="sidebar-logo" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;"><img src="/images/logo.png?v=3" alt="EventHub Logo" style="height: 60px; width: auto; object-fit: contain; background: transparent !important;"></div>
     <nav class="sidebar-nav" id="sidebar-links" style="display:flex; flex-direction:column; gap:4px; padding-top:10px;">
       <!-- Filled by auth.js -->
     </nav>
@@ -189,9 +189,9 @@
             <td style="color:var(--text-muted)">${stats.attended_count}</td>
             <td>${avgRating ? `<span style="color:#eab308;font-weight:700;display:inline-flex;align-items:center;gap:3px;">${starIcon} ${avgRating}</span>` : '<span style="color:var(--text-muted)">—</span>'}</td>
             <td style="display:flex;gap:6px;padding:14px 16px;flex-wrap:wrap;align-items:center">
-                <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${e.id})">Details</button>
+                <button class="btn btn-sm" style="background:rgba(139,92,246,0.12);color:#a78bfa;border:1px solid rgba(139,92,246,0.25)" onclick="showEventDetails(${e.id})" title="${t('View Details')}">${t('Details')}</button>
                 <button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='/sponsor/event-stats/${e.id}'" title="View Statistics">Stats</button>
-                <button class="btn btn-sm" style="background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.15)" onclick="downloadContract(${req.id})" title="${t('Agreement')}">${t('Agreement')}</button>
+                <button class="btn btn-sm" style="background:rgba(16,185,129,0.12);color:#10b981;border:1px solid rgba(16,185,129,0.25);font-weight:600;padding:4px 12px;border-radius:6px;" onclick="downloadContract(${req.id})" title="${t('Agreement')}">${t('Agreement')}</button>
             </td>
         </tr>`;
   }
@@ -217,7 +217,19 @@
     }
   }
 
-    const typeColors = { 'مؤتمر': '#3b82f6', 'ندوة': '#8b5cf6', 'ورشة عمل': '#10b981', 'دورة تدريبية': '#06b6d4', 'ترفيه': '#ec4899', 'ملتقى علمي': '#f59e0b', 'رياضة': '#22c55e', 'تقنية': '#6366f1', 'اجتماعية': '#f97316' };
+    const typeColors = {
+      'مؤتمر': '#3b82f6', 'Conference': '#3b82f6',
+      'ندوة': '#8b5cf6', 'Seminar': '#8b5cf6',
+      'ورشة عمل': '#10b981', 'Workshop': '#10b981',
+      'دورة تدريبية': '#06b6d4', 'Training Course': '#06b6d4',
+      'ترفيه': '#ec4899', 'Entertainment': '#ec4899',
+      'ملتقى علمي': '#f59e0b', 'Scientific Forum': '#f59e0b',
+      'رياضة': '#22c55e', 'Sports': '#22c55e',
+      'تقنية': '#6366f1', 'Technology': '#6366f1',
+      'اجتماعية': '#f97316', 'Social': '#f97316',
+      'معرض': '#f43f5e', 'Exhibition': '#f43f5e',
+      'Other': '#64748b'
+    };
 
     function showEventDetails(eventId) {
       const modal = document.getElementById('event-details-modal');

@@ -13,7 +13,7 @@
 <body>
   <div class="app-layout">
     <aside class="sidebar">
-      <div class="sidebar-logo" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;"><img src="/images/logo.png" alt="EventHub Logo" style="height: 60px; width: auto; object-fit: contain;"></div>
+      <div class="sidebar-logo" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;"><img src="/images/logo.png?v=3" alt="EventHub Logo" style="height: 60px; width: auto; object-fit: contain; background: transparent !important;"></div>
       <nav class="sidebar-nav" id="sidebar-links"></nav>
       @include('partials._sidebar-footer')
     </aside>
@@ -177,7 +177,7 @@
           <td style="color:var(--text-muted)">${ev.capacity || 'Unlimited (مفتوح)'}</td>
           <td><div style="display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center;">${badge(ev.status)} ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''} ${reviewBadge}</div></td>
           <td style="display:flex;gap:6px;padding:14px 16px;flex-wrap:wrap">
-            <button class="btn btn-ghost btn-sm" onclick="showEventDetails(${ev.id})" title="${t('View Details')}">${t('Details')}</button>
+             <button class="btn btn-sm" style="background:rgba(139,92,246,0.12);color:#a78bfa;border:1px solid rgba(139,92,246,0.25)" onclick="showEventDetails(${ev.id})" title="${t('View Details')}">${t('Details')}</button>
             <button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='/admin/event-stats/${ev.id}'" title="${t('View Statistics')}">${t('Stats')}</button>
             ${ev.status === 'pending' ? `<button class="btn btn-sm" style="background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25)" onclick="openReviewModal(${ev.id})" title="${t('Send Review')}">${t('Review')}</button><button class="btn btn-success btn-sm" onclick="approve(${ev.id})">${t('Approve')}</button><button class="btn btn-danger btn-sm" onclick="reject(${ev.id})">${t('Reject')}</button>` : ''}
             ${ev.status === 'cancellation_requested' ? `<button class="btn btn-danger btn-sm" onclick="approveCancellation(${ev.id})">${t('Approve Cancellation')}</button><button class="btn btn-ghost btn-sm" onclick="openCancellationRejectionModal(${ev.id})">${t('Reject Cancellation')}</button>` : ''}
@@ -229,7 +229,19 @@
       document.getElementById('rejection-modal').classList.remove('open');
       document.getElementById('rejection-form').reset();
     }
-    const typeColors = { 'مؤتمر': '#3b82f6', 'ندوة': '#8b5cf6', 'ورشة عمل': '#10b981', 'دورة تدريبية': '#06b6d4', 'ترفيه': '#ec4899', 'ملتقى علمي': '#f59e0b', 'رياضة': '#22c55e', 'تقنية': '#6366f1', 'اجتماعية': '#f97316', 'معرض': '#f43f5e', 'Other': '#64748b' };
+    const typeColors = {
+      'مؤتمر': '#3b82f6', 'Conference': '#3b82f6',
+      'ندوة': '#8b5cf6', 'Seminar': '#8b5cf6',
+      'ورشة عمل': '#10b981', 'Workshop': '#10b981',
+      'دورة تدريبية': '#06b6d4', 'Training Course': '#06b6d4',
+      'ترفيه': '#ec4899', 'Entertainment': '#ec4899',
+      'ملتقى علمي': '#f59e0b', 'Scientific Forum': '#f59e0b',
+      'رياضة': '#22c55e', 'Sports': '#22c55e',
+      'تقنية': '#6366f1', 'Technology': '#6366f1',
+      'اجتماعية': '#f97316', 'Social': '#f97316',
+      'معرض': '#f43f5e', 'Exhibition': '#f43f5e',
+      'Other': '#64748b'
+    };
 
     function showEventDetails(eventId) {
       const modal = document.getElementById('event-details-modal');
@@ -375,42 +387,42 @@
 
           <div class="ed-info-grid">
             <div class="ed-info-card ed-info-accent2">
-              <div class="ed-info-icon" style="display:flex; align-items:center; justify-content:center;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg></div>
+              <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg></div>
               <div><div class="ed-info-label">${t('Venue')}</div><div class="ed-info-value">${ev.venue?.name || ev.external_venue_name || '—'}</div></div>
             </div>
             <div class="ed-info-card ed-info-accent2">
-              <div class="ed-info-icon" style="display:flex; align-items:center; justify-content:center;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg></div>
+              <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg></div>
               <div><div class="ed-info-label">${t('Location')}</div><div class="ed-info-value">
                 ${ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">${t('Open in Maps')} ↗</a>` 
                 : (ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">${t('Open in Maps')} ↗</a>` : '—')}
               </div></div>
             </div>
             ${!ev.venue_id && ev.booking_proof_path ? `
-            <div class="ed-info-card ed-info-accent2" style="grid-column: 1 / -1; background:rgba(34,211,238,0.05); border-color:rgba(34,211,238,0.2);">
-              <div class="ed-info-icon" style="display:flex; align-items:center; justify-content:center;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l4.5-4.5m.718-2.262a9 9 0 019-9" /></svg></div>
-              <div><div class="ed-info-label" style="color:#22d3ee">${t('Booking Proof')}</div><div class="ed-info-value"><button onclick="downloadEventDoc(${ev.id}, 'booking_proof')" style="color:#22d3ee;text-decoration:underline;background:none;border:none;padding:0;font:inherit;cursor:pointer;">${t('View Document ↗')}</button></div></div>
+            <div class="ed-info-card ed-info-accent2" style="grid-column: 1 / -1;">
+              <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l4.5-4.5m.718-2.262a9 9 0 019-9" /></svg></div>
+              <div><div class="ed-info-label">${t('Booking Proof')}</div><div class="ed-info-value"><button onclick="downloadEventDoc(${ev.id}, 'booking_proof')" style="text-decoration:underline;background:none;border:none;padding:0;font:inherit;cursor:pointer;color:inherit;">${t('View Document ↗')}</button></div></div>
             </div>
             ` : ''}
             ${ev.ministry_document_path ? `
-            <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(139,92,246,0.05); border-color:rgba(139,92,246,0.2); border: 1px solid rgba(139,92,246,0.2);">
-              <div class="ed-info-icon" style="display:flex; align-items:center; justify-content:center;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg></div>
-              <div><div class="ed-info-label" style="color:#a78bfa">${t('Competent Authority Approval')}</div><div class="ed-info-value"><button onclick="downloadEventDoc(${ev.id}, 'ministry_document')" style="color:#a78bfa;text-decoration:underline;background:none;border:none;padding:0;font:inherit;cursor:pointer;">${t('View Document ↗')}</button></div></div>
+            <div class="ed-info-card ed-info-accent" style="grid-column: 1 / -1;">
+              <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg></div>
+              <div><div class="ed-info-label">${t('Competent Authority Approval')}</div><div class="ed-info-value"><button onclick="downloadEventDoc(${ev.id}, 'ministry_document')" style="text-decoration:underline;background:none;border:none;padding:0;font:inherit;cursor:pointer;color:inherit;">${t('View Document ↗')}</button></div></div>
             </div>
             ` : `
-            <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(239,68,68,0.05); border-color:rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.2);">
-              <div class="ed-info-icon" style="display:flex; align-items:center; justify-content:center;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg></div>
-              <div><div class="ed-info-label" style="color:#ef4444">${t('Competent Authority Approval')}</div><div class="ed-info-value" style="color:#ef4444;">${t('Not uploaded')}</div></div>
+            <div class="ed-info-card ed-info-danger" style="grid-column: 1 / -1;">
+              <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg></div>
+              <div><div class="ed-info-label">${t('Competent Authority Approval')}</div><div class="ed-info-value" style="color:inherit;">${t('Not uploaded')}</div></div>
             </div>
             `}
             ${ev.event_objective ? `
-            <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
-              <div class="ed-info-icon" style="display:flex; align-items:center; justify-content:center;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+            <div class="ed-info-card ed-info-accent" style="grid-column: 1 / -1;">
+              <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
               <div><div class="ed-info-label">${t('Event Objective')}</div><div class="ed-info-value i18n-skip" style="font-size:0.9rem;">${ev.event_objective}</div></div>
             </div>
             ` : ''}
             ${ev.target_audience ? `
-            <div class="ed-info-card" style="grid-column: 1 / -1; background:rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
-              <div class="ed-info-icon" style="display:flex; align-items:center; justify-content:center;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg></div>
+            <div class="ed-info-card ed-info-accent2" style="grid-column: 1 / -1;">
+              <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg></div>
               <div><div class="ed-info-label">${t('Target Audience')}</div><div class="ed-info-value i18n-skip" style="font-size:0.9rem;">${ev.target_audience}</div></div>
             </div>
             ` : ''}
@@ -453,16 +465,16 @@
                 scheduleHtml += '</div></div>';
                 return scheduleHtml;
               } else {
-                return '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon" style="display:flex; align-items:center; justify-content:center;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div><div><div class="ed-info-label">Start</div><div class="ed-info-value">' + fmtDate(ev.start_time) + '</div></div></div>' +
-                       '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon" style="display:flex; align-items:center; justify-content:center;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div><div><div class="ed-info-label">End</div><div class="ed-info-value">' + fmtDate(ev.end_time) + '</div></div></div>';
+                return '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div><div><div class="ed-info-label">Start</div><div class="ed-info-value">' + fmtDate(ev.start_time) + '</div></div></div>' +
+                       '<div class="ed-info-card ed-info-accent"><div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div><div><div class="ed-info-label">End</div><div class="ed-info-value">' + fmtDate(ev.end_time) + '</div></div></div>';
               }
             })()}
             <div class="ed-info-card ed-info-warning">
-              <div class="ed-info-icon" style="display:flex; align-items:center; justify-content:center;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg></div>
+              <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg></div>
               <div><div class="ed-info-label">${t('Capacity')}</div><div class="ed-info-value">${ev.capacity || 'Unlimited (مفتوح)'}</div></div>
             </div>
             <div class="ed-info-card ed-info-warning">
-              <div class="ed-info-icon" style="display:flex; align-items:center; justify-content:center;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-12v.75m0 3v.75m0 3v.75m0 3V18M3 6.75A1.75 1.75 0 014.75 5h14.5A1.75 1.75 0 0121 6.75v10.5a1.75 1.75 0 01-1.75 1.75H4.75A1.75 1.75 0 013 17.25V6.75z" /></svg></div>
+              <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-12v.75m0 3v.75m0 3v.75m0 3V18M3 6.75A1.75 1.75 0 014.75 5h14.5A1.75 1.75 0 0121 6.75v10.5a1.75 1.75 0 01-1.75 1.75H4.75A1.75 1.75 0 013 17.25V6.75z" /></svg></div>
               <div><div class="ed-info-label">${t('Tickets Booked')}</div><div class="ed-info-value">${ev.tickets_count ?? '—'}</div></div>
             </div>
           </div>
@@ -696,8 +708,16 @@
     }
 
     .ed-info-icon {
-      font-size: 1.3rem;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 1.1rem;
     }
 
     .ed-info-label {
@@ -717,13 +737,33 @@
     .ed-info-accent .ed-info-label {
       color: var(--accent);
     }
+    .ed-info-accent .ed-info-icon {
+      background: rgba(110, 64, 242, 0.15);
+      color: #a78bfa;
+    }
 
     .ed-info-accent2 .ed-info-label {
       color: var(--accent2);
     }
+    .ed-info-accent2 .ed-info-icon {
+      background: rgba(34, 211, 238, 0.15);
+      color: #22d3ee;
+    }
 
     .ed-info-warning .ed-info-label {
       color: var(--warning);
+    }
+    .ed-info-warning .ed-info-icon {
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+    }
+
+    .ed-info-danger .ed-info-label {
+      color: #ef4444;
+    }
+    .ed-info-danger .ed-info-icon {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
     }
 
     .ed-footer {

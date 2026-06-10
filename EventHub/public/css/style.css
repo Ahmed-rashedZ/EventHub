@@ -107,7 +107,7 @@ a:hover { color: var(--accent-hover); }
 }
 
 img[src*="logo.png"] {
-  background: var(--bg-dark);
+  background: transparent !important;
 }
 
 .sidebar-nav {

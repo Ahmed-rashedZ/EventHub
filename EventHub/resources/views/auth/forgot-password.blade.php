@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+ï»¿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Forgot Password – EventHub</title>
+  <title>Forgot Password ï¿½ EventHub</title>
   <meta name="description" content="Reset your EventHub account password"/>
   <link rel="stylesheet" href="/css/style.css"/>
   <script src="/js/i18n.js"></script>
@@ -84,7 +84,7 @@
   <div class="auth-bg-glow auth-bg-glow-2"></div>
 
   <div class="auth-card">
-    <div class="auth-logo" style="display:flex; justify-content:center; align-items:center; margin-bottom: 20px;"><img src="/images/logo.png" alt="EventHub Logo" style="width: 95px; height: 95px; object-fit: contain; border-radius: 50%; box-shadow: 0 8px 24px rgba(0,0,0,0.1);"></div>
+    <div class="auth-logo" style="display:flex; justify-content:center; align-items:center; margin-bottom: 20px;"><img src="/images/logo.png?v=3" alt="EventHub Logo" style="width: 95px; height: 95px; object-fit: contain; background: transparent !important;"></div>
 
     <!-- ??? STEP 1: Enter Email ??? -->
     <div id="step-1" class="step active">
@@ -166,11 +166,11 @@
       <form id="reset-form">
         <div class="form-group">
           <label class="form-label" for="new-password"><script>document.write(t('New Password'))</script></label>
-          <input id="new-password" type="password" class="form-control" placeholder="••••••••" required minlength="8"/>
+          <input id="new-password" type="password" class="form-control" placeholder="ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½" required minlength="8"/>
         </div>
         <div class="form-group">
           <label class="form-label" for="confirm-password"><script>document.write(t('Confirm Password'))</script></label>
-          <input id="confirm-password" type="password" class="form-control" placeholder="••••••••" required minlength="8"/>
+          <input id="confirm-password" type="password" class="form-control" placeholder="ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½" required minlength="8"/>
         </div>
 
         <button type="submit" class="btn btn-primary btn-block" id="btn-reset">
