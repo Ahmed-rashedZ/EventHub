@@ -1053,11 +1053,11 @@ class EventController extends Controller
         // Restriction: Cannot cancel if less than 30 days away
         $eventDate = Carbon::parse($event->start_time);
         if ($eventDate->isPast()) {
-             return response()->json(['message' => 'Cannot cancel an event that has already started.'], 400);
+             return response()->json(['message' => app()->getLocale() == 'ar' ? 'لا يمكن إلغاء فعالية بدأت بالفعل.' : 'Cannot cancel an event that has already started.'], 400);
         }
         
         if ($eventDate->diffInDays(now()) < 30) {
-            return response()->json(['message' => 'Cannot request cancellation for events starting in less than 30 days.'], 400);
+            return response()->json(['message' => app()->getLocale() == 'ar' ? 'لا يمكن طلب إلغاء الفعاليات التي تبدأ بعد أقل من 30 يوماً.' : 'Cannot request cancellation for events starting in less than 30 days.'], 400);
         }
 
         $event->update([

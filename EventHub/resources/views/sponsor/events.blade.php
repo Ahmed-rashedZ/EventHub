@@ -485,8 +485,7 @@
             <div class="ed-info-card ed-info-accent2">
               <div class="ed-info-icon">${PinIcon}</div>
               <div><div class="ed-info-label">Location</div><div class="ed-info-value">
-                ${ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` 
-                : (ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` : '—')}
+                <span style="opacity:0.5;font-size:0.8rem">${document.documentElement.lang === 'ar' ? 'مخفي (يتاح بعد القبول)' : 'Hidden (Available after approval)'}</span>
               </div></div>
             </div>
             ${(() => {

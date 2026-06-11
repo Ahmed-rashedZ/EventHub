@@ -144,7 +144,9 @@ class VerificationController extends Controller
             if (count($rejectedDocs) > 0) {
                 $user->notify(new SystemNotification(
                     'Document Update Rejected ❌',
-                    "Your updated documents were rejected:\n" . implode("\n", $rejectedDocs),
+                    app()->getLocale() == 'ar' 
+                        ? "تم رفض مستنداتك المحدثة:\n" . implode("\n", $rejectedDocs)
+                        : "Your updated documents were rejected:\n" . implode("\n", $rejectedDocs),
                     'verification',
                     '❌',
                     '/profile'
@@ -153,7 +155,9 @@ class VerificationController extends Controller
             if (count($approvedDocs) > 0) {
                 $user->notify(new SystemNotification(
                     'Document Update Approved ✅',
-                    'Your updated documents have been approved: ' . implode(', ', $approvedDocs),
+                    app()->getLocale() == 'ar' 
+                        ? 'تم اعتماد مستنداتك المحدثة: ' . implode(', ', $approvedDocs)
+                        : 'Your updated documents have been approved: ' . implode(', ', $approvedDocs),
                     'verification',
                     '✅',
                     '/profile'

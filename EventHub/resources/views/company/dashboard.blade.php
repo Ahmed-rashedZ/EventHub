@@ -196,7 +196,7 @@
               <button class="btn btn-success btn-sm" style="padding:4px 10px;" onclick="respondRequest(${app.application_id}, 'accepted')">${t('Accept')}</button>
               <button class="btn btn-danger btn-sm" style="padding:4px 10px;" onclick="respondRequest(${app.application_id}, 'rejected')">${t('Reject')}</button>
             ` : ''}
-            ${app.status === 'negotiating' ? `<a href="/company/exhibitions" class="btn btn-sm btn-primary" style="padding:4px 10px;">${t('Review Offer')}</a>` : ''}
+            ${app.status === 'negotiating' ? `<a href="/company/exhibitions" class="btn btn-sm" style="padding:4px 12px; font-size:11px; background:rgba(34,211,238,0.12); color:#22d3ee; border:1px solid rgba(34,211,238,0.25); font-weight:600; text-decoration:none;">${t('Review Offer')}</a>` : ''}
             <button class="btn btn-sm" style="padding:4px 10px;background:rgba(139,92,246,0.12);color:#a78bfa;border:1px solid rgba(139,92,246,0.25)" onclick="showEventDetails(${app.event_id})" title="${t('View Details')}">${t('Details')}</button>
            </div>
         </td>
@@ -360,32 +360,12 @@
           <div class="ed-info-card ed-info-accent2">
             <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25s-7.5-4.108-7.5-11.25a7.5 7.5 0 1115 0z" /></svg></div>
             <div><div class="ed-info-label">${t('Location')}</div><div class="ed-info-value">
-              ${ev.location_link ? `<a href="${ev.location_link}" target="_blank" style="color:inherit;text-decoration:underline;">${t('Open in Maps')} ↗</a>`
-              : (ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">${t('Open in Maps')} ↗</a>` 
-              : (ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">${t('Open in Maps')} ↗</a>` : '—'))}
+              <span style="opacity:0.5;font-size:0.8rem">${t('Hidden (Available after approval)')}</span>
             </div></div>
           </div>
         </div>
 
-        ${ev.booking_proof ? `
-          <div class="ed-info-card ed-info-accent2" style="grid-column: 1 / -1;">
-              <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" /></svg></div>
-              <div>
-                  <div class="ed-info-label">${t('Booking Proof')}</div>
-                  <a href="/storage/${ev.booking_proof}" target="_blank" class="ed-info-value" style="text-decoration:underline;">${t('View Document ↗')}</a>
-              </div>
-          </div>
-        ` : ''}
-
-        ${ev.ministry_approval_doc ? `
-          <div class="ed-info-card ed-info-accent" style="grid-column: 1 / -1;">
-              <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg></div>
-              <div>
-                  <div class="ed-info-label">${t('Competent Authority Approval')}</div>
-                  <a href="/storage/${ev.ministry_approval_doc}" target="_blank" class="ed-info-value" style="text-decoration:underline;">${t('View Document ↗')}</a>
-              </div>
-          </div>
-        ` : ''}
+        <!-- Document Links Hidden -->
 
         ${ev.objective ? `
           <div class="ed-info-card ed-info-accent" style="grid-column: 1 / -1;">

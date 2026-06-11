@@ -1815,6 +1815,18 @@ const I18N_AR = {
   'Generating description...': 'جاري توليد الوصف...',
   'Description Generated!': 'تم توليد الوصف!',
   'The description has been filled in below. Feel free to edit it.': 'تم تعبئة الوصف أدناه. يمكنك تعديله كما تشاء.',
+  'Generate': 'توليد',
+  'Select Event Days': 'تحديد أيام الفعالية',
+  'Please enter a valid number.': 'الرجاء إدخال رقم صحيح.',
+  'Capacity expanded successfully!': 'تم توسيع السعة بنجاح!',
+  'Cannot cancel an event that has already started.': 'لا يمكن إلغاء فعالية بدأت بالفعل.',
+  'Edit Event Capacity': 'تعديل سعة الفعالية',
+  'Current capacity:': 'السعة الحالية:',
+  'Venue max capacity:': 'السعة القصوى للقاعة:',
+  'New total capacity': 'إجمالي السعة الجديدة',
+  'Cannot exceed venue capacity': 'لا يمكن تجاوز سعة القاعة',
+  'Cancel': 'إلغاء',
+  'Save': 'حفظ',
 };
 
 /* ─────────────────────────────────────────────────────────────────

@@ -297,7 +297,7 @@
                           <div style="font-size:0.85rem; font-weight:600; color:#fff;">${sp.name}</div>
                           <div style="margin-top: 2px;">
                               ${getTierBadge(sp.pivot?.tier)}
-                              ${sp.sponsorship_request_id ? `<button style="background:rgba(34,211,238,0.1);color:#22d3ee;border:1px solid rgba(34,211,238,0.25);border-radius:6px;padding:2px 6px;font-size:0.65rem;margin-left:6px;cursor:pointer;" onclick="event.stopPropagation(); downloadAdminContract(${sp.sponsorship_request_id})">${t('Agreement')}</button>` : ''}
+                              ${sp.sponsorship_request_id ? `<button style="background:rgba(16,185,129,0.12);color:#10b981;border:1px solid rgba(16,185,129,0.25);border-radius:6px;padding:2px 6px;font-size:0.65rem;margin-left:6px;cursor:pointer;font-weight:600;" onclick="event.stopPropagation(); downloadAdminContract(${sp.sponsorship_request_id})">${t('Agreement')}</button>` : ''}
                           </div>
                       </div>
                    </div>
