@@ -1833,6 +1833,14 @@ const I18N_AR = {
   'Cannot exceed venue capacity': 'لا يمكن تجاوز سعة القاعة',
   'Cancel': 'إلغاء',
   'Save': 'حفظ',
+  'This exhibition is not open to your company category': 'هذا المعرض غير متاح لفئة/تخصص شركتك',
+  'Your account must be verified before applying': 'يجب أن يتم التحقق من حسابك أولاً قبل التقديم',
+  'You must be available to send applications': 'يجب أن تكون حالتك "متاح" لتتمكن من إرسال طلبات المشاركة',
+  'Exhibition registration is currently closed or the deadline has passed': 'التسجيل في المعرض مغلق حالياً أو انتهى الموعد النهائي للتقديم',
+  'You have already applied for this exhibition': 'لقد قمت بالتقديم بالفعل في هذا المعرض',
+  'Company category does not match this exhibition': 'فئة الشركة لا تتطابق مع فئة هذا المعرض',
+  'Company is not available': 'الشركة غير متاحة حالياً',
+  'An application already exists between this event and company': 'يوجد طلب مشاركة بالفعل بين هذه الفعالية والشركة',
 };
 
 /* ─────────────────────────────────────────────────────────────────
