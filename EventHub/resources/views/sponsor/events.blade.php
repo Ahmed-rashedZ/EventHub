@@ -485,7 +485,8 @@
             <div class="ed-info-card ed-info-accent2">
               <div class="ed-info-icon">${PinIcon}</div>
               <div><div class="ed-info-label">Location</div><div class="ed-info-value">
-                <span style="opacity:0.5;font-size:0.8rem">${t('Hidden (Available after approval)')}</span>
+                ${ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">${t('Open in Maps')} ↗</a>` 
+                : (ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">${t('Open in Maps')} ↗</a>` : '—')}
               </div></div>
             </div>
             ${(() => {
