@@ -245,18 +245,18 @@
       const isDocUpdate = req.verification_status === 'verified';
       let badge = '';
       if (isDocUpdate) {
-        badge = `<span style="font-size: 0.7rem; background:#3b82f6; color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px;">${t('Document Update')}</span>`;
+        badge = `<span style="font-size: 0.7rem; background:#3b82f6; color:#fff; padding:2px 6px; border-radius:4px;">${t('Document Update')}</span>`;
       } else if (isResubmit) {
-        badge = `<span style="font-size: 0.7rem; background:#0ea5e9; color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px;">${t('Resubmitted')}</span>`;
+        badge = `<span style="font-size: 0.7rem; background:#0ea5e9; color:#fff; padding:2px 6px; border-radius:4px;">${t('Resubmitted')}</span>`;
       } else {
-        badge = `<span style="font-size: 0.7rem; background:#10b981; color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px;">${t('New Request')}</span>`;
+        badge = `<span style="font-size: 0.7rem; background:#10b981; color:#fff; padding:2px 6px; border-radius:4px;">${t('New Request')}</span>`;
       }
       return `
         <div class="vf-card">
           <div class="vf-info">
             <div class="vf-icon" style="display:inline-flex;align-items:center;justify-content:center;">${icon}</div>
             <div>
-              <div class="vf-name">${req.name} ${badge}</div>
+              <div class="vf-name" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;"><bdi>${req.name}</bdi> ${badge}</div>
               <div class="vf-email">${req.email}</div>
               <div class="vf-role">${t(req.role)} ${req.profile && req.profile.company_type ? `• <bdi>${req.profile.company_type}</bdi>` : ''}</div>
             </div>
