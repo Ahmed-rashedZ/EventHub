@@ -567,6 +567,7 @@ const I18N_AR = {
   'Changes take effect immediately — التغيير يُطبَّق فوراً': 'التغيير يُطبَّق فوراً',
 
   /* ── Event Detail Modal ───────────────────────────────── */
+  'Application Details': 'تفاصيل الطلب',
   'About this Event': 'عن هذه الفعالية',
   'Location': 'الموقع',
   'Tickets Booked': 'التذاكر المحجوزة',
@@ -785,6 +786,8 @@ const I18N_AR = {
   'Describe sponsorship opportunity…': 'صف فرصة الرعاية...',
   'Submit Request': 'إرسال الطلب',
   'Sponsorship Message': 'رسالة الرعاية',
+  'Invitation Message': 'رسالة الدعوة',
+  'Application Message': 'رسالة الطلب',
   'Close': 'إغلاق',
   'Accept Sponsorship': 'قبول الرعاية',
   'Select Sponsor Tier': 'حدد مستوى الراعي',

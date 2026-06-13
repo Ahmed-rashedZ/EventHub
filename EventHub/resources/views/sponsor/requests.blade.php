@@ -206,7 +206,7 @@
         <td>${badge(effectiveStatus)}</td>
         <td style="display:flex;gap:6px;padding:14px 16px;flex-wrap:wrap;align-items:center">
           <button class="btn btn-sm" style="background:rgba(139,92,246,0.12);color:#a78bfa;border:1px solid rgba(139,92,246,0.25)" onclick="showEventDetails(${e.id})" title="${t('View Details')}">${t('Details')}</button>
-          ${(r.negotiation?.final_notes || r.message) ? `<button class="btn btn-ghost btn-sm" onclick="viewMessage(${r.id})" title="${t('View Message')}">${t('Msg')}</button>` : ''}
+          ${(r.negotiation?.final_notes || r.message) ? `<button class="btn btn-sm" onclick="viewMessage(${r.id})" title="${t('View Message')}" style="padding:4px 12px;font-size:11px;background:rgba(96,165,250,0.12);color:#60a5fa;border:1px solid rgba(96,165,250,0.25);font-weight:600;">${t('Message')}</button>` : ''}
           ${actionHtml}
         </td>
       </tr>`;

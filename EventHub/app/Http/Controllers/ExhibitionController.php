@@ -50,9 +50,6 @@ class ExhibitionController extends Controller
                 return response()->json(['message' => 'Company is not available'], 400);
             }
 
-            if (!$event->matchesCompanyCategory($targetCompany->profile?->company_type_slug)) {
-                return response()->json(['message' => 'Company category does not match this exhibition'], 400);
-            }
 
             // Duplicate check
             if (ExhibitionApplication::where('event_id', $event->id)->where('company_id', $targetCompany->id)->exists()) {
@@ -98,9 +95,6 @@ class ExhibitionController extends Controller
                 return response()->json(['message' => 'Exhibition registration is currently closed or the deadline has passed'], 403);
             }
 
-            if (!$event->matchesCompanyCategory($profile->company_type_slug)) {
-                return response()->json(['message' => 'This exhibition is not open to your company category'], 403);
-            }
 
             // Duplicate check
             if (ExhibitionApplication::where('event_id', $event->id)->where('company_id', $user->id)->exists()) {

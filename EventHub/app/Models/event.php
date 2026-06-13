@@ -261,15 +261,12 @@ class Event extends Model
 
     public function scopeBrowsableByCompany($query, User $company)
     {
-        $slug = $company->profile?->company_type_slug;
-
         return $query
             ->where('is_exhibition', true)
             ->where('status', 'approved')
             ->where('is_published', true)
             ->where('is_exhibitor_registration_open', true)
-            ->where('start_time', '>', now())
-            ->when($slug, fn ($q) => $q->where('company_category_slug', $slug), fn ($q) => $q->whereRaw('1 = 0'));
+            ->where('start_time', '>', now());
     }
 
     // ─── Backward-Compatible Accessors (Safety Net) ──────────────────────────

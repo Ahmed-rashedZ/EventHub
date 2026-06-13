@@ -255,7 +255,7 @@
         </td>
         <td>${badge(r.status)}</td>
         <td>
-            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">${actionHtml}</div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">${actionHtml}${r.message ? `<button class="btn btn-sm" onclick="showMsg(\`${r.message.replace(/`/g, '\\`').replace(/\\/g, '\\\\')}\`)" style="padding:3px 10px;font-size:11px;background:rgba(96,165,250,0.12);color:#60a5fa;border:1px solid rgba(96,165,250,0.25);font-weight:600;">${t('Message')}</button>` : ''}</div>
         </td>
         <td>
           ${r.status === 'accepted' ? getTierBadge(getSponsorTier(r)) : '<span style="font-size:12px; color:var(--text-muted)">—</span>'}

@@ -1056,8 +1056,8 @@
             <div class="ed-info-icon" style="display:flex; align-items:center; justify-content:center;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg></div>
             <div>
               <div class="ed-info-label" style="display:flex;align-items:center;gap:6px;">
-                Capacity 
-                ${ev.status === 'approved' && ev.time_status !== 'ended' ? `<button class="btn-icon-sm" onclick="expandCapacity(${ev.id}, ${ev.capacity}, ${ev.venue?.capacity || 99999})" title="Expand Capacity" style="padding:2px;background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.2);border-radius:4px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg></button>` : ''}
+                ${t('Capacity')}
+                ${ev.status === 'approved' && ev.time_status !== 'ended' ? `<button type="button" class="btn-icon-sm" onclick="event.stopPropagation(); expandCapacity(${ev.id}, ${ev.capacity || 'null'}, ${ev.venue?.capacity || 99999})" title="Expand Capacity" style="padding:5px;background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.2);border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;margin-inline-start:4px;position:relative;z-index:10;"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg></button>` : ''}
               </div>
               <div class="ed-info-value" id="det-capacity-${ev.id}">${ev.capacity || (document.documentElement.lang === 'ar' ? 'مفتوح' : 'Unlimited')}</div>
             </div>
@@ -3104,7 +3104,7 @@
       <input type="hidden" id="expand-capacity-event-id">
       <input type="hidden" id="expand-capacity-venue-max">
       <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:24px;">
-        <button class="btn btn-ghost" onclick="closeModal('expand-capacity-modal')"><script>document.write(t('Cancel'))</script></button>
+        <button class="btn btn-ghost" onclick="closeExpandCapacityModal()"><script>document.write(t('Cancel'))</script></button>
         <button class="btn btn-primary" onclick="submitExpandCapacity()"><script>document.write(t('Save'))</script></button>
       </div>
     </div>
@@ -3821,6 +3821,11 @@
       color: var(--text-muted);
     }
 
+    /* ── Expand Capacity Modal (above event details) ──── */
+    #expand-capacity-modal {
+      z-index: 1001;
+    }
+
     /* ── Event Details Modal ───────────────────────────── */
     .ed-modal {
       max-width: 560px;
@@ -4287,8 +4292,12 @@
       document.getElementById('expand-capacity-input').value = currentCap;
       document.getElementById('expand-capacity-event-id').value = eventId;
       document.getElementById('expand-capacity-venue-max').value = venueMax;
-      document.getElementById('expand-capacity-modal').style.display = 'flex';
+      document.getElementById('expand-capacity-modal').classList.add('open');
       setTimeout(() => document.getElementById('expand-capacity-input').focus(), 100);
+    }
+
+    function closeExpandCapacityModal() {
+      document.getElementById('expand-capacity-modal').classList.remove('open');
     }
 
     async function submitExpandCapacity() {
@@ -4312,7 +4321,7 @@
       try {
           const res = await api.patch(`/events/${eventId}/capacity`, { capacity: capInt });
           if (res.ok) {
-              closeModal('expand-capacity-modal');
+              closeExpandCapacityModal();
               showToast(t('Capacity expanded successfully!'), 'success');
               // Update local data
               const ev = allEvents.find(e => e.id == eventId);

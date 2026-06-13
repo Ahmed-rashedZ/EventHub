@@ -63,12 +63,27 @@
   </div>
 </div>
 
+<!-- View Message Modal -->
+<div class="modal-overlay" id="msg-modal">
+  <div class="modal" style="max-width: 500px;">
+    <div class="modal-header">
+      <h3 class="modal-title"><script>document.write(t('Application Details'))</script></h3>
+      <button class="modal-close" onclick="closeMsgModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="msg-content" style="padding: 20px; font-size: 15px; line-height: 1.6; color: var(--text);"></div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" onclick="closeMsgModal()" style="width: 100%;"><script>document.write(t('Close'))</script></button>
+    </div>
+  </div>
+</div>
+
 <div id="toast-container"></div>
 <script src="/js/api.js"></script>
 <script src="/js/notifications.js"></script>
 <script src="/js/auth.js"></script>
 <script src="/js/agreement-v2.js?v={{ time() }}"></script>
 <script>
+  let exhApps = [];
   const user = requireRole('Company');
   if (user) {
     populateSidebar(user);
@@ -86,6 +101,7 @@
     }
 
     const apps = res.data;
+    exhApps = apps;
     if (!apps.length) {
       tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><div class="empty-icon" style="display:flex; justify-content:center; margin-bottom:12px; color:var(--text-muted);"><svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" /></svg></div><p>You haven\'t applied to any exhibitions yet.</p></div></td></tr>';
       return;
@@ -109,11 +125,31 @@
                 ` : ''}
                 ${app.status === 'negotiating' ? `<button class="btn btn-sm" onclick="openAgreementModal(${app.id}, 'exhibition')" style="padding:4px 12px; font-size:11px; background:rgba(34,211,238,0.12); color:#22d3ee; border:1px solid rgba(34,211,238,0.25); font-weight:600;">${t('Review Offer')}</button>` : ''}
                 ${app.status === 'accepted' ? `<button class="btn btn-sm" onclick="openAgreementModal(${app.id}, 'exhibition')" style="padding:4px 12px; font-size:11px; background:rgba(16,185,129,0.12); color:#10b981; border:1px solid rgba(16,185,129,0.25); font-weight:600;">${t('Agreement')}</button>` : ''}
+                ${(app.message || app.product_category) ? `<button class="btn btn-sm" onclick="showMsg(${app.id})" style="padding:4px 12px;font-size:11px;background:rgba(96,165,250,0.12);color:#60a5fa;border:1px solid rgba(96,165,250,0.25);font-weight:600;">${t('Message')}</button>` : ''}
                 <button class="btn btn-sm" onclick="showEventDetails(${app.event_id})" style="background:rgba(139,92,246,0.12);color:#a78bfa;border:1px solid rgba(139,92,246,0.25)">${t('Details')}</button>
             </div>
         </td>
       </tr>
     `).join('');
+  }
+
+  function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+  function showMsg(appId) {
+    const app = exhApps.find(a => a.id === appId);
+    if (!app) return;
+    let html = '';
+    if (app.product_category) {
+      html += `<div style="margin-bottom:14px;"><div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent2);margin-bottom:6px;">${t('Product Category')}</div><div style="background:rgba(34,211,238,0.06);border:1px solid rgba(34,211,238,0.15);border-radius:10px;padding:10px 14px;color:#fff;font-size:0.9rem;">${escHtml(app.product_category)}</div></div>`;
+    }
+    if (app.message) {
+      html += `<div><div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:6px;">${t('Message')}</div><div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:10px 14px;color:#fff;font-size:0.9rem;line-height:1.6;white-space:pre-wrap;">${escHtml(app.message)}</div></div>`;
+    }
+    if (!html) html = `<div style="color:var(--text-muted);text-align:center;padding:20px;">${t('No details provided')}</div>`;
+    document.getElementById('msg-content').innerHTML = html;
+    document.getElementById('msg-modal').classList.add('open');
+  }
+  function closeMsgModal() {
+    document.getElementById('msg-modal').classList.remove('open');
   }
 
   async function respondRequest(id, status) {

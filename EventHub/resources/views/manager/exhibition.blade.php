@@ -272,7 +272,7 @@
 <div class="modal-overlay" id="msg-modal">
   <div class="modal" style="max-width: 500px;">
     <div class="modal-header">
-      <h3 class="modal-title"><script>document.write(t('Invitation Message'))</script></h3>
+      <h3 class="modal-title"><script>document.write(t('Application Details'))</script></h3>
       <button class="modal-close" onclick="closeMsgModal()">&times;</button>
     </div>
     <div class="modal-body" id="msg-content" style="padding: 20px; font-size: 15px; line-height: 1.6; color: var(--text);"></div>
@@ -435,6 +435,7 @@
   }
 
   let exhGroups = [];
+  let allExhApps = {};
 
   async function loadData() {
     const res = await api.get('/exhibition');
@@ -473,6 +474,9 @@
     });
 
     exhGroups = sorted;
+
+    allExhApps = {};
+    exhGroups.forEach(g => g.apps.forEach(a => allExhApps[a.id] = a));
 
     container.innerHTML = exhGroups.map((g, gi) => {
       const ev = g.event || {};
@@ -548,7 +552,7 @@
               </div>
             ` : ''}
           </td>
-          <td><div style="display:flex;gap:6px;flex-wrap:wrap;">${actionHtml}</div></td>
+          <td><div style="display:flex;gap:6px;flex-wrap:wrap;">${actionHtml}${(app.message || app.product_category) ? `<button class="btn btn-sm" onclick="showMsg(${app.id})" style="padding:3px 10px;font-size:11px;background:rgba(96,165,250,0.12);color:#60a5fa;border:1px solid rgba(96,165,250,0.25);font-weight:600;">${t('Message')}</button>` : ''}</div></td>
         </tr>`;
       }).join('');
 
@@ -871,8 +875,19 @@
     document.getElementById('r-company-id').value = '';
   }
 
-  function showMsg(message) {
-    document.getElementById('msg-content').innerText = message;
+  function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+  function showMsg(appId) {
+    const app = allExhApps[appId];
+    if (!app) return;
+    let html = '';
+    if (app.product_category) {
+      html += `<div style="margin-bottom:14px;"><div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent2);margin-bottom:6px;">${t('Product Category')}</div><div style="background:rgba(34,211,238,0.06);border:1px solid rgba(34,211,238,0.15);border-radius:10px;padding:10px 14px;color:#fff;font-size:0.9rem;">${escHtml(app.product_category)}</div></div>`;
+    }
+    if (app.message) {
+      html += `<div><div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:6px;">${t('Message')}</div><div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:10px 14px;color:#fff;font-size:0.9rem;line-height:1.6;white-space:pre-wrap;">${escHtml(app.message)}</div></div>`;
+    }
+    if (!html) html = `<div style="color:var(--text-muted);text-align:center;padding:20px;">${t('No details provided')}</div>`;
+    document.getElementById('msg-content').innerHTML = html;
     document.getElementById('msg-modal').classList.add('open');
   }
   function closeMsgModal() { document.getElementById('msg-modal').classList.remove('open'); }
