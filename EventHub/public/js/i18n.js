@@ -43,6 +43,8 @@ const I18N_EN = {
   'Publish': 'Publish',
   'Published — Visible to public': 'Published — Visible to public',
   'Draft — Not visible to public yet': 'Draft — Not visible to public yet',
+  'Hidden': 'Hidden',
+  'Hidden (Available after approval)': 'Hidden (Available after approval)',
   'morning': 'morning',
   'evening': 'evening',
   'afternoon': 'afternoon',
@@ -146,6 +148,8 @@ const I18N_AR = {
   'Publish': 'نشر',
   'Published — Visible to public': 'منشورة — مرئية للعامة',
   'Draft — Not visible to public yet': 'مسودة — غير مرئية للعامة بعد',
+  'Hidden': 'مخفي',
+  'Hidden (Available after approval)': 'مخفي (يتاح بعد القبول)',
   'morning': 'صباحاً',
   'evening': 'مساءً',
   'afternoon': 'ظهراً',
@@ -157,48 +161,48 @@ const I18N_AR = {
   'Ticket Scanned': 'تم مسح التذكرة',
   'Ticket Number': 'رقم التذكرة',
   /* ── Page Titles ──────────────────────────────────────── */
-  'My Events – EventHub Manager':          'فعالياتي – EventHub',
-  'My Analytics – EventHub Manager':       'تحليلاتي – EventHub',
-  'Edit Profile - EventHub':               'تعديل الملف الشخصي – EventHub',
-  'My Profile – EventHub':                 'ملفي الشخصي – EventHub',
-  'Events – EventHub Admin':               'الفعاليات – الأدمن',
-  'Browse Events – EventHub Sponsor':      'تصفح الفعاليات – EventHub',
-  'Exhibitions – EventHub Manager':        'المعارض – EventHub المدير',
-  'Sponsorship – EventHub Manager':        'الرعاية – EventHub المدير',
+  'My Events – EventHub Manager': 'فعالياتي – EventHub',
+  'My Analytics – EventHub Manager': 'تحليلاتي – EventHub',
+  'Edit Profile - EventHub': 'تعديل الملف الشخصي – EventHub',
+  'My Profile – EventHub': 'ملفي الشخصي – EventHub',
+  'Events – EventHub Admin': 'الفعاليات – الأدمن',
+  'Browse Events – EventHub Sponsor': 'تصفح الفعاليات – EventHub',
+  'Exhibitions – EventHub Manager': 'المعارض – EventHub المدير',
+  'Sponsorship – EventHub Manager': 'الرعاية – EventHub المدير',
 
   /* ── Sidebar – Navigation Labels ─────────────────────── */
-  'Overview':          'نظرة عامة',
-  'Events':            'الفعاليات',
-  'My Events':         'فعالياتي',
-  'Assistants':        'المساعدون',
-  'Attendance':        'الحضور',
-  'Sponsorship':       'الرعاية',
-  'Settings':          'الإعدادات',
-  'My Profile':        'ملفي الشخصي',
-  'Management':        'الإدارة',
-  'Users':             'المستخدمون',
-  'Venues':            'القاعات',
-  'Opportunities':     'الفرص',
-  'Verifications':     'التحقق',
-  'Browse Events':     'تصفح الفعاليات',
-  'Sponsorships':      'الرعايات',
-  'Browse Requests':   'الطلبات',
-  'History':           'السجل',
-  'Dashboard':         'لوحة التحكم',
-  'Logout':            'تسجيل الخروج',
+  'Overview': 'نظرة عامة',
+  'Events': 'الفعاليات',
+  'My Events': 'فعالياتي',
+  'Assistants': 'المساعدون',
+  'Attendance': 'الحضور',
+  'Sponsorship': 'الرعاية',
+  'Settings': 'الإعدادات',
+  'My Profile': 'ملفي الشخصي',
+  'Management': 'الإدارة',
+  'Users': 'المستخدمون',
+  'Venues': 'القاعات',
+  'Opportunities': 'الفرص',
+  'Verifications': 'التحقق',
+  'Browse Events': 'تصفح الفعاليات',
+  'Sponsorships': 'الرعايات',
+  'Browse Requests': 'الطلبات',
+  'History': 'السجل',
+  'Dashboard': 'لوحة التحكم',
+  'Logout': 'تسجيل الخروج',
 
   /* ── Page Main Titles & Subtitles ─────────────────────── */
-  'Profile Settings':                       'إعدادات الملف الشخصي',
+  'Profile Settings': 'إعدادات الملف الشخصي',
   'Manage your personal information and contact details': 'إدارة معلوماتك الشخصية وبيانات الاتصال',
-  'My Analytics':                           'تحليلاتي',
-  'Performance overview for your events':   'نظرة عامة على أداء فعالياتك',
-  'Create and manage your events':          'إنشاء وإدارة فعالياتك',
+  'My Analytics': 'تحليلاتي',
+  'Performance overview for your events': 'نظرة عامة على أداء فعالياتك',
+  'Create and manage your events': 'إنشاء وإدارة فعالياتك',
   'Approve, reject and monitor all events': 'اعتماد ورفض ومتابعة جميع الفعاليات',
   'Discover opportunities to sponsor upcoming verified events': 'اكتشف فرص رعاية الفعاليات القادمة المعتمدة',
-  'Update your personal information':       'تحديث معلوماتك الشخصية',
+  'Update your personal information': 'تحديث معلوماتك الشخصية',
 
   /* ── Topbar Buttons ───────────────────────────────────── */
-  '+ Create Event':  '+ إنشاء فعالية',
+  '+ Create Event': '+ إنشاء فعالية',
 
   /* ── Create Event Modal ─────────────────────────────────── */
   'Create New Event': 'إنشاء فعالية جديدة',
@@ -417,69 +421,69 @@ const I18N_AR = {
   'Dec': 'ديسمبر',
 
   /* ── Filter / Sort Controls ───────────────────────────── */
-  'All Status':  'الكل',
-  'Pending':     'قيد الانتظار',
-  'Approved':    'معتمد',
-  'Rejected':    'مرفوض',
+  'All Status': 'الكل',
+  'Pending': 'قيد الانتظار',
+  'Approved': 'معتمد',
+  'Rejected': 'مرفوض',
   'Cancellation Requested': 'طلب إلغاء',
-  'Cancelled':   'ملغى',
+  'Cancelled': 'ملغى',
 
   /* ── Sort Dropdown Options ───────────────────────────────── */
-  'Soonest First':   'الأقرب أولا',
-  'Farthest First':  'الأبعد أولا',
-  'Alphabetical':    'أبجدي',
-  'Live Now':        'مباشر الآن',
-  'Ended':           'منتهي',
+  'Soonest First': 'الأقرب أولا',
+  'Farthest First': 'الأبعد أولا',
+  'Alphabetical': 'أبجدي',
+  'Live Now': 'مباشر الآن',
+  'Ended': 'منتهي',
 
   /* ── Table Headers ────────────────────────────────────── */
-  'Title':          'العنوان',
-  'Venue':          'القاعة',
-  'Manager':        'المدير',
-  'Start':          'البداية',
-  'End':            'النهاية',
-  'Capacity':       'السعة',
-  'Status':         'الحالة',
-  'Actions':        'الإجراءات',
-  'Event Name':     'اسم الفعالية',
-  'Date':           'التاريخ',
-  'Action':         'الإجراء',
-  'Name':           'الاسم',
-  'Email':          'البريد الإلكتروني',
-  'Role':           'الدور',
-  'Joined':         'الانضمام',
-  'Location':       'المكان',
+  'Title': 'العنوان',
+  'Venue': 'القاعة',
+  'Manager': 'المدير',
+  'Start': 'البداية',
+  'End': 'النهاية',
+  'Capacity': 'السعة',
+  'Status': 'الحالة',
+  'Actions': 'الإجراءات',
+  'Event Name': 'اسم الفعالية',
+  'Date': 'التاريخ',
+  'Action': 'الإجراء',
+  'Name': 'الاسم',
+  'Email': 'البريد الإلكتروني',
+  'Role': 'الدور',
+  'Joined': 'الانضمام',
+  'Location': 'المكان',
 
   /* ── Action Buttons ───────────────────────────────────── */
-  'ℹ️ Details':        'ℹ️ التفاصيل',
-  '📊 Stats':          '📊 الإحصائيات',
-  '✓ Approve':         '✓ اعتماد',
-  '✕ Reject':          '✕ رفض',
-  'Save Changes':      'حفظ التغييرات',
-  'Saving...':         'جاري الحفظ...',
-  'Cancel':            'إلغاء',
-  'Send Request':      'إرسال الطلب',
-  'Sending...':        'جاري الإرسال...',
-  'Change Photo':      'تغيير الصورة',
-  'Request':           'طلب رعاية',
+  'ℹ️ Details': 'ℹ️ التفاصيل',
+  '📊 Stats': '📊 الإحصائيات',
+  '✓ Approve': '✓ اعتماد',
+  '✕ Reject': '✕ رفض',
+  'Save Changes': 'حفظ التغييرات',
+  'Saving...': 'جاري الحفظ...',
+  'Cancel': 'إلغاء',
+  'Send Request': 'إرسال الطلب',
+  'Sending...': 'جاري الإرسال...',
+  'Change Photo': 'تغيير الصورة',
+  'Request': 'طلب رعاية',
   'Already Requested': 'تم الطلب مسبقاً',
-  '+ Add Link':        '+ إضافة رابط',
-  '+ Add Phone':       '+ إضافة رقم',
-  '+ Add Venue':       '+ إضافة قاعة',
-  'Add Venue':         'إضافة قاعة',
-  'Save Venue':        'حفظ القاعة',
-  'Edit Venue':        'تعديل القاعة',
+  '+ Add Link': '+ إضافة رابط',
+  '+ Add Phone': '+ إضافة رقم',
+  '+ Add Venue': '+ إضافة قاعة',
+  'Add Venue': 'إضافة قاعة',
+  'Save Venue': 'حفظ القاعة',
+  'Edit Venue': 'تعديل القاعة',
   'Confirm Rejection': 'تأكيد الرفض',
   'View Public Profile': 'عرض الملف العام',
-  'Save Information':  'حفظ المعلومات',
+  'Save Information': 'حفظ المعلومات',
   'Update Security Settings': 'تحديث إعدادات الأمان',
-  '⏸ Suspend':         '⏸ تعليق',
-  '▶ Activate':        '▶ تفعيل',
-  '🗑 Delete':          '🗑 حذف',
-  '📄 Docs':            '📄 المستندات',
+  '⏸ Suspend': '⏸ تعليق',
+  '▶ Activate': '▶ تفعيل',
+  '🗑 Delete': '🗑 حذف',
+  '📄 Docs': '📄 المستندات',
   'Request Cancellation': 'طلب إلغاء',
   'Resume Ticket Sales': 'استئناف مبيعات التذاكر',
   'Suspend Ticket Sales': 'تعليق مبيعات التذاكر',
-  'Sign Out':          'تسجيل الخروج',
+  'Sign Out': 'تسجيل الخروج',
   'Company Dashboard': 'لوحة تحكم الشركة',
   'Manage your exhibition participation and booth bookings': 'إدارة مشاركاتك في المعارض وحجوزات الأجنحة',
   'Browse Exhibitions': 'تصفح المعارض',
@@ -541,43 +545,43 @@ const I18N_AR = {
   'Fixed Number': 'عدد محدد',
 
   /* ── Profile Page Form Labels ─────────────────────────── */
-  'Profile Information':    'معلومات الملف الشخصي',
-  'Full Name':              'الاسم الكامل',
-  'Contact Email':          'البريد الإلكتروني للتواصل',
-  'Company Name':           'اسم الشركة',
-  'Phone Numbers':          'أرقام الهاتف',
-  'Social Profiles & Links':'روابط التواصل الاجتماعي',
-  'Bio':                    'نبذة شخصية',
+  'Profile Information': 'معلومات الملف الشخصي',
+  'Full Name': 'الاسم الكامل',
+  'Contact Email': 'البريد الإلكتروني للتواصل',
+  'Company Name': 'اسم الشركة',
+  'Phone Numbers': 'أرقام الهاتف',
+  'Social Profiles & Links': 'روابط التواصل الاجتماعي',
+  'Bio': 'نبذة شخصية',
   'Tell us about yourself...': 'أخبرنا عن نفسك...',
-  'Security Settings':      'إعدادات الأمان',
-  'Login Email':            'البريد الإلكتروني للدخول',
+  'Security Settings': 'إعدادات الأمان',
+  'Login Email': 'البريد الإلكتروني للدخول',
   'This email is used for logging into your account.': 'يُستخدم هذا البريد لتسجيل الدخول إلى حسابك.',
   'New Password (leave blank to keep current)': 'كلمة مرور جديدة (اتركها فارغة للإبقاء على الحالية)',
-  'Confirm New Password':   'تأكيد كلمة المرور الجديدة',
+  'Confirm New Password': 'تأكيد كلمة المرور الجديدة',
   'For public/communication purposes': 'للتواصل العام',
-  'Open to Sponsorship':    'متاح للرعاية',
+  'Open to Sponsorship': 'متاح للرعاية',
   'Language & Interface / اللغة والواجهة': 'اللغة والواجهة',
   'Choose the interface language for all pages in the system.': 'اختر لغة الواجهة لجميع صفحات النظام.',
   'Changes take effect immediately — التغيير يُطبَّق فوراً': 'التغيير يُطبَّق فوراً',
 
   /* ── Event Detail Modal ───────────────────────────────── */
-  'About this Event':     'عن هذه الفعالية',
-  'Location':             'الموقع',
-  'Tickets Booked':       'التذاكر المحجوزة',
-  'Created by':           'أنشئ بواسطة',
-  'Event Manager':        'مدير الفعالية',
-  'Current Sponsors':     'الرعاة الحاليون',
-  '👥 Attendee Reviews':  '👥 تقييمات الحضور',
+  'About this Event': 'عن هذه الفعالية',
+  'Location': 'الموقع',
+  'Tickets Booked': 'التذاكر المحجوزة',
+  'Created by': 'أنشئ بواسطة',
+  'Event Manager': 'مدير الفعالية',
+  'Current Sponsors': 'الرعاة الحاليون',
+  '👥 Attendee Reviews': '👥 تقييمات الحضور',
   'No description provided.': 'لا يوجد وصف.',
-  '⚠ Rejection Reason':  '⚠ سبب الرفض',
+  '⚠ Rejection Reason': '⚠ سبب الرفض',
   'Be the first to sponsor this event!': 'كن أول راعٍ لهذه الفعالية!',
 
   /* ── Rejection Modal ──────────────────────────────────── */
-  'Reason for Rejection':  'سبب الرفض',
+  'Reason for Rejection': 'سبب الرفض',
   'Explain why this event is being rejected': 'اشرح سبب رفض هذه الفعالية',
-  'Sponsor Event':         'رعاية الفعالية',
-  'Selected Event':        'الفعالية المحددة',
-  'Message / Intro':       'رسالة / مقدمة',
+  'Sponsor Event': 'رعاية الفعالية',
+  'Selected Event': 'الفعالية المحددة',
+  'Message / Intro': 'رسالة / مقدمة',
   'Introduce yourself and state what sponsorship options you are interested in...': 'قدم نفسك واذكر خيارات الرعاية التي تهتم بها...',
   'Apply': 'تقديم',
   'View File': 'عرض الملف',
@@ -618,39 +622,39 @@ const I18N_AR = {
   ' rating': ' تقييم',
 
   /* ── Analytics Stats ──────────────────────────────────── */
-  'Tickets Sold':          'التذاكر المباعة',
-  'Attendance Rate':       'معدل الحضور',
-  'Capacity Usage':        'استخدام السعة',
-  'Avg Rating':            'متوسط التقييم',
-  'Based on all events':   'بناءً على جميع الفعاليات',
-  'Event Performance':     'أداء الفعاليات',
-  'Events by Status':      'الفعاليات حسب الحالة',
-  'Events by Type':        'الفعاليات حسب النوع',
-  'Registered':            'مسجلون',
-  'Attended':              'حضروا',
-  'Fill Rate':             'نسبة الامتلاء',
-  'Capacity Utilization':  'استخدام السعة',
+  'Tickets Sold': 'التذاكر المباعة',
+  'Attendance Rate': 'معدل الحضور',
+  'Capacity Usage': 'استخدام السعة',
+  'Avg Rating': 'متوسط التقييم',
+  'Based on all events': 'بناءً على جميع الفعاليات',
+  'Event Performance': 'أداء الفعاليات',
+  'Events by Status': 'الفعاليات حسب الحالة',
+  'Events by Type': 'الفعاليات حسب النوع',
+  'Registered': 'مسجلون',
+  'Attended': 'حضروا',
+  'Fill Rate': 'نسبة الامتلاء',
+  'Capacity Utilization': 'استخدام السعة',
 
   /* ── General ─────────────────────────────────────────── */
-  'Platform':              'المنصة',
-  'PLATFORM':              'المنصة',
-  'Choose Platform...':    'اختر المنصة...',
+  'Platform': 'المنصة',
+  'PLATFORM': 'المنصة',
+  'Choose Platform...': 'اختر المنصة...',
 
   /* ── Statuses ────────────────────────────────────────── */
-  'Accepted':              'مقبول',
-  'ACCEPTED':              'مقبول',
-  'Pending':               'قيد الانتظار',
-  'PENDING':               'قيد الانتظار',
-  'REJECTED':              'مرفوض',
-  'Change Booth':          'تغيير الكشك',
-  'Confirmed':             'تم التأكيد',
-  'Booth':                 'الكشك',
-  'Booth Locked':          'تم قفل الكشك',
+  'Accepted': 'مقبول',
+  'ACCEPTED': 'مقبول',
+  'Pending': 'قيد الانتظار',
+  'PENDING': 'قيد الانتظار',
+  'REJECTED': 'مرفوض',
+  'Change Booth': 'تغيير الكشك',
+  'Confirmed': 'تم التأكيد',
+  'Booth': 'الكشك',
+  'Booth Locked': 'تم قفل الكشك',
   'Exhibition layout is locked (Less than 14 days remaining). You can no longer add, edit, or delete zones and booths.': 'تم قفل توزيع المعرض (بقي أقل من 14 يوماً). لم يعد بإمكانك إضافة أو تعديل أو حذف الأجنحة والزونات.',
 
   /* ── Empty States ─────────────────────────────────────── */
-  'No events found':   'لا توجد فعاليات',
-  'Failed to load':    'فشل التحميل',
+  'No events found': 'لا توجد فعاليات',
+  'Failed to load': 'فشل التحميل',
   'No events match your selection.': 'لا توجد فعاليات تتطابق مع اختيارك.',
   'No upcoming public events available right now.': 'لا توجد فعاليات عامة قادمة الآن.',
   'No public events available right now.': 'لا توجد فعاليات عامة الآن.',
@@ -1848,15 +1852,15 @@ I18N_EN['مدير فعاليات'] = 'Event Manager';
    Maps Arabic DB values to English display names.
    ───────────────────────────────────────────────────────────────── */
 const EVENT_TYPE_MAP = {
-  'مؤتمر':        { en: 'Conference',       icon: '🎙️' },
-  'ندوة':         { en: 'Seminar',          icon: '📖' },
-  'ورشة عمل':     { en: 'Workshop',         icon: '🔧' },
-  'دورة تدريبية': { en: 'Training Course',  icon: '🎓' },
-  'ترفيه':        { en: 'Entertainment',     icon: '🎭' },
-  'ملتقى علمي':   { en: 'Scientific Forum',  icon: '🔬' },
-  'رياضة':        { en: 'Sports',           icon: '⚽' },
-  'تقنية':        { en: 'Technology',        icon: '💻' },
-  'اجتماعية':     { en: 'Social',           icon: '🤝' },
+  'مؤتمر': { en: 'Conference', icon: '🎙️' },
+  'ندوة': { en: 'Seminar', icon: '📖' },
+  'ورشة عمل': { en: 'Workshop', icon: '🔧' },
+  'دورة تدريبية': { en: 'Training Course', icon: '🎓' },
+  'ترفيه': { en: 'Entertainment', icon: '🎭' },
+  'ملتقى علمي': { en: 'Scientific Forum', icon: '🔬' },
+  'رياضة': { en: 'Sports', icon: '⚽' },
+  'تقنية': { en: 'Technology', icon: '💻' },
+  'اجتماعية': { en: 'Social', icon: '🤝' },
 };
 
 /**
@@ -1896,7 +1900,7 @@ function t(key) {
 function translateText(text) {
   if (!text || typeof text !== 'string') return text;
   const lang = getLang();
-  
+
   const dict = lang === 'ar' ? I18N_AR : I18N_EN;
   if (!dict) return text;
 
@@ -1997,10 +2001,10 @@ function injectRTLStyles() {
 
   /* ── Load Cairo font ─────────────────────────────── */
   if (!document.getElementById('cairo-font')) {
-    const link  = document.createElement('link');
-    link.id     = 'cairo-font';
-    link.rel    = 'stylesheet';
-    link.href   = 'https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap';
+    const link = document.createElement('link');
+    link.id = 'cairo-font';
+    link.rel = 'stylesheet';
+    link.href = 'https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap';
     document.head.appendChild(link);
   }
 
@@ -2139,7 +2143,7 @@ function injectRTLStyles() {
  */
 function translateNode(node) {
   if (!node || !node.textContent) return;
-  
+
   // Skip if inside an excluded container
   let p = node.parentElement;
   while (p) {
@@ -2148,7 +2152,7 @@ function translateNode(node) {
   }
 
   const original = node.textContent;
-  const trimmed  = original.trim();
+  const trimmed = original.trim();
   if (!trimmed) return;
 
   // Normalize whitespace (replace newlines and multiple spaces with a single space) for key matching
@@ -2179,7 +2183,7 @@ function translateAttrs(el) {
   });
 }
 
-const SKIP_TAGS = new Set(['SCRIPT','STYLE','NOSCRIPT','CODE','PRE','TEMPLATE']);
+const SKIP_TAGS = new Set(['SCRIPT', 'STYLE', 'NOSCRIPT', 'CODE', 'PRE', 'TEMPLATE']);
 
 /**
  * Walk through a subtree and translate all text nodes + attributes.
@@ -2216,7 +2220,7 @@ function translateSubtree(root) {
 /** Full DOM pass on document.body + title */
 function translateDOM() {
   translateSubtree(document.body);
-  
+
   // Also translate page title
   const tTitle = t(document.title);
   if (tTitle !== document.title) document.title = tTitle;
@@ -2257,7 +2261,7 @@ function injectLanguageToggle() {
 
   const sidebarLogo = document.querySelector('.sidebar-logo');
   const authCard = document.querySelector('.auth-card');
-  
+
   if (!sidebarLogo && !authCard) return;
 
   const isAr = getLang() === 'ar';
@@ -2265,7 +2269,7 @@ function injectLanguageToggle() {
   toggleBtn.id = 'injected-lang-toggle';
   toggleBtn.onclick = () => setLanguage(isAr ? 'en' : 'ar');
   toggleBtn.title = isAr ? 'Switch Language' : 'تبديل اللغة';
-  
+
   // Style for the button
   const style = document.createElement('style');
   style.textContent = `
@@ -2313,7 +2317,7 @@ function injectLanguageToggle() {
       <circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20"/><path d="M12 2a14.5 14.5 0 0 1 0 20"/><path d="M2 12h20"/>
     </svg>
   `;
-  
+
   if (sidebarLogo) sidebarLogo.appendChild(toggleBtn);
   else if (authCard) authCard.appendChild(toggleBtn);
 }

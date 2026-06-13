@@ -785,37 +785,34 @@
         <tr>
           <td style="color:var(--text-muted)">${i + 1}</td>
           <td><div style="font-weight:600" class="i18n-skip">${ev.title}</div></td>
-          <td style="color:var(--text-muted)">${ev.venue_id ? (ev.venue?.name || '—') : (ev.external_venue_name ? ev.external_venue_name + ' (External)' : '—')}</td>
+          <td style="color:var(--text-muted)">${ev.venue_id ? (ev.venue?.name || '—') : (ev.external_venue_name ? ev.external_venue_name + ' (' + t('External') + ')' : '—')}</td>
           <td style="color:var(--text-muted);white-space:nowrap">${fmtDateShort(ev.start_time)}</td>
-          <td style="color:var(--text-muted)">${ev.capacity || (document.documentElement.lang === 'ar' ? 'مفتوح' : 'Unlimited')}</td>
+          <td style="color:var(--text-muted)">${ev.capacity || t('Unlimited')}</td>
           <td>
              <div style="display:flex; align-items:center; margin-bottom: ${ev.is_exhibition ? '8px' : '0'}">
                <input type="checkbox" id="spon-tog-${ev.id}" ${ev.is_sponsorship_open ? 'checked' : ''} onchange="toggleSponsorship(${ev.id}, this.checked)" 
                  style="width:16px; height:16px; margin-right:5px; ${(ev.status !== 'approved' || ev.time_status === 'live' || ev.time_status === 'ended') ? 'cursor:not-allowed;' : 'cursor:pointer;'}" 
-                 ${(ev.status !== 'approved' || ev.time_status === 'live' || ev.time_status === 'ended') ? 'disabled' : ''}
-                 title="${ev.status !== 'approved' ? 'Event must be approved first' : (ev.time_status === 'live' || ev.time_status === 'ended' ? 'Cannot change sponsorship for live/ended events' : '')}"/>
-               <label for="spon-tog-${ev.id}" style="font-size:11px; ${(ev.status !== 'approved' || ev.time_status === 'live' || ev.time_status === 'ended') ? 'color:var(--text-muted); cursor:not-allowed;' : 'cursor:pointer;'}" 
-                 title="${ev.status !== 'approved' ? 'Event must be approved first' : (ev.time_status === 'live' || ev.time_status === 'ended' ? 'Cannot change sponsorship for live/ended events' : '')}">Sponsorship</label>
+                 ${(ev.status !== 'approved' || ev.time_status === 'live' || ev.time_status === 'ended') ? 'disabled' : ''}/>
+               <label for="spon-tog-${ev.id}" style="font-size:11px; ${(ev.status !== 'approved' || ev.time_status === 'live' || ev.time_status === 'ended') ? 'color:var(--text-muted); cursor:not-allowed;' : 'cursor:pointer;'}">${t('Sponsorship')}</label>
              </div>
              ${ev.is_exhibition ? `
              <div style="display:flex; align-items:center;">
                <input type="checkbox" id="exh-tog-${ev.id}" ${ev.is_exhibitor_registration_open ? 'checked' : ''} onchange="toggleExhibitorRegistration(${ev.id}, this.checked)" 
                  style="width:16px; height:16px; margin-right:5px; ${(ev.status !== 'approved' || ev.time_status === 'ended') ? 'cursor:not-allowed;' : 'cursor:pointer;'}" 
                  ${(ev.status !== 'approved' || ev.time_status === 'ended') ? 'disabled' : ''}/>
-               <label for="exh-tog-${ev.id}" style="font-size:11px; ${(ev.status !== 'approved' || ev.time_status === 'ended') ? 'color:var(--text-muted); cursor:not-allowed;' : 'cursor:pointer;'}" 
-                 title="${ev.status !== 'approved' ? 'Event must be approved first' : (ev.time_status === 'ended' ? 'Exhibition has ended' : '')}">Register</label>
+               <label for="exh-tog-${ev.id}" style="font-size:11px; ${(ev.status !== 'approved' || ev.time_status === 'ended') ? 'color:var(--text-muted); cursor:not-allowed;' : 'cursor:pointer;'}">${t('Register')}</label>
              </div>
              ` : ''}
-             ${ev.status !== 'approved' ? '<div style="font-size:10px;color:#ef4444;margin-top:4px;">Needs Approval</div>' : ''}
-             ${ev.status === 'approved' && (ev.time_status === 'live' || ev.time_status === 'ended') ? `<div style="font-size:10px;color:var(--text-muted);margin-top:4px;">Event ${ev.time_status === 'live' ? 'is live' : 'has ended'}</div>` : ''}
+             ${ev.status !== 'approved' ? `<div style="font-size:10px;color:#ef4444;margin-top:4px;">${t('Needs Approval')}</div>` : ''}
+             ${ev.status === 'approved' && (ev.time_status === 'live' || ev.time_status === 'ended') ? `<div style="font-size:10px;color:var(--text-muted);margin-top:4px;">${t(ev.time_status === 'live' ? 'Event is live' : 'Event has ended')}</div>` : ''}
           </td>
           <td><div style="display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center;">${badge(ev.status)} ${ev.status === 'approved' ? timeBadge(ev.time_status) : ''} ${reviewBadge}</div></td>
           <td style="padding:14px 16px;">
             <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
-              <button class="btn btn-sm" style="background:rgba(139,92,246,0.12);color:#a78bfa;border:1px solid rgba(139,92,246,0.25)" onclick="showEventDetails(${ev.id})" title="${t('View Details')}">${t('Details')}</button>
-              <button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='/manager/event-stats/${ev.id}'" title="View Statistics">Stats</button>
-              ${ev.status === 'approved' && ev.time_status !== 'ended' ? `<button class="btn btn-sm" style="background:${ev.is_published ? 'rgba(16,185,129,0.12)' : 'rgba(139,92,246,0.12)'};color:${ev.is_published ? '#10b981' : '#a78bfa'};border:1px solid ${ev.is_published ? 'rgba(16,185,129,0.25)' : 'rgba(139,92,246,0.25)'}" onclick="openPublishedScheduleModal(${ev.id})" title="Publish Specific Days">${t('Publish Days')}</button>` : ''}
-              ${ev.status === 'pending' ? `<button class="btn btn-sm" style="background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25)" onclick="deleteEvent(${ev.id})" title="Delete Event">Delete</button>` : ''}
+              <button class="btn btn-sm" style="background:rgba(139,92,246,0.12);color:#a78bfa;border:1px solid rgba(139,92,246,0.25)" onclick="showEventDetails(${ev.id})">${t('Details')}</button>
+              <button class="btn btn-sm" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)" onclick="window.location.href='/manager/event-stats/${ev.id}'">${t('Stats')}</button>
+              ${ev.status === 'approved' && ev.time_status !== 'ended' ? `<button class="btn btn-sm" style="background:${ev.is_published ? 'rgba(16,185,129,0.12)' : 'rgba(139,92,246,0.12)'};color:${ev.is_published ? '#10b981' : '#a78bfa'};border:1px solid ${ev.is_published ? 'rgba(16,185,129,0.25)' : 'rgba(139,92,246,0.25)'}" onclick="openPublishedScheduleModal(${ev.id})">${t('Publish Days')}</button>` : ''}
+              ${ev.status === 'pending' ? `<button class="btn btn-sm" style="background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25)" onclick="deleteEvent(${ev.id})">${t('Delete')}</button>` : ''}
             </div>
           </td>
         </tr>${reviewRow}`;
@@ -981,30 +978,12 @@
             <div class="ed-info-card ed-info-accent2">
               <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0zM19.5 10.5c0 7.142-7.5 11.25-7.5 11.25s-7.5-4.108-7.5-11.25a7.5 7.5 0 1115 0z"></path></svg></div>
               <div>
-                <div class="ed-info-label">Location</div>
+                <div class="ed-info-label">${t('Location')}</div>
                 <div class="ed-info-value">
-                  ${ev.venue?.location ? `<a href="${ev.venue.location.startsWith('http') ? ev.venue.location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.venue.location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>`
-            : (ev.external_venue_location ? `<a href="${ev.external_venue_location.startsWith('http') ? ev.external_venue_location : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.external_venue_location)}" target="_blank" style="color:inherit;text-decoration:underline;">Open in Maps ↗</a>` : '—')}
+                  <span style="color:#94a3b8; font-size:0.85em; font-style:italic;">${t('Hidden')}</span>
                 </div>
               </div>
             </div>
-          ${!ev.venue_id && ev.booking_proof_path ? `
-          <div class="ed-info-card ed-info-accent2" style="grid-column: 1 / -1;">
-            <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l4.5-4.5m.718-2.262a9 9 0 019-9"></path></svg></div>
-            <div><div class="ed-info-label">Booking Proof</div><div class="ed-info-value"><button onclick="downloadEventDoc(${ev.id}, 'booking_proof')" style="color:#22d3ee;text-decoration:underline;background:none;border:none;padding:0;font:inherit;cursor:pointer;">View Document ↗</button></div></div>
-          </div>
-          ` : ''}
-          ${ev.ministry_document_path ? `
-          <div class="ed-info-card ed-info-accent" style="grid-column: 1 / -1;">
-            <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"></path></svg></div>
-            <div><div class="ed-info-label">Competent Authority Approval</div><div class="ed-info-value"><button onclick="downloadEventDoc(${ev.id}, 'ministry_document')" style="color:#a78bfa;text-decoration:underline;background:none;border:none;padding:0;font:inherit;cursor:pointer;">View Document ↗</button></div></div>
-          </div>
-          ` : `
-          <div class="ed-info-card ed-info-danger" style="grid-column: 1 / -1;">
-            <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg></div>
-            <div><div class="ed-info-label">Competent Authority Approval</div><div class="ed-info-value" style="color:#ef4444;">Not uploaded</div></div>
-          </div>
-          `}
           ${ev.event_objective ? `
           <div class="ed-info-card ed-info-accent" style="grid-column: 1 / -1;">
             <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>

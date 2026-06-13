@@ -343,7 +343,7 @@
               <div class="ed-info-card ed-info-accent2">
                 <div class="ed-info-icon">${PinIcon}</div>
                 <div><div class="ed-info-label">Location</div><div class="ed-info-value">
-                  <span style="opacity:0.5;font-size:0.8rem">${document.documentElement.lang === 'ar' ? 'مخفي (يتاح بعد القبول)' : 'Hidden (Available after approval)'}</span>
+                  <span style="opacity:0.5;font-size:0.8rem">${t('Hidden (Available after approval)')}</span>
                 </div></div>
               </div>
               ${(() => {
