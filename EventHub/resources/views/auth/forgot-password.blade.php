@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -118,7 +118,7 @@
         <div class="step-dot active"></div>
         <div class="step-dot"></div>
       </div>
-      <div class="lock-icon">??</div>
+
       <h2 class="auth-heading"><script>document.write(t('Enter Verification Code'))</script></h2>
       <p class="auth-subheading" id="step2-subtitle"></p>
 
@@ -133,7 +133,7 @@
         </div>
 
         <div style="text-align:center;">
-          <div class="timer-badge" id="timer-badge">? <span id="timer">5:00</span></div>
+          <div class="timer-badge" id="timer-badge"><span id="timer">5:00</span></div>
         </div>
 
         <button type="submit" class="btn btn-primary btn-block" id="btn-verify" style="margin-top: 20px;">
@@ -148,7 +148,7 @@
       </div>
 
       <div class="auth-footer">
-        <a href="#" onclick="goToStep(1)" style="color:var(--text-muted);"><script>document.write(t('? Back'))</script></a>
+        <a href="#" onclick="goToStep(1)" style="color:var(--text-muted);"><script>document.write(t('Back'))</script></a>
       </div>
     </div>
 
@@ -159,7 +159,7 @@
         <div class="step-dot done"></div>
         <div class="step-dot active"></div>
       </div>
-      <div class="lock-icon">??</div>
+
       <h2 class="auth-heading"><script>document.write(t('Set New Password'))</script></h2>
       <p class="auth-subheading"><script>document.write(t('Your code was verified. Now set a new password for your account.'))</script></p>
 
@@ -181,7 +181,7 @@
 
     <!-- ??? STEP 4: Success ??? -->
     <div id="step-4" class="step" style="text-align:center;">
-      <div class="success-icon">?</div>
+
       <h2 class="auth-heading"><script>document.write(t('Password Changed!'))</script></h2>
       <p class="auth-subheading" style="margin-bottom:24px;"><script>document.write(t('Your password has been reset successfully. You can now sign in with your new password.'))</script></p>
       <a href="/login" class="btn btn-primary btn-block" style="text-decoration:none;"><script>document.write(t('Go to Sign In'))</script></a>

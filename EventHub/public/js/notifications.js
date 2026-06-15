@@ -160,8 +160,8 @@ function _renderDropdown() {
         const unreadClass = n.is_read ? '' : ' notif-item-unread';
         const timeAgo = _timeAgo(n.created_at);
         const actionAttr = n.action_url ? `onclick="_goToNotif('${n.id}', '${n.action_url}')"` : `onclick="_markOneRead('${n.id}')"`;
-        const cleanTitle = _cleanNotifText(translateText(n.title));
-        const cleanMessage = _cleanNotifText(translateText(n.message));
+        const cleanTitle = translateText(_cleanNotifText(n.title));
+        const cleanMessage = translateText(_cleanNotifText(n.message));
         return `
             <div class="notif-item${unreadClass}" ${actionAttr} style="display:flex;align-items:center;gap:12px;padding:12px 16px;">
                 <div class="notif-item-icon" style="flex-shrink:0;background:none;padding:0;display:flex;align-items:center;justify-content:center;">${_getNotifIconHTML(n.icon, n.type)}</div>
@@ -192,7 +192,7 @@ async function _markAllRead() {
     await api.put('/notifications/read-all');
     await _loadNotifications();
     _renderDropdown();
-    showToast('All notifications marked as read', 'success');
+    showToast(t('All notifications marked as read'), 'success');
 }
 
 function _timeAgo(dateStr) {

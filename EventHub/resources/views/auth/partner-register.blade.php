@@ -127,20 +127,21 @@
         </div>
 
         <div class="form-group" id="grp-company_type" style="display:none;">
-          <label class="form-label">قطاع الشركة / الفئة</label>
+          <label class="form-label"><script>document.write(t('Company Sector / Category'))</script></label>
           <select id="pr-company_type" class="form-control" style="cursor:pointer;">
-            <option value="" disabled selected>اختر الفئة</option>
-            <option value="sports">رياضة</option>
-            <option value="tech">تقنية</option>
-            <option value="aviation">طيران</option>
-            <option value="telecom">اتصالات</option>
-            <option value="arts">فنون</option>
-            <option value="entertainment">ترفيه</option>
-            <option value="food">غداء</option>
-            <option value="construction">مقاولات</option>
-            <option value="other">أخرى</option>
+            <option value="" disabled selected><script>document.write(t('Select Category'))</script></option>
+            <option value="sports"><script>document.write(t('Sports'))</script></option>
+            <option value="tech"><script>document.write(t('Technology'))</script></option>
+            <option value="aviation"><script>document.write(t('Aviation'))</script></option>
+            <option value="telecom"><script>document.write(t('Telecommunications'))</script></option>
+            <option value="arts"><script>document.write(t('Arts'))</script></option>
+            <option value="entertainment"><script>document.write(t('Entertainment'))</script></option>
+            <option value="food"><script>document.write(t('Food & Beverage'))</script></option>
+            <option value="construction"><script>document.write(t('Construction'))</script></option>
+            <option value="other"><script>document.write(t('Other'))</script></option>
           </select>
-          <input id="pr-company_type_other" class="form-control" type="text" placeholder="حدد الفئة الأخرى"
+          <input id="pr-company_type_other" class="form-control" type="text"
+            placeholder="" id="pr-company_type_other_input"
             style="margin-top:8px; display:none;" />
           <input id="pr-company_type_slug" type="hidden" />
         </div>
@@ -364,7 +365,7 @@
         if (ct === 'other') {
           const other = document.getElementById('pr-company_type_other').value.trim();
           if (!other) {
-            showToast('يرجى كتابة الفئة الأخرى', 'error');
+          showToast(t('Please enter the other category'), 'error');
             btn.textContent = t('Submit Application'); btn.disabled = false;
             return;
           }
@@ -402,7 +403,7 @@
           sessionStorage.setItem('token', data.token);
           sessionStorage.setItem('user', JSON.stringify(data.user));
           document.cookie = "auth_token=" + data.token + "; path=/; max-age=86400;";
-          showToast('Registration successful! Redirecting...', 'success');
+          showToast(t('Registration successful! Redirecting...'), 'success');
           setTimeout(() => { window.location.href = '/pending-verification'; }, 1500);
         } else {
           showToast(data.message || (data.errors ? Object.values(data.errors).flat().join('. ') : 'Error occurred'), 'error');

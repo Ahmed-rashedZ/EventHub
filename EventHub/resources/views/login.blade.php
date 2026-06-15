@@ -27,17 +27,17 @@
           src="/images/logo.png?v=3" alt="EventHub Logo"
           style="width: 95px; height: 95px; object-fit: contain; background: transparent !important;"></div>
 
-      <h2 class="auth-heading">Welcome back</h2>
-      <p class="auth-subheading">Sign in to your account to continue</p>
+      <h2 class="auth-heading"><script>document.write(t('Welcome back'))</script></h2>
+      <p class="auth-subheading"><script>document.write(t('Sign in to your account to continue'))</script></p>
 
       <form id="login-form" autocomplete="off">
         <div class="form-group">
-          <label class="form-label" for="email">Email Address</label>
+          <label class="form-label" for="email"><script>document.write(t('Email Address'))</script></label>
           <input id="email" type="email" class="form-control" placeholder="you@example.com" required
             autocomplete="off" />
         </div>
         <div class="form-group">
-          <label class="form-label" for="password">Password</label>
+          <label class="form-label" for="password"><script>document.write(t('Password'))</script></label>
           <input id="password" type="password" class="form-control" placeholder="••••••••" required
             autocomplete="new-password" />
         </div>
@@ -48,11 +48,11 @@
             <script>document.write(t('Forgot Password?'))</script>
           </a>
         </div>
-        <button type="submit" class="btn btn-primary btn-block" id="login-btn">Sign In</button>
+        <button type="submit" class="btn btn-primary btn-block" id="login-btn"><script>document.write(t('Sign In'))</script></button>
       </form>
 
       <div class="auth-footer">
-        Don't have an account? <a href="/register">Register</a>
+        <script>document.write(t("Don't have an account?"))</script> <a href="/register"><script>document.write(t('Register'))</script></a>
       </div>
     </div>
   </div>
@@ -103,7 +103,7 @@
       // إزالة class الخطأ عند محاولة جديدة
       passwordInput.classList.remove('error');
 
-      btn.textContent = 'Signing in…'; btn.disabled = true;
+      btn.textContent = t('Signing in…'); btn.disabled = true;
 
       const res = await api.post('/login', {
         email: document.getElementById('email').value,
@@ -127,8 +127,8 @@
       } else {
         // إضافة border أحمر على حقل كلمة المرور عند فشل تسجيل الدخول
         passwordInput.classList.add('error');
-        showToast(res.data?.message || 'Login failed', 'error');
-        btn.textContent = 'Sign In'; btn.disabled = false;
+        showToast(res.data?.message || t('Login failed'), 'error');
+        btn.textContent = t('Sign In'); btn.disabled = false;
       }
     });
   </script>

@@ -36,7 +36,7 @@ public function register(Request $request)
         'password' => 'required|string|min:8',
         'role' => 'nullable|string|in:Attendee,Assistant',
     ], [
-        'email.unique' => 'البريد الإلكتروني مأخوذ بالفعل',
+        'email.unique' => 'Email Address is already taken',
     ]);
 
     $role = $request->role ?? 'Attendee';
@@ -86,28 +86,28 @@ public function registerPartner(Request $request)
 
     // Custom Arabic error messages
     $messages = [
-        'doc_commercial_register.required' => 'حقل السجل التجاري مطلوب',
-        'doc_commercial_register.file' => 'الملف يجب أن يكون من نوع',
-        'doc_commercial_register.mimes' => 'الملف يجب أن يكون من نوع: pdf, jpg, jpeg, png',
-        'doc_commercial_register.max' => 'الملفات يجب ان لا تتجاوز 5 ميغابايت',
+        'doc_commercial_register.required' => 'Commercial Register is required',
+        'doc_commercial_register.file' => 'The file must be of a valid type',
+        'doc_commercial_register.mimes' => 'The file must be of type: pdf, jpg, jpeg, png',
+        'doc_commercial_register.max' => 'Files must not exceed 5 MB',
 
-        'doc_tax_number.required' => 'حقل الرقم الضريبي مطلوب',
-        'doc_tax_number.file' => 'الملف يجب أن يكون من نوع',
-        'doc_tax_number.mimes' => 'الملف يجب أن يكون من نوع: pdf, jpg, jpeg, png',
-        'doc_tax_number.max' => 'الملفات يجب ان لا تتجاوز 5 ميغابايت',
+        'doc_tax_number.required' => 'Tax Number Certificate is required',
+        'doc_tax_number.file' => 'The file must be of a valid type',
+        'doc_tax_number.mimes' => 'The file must be of type: pdf, jpg, jpeg, png',
+        'doc_tax_number.max' => 'Files must not exceed 5 MB',
 
-        'doc_articles_of_association.required' => 'حقل النظام الأساسي مطلوب',
-        'doc_articles_of_association.file' => 'الملف يجب أن يكون من نوع',
-        'doc_articles_of_association.mimes' => 'الملف يجب أن يكون من نوع: pdf, jpg, jpeg, png',
-        'doc_articles_of_association.max' => 'الملفات يجب ان لا تتجاوز 5 ميغابايت',
+        'doc_articles_of_association.required' => 'Articles of Association is required',
+        'doc_articles_of_association.file' => 'The file must be of a valid type',
+        'doc_articles_of_association.mimes' => 'The file must be of type: pdf, jpg, jpeg, png',
+        'doc_articles_of_association.max' => 'Files must not exceed 5 MB',
 
-        'doc_practice_license.required' => 'حقل رخصة الممارسة مطلوب',
-        'doc_practice_license.file' => 'الملف يجب أن يكون من نوع',
-        'doc_practice_license.mimes' => 'الملف يجب أن يكون من نوع: pdf, jpg, jpeg, png',
-        'doc_practice_license.max' => 'الملفات يجب ان لا تتجاوز 5 ميغابايت',
+        'doc_practice_license.required' => 'Practice License is required',
+        'doc_practice_license.file' => 'The file must be of a valid type',
+        'doc_practice_license.mimes' => 'The file must be of type: pdf, jpg, jpeg, png',
+        'doc_practice_license.max' => 'Files must not exceed 5 MB',
 
-        'email.unique' => 'البريد الإلكتروني مأخوذ بالفعل',
-        'account.suspended' => 'تم تعليق حسابك. يرجى الاتصال بالدعم',
+        'email.unique' => 'Email Address is already taken',
+        'account.suspended' => 'Your account has been suspended. Please contact support',
     ];
 
     $request->validate($rules, $messages);
@@ -182,7 +182,7 @@ public function registerPartner(Request $request)
     $platform = $request->input('platform', 'mobile'); // Default to mobile if not specified
 
     if (!Auth::attempt($credentials)) {
-        return response()->json(['message' => 'بيانات اعتماد غير صحيحة'], 401);
+        return response()->json(['message' => 'Invalid credentials'], 401);
     }
 
     /** @var \App\Models\User $user */
@@ -190,7 +190,7 @@ public function registerPartner(Request $request)
 
     if (!$user->is_active) {
         Auth::logout();
-        return response()->json(['message' => 'تم تعليق حسابك. يرجى الاتصال بالدعم'], 403);
+        return response()->json(['message' => 'Your account has been suspended. Please contact support'], 403);
     }
 
     // ── Platform-Based Role Restrictions ──
@@ -200,7 +200,7 @@ public function registerPartner(Request $request)
     if ($platform === 'web' && in_array($user->role, $mobileRoles)) {
         Auth::logout();
         return response()->json([
-            'message' => 'هذا الحساب مخصص لتطبيق الموبايل فقط. لا يمكنك تسجيل الدخول عبر الويب.',
+            'message' => 'This account is for the mobile app only. You cannot log in via the web.',
             'error_code' => 'MOBILE_ONLY_ACCOUNT'
         ], 403);
     }
@@ -208,7 +208,7 @@ public function registerPartner(Request $request)
     if ($platform === 'mobile' && in_array($user->role, $webRoles)) {
         Auth::logout();
         return response()->json([
-            'message' => 'حسابات الويب لا يمكنها تسجيل الدخول عبر تطبيق الموبايل.',
+            'message' => 'Web accounts cannot log in via the mobile app.',
             'error_code' => 'WEB_ONLY_ACCOUNT'
         ], 403);
     }

@@ -57,7 +57,7 @@
       </div>
 
       <div class="auth-footer" style="margin-top: 32px;">
-        Already have an account? <a href="/login">Sign in here</a>
+        <script>document.write(t('Already have an account?'))</script> <a href="/login"><script>document.write(t('Sign in here'))</script></a>
       </div>
     </div>
   </div>

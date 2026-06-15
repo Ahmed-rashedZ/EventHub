@@ -316,7 +316,7 @@
     document.getElementById('req-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('btn-submit');
-      btn.textContent = 'Sending...';
+      btn.textContent = t('Sending...');
       btn.disabled = true;
 
       const payload = {
@@ -327,13 +327,13 @@
       const res = await api.post('/sponsorship', payload);
 
       if (res.ok) {
-        showToast('Request sent directly to Event Manager!', 'success');
+        showToast(t('Request sent directly to Event Manager!'), 'success');
         closeModal();
       } else {
-        showToast(res.data?.message || 'Error sending request', 'error');
+        showToast(res.data?.message || t('Error sending request'), 'error');
       }
 
-      btn.textContent = 'Send Request';
+      btn.textContent = t('Send Request');
       btn.disabled = false;
     });
 
