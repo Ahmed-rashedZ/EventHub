@@ -106,6 +106,75 @@ const I18N_EN = {
   'Partners & Exhibitors': 'Partners & Exhibitors',
   'Join as an Event Manager, Sponsor, or Exhibiting Company. Your account will be reviewed and verified by our team.': 'Join as an Event Manager, Sponsor, or Exhibiting Company. Your account will be reviewed and verified by our team.',
   'Apply as Partner →': 'Apply as Partner →',
+
+  /* ── Notification Titles & Messages (Arabic → English) ── */
+  /* ExhibitionController */
+  'دعوة مشاركة في معرض 🏛️': 'Exhibition Participation Invitation 🏛️',
+  'دعوة مشاركة في معرض': 'Exhibition Participation Invitation',
+  'طلب مشاركة جديد في المعرض 🏪': 'New Exhibition Participation Request 🏪',
+  'طلب مشاركة جديد في المعرض': 'New Exhibition Participation Request',
+  'تم قبول طلبك في المعرض ✅': 'Your Exhibition Application Accepted ✅',
+  'تم قبول طلبك في المعرض': 'Your Exhibition Application Accepted',
+  'تم رفض طلبك في المعرض ❌': 'Your Exhibition Application Rejected ❌',
+  'تم رفض طلبك في المعرض': 'Your Exhibition Application Rejected',
+  'شركة قبلت الدعوة ✅': 'Company Accepted Invitation ✅',
+  'شركة قبلت الدعوة': 'Company Accepted Invitation',
+  'شركة رفضت الدعوة ❌': 'Company Rejected Invitation ❌',
+  'شركة رفضت الدعوة': 'Company Rejected Invitation',
+  'تلقيت دعوة مشاركة في معرض': 'You received an exhibition participation invitation for',
+  'قدّم طلب مشاركة في معرض': 'submitted an exhibition participation request for',
+  'طلب مشاركتك في معرض': 'Your exhibition participation request for',
+  'دعوة المشاركة في معرض': 'the exhibition participation invitation for',
+  'تم توليد عقد المشاركة الأولي تلقائياً': 'Initial participation agreement generated automatically',
+
+  /* AgreementController */
+  'عقد جديد 📋': 'New Agreement 📋',
+  'عقد جديد': 'New Agreement',
+  'عقد محدث': 'Updated Agreement',
+  'عقد محدوث 📝': 'Updated Agreement 📝',
+  'عقد محدوث': 'Updated Agreement',
+  'عقد رعاية محدث 📝': 'Updated Sponsorship Agreement 📝',
+  'عقد رعاية محدث': 'Updated Sponsorship Agreement',
+  'تم إنشاء عقد لحدث': 'An agreement was created for event',
+  'يرجى مراجعة العقد وتعديل البنود.': 'Please review the agreement and adjust the terms.',
+  'تم توليد العقد الأولي تلقائياً': 'Initial agreement generated automatically',
+  'رفع نسخة جديدة من عقد': 'uploaded a new version of the agreement for',
+  'رد على العقد': 'Agreement Response',
+  'قبل العقد': 'accepted the agreement',
+  'رفض العقد': 'rejected the agreement',
+  'طلب تعديلات': 'requested revisions',
+  'تم إلغاء الاتفاقية 🚫': 'Agreement Cancelled 🚫',
+  'تم إلغاء الاتفاقية': 'Agreement Cancelled',
+  'ألغى الاتفاقية لحدث': 'cancelled the agreement for event',
+
+  /* AssistantController */
+  'طلب مساعدة جديد': 'New Assistance Request',
+  'لتعمل كمساعد في الحدث:': 'to work as an assistant at the event:',
+  'تم إلغاء تعيينك': 'Your Assignment Cancelled',
+  'لقد تم إلغاء تعيينك كمساعد في الحدث:': 'Your assistant assignment for the event has been cancelled:',
+
+  /* EventController */
+  'فعالية جديدة تهمك! 🎉': 'New Event For You! 🎉',
+  'فعالية جديدة تهمك!': 'New Event For You!',
+  'تم نشر فعالية جديدة': 'A new event has been published',
+  'من نوع': 'of type',
+
+  /* Fragment/Helper Mappings */
+  'من': 'from',
+  'قبلت': 'accepted',
+  'رفضت': 'rejected',
+  'لحدث': 'for event',
+  ' لحدث "': ' for event "',
+  'بينك وبين': 'between you and',
+  'تمت دعوتك من قبل': 'You have been invited by',
+  'تعارض صيانة قاعة': 'Venue Maintenance Conflict',
+  'تعارض صيانة قاعة ⚠️': 'Venue Maintenance Conflict ⚠️',
+  'تم جدولة صيانة لقاعة': 'Maintenance has been scheduled for venue',
+  'لديك': 'You have',
+  'فعالية متأثرة': 'affected event(s)',
+  'يرجى مراجعة التواريخ والتواصل مع الإدارة.': 'Please review the dates and contact the administration.',
+  'السبب:': 'Reason:',
+  'السبب': 'Reason',
 };
 
 const I18N_AR = {
@@ -444,6 +513,97 @@ const I18N_AR = {
   'Nov': 'نوفمبر',
   'Dec': 'ديسمبر',
 
+  /* Notification message fragments (EN→AR for Arabic mode) */
+  /* Titles */
+  'New Event Pending': 'فعالية جديدة قيد الانتظار',
+  'Event Approved ✅': 'تمت اعتماد الفعالية ✅',
+  'Event Approved': 'تمت اعتماد الفعالية',
+  'Event Rejected ❌': 'تم رفض الفعالية ❌',
+  'Event Rejected': 'تم رفض الفعالية',
+  'Event Updated 🔄': 'تم تحديث الفعالية 🔄',
+  'Event Updated': 'تم تحديث الفعالية',
+  'Cancellation Requested ⚠️': 'طلب إلغاء الفعالية ⚠️',
+  'Cancellation Requested': 'طلب إلغاء الفعالية',
+  'Cancellation Approved 🚫': 'تم قبول إلغاء الفعالية 🚫',
+  'Cancellation Approved': 'تم قبول إلغاء الفعالية',
+  'Cancellation Rejected ⚠️': 'تم رفض إلغاء الفعالية ⚠️',
+  'Cancellation Rejected': 'تم رفض إلغاء الفعالية',
+  'New Ticket Booked 🎟️': 'تم حجز تذكرة جديدة 🎟️',
+  'New Ticket Booked': 'تم حجز تذكرة جديدة',
+  'Document Update Rejected ❌': 'تم رفض تحديث المستندات ❌',
+  'Document Update Rejected': 'تم رفض تحديث المستندات',
+  'Document Update Approved ✅': 'تم قبول تحديث المستندات ✅',
+  'Document Update Approved': 'تم قبول تحديث المستندات',
+  'Verification Approved ✅': 'تم اعتماد الحساب ✅',
+  'Verification Approved': 'تم اعتماد الحساب',
+  'Verification Rejected ❌': 'تم رفض التحقق من الحساب ❌',
+  'Verification Rejected': 'تم رفض التحقق من الحساب',
+  'Documents Need Revision ⚠️': 'المستندات تحتاج إلى مراجعة ⚠️',
+  'Documents Need Revision': 'المستندات تحتاج إلى مراجعة',
+  'New Rating Received': 'تم تلقي تقييم جديد',
+  'Event Review Required 📝': 'مراجعة الفعالية مطلوبة 📝',
+  'Event Review Required': 'مراجعة الفعالية مطلوبة',
+  'Sponsorship accepted ✅': 'تم قبول الرعاية ✅',
+  'Sponsorship accepted': 'تم قبول الرعاية',
+  'Sponsorship rejected ❌': 'تم رفض الرعاية ❌',
+  'Sponsorship rejected': 'تم رفض الرعاية',
+  'Invitation accepted ✅': 'تم قبول الدعوة ✅',
+  'Invitation accepted': 'تم قبول الدعوة',
+  'Invitation rejected ❌': 'تم رفض الدعوة ❌',
+  'Invitation rejected': 'تم رفض الدعوة',
+
+  /* Messages & Fragments */
+  'booked a ticket for': 'حجز تذكرة لـ',
+  'booked a ticket for "': 'حجز تذكرة لـ "',
+  'sent a sponsorship request for': 'أرسل طلب رعاية لـ',
+  'You received a sponsorship invitation for': 'تلقيت دعوة رعاية للفعالية',
+  'has accepted your sponsorship invitation for': 'قبل دعوة رعايتك للفعالية',
+  'has rejected your sponsorship invitation for': 'رفض دعوة رعايتك للفعالية',
+  'Your sponsorship request for': 'طلب رعايتك للفعالية',
+  'has registered and is waiting for verification': 'سجّل وينتظر التحقق',
+  'is pending admin approval': 'بانتظار موافقة الإدارة',
+  'has been approved': 'تمت الموافقة عليه',
+  'has been accepted': 'تم قبوله',
+  'has been rejected': 'تم رفضه',
+  'Your event "': 'فعاليتك "',
+  'Your event': 'فعاليتك',
+  'received a': 'حصلت على',
+  'star rating': 'نجوم كتقييم',
+  'rating': 'تقييم',
+  '-star rating': ' نجوم كتقييم',
+  'has been approved and is now live!': 'تمت الموافقة عليها وهي الآن مباشرة!',
+  'has been approved and is now live.': 'تمت الموافقة عليها وهي الآن مباشرة.',
+  'has been approved and is now live': 'تمت الموافقة عليها وهي الآن مباشرة',
+  'is now live!': 'هي الآن مباشرة!',
+  'is now live': 'هي الآن مباشرة',
+  'and is now live!': 'وهي الآن مباشرة!',
+  'and is now live': 'وهي الآن مباشرة',
+  'needs changes:': 'تحتاج إلى تعديلات:',
+  'needs changes': 'تحتاج إلى تعديلات',
+  'All your documents have been approved! You now have full access to the platform.': 'تمت الموافقة على جميع مستنداتك! لديك الآن صلاحية الوصول الكاملة إلى المنصة.',
+  'All your documents have been approved!': 'تمت الموافقة على جميع مستنداتك!',
+  'You now have full access to the platform.': 'لديك الآن صلاحية الوصول الكاملة إلى المنصة.',
+  'Some documents were rejected:': 'تم رفض بعض المستندات:',
+  'Some documents were rejected': 'تم رفض بعض المستندات',
+  'from': 'من',
+  'Event "': 'الفعالية "',
+  'was submitted by': 'تم تقديمها بواسطة',
+  'and needs your approval.': 'وتحتاج إلى موافقة.',
+  'and needs your approval': 'وتحتاج إلى موافقة',
+  'was updated by': 'تم تحديثها بواسطة',
+  'after review.': 'بعد المراجعة.',
+  'after review': 'بعد المراجعة',
+  'requested to cancel': 'طلب إلغاء',
+  'Your cancellation request for': 'طلب إلغاء فعاليتك',
+  'was rejected:': 'تم رفضه:',
+  'was rejected': 'تم رفضه',
+  'Your updated documents were rejected:': 'تم رفض مستنداتك المحدثة:',
+  'Your updated documents were rejected': 'تم رفض مستنداتك المحدثة',
+  'Your updated documents have been approved:': 'تم اعتماد مستنداتك المحدثة:',
+  'Your updated documents have been approved': 'تم اعتماد مستنداتك المحدثة',
+  'Your account verification request was rejected.': 'تم رفض طلب التحقق من حسابك.',
+
+
   /* ── Filter / Sort Controls ───────────────────────────── */
   'All Status': 'الكل',
   'Pending': 'قيد الانتظار',
@@ -574,10 +734,22 @@ const I18N_AR = {
   'has been approved': 'تمت الموافقة عليه',
   'has been accepted': 'تم قبوله',
   'has been rejected': 'تم رفضه',
-  'Agreement cancelled. Reason:': 'تم إلغاء الاتفاقية. السبب:',
-  'Agreement accepted by': 'تمت قبول الاتفاقية من قِبل',
-  'Agreement rejected by': 'تم رفض الاتفاقية من قِبل',
-  'submitted a new version of the agreement for': 'أرسل نسخة جديدة من الاتفاقية لـ',
+  'Agreement Cancelled 🚫': 'تم إلغاء الاتفاقية 🚫',
+  'Agreement Cancelled': 'تم إلغاء الاتفاقية',
+  ' cancelled the agreement for event "': ' ألغى الاتفاقية لحدث "',
+  '".\nReason: "': '".\nالسبب: "',
+  '🚫 Agreement cancelled: ': '🚫 تم إلغاء الاتفاقية: ',
+  'Agreement Response ': 'رد على العقد ',
+  ' accepted the agreement': ' قبل العقد',
+  ' rejected the agreement': ' رفض العقد',
+  ' requested revisions': ' طلب تعديلات',
+  ' for event "': ' لحدث "',
+  ' uploaded a new version of the agreement for "': ' رفع نسخة جديدة من عقد "',
+  'Updated Agreement': 'عقد محدث',
+  '". Please review the agreement and adjust the terms.': '". يرجى مراجعة العقد وتعديل البنود.',
+  'An agreement was created for event "': 'تم إنشاء عقد لحدث "',
+  'New Agreement 📋': 'عقد جديد 📋',
+  'Initial agreement generated automatically': 'تم توليد العقد الأولي تلقائياً',
 
 
   /* ── AI Attendance Prediction ───────────────────────────── */
@@ -1937,6 +2109,49 @@ const I18N_AR = {
   'Company category does not match this exhibition': 'فئة الشركة لا تتطابق مع فئة هذا المعرض',
   'Company is not available': 'الشركة غير متاحة حالياً',
   'An application already exists between this event and company': 'يوجد طلب مشاركة بالفعل بين هذه الفعالية والشركة',
+
+  /* ── Extra success/error & notification keys ── */
+  'All documents approved. User verified.': 'تم قبول جميع المستندات. تم التحقق من حساب المستخدم.',
+  'Review submitted. Partner notified of rejected documents.': 'تم تقديم المراجعة. تم إخطار الشريك بالمستندات المرفوضة.',
+  'User verification rejected.': 'تم رفض طلب التحقق من حساب المستخدم.',
+  'Documents submitted for review successfully.': 'تم تقديم المستندات للمراجعة بنجاح.',
+  'Venue name already exists': 'اسم القاعة/المكان موجود بالفعل',
+  'Venue deletion is disabled to preserve archive records': 'تم تعطيل حذف القاعات للحفاظ على السجلات المؤرشفة',
+  'Cannot schedule maintenance — there are existing event bookings in this date range.': 'لا يمكن جدولة الصيانة — هناك حجوزات فعاليات قائمة في هذا النطاق الزمني.',
+  'Maintenance period deleted': 'تم حذف فترة الصيانة',
+  'Only attendees can book tickets': 'يمكن للحضور فقط حجز التذاكر',
+  'Event is not available for booking': 'الفعالية غير متاحة للحجز',
+  'Ticket sales are currently suspended for this event.': 'مبيعات التذاكر معلقة حالياً لهذه الفعالية.',
+  'You already have a ticket for this event': 'لديك تذكرة بالفعل لهذه الفعالية',
+  'Event is fully booked': 'الفعالية ممتلئة بالكامل',
+  'Sponsorships can only be created for approved events': 'يمكن إنشاء الرعايات فقط للفعاليات المعتمدة',
+  'Event not found or not yours': 'الفعالية غير موجودة أو ليست تابعة لك',
+  'Sponsor is not available': 'الراعي غير متاح حالياً',
+  'A sponsorship request already exists between this event and sponsor': 'يوجد طلب رعاية بالفعل بين هذه الفعالية والراعي',
+  'You must be available to send requests': 'يجب أن تكون حالتك متاحاً لإرسال الطلبات',
+  'This event is currently closed to new sponsorship requests.': 'هذه الفعالية مغلقة حالياً لطلبات الرعاية الجديدة.',
+  'You have already sent a request for this event': 'لقد أرسلت طلباً بالفعل لهذه الفعالية',
+  'Only the Event Manager can respond to this request': 'يمكن لمدير الفعاليات فقط الرد على هذا الطلب',
+  'Only the Sponsor can respond to this request': 'يمكن للراعي فقط الرد على هذا الطلب',
+  'Not your request': 'الطلب ليس تابعاً لك',
+  'Can only update tier for accepted sponsorships': 'يمكن فقط تحديث مستوى الرعايات المقبولة',
+  'Sponsor rank updated successfully': 'تم تحديث رتبة/مستوى الراعي بنجاح',
+  'Marked as read': 'تم وضع علامة مقروء',
+  'All notifications marked as read': 'تم تحديد جميع الإشعارات كمقروءة',
+  'FCM token saved': 'تم حفظ رمز FCM',
+  'Zone deleted': 'تم حذف المنطقة',
+  'Cannot delete allocated booth': 'لا يمكن حذف جناح تم تخصيصه',
+  'Booth deleted': 'تم حذف الجناح',
+  'Exhibition layout cannot be modified with less than 14 days remaining before the event.': 'لا يمكن تعديل مخطط المعرض مع بقاء أقل من 14 يوماً على الفعالية.',
+  'This event is not an exhibition': 'هذه الفعالية ليست معرضاً',
+  'Applications can only be submitted for approved events': 'لا يمكن تقديم الطلبات إلا للفعاليات المعتمدة',
+  'Event Agenda Updated 🔄': 'تم تحديث أجندة الفعالية 🔄',
+  'Event Agenda Updated': 'تم تحديث أجندة الفعالية',
+  'agenda was updated by': 'تم تحديث الأجندة بواسطة',
+  'and needs re-approval.': 'وتحتاج إلى إعادة اعتماد.',
+  'and needs re-approval': 'وتحتاج إلى إعادة اعتماد',
+  'needs re-approval.': 'وتحتاج إلى إعادة اعتماد.',
+  'needs re-approval': 'وتحتاج إلى إعادة اعتماد',
 };
 
 /* ─────────────────────────────────────────────────────────────────
@@ -1945,6 +2160,7 @@ const I18N_AR = {
 for (const [en, ar] of Object.entries(I18N_AR)) {
   if (ar.trim().length <= 1) continue;
   if (ar === 'معرض' || ar === 'المعرض' || ar === 'المعارض') continue;
+  if (ar.trim() === 'من') continue;
   I18N_EN[ar] = en;
 }
 
@@ -1952,6 +2168,10 @@ for (const [en, ar] of Object.entries(I18N_AR)) {
 I18N_EN['مدير الفعاليات'] = 'Event Manager';
 I18N_EN['مدير الفعالية'] = 'Event Manager';
 I18N_EN['مدير فعاليات'] = 'Event Manager';
+I18N_EN['من'] = 'from';
+I18N_EN[' من '] = ' from ';
+I18N_EN['يرجى مراجعة التعديلات.'] = 'Please review the revisions.';
+I18N_EN['يرجى مراجعة التعديلات'] = 'Please review the revisions';
 
 /* ─────────────────────────────────────────────────────────────────
    Event Type display helper
@@ -2010,6 +2230,16 @@ function translateText(text) {
   const dict = lang === 'ar' ? I18N_AR : I18N_EN;
   if (!dict) return text;
 
+  // Custom rule for assistant request notifications to make them grammatically correct in English
+  if (lang === 'en' && text.startsWith('دعاك ') && text.includes(' لتعمل كمساعد في الحدث')) {
+    const separator = text.includes(' لتعمل كمساعد في الحدث:') ? ' لتعمل كمساعد في الحدث:' : ' لتعمل كمساعد في الحدث';
+    const parts = text.split(separator);
+    const name = parts[0].replace('دعاك ', '').trim();
+    const translatedName = dict[name] || name;
+    const eventPart = separator.endsWith(':') ? `:${parts[1]}` : parts[1];
+    return `${translatedName} invited you to work as an assistant at the event${eventPart}`;
+  }
+
   // Exact match first
   if (dict[text]) return dict[text];
 
@@ -2031,6 +2261,14 @@ function translateText(text) {
     updated = updatedWithNoEmails;
   }
 
+  // Protect quoted strings (user-generated content like event names, reasons)
+  const quotedStrings = [];
+  updated = updated.replace(/"([^"]*)"/g, function(match) {
+    quotedStrings.push(match);
+    return '__QUOTED_TOKEN_' + (quotedStrings.length - 1) + '__';
+  });
+  const hasQuoted = quotedStrings.length > 0;
+
   const hasEventHub = updated.includes('EventHub');
   if (hasEventHub) {
     updated = updated.split('EventHub').join('__EHUB_TOKEN__');
@@ -2048,9 +2286,9 @@ function translateText(text) {
 
   for (let i = 0; i < entries.length; i++) {
     const [key, val] = entries[i];
-    const isWord = /^[a-zA-Z0-9_-]+$/.test(key);
+    const isWord = /^[\p{L}0-9_-]+$/u.test(key);
     if (isWord) {
-      const regex = new RegExp('\\b' + key + '\\b', 'g');
+      const regex = new RegExp('(?<![\\p{L}0-9_-])' + key + '(?![\\p{L}0-9_-])', 'ug');
       const nextUpdated = updated.replace(regex, val);
       if (nextUpdated !== updated) {
         updated = nextUpdated;
@@ -2066,6 +2304,13 @@ function translateText(text) {
 
   if (hasEventHub) {
     updated = updated.split('__EHUB_TOKEN__').join('EventHub');
+  }
+
+  // Restore protected quoted strings (user-generated content)
+  if (hasQuoted) {
+    for (let i = 0; i < quotedStrings.length; i++) {
+      updated = updated.split('__QUOTED_TOKEN_' + i + '__').join(quotedStrings[i]);
+    }
   }
 
   // Restore protected email addresses
