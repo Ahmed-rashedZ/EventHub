@@ -252,6 +252,7 @@ public function updateProfile(Request $request)
         'name' => 'required|string|max:255',
         'email' => 'required|string|email|max:255|unique:users,email,' . $request->user()->id,
         'password' => 'nullable|string|min:8',
+        'current_password' => 'nullable|string',
         'bio' => 'nullable|string',
         'logo' => 'nullable|image|max:2048', // 2MB max image
         'company_description' => 'nullable|string',
@@ -266,6 +267,13 @@ public function updateProfile(Request $request)
     $user->name = $request->name;
     $user->email = $request->email;
     if ($request->filled('password')) {
+        // Verify current password before allowing change
+        if (!$request->filled('current_password')) {
+            return response()->json(['message' => 'Current password is required'], 422);
+        }
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json(['message' => 'Current password is incorrect'], 422);
+        }
         $user->password = Hash::make($request->password);
     }
     if ($request->has('interests')) {
