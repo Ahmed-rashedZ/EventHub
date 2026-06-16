@@ -98,7 +98,7 @@ def train_model() -> None:
         sys.exit(1)
 
     df = pd.read_csv(DATASET_PATH)
-    print(f"[INFO] Loaded dataset  →  {len(df)} rows, {len(df.columns)} columns")
+    print(f"[INFO] Loaded dataset  ->  {len(df)} rows, {len(df.columns)} columns")
 
     # 2. Preprocess -----------------------------------------------------------
     X, y = preprocess(df)
@@ -114,16 +114,16 @@ def train_model() -> None:
     # 4. Train Point Estimate Model -------------------------------------------
     model = GradientBoostingRegressor(loss='squared_error', **GB_PARAMS)
     model.fit(X_train, y_train)
-    print("[INFO] ✅ Point estimate model trained.")
+    print("[INFO] Point estimate model trained.")
 
     # 5. Train Quantile Models for Prediction Intervals -----------------------
     model_lower = GradientBoostingRegressor(loss='quantile', alpha=0.15, **GB_PARAMS)
     model_lower.fit(X_train, y_train)
-    print("[INFO] ✅ Lower-bound model (15th percentile) trained.")
+    print("[INFO] Lower-bound model (15th percentile) trained.")
 
     model_upper = GradientBoostingRegressor(loss='quantile', alpha=0.85, **GB_PARAMS)
     model_upper.fit(X_train, y_train)
-    print("[INFO] ✅ Upper-bound model (85th percentile) trained.")
+    print("[INFO] Upper-bound model (85th percentile) trained.")
 
     # 6. Evaluate on test set -------------------------------------------------
     y_pred_log = model.predict(X_test)
@@ -139,7 +139,7 @@ def train_model() -> None:
     within_30 = np.mean(np.abs((y_actual[mask] - y_pred[mask]) / y_actual[mask]) <= 0.30) * 100
 
     print(f"\n{'='*60}")
-    print(f"  📊  Test Set Evaluation (20% holdout)")
+    print(f"  Test Set Evaluation (20% holdout)")
     print(f"{'='*60}")
     print(f"  MAE  (Mean Absolute Error):     {mae:,.0f}")
     print(f"  RMSE (Root Mean Squared Error):  {rmse:,.0f}")
@@ -164,10 +164,10 @@ def train_model() -> None:
     # Clean up old linear regression model
     if os.path.exists(OLD_MODEL_PATH):
         os.remove(OLD_MODEL_PATH)
-        print("[INFO] 🗑️  Removed old linear regression model.")
+        print("[INFO] Removed old linear regression model.")
 
-    print(f"[INFO] Models saved  →  {MODEL_DIR}/")
-    print("[INFO] Training complete. ✅")
+    print(f"[INFO] Models saved  ->  {MODEL_DIR}/")
+    print("[INFO] Training complete.")
 
 
 # ---------------------------------------------------------------------------

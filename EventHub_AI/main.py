@@ -98,7 +98,7 @@ def startup_event() -> None:
     """Load models into memory when the server starts."""
     try:
         _load_model()
-        print("[INFO] All models loaded into memory. ✅")
+        print("[INFO] All models loaded into memory. [OK]")
     except FileNotFoundError as exc:
         print(f"[WARNING] {exc}")
 
