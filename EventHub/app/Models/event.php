@@ -143,9 +143,9 @@ class Event extends Model
     public function getTimeStatusAttribute()
     {
         $now = now();
-        if ($now < $this->start_time) {
+        if ($this->start_time && $now < $this->start_time) {
             return 'upcoming';
-        } elseif ($now > $this->end_time) {
+        } elseif ($this->end_time && $now > $this->end_time) {
             return 'ended';
         } else {
             return 'live';
