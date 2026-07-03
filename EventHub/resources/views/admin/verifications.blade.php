@@ -137,6 +137,35 @@
       box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
     }
     .direct-reject-area textarea::placeholder { color: rgba(239,68,68,.4); }
+
+    /* ── Scrollable Modal Styles ── */
+    #doc-modal .modal {
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      padding: 0 !important;
+    }
+    #doc-modal .modal-header {
+      padding: 24px 32px 16px;
+      margin-bottom: 0;
+      border-bottom: 1px solid var(--border);
+    }
+    #doc-cards-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 32px !important;
+    }
+    #doc-modal .modal-footer {
+      padding: 16px 32px 24px;
+      margin-top: 0;
+      border-top: 1px solid var(--border);
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 0 0 24px 24px;
+    }
+    #doc-modal .direct-reject-area {
+      margin: 0 32px 24px;
+      padding: 16px;
+    }
   </style>
 <link rel="icon" href="/images/logo.png" type="image/png">
 </head>

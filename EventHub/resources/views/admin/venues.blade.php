@@ -463,8 +463,8 @@
       evening_end: document.getElementById('v-evening-end').value
     };
     const res = editingId ? await api.put(`/venues/${editingId}`, body) : await api.post('/venues', body);
-    if (res.ok) { showToast(editingId ? 'Venue updated!' : 'Venue added!', 'success'); closeModal(); loadVenues(); }
-    else showToast(res.data?.message || 'Error', 'error');
+    if (res.ok) { showToast(editingId ? t('Venue updated!') : t('Venue added!'), 'success'); closeModal(); loadVenues(); }
+    else showToast(t(res.data?.message || 'Error'), 'error');
   });
 
   // ── Maintenance Modal ─────────────────────────────────────────────────
@@ -618,7 +618,7 @@
           }
         }, 8000);
       } else {
-        showToast(data.message || 'Error scheduling maintenance', 'error');
+        showToast(t(data.message || 'Error scheduling maintenance'), 'error');
       }
     }
   }
@@ -636,7 +636,7 @@
       adminVenueBookings = bookRes.ok ? bookRes.data : [];
       initMaintFlatpickrs();
     } else {
-      showToast(res.data?.message || 'Error', 'error');
+      showToast(t(res.data?.message || 'Error'), 'error');
     }
   }
 

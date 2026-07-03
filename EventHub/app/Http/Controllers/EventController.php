@@ -80,6 +80,29 @@ class EventController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
+        // Block event creation if partner documents are not fully verified
+        if ($request->user()->verification_status !== 'verified') {
+            return response()->json([
+                'message' => 'لا يمكنك إنشاء فعالية حتى يتم اعتماد جميع وثائقك من قبل الإدارة.',
+                'verification_status' => $request->user()->verification_status,
+            ], 403);
+        }
+
+        // Even if account status is verified, check if any individual required document is rejected or not approved
+        $requiredDocs = ['commercial_register', 'tax_number', 'articles_of_association', 'practice_license'];
+        $user = $request->user();
+        $user->load('documents');
+
+        foreach ($requiredDocs as $docType) {
+            $doc = $user->documents->firstWhere('document_type', $docType);
+            if (!$doc || $doc->status !== 'approved') {
+                return response()->json([
+                    'message' => 'لا يمكنك إنشاء فعالية لوجود وثائق مرفوضة أو غير معتمدة. يرجى مراجعة حالة وثائقك وإعادة رفعها.',
+                    'verification_status' => 'document_unapproved',
+                ], 403);
+            }
+        }
+
         $request->validate([
             'title'              => 'required|string|max:255',
             'description'        => 'required|string',

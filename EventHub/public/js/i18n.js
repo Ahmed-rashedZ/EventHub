@@ -175,6 +175,8 @@ const I18N_EN = {
   'يرجى مراجعة التواريخ والتواصل مع الإدارة.': 'Please review the dates and contact the administration.',
   'السبب:': 'Reason:',
   'السبب': 'Reason',
+  'لا يمكنك إنشاء فعالية حتى يتم اعتماد جميع وثائقك من قبل الإدارة.': 'You cannot create events until all your documents are approved by the administration.',
+  'لا يمكنك إنشاء فعالية لوجود وثائق مرفوضة أو غير معتمدة. يرجى مراجعة حالة وثائقك وإعادة رفعها.': 'You cannot create events because some documents are rejected or not approved. Please check your document status and re-upload them.',
 };
 
 const I18N_AR = {
@@ -468,6 +470,14 @@ const I18N_AR = {
   'End Date': 'تاريخ الانتهاء',
   'Select start date...': 'اختر تاريخ البدء...',
   'Select end date...': 'اختر تاريخ الانتهاء...',
+  'Please select both start and end dates': 'يرجى تحديد تاريخي البدء والانتهاء',
+  'Maintenance period scheduled!': 'تمت جدولة فترة الصيانة بنجاح!',
+  'Are you sure you want to remove this maintenance period?': 'هل أنت متأكد من إزالة فترة الصيانة هذه؟',
+  'Maintenance period removed': 'تمت إزالة فترة الصيانة بنجاح',
+  'day': 'يوم',
+  'days': 'أيام',
+  'Error scheduling maintenance': 'حدث خطأ أثناء جدولة الصيانة',
+  'Error': 'خطأ',
   'Booked (Event)': 'محجوز (فعالية)',
   'Maintenance': 'صيانة',
   'Today': 'اليوم',
@@ -2152,6 +2162,11 @@ const I18N_AR = {
   'and needs re-approval': 'وتحتاج إلى إعادة اعتماد',
   'needs re-approval.': 'وتحتاج إلى إعادة اعتماد.',
   'needs re-approval': 'وتحتاج إلى إعادة اعتماد',
+  'The doc commercial register field must not be greater than 5120 kilobytes.': 'يجب ألا يتجاوز حجم السجل التجاري 5 ميجابايت.',
+  'The doc tax number field must not be greater than 5120 kilobytes.': 'يجب ألا يتجاوز حجم شهادة الرقم الضريبي 5 ميجابايت.',
+  'The doc articles of association field must not be greater than 5120 kilobytes.': 'يجب ألا يتجاوز حجم عقد التأسيس 5 ميجابايت.',
+  'The doc practice license field must not be greater than 5120 kilobytes.': 'يجب ألا يتجاوز حجم رخصة مزاولة المهنة 5 ميجابايت.',
+  'The span between first and last day cannot exceed 14 days.': 'لا يمكن أن تتجاوز الفترة بين اليوم الأول والأخير 14 يوماً.',
 };
 
 /* ─────────────────────────────────────────────────────────────────
