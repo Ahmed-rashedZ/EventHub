@@ -179,13 +179,6 @@ class AnalyticsController extends Controller
         }
 
         $users = User::with('profile')
-            ->where(function ($q) {
-                $q->whereIn('role', ['Admin', 'Attendee', 'Assistant'])
-                  ->orWhere(function ($q2) {
-                      $q2->whereIn('role', ['Event Manager', 'Sponsor', 'Company'])
-                         ->where('verification_status', 'verified');
-                  });
-            })
             ->orderBy('created_at', 'desc')
             ->get();
 

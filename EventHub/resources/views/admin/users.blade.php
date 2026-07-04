@@ -24,6 +24,31 @@
       </div>
     </div>
 
+    <!-- Status Legend -->
+    <div class="card" style="margin-bottom:16px; padding: 12px 18px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: 8px;">
+      <span style="font-size: 0.82rem; color: var(--text-secondary); font-weight: 600;"><script>document.write(t('Status Legend:'))</script></span>
+      <div style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--text-muted);">
+        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #10b981;"></span>
+        <span><script>document.write(t('Active / Verified'))</script></span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--text-muted);">
+        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #f59e0b;"></span>
+        <span><script>document.write(t('Pending Review'))</script></span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--text-muted);">
+        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #3b82f6;"></span>
+        <span><script>document.write(t('Pending Update'))</script></span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--text-muted);">
+        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #ef4444;"></span>
+        <span><script>document.write(t('Document Problem'))</script></span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--text-muted);">
+        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #6b7280;"></span>
+        <span><script>document.write(t('Suspended'))</script></span>
+      </div>
+    </div>
+
     <div class="card">
       <div class="table-wrap">
         <table id="users-table">
@@ -35,10 +60,11 @@
               <th><script>document.write(t('Role'))</script></th>
               <th><script>document.write(t('Joined'))</script></th>
               <th><script>document.write(t('Actions'))</script></th>
+              <th><script>document.write(t('Account Status'))</script></th>
             </tr>
           </thead>
           <tbody id="users-body">
-            <tr class="loading-row"><td colspan="6"><div class="spinner" style="margin:auto"></div></td></tr>
+            <tr class="loading-row"><td colspan="7"><div class="spinner" style="margin:auto"></div></td></tr>
           </tbody>
         </table>
       </div>
@@ -80,7 +106,7 @@
   async function loadUsers() {
     const res = await api.get('/analytics/users');
     const tbody = document.getElementById('users-body');
-    if (!res.ok) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--danger)">Failed to load users</td></tr>'; return; }
+    if (!res.ok) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--danger)">Failed to load users</td></tr>'; return; }
     allUsers = res.data;
     renderUsers(allUsers);
   }
@@ -88,11 +114,12 @@
   function renderUsers(users) {
     const tbody = document.getElementById('users-body');
     if (!users.length) {
-      tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon" style="display:flex; justify-content:center; margin-bottom:12px; color:var(--text-muted);"><svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.109A11.386 11.386 0 0110.089 18M15 8.25a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM3 19.235v-.111c0-1.656 1.002-3.066 2.44-3.562 1.438-.495 3.017-.27 4.29.599m-5.83-.342A9.338 9.338 0 0110.25 15c2.25 0 4.29.599 5.83 1.342m-11.66 0C2.522 17.11 3 18.062 3 19.124v.111" /></svg></div><p>${t('No users found')}</p></div></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon" style="display:flex; justify-content:center; margin-bottom:12px; color:var(--text-muted);"><svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.109A11.386 11.386 0 0110.089 18M15 8.25a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM3 19.235v-.111c0-1.656 1.002-3.066 2.44-3.562 1.438-.495 3.017-.27 4.29.599m-5.83-.342A9.338 9.338 0 0110.25 15c2.25 0 4.29.599 5.83 1.342m-11.66 0C2.522 17.11 3 18.062 3 19.124v.111" /></svg></div><p>${t('No users found')}</p></div></td></tr>`;
       return;
     }
     tbody.innerHTML = users.map((u, i) => {
       const isPartner = u.role === 'Event Manager' || u.role === 'Sponsor' || u.role === 'Company';
+      
       const nameCell = isPartner
         ? `<a href="/user-profile?id=${u.id}" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--accent);transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">${u.name}</a>`
         : `<span style="font-weight:500;">${u.name}</span>`;
@@ -102,6 +129,52 @@
              onclick="openDocsModal(${u.id}, '${u.role}', '${u.name.replace(/'/g,"\\'")}', '${u.verification_status}')">
              ${t('Documents')}</button>`
         : '';
+
+      let statusColor = '#10b981'; // Green
+      let statusText = t('Active');
+
+      if (!u.is_active) {
+        statusColor = '#6b7280'; // Grey
+        statusText = t('Suspended');
+      } else if (isPartner) {
+        const hasRejectedDoc = (
+          u.doc_commercial_register_status === 'rejected' ||
+          u.doc_tax_number_status === 'rejected' ||
+          u.doc_articles_of_association_status === 'rejected' ||
+          u.doc_practice_license_status === 'rejected'
+        );
+
+        const hasPendingUpdate = (
+          u.doc_commercial_register_status === 'pending_update' ||
+          u.doc_tax_number_status === 'pending_update' ||
+          u.doc_articles_of_association_status === 'pending_update' ||
+          u.doc_practice_license_status === 'pending_update'
+        );
+
+        if (u.verification_status === 'rejected') {
+          statusColor = '#ef4444'; // Red
+          statusText = t('Rejected');
+        } else if (u.verification_status === 'changes_requested' || hasRejectedDoc) {
+          statusColor = '#ef4444'; // Red
+          statusText = t('Document Problem');
+        } else if (hasPendingUpdate) {
+          statusColor = '#3b82f6'; // Blue
+          statusText = t('Pending Update');
+        } else if (u.verification_status === 'pending') {
+          statusColor = '#f59e0b'; // Yellow/Orange
+          statusText = t('Pending Review');
+        } else if (u.verification_status === 'verified') {
+          statusColor = '#10b981'; // Green
+          statusText = t('Verified');
+        }
+      }
+
+      const verificationStatusDot = `
+        <div style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--text-secondary);">
+          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background-color:${statusColor};flex-shrink:0;"></span>
+          <span style="white-space:nowrap;">${statusText}</span>
+        </div>
+      `;
 
       return `<tr>
         <td style="color:var(--text-muted)">${i+1}</td>
@@ -119,6 +192,7 @@
             ${docBtn}
           </div>
         </td>
+        <td>${verificationStatusDot}</td>
       </tr>`;
     }).join('');
   }
@@ -181,6 +255,45 @@
     // Fetch fresh user data
     const res = await api.get('/analytics/users');
     const userData = res.ok ? res.data.find(u => u.id === id) : null;
+
+    if (userData) {
+      const hasRejectedDoc = (
+        userData.doc_commercial_register_status === 'rejected' ||
+        userData.doc_tax_number_status === 'rejected' ||
+        userData.doc_articles_of_association_status === 'rejected' ||
+        userData.doc_practice_license_status === 'rejected'
+      );
+
+      const hasPendingUpdate = (
+        userData.doc_commercial_register_status === 'pending_update' ||
+        userData.doc_tax_number_status === 'pending_update' ||
+        userData.doc_articles_of_association_status === 'pending_update' ||
+        userData.doc_practice_license_status === 'pending_update'
+      );
+
+      let modalStatusText = t('Verified');
+      let modalStatusColor = '#10b981';
+
+      if (!userData.is_active) {
+        modalStatusText = t('Suspended');
+        modalStatusColor = '#6b7280';
+      } else if (userData.verification_status === 'rejected') {
+        modalStatusText = t('Rejected');
+        modalStatusColor = '#ef4444';
+      } else if (userData.verification_status === 'changes_requested' || hasRejectedDoc) {
+        modalStatusText = t('Document Problem');
+        modalStatusColor = '#ef4444';
+      } else if (hasPendingUpdate) {
+        modalStatusText = t('Pending Update');
+        modalStatusColor = '#3b82f6';
+      } else if (userData.verification_status === 'pending') {
+        modalStatusText = t('Pending Review');
+        modalStatusColor = '#f59e0b';
+      }
+
+      document.getElementById('docs-modal-info').innerHTML =
+        `${t('Account Status')}: <strong style="color:${modalStatusColor}">${modalStatusText}</strong>`;
+    }
 
     const docTypes = (role === 'Sponsor' || role === 'Company')
       ? ALL_DOC_TYPES.filter(d => ['doc_commercial_register','doc_tax_number'].includes(d.key))
