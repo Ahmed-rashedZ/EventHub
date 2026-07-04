@@ -612,7 +612,7 @@
           : `<div class="ed-banner ed-banner-placeholder"><span class="ed-banner-emoji" style="color:var(--text-muted); opacity: 0.3; display: flex; align-items: center; justify-content: center;">${tagSvg}</span><div class="ed-banner-fade"></div></div>`;
 
         const rejectionSection = (ev.status === 'rejected' && ev.rejection_reason)
-          ? `<div class="ed-rejection"><span class="ed-rej-label"><svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2; margin-inline-end:4px; vertical-align:middle; display:inline-block;" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg> ${t('Rejection Reason')}</span><p>${ev.rejection_reason}</p></div>`
+          ? `<div class="ed-rejection"><span class="ed-rej-label"><svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2; margin-inline-end:4px; vertical-align:middle; display:inline-block;" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg> ${t('Rejection Reason')}</span><p class="i18n-skip">${ev.rejection_reason}</p></div>`
           : '';
 
         let sponsorsHtml = '';

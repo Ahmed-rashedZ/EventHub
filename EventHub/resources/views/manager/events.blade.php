@@ -866,7 +866,7 @@
           : `<div class="ed-banner ed-banner-placeholder"><div class="ed-banner-fade"></div></div>`;
 
         const rejectionSection = (ev.status === 'rejected' && ev.rejection_reason)
-          ? `<div class="ed-rejection"><span class="ed-rej-label">Rejection Reason</span><p>${ev.rejection_reason}</p></div>`
+          ? `<div class="ed-rejection"><span class="ed-rej-label">Rejection Reason</span><p class="i18n-skip">${ev.rejection_reason}</p></div>`
           : '';
 
         let sponsorsHtml = '';
@@ -964,7 +964,7 @@
         <!-- Description -->
         <div class="ed-section">
           <div class="ed-section-label">About this Event</div>
-          <p class="ed-description">${ev.description || 'No description provided.'}</p>
+          <p class="ed-description i18n-skip">${ev.description || 'No description provided.'}</p>
         </div>
 
           <div class="ed-info-grid">
@@ -1178,7 +1178,7 @@
                 <div style="width: 100%; padding: 12px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 10px;">
                   <div style="font-size: 0.75rem; font-weight: 700; color: #ef4444; text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> Cancellation Rejected</div>
                   <div style="font-size: 0.85rem; color: #e2e8f0;">The admin rejected your cancellation request.</div>
-                  <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(239, 68, 68, 0.1);"><strong>Admin Note:</strong> ${ev.cancellation_rejection_reason}</div>
+                  <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(239, 68, 68, 0.1);"><strong>Admin Note:</strong> <span class="i18n-skip">${ev.cancellation_rejection_reason}</span></div>
                 </div>
               ` : ''}
             </div>

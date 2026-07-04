@@ -10,9 +10,11 @@ use App\Models\User;
 use App\Services\AgreementWordService;
 use Illuminate\Http\Request;
 use App\Notifications\SystemNotification;
+use App\Http\Traits\ChecksDocumentVerification;
 
 class ExhibitionController extends Controller
 {
+    use ChecksDocumentVerification;
     // POST /api/exhibition — Company applies or Event Manager invites
     public function store(Request $request)
     {
@@ -45,9 +47,19 @@ class ExhibitionController extends Controller
                 return response()->json(['message' => 'Event not found or not yours'], 404);
             }
 
+            // Check manager's own documents
+            if (!$this->hasAllDocumentsApproved($user)) {
+                return $this->ownDocumentsNotApprovedResponse('send_invitation');
+            }
+
             $targetCompany = User::with('profile')->find($request->company_id);
             if (!$targetCompany || $targetCompany->role !== 'Company' || !$targetCompany->profile?->is_available) {
                 return response()->json(['message' => 'Company is not available'], 400);
+            }
+
+            // Check target company's documents
+            if (!$this->hasAllDocumentsApproved($targetCompany)) {
+                return $this->targetDocumentsNotApprovedResponse('company');
             }
 
 
@@ -84,6 +96,11 @@ class ExhibitionController extends Controller
         if ($user->role === 'Company') {
             if ($user->verification_status !== 'verified') {
                 return response()->json(['message' => 'Your account must be verified before applying'], 403);
+            }
+
+            // Check individual document approval
+            if (!$this->hasAllDocumentsApproved($user)) {
+                return $this->ownDocumentsNotApprovedResponse('apply_exhibition');
             }
 
             $profile = $user->profile;

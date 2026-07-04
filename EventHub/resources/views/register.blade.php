@@ -68,7 +68,12 @@
       </div>
 
       <div class="auth-footer" style="margin-top: 32px;">
-        <script>document.write(t('Already have an account?'))</script> <a href="/login"><script>document.write(t('Sign in here'))</script></a>
+        <div style="margin-bottom: 12px;">
+          <script>document.write(t('Already have an account?'))</script> <a href="/login"><script>document.write(t('Sign in here'))</script></a>
+        </div>
+        <div style="font-size: 0.85rem;">
+          <a href="mailto:support@eventhub.com" onclick="try{navigator.clipboard.writeText('support@eventhub.com'); showToast(t('Email copied to clipboard'), 'success');}catch(e){}" style="color: var(--text-muted); text-decoration: none; transition: 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-muted)'"><script>document.write(t('Contact Support'))</script></a>
+        </div>
       </div>
     </div>
   </div>

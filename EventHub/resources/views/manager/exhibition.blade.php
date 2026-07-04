@@ -497,6 +497,7 @@
 
       const isPast = ev.end_time && new Date(ev.end_time) < new Date();
       const isOpen = gi === 0; // auto-open first group
+      const isLocked = ev.start_time && (new Date(ev.start_time) - new Date()) / (1000 * 60 * 60 * 24) < 14;
 
       const rows = apps.map((app, i) => {
         const comp = app.company || {};
@@ -516,8 +517,7 @@
             <button class="btn btn-sm" onclick="openAgreementModal(${app.id}, 'exhibition')" style="padding:3px 10px;font-size:11px;background:rgba(34,211,238,0.1);color:#22d3ee;border:1px solid rgba(34,211,238,0.2);font-weight:600;">${t('Contract')}</button>
           `;
           if (app.status === 'accepted') {
-            const isWithin14Days = ev.start_time && (new Date(ev.start_time) - new Date()) / (1000 * 60 * 60 * 24) < 14;
-            const canChange = !app.booth || !isWithin14Days;
+            const canChange = !app.booth || !isLocked;
 
             if (canChange) {
               let boothBtnText = app.booth ? t('Change Booth') : t('Assign Booth');
@@ -627,10 +627,12 @@
                 <h4 style="margin:0; font-size:1rem;">${t('Zones & Booths Configuration')}</h4>
                 <p style="font-size:0.75rem; color:var(--text-muted); margin:4px 0 0;">${t('Manage exhibition zones and available slots')}</p>
               </div>
+              ${!isLocked ? `
               <button class="btn btn-primary btn-sm" onclick="openZoneModalUI(${g.event.id})" style="display:inline-flex; align-items:center; gap:6px;">
                 <svg xmlns="http://www.w3.org/2000/svg" style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
                 ${t('Add Zone')}
               </button>
+              ` : ''}
             </div>
             <div id="layout-container-${g.event.id}" class="layout-grid">
               <div class="spinner" style="margin:20px auto"></div>

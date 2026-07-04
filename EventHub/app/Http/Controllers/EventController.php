@@ -6,10 +6,12 @@ use App\Models\Event;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Notifications\SystemNotification;
+use App\Http\Traits\ChecksDocumentVerification;
 use Carbon\Carbon;
 
 class EventController extends Controller
 {
+    use ChecksDocumentVerification;
     // GET /api/events  – public approved+published events
     public function index(Request $request)
     {
@@ -88,19 +90,9 @@ class EventController extends Controller
             ], 403);
         }
 
-        // Even if account status is verified, check if any individual required document is rejected or not approved
-        $requiredDocs = ['commercial_register', 'tax_number', 'articles_of_association', 'practice_license'];
-        $user = $request->user();
-        $user->load('documents');
-
-        foreach ($requiredDocs as $docType) {
-            $doc = $user->documents->firstWhere('document_type', $docType);
-            if (!$doc || $doc->status !== 'approved') {
-                return response()->json([
-                    'message' => 'لا يمكنك إنشاء فعالية لوجود وثائق مرفوضة أو غير معتمدة. يرجى مراجعة حالة وثائقك وإعادة رفعها.',
-                    'verification_status' => 'document_unapproved',
-                ], 403);
-            }
+        // Even if account status is verified, check individual documents
+        if (!$this->hasAllDocumentsApproved($request->user())) {
+            return $this->ownDocumentsNotApprovedResponse('create_event');
         }
 
         $request->validate([

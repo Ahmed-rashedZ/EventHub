@@ -10,9 +10,11 @@ use App\Models\User;
 use App\Services\AgreementWordService;
 use Illuminate\Http\Request;
 use App\Notifications\SystemNotification;
+use App\Http\Traits\ChecksDocumentVerification;
 
 class SponsorshipController extends Controller
 {
+    use ChecksDocumentVerification;
     // POST /api/sponsorship  – Create a request (Bidirectional)
     public function store(Request $request)
     {
@@ -39,10 +41,20 @@ class SponsorshipController extends Controller
             if ($event->created_by !== $user->id) {
                 return response()->json(['message' => 'Event not found or not yours'], 404);
             }
+
+            // Check manager's own documents
+            if (!$this->hasAllDocumentsApproved($user)) {
+                return $this->ownDocumentsNotApprovedResponse('send_invitation');
+            }
             
             $targetSponsor = \App\Models\User::with('profile')->find($request->sponsor_id);
             if ($targetSponsor->role !== 'Sponsor' || !$targetSponsor->profile?->is_available) {
                 return response()->json(['message' => 'Sponsor is not available'], 400);
+            }
+
+            // Check target sponsor's documents
+            if (!$this->hasAllDocumentsApproved($targetSponsor)) {
+                return $this->targetDocumentsNotApprovedResponse('sponsor');
             }
             
             // Duplicate Check
@@ -77,6 +89,11 @@ class SponsorshipController extends Controller
             $profile = $user->profile;
             if (!$profile || !$profile->is_available) {
                 return response()->json(['message' => 'You must be available to send requests'], 403);
+            }
+
+            // Check sponsor's own documents
+            if (!$this->hasAllDocumentsApproved($user)) {
+                return $this->ownDocumentsNotApprovedResponse('send_sponsorship');
             }
             
             if (!$event->is_sponsorship_open) {

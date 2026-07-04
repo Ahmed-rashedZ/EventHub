@@ -72,6 +72,19 @@
   </main>
 </div>
 
+<!-- Confirmation Modal -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal" style="max-width: 400px; text-align: center; padding: 30px 20px;">
+    <div id="confirm-icon" style="margin-bottom: 16px; display: flex; justify-content: center;"></div>
+    <h3 id="confirm-title" style="margin: 0 0 10px; color: #fff; font-size: 1.2rem;"></h3>
+    <p id="confirm-message" style="color: var(--text-muted); font-size: 0.9rem; margin: 0 0 24px;"></p>
+    <div style="display: flex; gap: 12px; justify-content: center;">
+      <button class="btn btn-ghost btn-sm" onclick="closeConfirmModal()"><script>document.write(t('Cancel'))</script></button>
+      <button class="btn btn-primary btn-sm" id="confirm-btn"><script>document.write(t('Confirm'))</script></button>
+    </div>
+  </div>
+</div>
+
 <!-- Documents Review Modal -->
 <div class="modal-overlay" id="docs-modal">
   <div class="modal" style="max-width: 560px; max-height: 90vh; overflow-y: auto;">
@@ -206,20 +219,58 @@
     ));
   }
 
-  async function toggleUserStatus(id, name, activate) {
+  function toggleUserStatus(id, name, activate) {
+    const title = activate ? t('Activate User') : t('Suspend User');
     const msg = activate ? t('Are you sure you want to activate user "') : t('Are you sure you want to suspend user "');
-    if (!confirm(msg + name + '"?')) return;
-    const res = await api.patch(`/analytics/users/${id}/status`);
-    if (res.ok) { showToast(activate ? t('User activated successfully.') : t('User suspended successfully.'), 'success'); loadUsers(); }
-    else showToast(res.data?.message || t('Error updating status'), 'error');
+    showConfirmModal(title, msg + name + '"?', !activate, async () => {
+      const res = await api.patch(`/analytics/users/${id}/status`);
+      if (res.ok) { showToast(activate ? t('User activated successfully.') : t('User suspended successfully.'), 'success'); loadUsers(); }
+      else showToast(res.data?.message || t('Error updating status'), 'error');
+    });
   }
 
-  async function deleteUser(id, name) {
-    if (!confirm(t('Delete user "') + name + t('"? This cannot be undone.'))) return;
-    const res = await api.delete(`/analytics/users/${id}`);
-    if (res.ok) { showToast(t('User deleted'), 'success'); loadUsers(); }
-    else showToast(res.data?.message || t('Error deleting user'), 'error');
+  function deleteUser(id, name) {
+    showConfirmModal(t('Delete User'), t('Delete user "') + name + t('"? This cannot be undone.'), true, async () => {
+      const res = await api.delete(`/analytics/users/${id}`);
+      if (res.ok) { showToast(t('User deleted'), 'success'); loadUsers(); }
+      else showToast(res.data?.message || t('Error deleting user'), 'error');
+    });
   }
+
+  // ── Confirm Modal Logic ──────────────────────────────────────────────────
+  let confirmCallback = null;
+  function showConfirmModal(title, message, isDanger, onConfirm) {
+    document.getElementById('confirm-title').textContent = title;
+    document.getElementById('confirm-message').textContent = message;
+    
+    const iconContainer = document.getElementById('confirm-icon');
+    const btn = document.getElementById('confirm-btn');
+    
+    if (isDanger) {
+      iconContainer.innerHTML = '<svg width="48" height="48" fill="none" stroke="#f59e0b" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>';
+      btn.style.background = '#ef4444';
+      btn.style.borderColor = '#ef4444';
+      btn.style.color = '#fff';
+    } else {
+      iconContainer.innerHTML = '<svg width="48" height="48" fill="none" stroke="#10b981" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
+      btn.style.background = '#10b981';
+      btn.style.borderColor = '#10b981';
+      btn.style.color = '#fff';
+    }
+    
+    confirmCallback = onConfirm;
+    document.getElementById('confirm-modal').classList.add('open');
+  }
+
+  function closeConfirmModal() {
+    document.getElementById('confirm-modal').classList.remove('open');
+    confirmCallback = null;
+  }
+
+  document.getElementById('confirm-btn').addEventListener('click', () => {
+    if (confirmCallback) confirmCallback();
+    closeConfirmModal();
+  });
 
   // ── Documents Review Modal ──────────────────────────────────────────────
   const ALL_DOC_TYPES = [

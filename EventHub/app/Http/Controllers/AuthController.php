@@ -107,7 +107,7 @@ public function registerPartner(Request $request)
         'doc_practice_license.max' => 'Files must not exceed 5 MB',
 
         'email.unique' => 'Email Address is already taken',
-        'account.suspended' => 'Your account has been suspended. Please contact support',
+        'account.suspended' => 'Your account has been suspended. Please contact support at support@eventhub.com',
     ];
 
     $request->validate($rules, $messages);
@@ -190,7 +190,7 @@ public function registerPartner(Request $request)
 
     if (!$user->is_active) {
         Auth::logout();
-        return response()->json(['message' => 'Your account has been suspended. Please contact support'], 403);
+        return response()->json(['message' => 'Your account has been suspended. Please contact support at support@eventhub.com'], 403);
     }
 
     // ── Platform-Based Role Restrictions ──

@@ -325,6 +325,11 @@ class AgreementController extends Controller
             }
         }
 
+        if ($request->action === 'rejected') {
+            $target->status = 'rejected';
+            $target->save();
+        }
+
         // Notify other party
         $managerId = $target->event_manager_id;
         $partnerId = ($type === 'exhibition') ? $target->company_id : $target->sponsor_id;

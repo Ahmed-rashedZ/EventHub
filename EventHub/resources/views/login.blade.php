@@ -52,7 +52,12 @@
       </form>
 
       <div class="auth-footer">
-        <script>document.write(t("Don't have an account?"))</script> <a href="/register"><script>document.write(t('Register'))</script></a>
+        <div style="margin-bottom: 12px;">
+          <script>document.write(t("Don't have an account?"))</script> <a href="/register"><script>document.write(t('Register'))</script></a>
+        </div>
+        <div style="font-size: 0.85rem;">
+          <a href="mailto:support@eventhub.com" onclick="try{navigator.clipboard.writeText('support@eventhub.com'); showToast(t('Email copied to clipboard'), 'success');}catch(e){}" style="color: var(--text-muted); text-decoration: none; transition: 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-muted)'"><script>document.write(t('Contact Support'))</script></a>
+        </div>
       </div>
     </div>
   </div>

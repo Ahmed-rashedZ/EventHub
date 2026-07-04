@@ -262,7 +262,7 @@
           : `<div class="ed-banner ed-banner-placeholder"><div class="ed-banner-fade"></div></div>`;
 
         const rejectionSection = (ev.status === 'rejected' && ev.rejection_reason)
-          ? `<div class="ed-rejection"><span class="ed-rej-label">${t('Rejection Reason')}</span><p>${ev.rejection_reason}</p></div>`
+          ? `<div class="ed-rejection"><span class="ed-rej-label">${t('Rejection Reason')}</span><p class="i18n-skip">${ev.rejection_reason}</p></div>`
           : '';
 
         let sponsorsHtml = '';

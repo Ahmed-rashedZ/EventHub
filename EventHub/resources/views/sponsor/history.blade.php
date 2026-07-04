@@ -333,7 +333,7 @@
             ` : ''}
             <div class="ed-section">
               <div class="ed-section-label">About this Event</div>
-              <p class="ed-description">${ev.description || 'No description provided.'}</p>
+              <p class="ed-description i18n-skip">${ev.description || 'No description provided.'}</p>
             </div>
             <div class="ed-info-grid">
               <div class="ed-info-card ed-info-accent2">
