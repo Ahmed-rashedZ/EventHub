@@ -1097,6 +1097,7 @@ const I18N_AR = {
   'Loading assistants...': 'جاري تحميل المساعدين...',
   'Delete': 'حذف',
   'No assistants created yet.': 'لا يوجد مساعدون بعد.',
+  'Please download the EventHub Mobile App to create your assistant account.': 'يرجى تحميل EventHub Mobile App لإنشاء حسابك كمساعد.',
   'Busy': 'مشغول',
 
   /* ── Assistants UI (Management) ────────────────────────── */
@@ -2278,7 +2279,7 @@ function translateText(text) {
 
   // Protect quoted strings (user-generated content like event names, reasons)
   const quotedStrings = [];
-  updated = updated.replace(/"([^"]*)"/g, function(match) {
+  updated = updated.replace(/"([^"]*)"/g, function (match) {
     quotedStrings.push(match);
     return '__QUOTED_TOKEN_' + (quotedStrings.length - 1) + '__';
   });

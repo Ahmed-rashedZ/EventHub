@@ -33,10 +33,21 @@
           style="padding: 16px; margin-bottom: 16px; background: rgba(59,130,246,0.1); border: 1px solid var(--primary);">
           <h4 style="margin: 0 0 8px 0; color: var(--primary); display: flex; align-items: center; gap: 8px;">
             <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink: 0;"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
-            <script>document.write(t('Attendees (Users)'))</script>
+            <script>document.write(t('Attendees'))</script>
           </h4>
           <p style="margin: 0; font-size: 0.85rem; color: var(--text-secondary);">
             <script>document.write(t('Please download the EventHub Mobile App to create your account and buy tickets.'))</script>
+          </p>
+        </div>
+
+        <div class="card"
+          style="padding: 16px; margin-bottom: 16px; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.4);">
+          <h4 style="margin: 0 0 8px 0; color: #10b981; display: flex; align-items: center; gap: 8px;">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink: 0;"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+            <script>document.write(t('Assistants'))</script>
+          </h4>
+          <p style="margin: 0; font-size: 0.85rem; color: var(--text-secondary);">
+            <script>document.write(t('Please download the EventHub Mobile App to create your assistant account.'))</script>
           </p>
         </div>
 
