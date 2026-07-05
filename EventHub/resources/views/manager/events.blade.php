@@ -3089,6 +3089,23 @@
     };
   </script>
 
+  <!-- Unpublish Confirmation Modal -->
+  <div class="modal-overlay" id="unpublish-confirm-modal" style="z-index: 1100;">
+    <div class="modal" style="max-width: 400px; text-align: center; padding: 30px 20px;">
+      <div style="margin-bottom: 16px; display: flex; justify-content: center;">
+        <svg width="48" height="48" fill="none" stroke="#f59e0b" stroke-width="1.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+      </div>
+      <h3 style="margin: 0 0 10px; color: #fff; font-size: 1.2rem;"><script>document.write(t('Unpublish'))</script></h3>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0 0 24px;"><script>document.write(t('Are you sure you want to unpublish this event? It will no longer be visible to the public.'))</script></p>
+      <div style="display: flex; gap: 12px; justify-content: center;">
+        <button class="btn btn-ghost btn-sm" onclick="closeUnpublishConfirmModal()"><script>document.write(t('Cancel'))</script></button>
+        <button class="btn btn-sm" id="unpublish-confirm-btn" style="background: #ef4444; border-color: #ef4444; color: #fff;"><script>document.write(t('Confirm'))</script></button>
+      </div>
+    </div>
+  </div>
+
   <!-- Expand Capacity Modal -->
   <div class="modal-overlay" id="expand-capacity-modal">
     <div class="modal" style="max-width:400px; padding:20px; text-align:center;">
@@ -4265,10 +4282,17 @@
       }
     }
 
-    async function unpublishEvent() {
+    function unpublishEvent() {
       if (!currentPublishedScheduleEventId) return;
+      document.getElementById('unpublish-confirm-modal').classList.add('open');
+    }
 
-      if (!confirm(t('Are you sure you want to unpublish this event? It will no longer be visible to the public.'))) return;
+    function closeUnpublishConfirmModal() {
+      document.getElementById('unpublish-confirm-modal').classList.remove('open');
+    }
+
+    document.getElementById('unpublish-confirm-btn').addEventListener('click', async () => {
+      closeUnpublishConfirmModal();
 
       const ev = allEvents.find(e => e.id === currentPublishedScheduleEventId);
       const currentSchedule = ev.published_schedule || [];
@@ -4285,7 +4309,7 @@
       } else {
         showToast(res.data?.message || 'Error', 'error');
       }
-    }
+    });
     function expandCapacity(eventId, currentCap, venueMax) {
       document.getElementById('expand-modal-current').textContent = currentCap;
       document.getElementById('expand-modal-max').textContent = venueMax;

@@ -271,35 +271,33 @@ function sendInvite(idx, btnElement) {
   }
 
   var eventName = eventsMap[eventId] || t('this event');
-  if (!confirm(t('Send invitation to ') + '"' + assistant.name + '"' + t(' for ') + '"' + eventName + '"?')) {
-    return;
-  }
+  showConfirmModal(t('Send Invitation'), t('Send invitation to ') + '"' + assistant.name + '"' + t(' for ') + '"' + eventName + '"?', false, function() {
+    // Visual feedback
+    btnElement.textContent = t('Sending...');
+    btnElement.className = 'invite-btn sending';
 
-  // Visual feedback
-  btnElement.textContent = t('Sending...');
-  btnElement.className = 'invite-btn sending';
+    var body = {
+      assistant_id: assistant.id,
+      event_id: parseInt(eventId)
+    };
 
-  var body = {
-    assistant_id: assistant.id,
-    event_id: parseInt(eventId)
-  };
-
-  api.post('/manager/invite-assistant', body).then(function(res) {
-    if (res.ok) {
-      showToast(t('Invitation sent to') + ' ' + assistant.name + '!', 'success');
-      btnElement.textContent = t('Invited');
-      btnElement.className = 'invite-btn disabled';
-      loadInvitations();
-    } else {
-      var msg = (res.data && res.data.message) ? res.data.message : t('Failed to send invitation');
-      showToast(msg, 'error');
+    api.post('/manager/invite-assistant', body).then(function(res) {
+      if (res.ok) {
+        showToast(t('Invitation sent to') + ' ' + assistant.name + '!', 'success');
+        btnElement.textContent = t('Invited');
+        btnElement.className = 'invite-btn disabled';
+        loadInvitations();
+      } else {
+        var msg = (res.data && res.data.message) ? res.data.message : t('Failed to send invitation');
+        showToast(msg, 'error');
+        btnElement.textContent = t('Invite');
+        btnElement.className = 'invite-btn primary';
+      }
+    }).catch(function(err) {
+      showToast(t('Network error'), 'error');
       btnElement.textContent = t('Invite');
       btnElement.className = 'invite-btn primary';
-    }
-  }).catch(function(err) {
-    showToast(t('Network error'), 'error');
-    btnElement.textContent = t('Invite');
-    btnElement.className = 'invite-btn primary';
+    });
   });
 }
 
@@ -410,17 +408,69 @@ function renderInvitations() {
 }
 
 function cancelInvite(id, isRemove = false) {
-  if (!confirm(isRemove ? t('Are you sure you want to remove this assistant from the event?') : t('Cancel this invitation?'))) return;
-  api.delete('/manager/invitations/' + id).then(function(res) {
-    if (res.ok) {
-      showToast(isRemove ? t('Assistant removed') : t('Invitation cancelled'), 'success');
-      loadInvitations();
-      loadAvailableAssistants();
-    } else {
-      showToast((res.data && res.data.message) ? res.data.message : t('Failed to cancel'), 'error');
-    }
+  var title = isRemove ? t('Remove Assistant') : t('Cancel Invitation');
+  var msg = isRemove ? t('Are you sure you want to remove this assistant from the event?') : t('Cancel this invitation?');
+
+  showConfirmModal(title, msg, true, function() {
+    api.delete('/manager/invitations/' + id).then(function(res) {
+      if (res.ok) {
+        showToast(isRemove ? t('Assistant removed') : t('Invitation cancelled'), 'success');
+        loadInvitations();
+        loadAvailableAssistants();
+      } else {
+        showToast((res.data && res.data.message) ? res.data.message : t('Failed to cancel'), 'error');
+      }
+    });
   });
 }
+
+// ── Confirm Modal Logic ──────────────────────────────────────────────────
+let confirmCallback = null;
+function showConfirmModal(title, message, isDanger, onConfirm) {
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-message').textContent = message;
+  
+  const iconContainer = document.getElementById('confirm-icon');
+  const btn = document.getElementById('confirm-btn');
+  
+  if (isDanger) {
+    iconContainer.innerHTML = '<svg width="48" height="48" fill="none" stroke="#ef4444" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>';
+    btn.style.background = '#ef4444';
+    btn.style.borderColor = '#ef4444';
+  } else {
+    // Beautiful info/invitation icon (purple mail-like/question style icon)
+    iconContainer.innerHTML = '<svg width="48" height="48" fill="none" stroke="#8b5cf6" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 10.742h.01m5.624 0h.01M12 12v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
+    btn.style.background = 'linear-gradient(135deg, #6e40f2, #8b5cf6)';
+    btn.style.borderColor = '#6e40f2';
+  }
+  
+  confirmCallback = onConfirm;
+  document.getElementById('confirm-modal').classList.add('open');
+}
+
+function closeConfirmModal() {
+  document.getElementById('confirm-modal').classList.remove('open');
+  confirmCallback = null;
+}
+
+document.getElementById('confirm-btn').addEventListener('click', function() {
+  if (confirmCallback) confirmCallback();
+  closeConfirmModal();
+});
 </script>
+
+<!-- Confirmation Modal -->
+<div class="modal-overlay" id="confirm-modal" style="z-index: 1100;">
+  <div class="modal" style="max-width: 400px; text-align: center; padding: 30px 20px;">
+    <div id="confirm-icon" style="margin-bottom: 16px; display: flex; justify-content: center;"></div>
+    <h3 id="confirm-title" style="margin: 0 0 10px; color: #fff; font-size: 1.2rem;"></h3>
+    <p id="confirm-message" style="color: var(--text-muted); font-size: 0.9rem; margin: 0 0 24px;"></p>
+    <div style="display: flex; gap: 12px; justify-content: center;">
+      <button class="btn btn-ghost btn-sm" onclick="closeConfirmModal()"><script>document.write(t('Cancel'))</script></button>
+      <button class="btn btn-sm" id="confirm-btn" style="color: #fff;"><script>document.write(t('Confirm'))</script></button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
