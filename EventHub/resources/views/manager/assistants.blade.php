@@ -453,10 +453,10 @@ function closeConfirmModal() {
   confirmCallback = null;
 }
 
-document.getElementById('confirm-btn').addEventListener('click', function() {
+function handleConfirmClick() {
   if (confirmCallback) confirmCallback();
   closeConfirmModal();
-});
+}
 </script>
 
 <!-- Confirmation Modal -->
@@ -467,7 +467,7 @@ document.getElementById('confirm-btn').addEventListener('click', function() {
     <p id="confirm-message" style="color: var(--text-muted); font-size: 0.9rem; margin: 0 0 24px;"></p>
     <div style="display: flex; gap: 12px; justify-content: center;">
       <button class="btn btn-ghost btn-sm" onclick="closeConfirmModal()"><script>document.write(t('Cancel'))</script></button>
-      <button class="btn btn-sm" id="confirm-btn" style="color: #fff;"><script>document.write(t('Confirm'))</script></button>
+      <button class="btn btn-sm" id="confirm-btn" style="color: #fff;" onclick="handleConfirmClick()"><script>document.write(t('Confirm'))</script></button>
     </div>
   </div>
 </div>
