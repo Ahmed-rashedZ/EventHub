@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Exhibitions – EventHub Manager</title>
   <link rel="stylesheet" href="/css/style.css"/>
-  <script src="/js/i18n.js"></script>
+  <script src="/js/i18n.js?v=3"></script>
   <link rel="icon" href="/images/logo.png" type="image/png">
   <style>
     .exh-card { 
@@ -275,7 +275,7 @@
       <h3 class="modal-title"><script>document.write(t('Application Details'))</script></h3>
       <button class="modal-close" onclick="closeMsgModal()">&times;</button>
     </div>
-    <div class="modal-body" id="msg-content" style="padding: 20px; font-size: 15px; line-height: 1.6; color: var(--text);"></div>
+    <div class="modal-body i18n-skip" id="msg-content" style="padding: 20px; font-size: 15px; line-height: 1.6; color: var(--text);"></div>
     <div class="modal-footer">
       <button type="button" class="btn btn-primary" onclick="closeMsgModal()" style="width: 100%;"><script>document.write(t('Close'))</script></button>
     </div>

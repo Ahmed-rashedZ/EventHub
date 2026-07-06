@@ -10,7 +10,7 @@
   <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://npmcdn.com/flatpickr/dist/l10n/ar.js"></script>
-  <script src="/js/i18n.js"></script>
+  <script src="/js/i18n.js?v=3"></script>
   <script src="/js/flatpickr-custom.js"></script>
 
   <link rel="icon" href="/images/logo.png" type="image/png">
@@ -1005,13 +1005,13 @@
           ${ev.event_objective ? `
           <div class="ed-info-card ed-info-accent" style="grid-column: 1 / -1;">
             <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
-            <div><div class="ed-info-label">Event Objective</div><div class="ed-info-value" style="font-size:0.9rem;">${ev.event_objective}</div></div>
+            <div><div class="ed-info-label">Event Objective</div><div class="ed-info-value i18n-skip" style="font-size:0.9rem;">${ev.event_objective}</div></div>
           </div>
           ` : ''}
           ${ev.target_audience ? `
           <div class="ed-info-card ed-info-accent2" style="grid-column: 1 / -1;">
             <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg></div>
-            <div><div class="ed-info-label">Target Audience</div><div class="ed-info-value" style="font-size:0.9rem;">${ev.target_audience}</div></div>
+            <div><div class="ed-info-label">Target Audience</div><div class="ed-info-value i18n-skip" style="font-size:0.9rem;">${ev.target_audience}</div></div>
           </div>
           ` : ''}
           ${(function () {
@@ -1059,7 +1059,7 @@
                 ${t('Capacity')}
                 ${ev.status === 'approved' && ev.time_status !== 'ended' ? `<button type="button" class="btn-icon-sm" onclick="event.stopPropagation(); expandCapacity(${ev.id}, ${ev.capacity || 'null'}, ${ev.venue?.capacity || 99999})" title="Expand Capacity" style="padding:5px;background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.2);border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;margin-inline-start:4px;position:relative;z-index:10;"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg></button>` : ''}
               </div>
-              <div class="ed-info-value" id="det-capacity-${ev.id}">${ev.capacity || (document.documentElement.lang === 'ar' ? 'مفتوح' : 'Unlimited')}</div>
+              <div class="ed-info-value" id="det-capacity-${ev.id}">${ev.capacity || t('Unlimited')}</div>
             </div>
           </div>
           <div class="ed-info-card ed-info-warning">

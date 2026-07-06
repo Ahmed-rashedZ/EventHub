@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>My Sponsorships History – EventHub</title>
   <link rel="stylesheet" href="/css/style.css"/>
-  <script src="/js/i18n.js"></script>
+  <script src="/js/i18n.js?v=3"></script>
   <style>
     .history-card {
         background: var(--bg-card);
@@ -176,7 +176,7 @@
         <tr>
             <td style="color:var(--text-muted)">${index + 1}</td>
             <td>
-                <div style="font-weight:600; ${e.status === 'cancelled' ? 'text-decoration:line-through; color:var(--danger)' : ''}">${e.title}</div>
+                <div style="font-weight:600; ${e.status === 'cancelled' ? 'text-decoration:line-through; color:var(--danger)' : ''}" class="i18n-skip">${e.title}</div>
                 ${e.status === 'cancelled' ? `<span class="badge badge-cancelled" style="font-size:9px; padding:1px 6px; margin-top:4px;">${t('cancelled')}</span>` : ''}
             </td>
             <td style="color:var(--text-muted)">
@@ -304,7 +304,7 @@
           <div class="ed-body">
             <div class="ed-header">
               <div class="ed-title-row">
-                <h2 class="ed-title">${ev.title}</h2>
+                <h2 class="ed-title i18n-skip">${ev.title}</h2>
                 <span class="ed-type-pill" style="--tcolor:${tColor}">${eType}</span>
               </div>
               <div class="ed-badges">
@@ -387,7 +387,7 @@
               })()}
               <div class="ed-info-card ed-info-warning">
                 <div class="ed-info-icon">${UsersIcon}</div>
-                <div><div class="ed-info-label">Capacity</div><div class="ed-info-value">${ev.capacity}</div></div>
+                <div><div class="ed-info-label">Capacity</div><div class="ed-info-value">${ev.capacity || t('Unlimited')}</div></div>
               </div>
               <div class="ed-info-card ed-info-warning">
                 <div class="ed-info-icon">${TicketIcon}</div>

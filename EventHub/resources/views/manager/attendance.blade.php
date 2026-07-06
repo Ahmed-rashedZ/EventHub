@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Attendance – EventHub Manager</title>
   <link rel="stylesheet" href="/css/style.css"/>
-  <script src="/js/i18n.js"></script>
+  <script src="/js/i18n.js?v=3"></script>
 <style>
 /* ── Live Attendance Styles ──────────────────────────── */
 .att-header-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}

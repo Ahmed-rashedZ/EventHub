@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Assistants – EventHub Manager</title>
   <link rel="stylesheet" href="/css/style.css"/>
-  <script src="/js/i18n.js"></script>
+  <script src="/js/i18n.js?v=3"></script>
   <style>
     .assistants-layout { display: grid; grid-template-columns: 1fr; gap: 24px; }
     @media(min-width: 1024px) { .assistants-layout { grid-template-columns: 380px 1fr; } }

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Browse Requests – EventHub Sponsor</title>
   <link rel="stylesheet" href="/css/style.css"/>
-  <script src="/js/i18n.js"></script>
+  <script src="/js/i18n.js?v=3"></script>
 <link rel="icon" href="/images/logo.png" type="image/png">
 </head>
 <body>
@@ -79,7 +79,7 @@
         <h3 id="message-sender" style="margin:0; font-size:1rem; color:var(--text-muted);">Request Message</h3>
         <button class="btn btn-ghost btn-sm" onclick="closeMessageModal()" style="padding:4px 8px;">&times;</button>
     </div>
-    <div id="message-text" style="font-size:0.95rem; line-height:1.6; color:#fff; background:rgba(255,255,255,0.03); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.05); min-height:80px; white-space:pre-wrap;"></div>
+    <div id="message-text" class="i18n-skip" style="font-size:0.95rem; line-height:1.6; color:#fff; background:rgba(255,255,255,0.03); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.05); min-height:80px; white-space:pre-wrap;"></div>
     <div style="margin-top:20px; text-align:right;">
         <button class="btn btn-primary" onclick="closeMessageModal()" style="padding:6px 20px;"><script>document.write(t('Got it'))</script></button>
     </div>
@@ -193,7 +193,7 @@
       <tr>
         <td style="color:var(--text-muted)">${i + 1}</td>
         <td>
-          <div style="font-weight:600">${e.title || 'Untitled'}</div>
+          <div style="font-weight:600" class="i18n-skip">${e.title || 'Untitled'}</div>
           ${initiatorBadge}
         </td>
         <td style="color:var(--text-muted)">
@@ -323,7 +323,7 @@
           <div class="ed-body">
             <div class="ed-header">
               <div class="ed-title-row">
-                <h2 class="ed-title">${ev.title}</h2>
+                <h2 class="ed-title i18n-skip">${ev.title}</h2>
                 <span class="ed-type-pill" style="--tcolor:${tColor}">${tIcon} ${eType}</span>
               </div>
               <div class="ed-badges">
@@ -406,7 +406,7 @@
               })()}
               <div class="ed-info-card ed-info-warning">
                 <div class="ed-info-icon">${UsersIcon}</div>
-                <div><div class="ed-info-label">Capacity</div><div class="ed-info-value">${ev.capacity}</div></div>
+                <div><div class="ed-info-label">Capacity</div><div class="ed-info-value">${ev.capacity || t('Unlimited')}</div></div>
               </div>
               <div class="ed-info-card ed-info-warning">
                 <div class="ed-info-icon">${TicketIcon}</div>

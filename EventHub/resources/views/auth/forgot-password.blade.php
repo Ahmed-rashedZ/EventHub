@@ -6,7 +6,7 @@
   <title>Forgot Password � EventHub</title>
   <meta name="description" content="Reset your EventHub account password"/>
   <link rel="stylesheet" href="/css/style.css"/>
-  <script src="/js/i18n.js"></script>
+  <script src="/js/i18n.js?v=3"></script>
   <style>
     .step { display: none; animation: fadeSlideIn 0.4s ease; }
     .step.active { display: block; }

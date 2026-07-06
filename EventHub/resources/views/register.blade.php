@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Register – EventHub</title>
   <link rel="stylesheet" href="/css/style.css" />
-  <script src="/js/i18n.js"></script>
+  <script src="/js/i18n.js?v=3"></script>
   <link rel="icon" href="/images/logo.png" type="image/png">
 </head>
 

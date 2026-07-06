@@ -20,9 +20,9 @@
                     <!-- Body -->
                     <tr>
                         <td style="padding:32px 28px;">
-                            <h2 style="margin:0 0 8px;color:#fff;font-size:18px;">ЦямхгП {{ $userName }}║</h2>
+                            <h2 style="margin:0 0 8px;color:#fff;font-size:18px;">О©╫О©╫О©╫О©╫О©╫О©╫ {{ $userName }}О©╫</h2>
                             <p style="color:#9ca3af;font-size:14px;line-height:1.6;margin:0 0 24px;">
-                                Ачо йАчМДг ьАхгП Аезгои йзММД ъАЦи гАЦяФя гАнгуи хмсгхъ. гсйноЦ гАяЦр гАйгАМ:
+                                О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫. О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫:
                             </p>
                             
                             <!-- OTP Code -->
@@ -33,20 +33,20 @@
                             </div>
                             
                             <p style="color:#ef4444;font-size:13px;margin:0 0 16px;text-align:center;">
-                                ? Епг гАяЦр угАм АЦои <strong>5 очгфч</strong> щчь
+                                ? О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ <strong>5 О©╫О©╫О©╫О©╫О©╫</strong> О©╫О©╫О©╫
                             </p>
                             
                             <hr style="border:none;border-top:1px solid rgba(255,255,255,0.06);margin:20px 0;">
                             
                             <p style="color:#6b7280;font-size:12px;line-height:1.5;margin:0;">
-                                епг АЦ йьАх езгои йзММД ъАЦи гАЦяФя║ МЦъДъ йлгЕА ЕпЕ гАясгАи хцЦгД.
+                                О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫я║ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫.
                             </p>
                         </td>
                     </tr>
                     <!-- Footer -->
                     <tr>
                         <td style="padding:16px 28px;border-top:1px solid rgba(255,255,255,0.06);text-align:center;">
-                            <p style="color:#4b5563;font-size:11px;margin:0;">╘ {{ date('Y') }} EventHub. All rights reserved.</p>
+                            <p style="color:#4b5563;font-size:11px;margin:0;">О©╫ {{ date('Y') }} EventHub. All rights reserved.</p>
                         </td>
                     </tr>
                 </table>

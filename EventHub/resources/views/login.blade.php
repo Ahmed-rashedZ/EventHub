@@ -7,7 +7,7 @@
   <title>Login – EventHub</title>
   <meta name="description" content="Sign in to EventHub Smart Event Management Platform" />
   <link rel="stylesheet" href="/css/style.css" />
-  <script src="/js/i18n.js"></script>
+  <script src="/js/i18n.js?v=3"></script>
   <link rel="icon" href="/images/logo.png" type="image/png">
   <style>
     .form-control.error {

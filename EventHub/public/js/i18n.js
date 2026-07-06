@@ -2275,6 +2275,12 @@ function translateText(text) {
   // Exact match first
   if (dict[text]) return dict[text];
 
+  // If English, do not perform partial/substring translations on strings containing Arabic characters.
+  // This ensures that user-generated Arabic names, titles, and messages are preserved intact.
+  if (lang === 'en' && /[\u0600-\u06FF]/.test(text)) {
+    return text;
+  }
+
   // If English and the key wasn't in dict, don't do partial replacement unless we have custom EN rules
   if (lang === 'en' && Object.keys(I18N_EN).length === 0) return text;
 
@@ -2520,6 +2526,66 @@ function injectRTLStyles() {
    Text Translation
    ───────────────────────────────────────────────────────────────── */
 
+// Class/ID patterns that represent user-generated inputs or dynamic fields
+// which must NEVER be translated by i18n.
+const USER_CONTENT_SELECTORS = [
+  'i18n-skip',
+  'u-name',
+  'sidebar-username',
+  'u-bio',
+  'msg-content',
+  'message-text',
+  'message-sender',
+  'r-event-title',
+  'r-message',
+  'ed-title',
+  'ed-description',
+  'es-review-name',
+  'profile-name',
+  'user-name',
+  'company-name',
+  'sponsor-name',
+  'manager-name',
+  'venue-name',
+  'external-venue-name',
+  'external-venue-location',
+  'user-bio',
+  'company-bio',
+  'rejection-reason',
+  'cancellation-reason',
+  'cancellation-rejection-reason',
+  'msg-body',
+  'message-body',
+  'chat-message',
+  'final-notes'
+];
+
+function shouldSkipTranslation(el) {
+  if (!el) return false;
+  if (el.hasAttribute('data-no-translate')) return true;
+  
+  if (el.classList) {
+    for (let i = 0; i < USER_CONTENT_SELECTORS.length; i++) {
+      const selector = USER_CONTENT_SELECTORS[i];
+      if (el.classList.contains(selector)) return true;
+    }
+  }
+  if (el.id && USER_CONTENT_SELECTORS.includes(el.id)) return true;
+
+  return false;
+}
+
+function isExcluded(node) {
+  let p = node.nodeType === Node.ELEMENT_NODE ? node : node.parentElement;
+  while (p) {
+    if (SKIP_TAGS.has(p.tagName) || shouldSkipTranslation(p)) {
+      return true;
+    }
+    p = p.parentElement;
+  }
+  return false;
+}
+
 /**
  * Translate a single DOM text node if it matches a dictionary entry.
  * Handles full-string matches and trims surrounding whitespace.
@@ -2528,11 +2594,7 @@ function translateNode(node) {
   if (!node || !node.textContent) return;
 
   // Skip if inside an excluded container
-  let p = node.parentElement;
-  while (p) {
-    if (p.classList.contains('i18n-skip') || p.hasAttribute('data-no-translate') || SKIP_TAGS.has(p.tagName)) return;
-    p = p.parentElement;
-  }
+  if (isExcluded(node)) return;
 
   const original = node.textContent;
   const trimmed = original.trim();
@@ -2579,12 +2641,12 @@ function translateSubtree(root) {
       acceptNode(node) {
         if (node.nodeType === Node.ELEMENT_NODE) {
           if (SKIP_TAGS.has(node.tagName)) return NodeFilter.FILTER_REJECT;
-          if (node.classList.contains('i18n-skip') || node.hasAttribute('data-no-translate')) return NodeFilter.FILTER_REJECT;
+          if (shouldSkipTranslation(node)) return NodeFilter.FILTER_REJECT;
           return NodeFilter.FILTER_SKIP;
         }
         const parent = node.parentElement;
         if (!parent || SKIP_TAGS.has(parent.tagName)) return NodeFilter.FILTER_REJECT;
-        if (parent.classList.contains('i18n-skip') || parent.hasAttribute('data-no-translate')) return NodeFilter.FILTER_REJECT;
+        if (shouldSkipTranslation(parent)) return NodeFilter.FILTER_REJECT;
         return NodeFilter.FILTER_ACCEPT;
       }
     }
@@ -2624,7 +2686,7 @@ function startObserver() {
           translateNode(node);
         } else if (node.nodeType === Node.ELEMENT_NODE) {
           if (SKIP_TAGS.has(node.tagName)) return;
-          if (node.classList.contains('i18n-skip') || node.hasAttribute('data-no-translate')) return;
+          if (shouldSkipTranslation(node)) return;
           translateSubtree(node);
         }
       });

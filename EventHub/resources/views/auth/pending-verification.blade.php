@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pending Verification – EventHub</title>
   <link rel="stylesheet" href="/css/style.css" />
-  <script src="/js/i18n.js"></script>
+  <script src="/js/i18n.js?v=3"></script>
   <style>
     .doc-status-wrapper {
       margin-bottom: 12px;

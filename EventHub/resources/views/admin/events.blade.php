@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Events – EventHub Admin</title>
   <link rel="stylesheet" href="/css/style.css" />
-  <script src="/js/i18n.js"></script>
+  <script src="/js/i18n.js?v=3"></script>
 <link rel="icon" href="/images/logo.png" type="image/png">
 </head>
 
@@ -471,7 +471,7 @@
             })()}
             <div class="ed-info-card ed-info-warning">
               <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg></div>
-              <div><div class="ed-info-label">${t('Capacity')}</div><div class="ed-info-value">${ev.capacity || 'Unlimited (مفتوح)'}</div></div>
+              <div><div class="ed-info-label">${t('Capacity')}</div><div class="ed-info-value">${ev.capacity || t('Unlimited')}</div></div>
             </div>
             <div class="ed-info-card ed-info-warning">
               <div class="ed-info-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-12v.75m0 3v.75m0 3v.75m0 3V18M3 6.75A1.75 1.75 0 014.75 5h14.5A1.75 1.75 0 0121 6.75v10.5a1.75 1.75 0 01-1.75 1.75H4.75A1.75 1.75 0 013 17.25V6.75z" /></svg></div>

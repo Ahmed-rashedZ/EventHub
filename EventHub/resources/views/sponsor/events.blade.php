@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Browse Events – EventHub Sponsor</title>
   <link rel="stylesheet" href="/css/style.css" />
-  <script src="/js/i18n.js"></script>
+  <script src="/js/i18n.js?v=3"></script>
   <style>
     .req-btn {
       padding: 6px 12px;
@@ -276,7 +276,7 @@
         return `
       <tr>
         <td>
-            <div style="font-weight:600">${e.title}</div>
+            <div style="font-weight:600" class="i18n-skip">${e.title}</div>
         </td>
         <td>
             <div class="i18n-skip" style="font-size:13px; color:var(--accent2); cursor:pointer; display:inline-block;" onclick="navigateToProfile(${e.creator?.id})">
@@ -466,7 +466,7 @@
         <div class="ed-body">
           <div class="ed-header">
             <div class="ed-title-row">
-              <h2 class="ed-title">${ev.title}</h2>
+              <h2 class="ed-title i18n-skip">${ev.title}</h2>
               <span class="ed-type-pill" style="--tcolor:${tColor}">${eType}</span>
             </div>
             <div class="ed-badges">
@@ -529,7 +529,7 @@
             })()}
             <div class="ed-info-card ed-info-warning">
               <div class="ed-info-icon">${UsersIcon}</div>
-              <div><div class="ed-info-label">Capacity</div><div class="ed-info-value">${ev.capacity || (document.documentElement.lang === 'ar' ? 'مفتوح' : 'Unlimited')}</div></div>
+              <div><div class="ed-info-label">Capacity</div><div class="ed-info-value">${ev.capacity || t('Unlimited')}</div></div>
             </div>
           </div>
           
