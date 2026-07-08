@@ -2446,7 +2446,8 @@
       }, 250);
     }
 
-    async function generateAIDescription() {
+    async function generateAIDescription(retryCount = 0) {
+      const MAX_AUTO_RETRIES = 3;
       const title = document.getElementById('e-title').value.trim();
       if (!title) {
         showToast(document.documentElement.lang === 'ar' ? 'الرجاء إدخال عنوان الحدث أولاً' : 'Please enter an event title first', 'error');
@@ -2455,11 +2456,13 @@
 
       const eventType = document.getElementById('e-type').value;
 
-      // Switch to loading state
-      document.getElementById('ai-desc-prompt').style.display = 'none';
-      document.getElementById('ai-desc-loading').style.display = 'block';
-      document.getElementById('ai-desc-success').style.display = 'none';
-      document.getElementById('ai-desc-error').style.display = 'none';
+      // Switch to loading state (only on first attempt)
+      if (retryCount === 0) {
+        document.getElementById('ai-desc-prompt').style.display = 'none';
+        document.getElementById('ai-desc-loading').style.display = 'block';
+        document.getElementById('ai-desc-success').style.display = 'none';
+        document.getElementById('ai-desc-error').style.display = 'none';
+      }
 
       try {
         const res = await api.post('/events/generate-description', {
@@ -2496,14 +2499,21 @@
             }, 250);
           }, 3000);
         } else {
-          // Show error state
-          document.getElementById('ai-desc-loading').style.display = 'none';
-          const errEl = document.getElementById('ai-desc-error');
-          errEl.style.display = 'block';
-
           // Check for rate limit error
           const detail = res.data?.detail || res.data?.message || '';
           const isRateLimit = detail.toLowerCase().includes('rate limit') || detail.toLowerCase().includes('quota') || res.status === 429;
+
+          // Auto-retry silently on rate limit (keep showing loading spinner)
+          if (isRateLimit && retryCount < MAX_AUTO_RETRIES) {
+            console.log(`[AI Desc] Rate limited, auto-retrying (${retryCount + 1}/${MAX_AUTO_RETRIES}) in 3s...`);
+            setTimeout(() => generateAIDescription(retryCount + 1), 3000);
+            return; // Stay in loading state
+          }
+
+          // All retries exhausted or non-rate-limit error — show error
+          document.getElementById('ai-desc-loading').style.display = 'none';
+          const errEl = document.getElementById('ai-desc-error');
+          errEl.style.display = 'block';
 
           if (isRateLimit) {
             errEl.textContent = document.documentElement.lang === 'ar' ? '⏳ تم تجاوز الحد المسموح. انتظر دقيقة وحاول مرة أخرى.' : '⏳ Rate limit reached. Please wait a minute and try again.';
@@ -2517,6 +2527,14 @@
         }
       } catch (err) {
         console.error('AI description error:', err);
+
+        // Auto-retry on connection errors too
+        if (retryCount < MAX_AUTO_RETRIES) {
+          console.log(`[AI Desc] Connection error, auto-retrying (${retryCount + 1}/${MAX_AUTO_RETRIES}) in 3s...`);
+          setTimeout(() => generateAIDescription(retryCount + 1), 3000);
+          return;
+        }
+
         document.getElementById('ai-desc-loading').style.display = 'none';
         const errEl = document.getElementById('ai-desc-error');
         errEl.style.display = 'block';

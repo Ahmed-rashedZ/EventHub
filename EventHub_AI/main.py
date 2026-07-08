@@ -367,54 +367,71 @@ def generate_description(payload: GenerateDescriptionRequest):
         }
 
         # Sequential list of free models to try for fallback robustness
+        # Each model gets multiple retry attempts with increasing delays
         models_to_try = [
             "google/gemma-4-31b-it:free",
             "google/gemma-4-26b-a4b-it:free",
             "meta-llama/llama-3.3-70b-instruct:free",
         ]
 
+        MAX_RETRIES_PER_MODEL = 3  # Retry each model up to 3 times on rate limit
         last_error = None
         description = None
 
+        import time
+
         for model in models_to_try:
-            try:
-                # Request body
-                data = {
-                    "model": model,
-                    "messages": [
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_prompt},
-                    ],
-                    "temperature": 0.3,  # Lower temperature for more factual/direct response
-                    "max_tokens": 300,
-                }
+            for attempt in range(MAX_RETRIES_PER_MODEL):
+                try:
+                    data = {
+                        "model": model,
+                        "messages": [
+                            {"role": "system", "content": system_prompt},
+                            {"role": "user", "content": user_prompt},
+                        ],
+                        "temperature": 0.3,
+                        "max_tokens": 300,
+                    }
 
-                # Call OpenRouter API
-                response = httpx.post(
-                    "https://openrouter.ai/api/v1/chat/completions",
-                    headers=headers,
-                    json=data,
-                    timeout=20.0,
-                )
+                    response = httpx.post(
+                        "https://openrouter.ai/api/v1/chat/completions",
+                        headers=headers,
+                        json=data,
+                        timeout=25.0,
+                    )
 
-                if response.status_code == 200:
-                    resp_json = response.json()
-                    choices = resp_json.get("choices")
-                    if choices and len(choices) > 0:
-                        message = choices[0].get("message")
-                        if message and message.get("content"):
-                            description = message["content"].strip()
-                            # We got a successful response! Break the loop.
-                            break
-                else:
-                    last_error = f"Model {model} returned status {response.status_code}: {response.text}"
-            except Exception as e:
-                last_error = f"Model {model} failed with exception: {str(e)}"
+                    if response.status_code == 200:
+                        resp_json = response.json()
+                        choices = resp_json.get("choices")
+                        if choices and len(choices) > 0:
+                            message = choices[0].get("message")
+                            if message and message.get("content"):
+                                description = message["content"].strip()
+                                break  # Success!
+                        else:
+                            last_error = f"Model {model} returned empty choices"
+                            break  # No point retrying empty choices
+                    elif response.status_code == 429:
+                        # Rate limited — wait then retry same model
+                        wait_seconds = (attempt + 1) * 2  # 2s, 4s, 6s
+                        last_error = f"Model {model} rate limited (429), attempt {attempt + 1}"
+                        if attempt < MAX_RETRIES_PER_MODEL - 1:
+                            time.sleep(wait_seconds)
+                        # If last attempt, fall through to next model
+                    else:
+                        last_error = f"Model {model} returned status {response.status_code}: {response.text}"
+                        break  # Non-rate-limit error, try next model
+                except Exception as e:
+                    last_error = f"Model {model} failed: {str(e)}"
+                    break  # Connection error, try next model
+
+            if description:
+                break  # Got a successful response, stop trying models
 
         if not description:
             raise HTTPException(
-                status_code=502,
-                detail=f"All configured free models failed. Last error: {last_error}",
+                status_code=429,
+                detail=f"Rate limit reached. Please wait a minute and try again.",
             )
 
         # Clean up any unwanted prefixes or quotes the model might still return

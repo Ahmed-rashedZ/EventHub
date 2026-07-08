@@ -1484,7 +1484,7 @@ class EventController extends Controller
         }
 
         try {
-            $response = \Illuminate\Support\Facades\Http::timeout(15)
+            $response = \Illuminate\Support\Facades\Http::timeout(90)
                 ->post("{$aiUrl}/generate-description", $payload);
 
             if ($response->successful()) {
