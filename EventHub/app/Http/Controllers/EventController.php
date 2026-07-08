@@ -1071,7 +1071,7 @@ class EventController extends Controller
              return response()->json(['message' => app()->getLocale() == 'ar' ? 'لا يمكن إلغاء فعالية بدأت بالفعل.' : 'Cannot cancel an event that has already started.'], 400);
         }
         
-        if ($eventDate->diffInDays(now()) < 30) {
+        if (now()->diffInDays($eventDate, absolute: true) < 30) {
             return response()->json(['message' => app()->getLocale() == 'ar' ? 'لا يمكن طلب إلغاء الفعاليات التي تبدأ بعد أقل من 30 يوماً.' : 'Cannot request cancellation for events starting in less than 30 days.'], 400);
         }
 
