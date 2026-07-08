@@ -123,6 +123,14 @@ class Event extends Model
         return $this->hasOne(EventReview::class);
     }
 
+    /**
+     * AI training log — tracks whether this event's data was sent to the AI model.
+     */
+    public function aiTrainingLog()
+    {
+        return $this->hasOne(AiTrainingLog::class);
+    }
+
     // ─── Computed Attributes ──────────────────────────────────────────────────
 
     public function getAverageRatingAttribute()

@@ -10,3 +10,4 @@ Artisan::command('inspire', function () {
 
 Schedule::command('app:prune-rejected-partners')->daily();
 Schedule::command('app:send-event-reminders')->everyThirtyMinutes();
+Schedule::command('app:feed-ended-events-to-ai')->daily();
